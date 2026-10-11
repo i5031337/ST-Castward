@@ -21,7 +21,7 @@ export async function synthesizeSpeech(unit, config, signal) {
 }
 
 /** Abort stops audible playback and releases the generated object URL. */
-export function playSpeechAudio(blob, signal) {
+export function playSpeechAudio(blob, signal, onStart = () => {}) {
     if (signal.aborted) return Promise.resolve();
     const url = URL.createObjectURL(blob);
     const player = new Audio(url);
@@ -39,6 +39,7 @@ export function playSpeechAudio(blob, signal) {
         };
         const abort = () => finish();
         signal.addEventListener('abort', abort, { once: true });
+        player.addEventListener('playing', () => { if (!settled && !signal.aborted) onStart(); }, { once: true });
         player.addEventListener('ended', () => finish(), { once: true });
         player.addEventListener('error', () => finish(new Error('Audio playback failed.')), { once: true });
         player.play().catch(error => finish(error));

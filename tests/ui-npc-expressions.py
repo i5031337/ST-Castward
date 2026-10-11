@@ -40,14 +40,50 @@ with browser_session() as browser:
             ? (packRequests++,Promise.resolve(new Response(JSON.stringify(sprites),{headers:{'Content-Type':'application/json'}})))
             : originalFetch(url,...args);
           let calls=[];
-          const adapters={loadPack:async()=>sprites,classify:async job=>{calls.push([job.line.npcId,job.line.text]);return 'joy';}};
+          const adapters={loadPack:async()=>sprites,classify:async job=>{calls.push([job.line.npcId,job.line.text]);return job.line.text==='First.'?'neutral':'joy';}};
           await runtime.completeNpcExpressions(chatLength,adapters);
-          result.lastLines=JSON.stringify(calls)===JSON.stringify([[cards[1].id,'Second.'],[cards[0].id,'Last.']]);
-          result.portraits=[...fixture.querySelectorAll('.sillynpc-chat-avatar')].every(a=>a.dataset.sillynpcExpression==='joy');
+          result.eachLine=JSON.stringify(calls)===JSON.stringify([[cards[0].id,'First.'],[cards[1].id,'Second.'],[cards[0].id,'Last.']]);
+          result.portraits=[...fixture.querySelectorAll('.sillynpc-chat-avatar')].map(a=>a.dataset.sillynpcExpression).join(',')==='neutral,joy,joy';
           runtime.renderNpcExpressions(fixture); await runtime.completeNpcExpressions(chatLength,adapters);
-          result.cached=calls.length===2;
+          result.cached=calls.length===3;
+          const {readSpeechUnits}=await import(root+'src/tts/speech-units.js');
+          const {createSpeechQueue}=await import(root+'src/tts/speech-queue.js');
+          const {playSpeechAudio}=await import(root+'src/tts/openai-speech.js');
+          const units=readSpeechUnits(fixture).map(u=>({...u,voice:'test'}));
+          result.lineIdentity=units.map(u=>u.dialogueLineIndex).join(',')==='0,1,2';
+          const OriginalAudio=window.Audio; const players=[];
+          try {
+            window.Audio=class extends EventTarget {
+              constructor(){super();players.push(this);} play(){return Promise.resolve();}
+              pause(){} removeAttribute(){} load(){}
+            };
+            const queue=createSpeechQueue({valid:()=>true,synthesize:async()=>new Blob(['mock']),
+              playAudio:playSpeechAudio,onState:(state,job,unit)=>{if(state==='playing')runtime.showNpcSpeechExpression(unit);}});
+            const playing=queue.play(chatLength,units[0].revision,units);
+            for(let i=0;i<50&&players.length<1;i++) await new Promise(r=>setTimeout(r,10));
+            result.noSynthesisAdvance=!document.querySelector('#sillynpc-speech-sprite');
+            players[0].dispatchEvent(new Event('playing'));
+            result.firstSprite=document.querySelector('#sillynpc-speech-sprite img').src.includes('expression=neutral');
+            const portraitsBefore=[...fixture.querySelectorAll('.sillynpc-chat-avatar')].map(a=>a.src).join('|');
+            players[0].dispatchEvent(new Event('ended'));
+            for(let i=0;i<50&&players.length<2;i++) await new Promise(r=>setTimeout(r,10));
+            result.waitingRetainsSprite=document.querySelector('#sillynpc-speech-sprite').dataset.npcId===cards[0].id;
+            players[1].dispatchEvent(new Event('playing'));
+            result.secondSprite=document.querySelector('#sillynpc-speech-sprite').dataset.npcId===cards[1].id;
+            players[1].dispatchEvent(new Event('ended'));
+            for(let i=0;i<50&&players.length<3;i++) await new Promise(r=>setTimeout(r,10));
+            players[2].dispatchEvent(new Event('playing'));
+            const holder=document.querySelector('#sillynpc-speech-sprite');
+            result.lastSprite=holder.dataset.npcId===cards[0].id&&holder.querySelector('img').src.includes('expression=joy');
+            result.fullBody=getComputedStyle(holder.querySelector('img')).objectFit==='contain'&&holder.getBoundingClientRect().height>200;
+            result.staticPortraits=portraitsBefore===[...fixture.querySelectorAll('.sillynpc-chat-avatar')].map(a=>a.src).join('|');
+            players[2].dispatchEvent(new Event('ended')); await playing;
+            result.retainedAfterSpeech=!!document.querySelector('#sillynpc-speech-sprite');
+            const {stopNpcTts}=await import(root+'src/tts/npc-tts.js'); stopNpcTts();
+            result.stopClears=!document.querySelector('#sillynpc-speech-sprite');
+          } finally {window.Audio=OriginalAudio;}
           result.baseUnchanged=cards.every(c=>c.imageUrl==='/img/ai4.png');
-          const avatar=fixture.querySelector('.sillynpc-chat-avatar');
+          const avatar=fixture.querySelectorAll('.sillynpc-chat-avatar')[1];
           avatar.dispatchEvent(new Event('error'));
           result.missingImageFallback=avatar.dataset.sillynpcExpression==='neutral';
           avatar.dispatchEvent(new Event('error'));

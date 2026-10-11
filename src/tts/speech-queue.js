@@ -1,5 +1,5 @@
 /** Keep synthesis ahead of ordered playback without buffering an entire message. */
-export function createSpeechQueue({ synthesize, playAudio, valid, onState = () => {} }) {
+export function createSpeechQueue({ synthesize, playAudio, valid, prepare = async () => {}, onState = () => {} }) {
     let active = null;
     let serial = 0;
     const stop = () => {
@@ -14,6 +14,15 @@ export function createSpeechQueue({ synthesize, playAudio, valid, onState = () =
         const job = { id: ++serial, messageId, revision, controller: new AbortController() };
         active = job;
         onState('working', job);
+        try { await prepare(job); }
+        catch (error) {
+            if (active === job) { onState('error', job, error); stop(); }
+            return;
+        }
+        if (active !== job || job.controller.signal.aborted || !valid(job)) {
+            if (active === job) stop();
+            return;
+        }
         const spoken = units.filter(unit => unit.voice);
         const consumed = spoken.map(() => {
             let release;
@@ -36,8 +45,10 @@ export function createSpeechQueue({ synthesize, playAudio, valid, onState = () =
                 if (!current()) break;
                 if (result.error) throw result.error;
                 if (result.skip) break;
-                onState('playing', job, spoken[i]);
-                await playAudio(result.blob, job.controller.signal);
+                await playAudio(result.blob, job.controller.signal, () => {
+                    if (current()) onState('playing', job, spoken[i]);
+                });
+                if (current()) onState('ended', job, spoken[i]);
                 consumed[i].release();
             }
         } catch (error) {

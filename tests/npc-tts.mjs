@@ -167,3 +167,32 @@ test('automatic speech waits for a changed completed reply and rejects stale sou
     assert.equal(completions, 1);
     assert.equal(stops, 4);
 });
+
+test('speaker notifications follow audio start, not prefetched synthesis or play invocation', async () => {
+    const states = [], starts = [], ends = [];
+    const queue = createSpeechQueue({valid: () => true,
+        synthesize: async unit => unit.text,
+        playAudio: (blob, signal, start) => new Promise(resolve => {
+            starts.push(start); ends.push(resolve); signal.addEventListener('abort', resolve, {once:true});
+        }),
+        onState: (state, job, unit) => { if (state === 'playing') states.push(unit.text); },
+    });
+    const task = queue.play(1, 'revision', [{text:'first',voice:'a'}, {text:'second',voice:'b'}]);
+    await new Promise(resolve => setImmediate(resolve));
+    assert.deepEqual(states, []);
+    starts[0](); assert.deepEqual(states, ['first']);
+    ends[0](); await new Promise(resolve => setImmediate(resolve));
+    assert.deepEqual(states, ['first']);
+    queue.stop(); starts[1](); await task;
+    assert.deepEqual(states, ['first']);
+});
+
+test('Stop during expression preparation prevents synthesis and stale playback', async () => {
+    let release; const calls = [];
+    const queue = createSpeechQueue({valid: () => true,
+        prepare: () => new Promise(resolve => {release=resolve;}),
+        synthesize: async () => calls.push('synthesize'), playAudio: async () => calls.push('audio')});
+    const task=queue.play(1,'revision',[{voice:'a',text:'hello'}]);
+    queue.stop(); release(); await task;
+    assert.deepEqual(calls, []);
+});

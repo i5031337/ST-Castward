@@ -29,7 +29,7 @@ export function buildExpressionsSection(card, { save = () => {
     const button = document.createElement('button'); button.type = 'button'; button.className = 'menu_button';
     button.textContent = 'Load pack / preview'; root.append(button);
     const status = document.createElement('p'); status.setAttribute('role', 'status'); root.append(status);
-    const hint = document.createElement('p'); hint.textContent = classifierHint() || 'Classifies only each NPC’s last dialogue line in a completed reply.';
+    const hint = document.createElement('p'); hint.textContent = classifierHint() || 'Classifies each dialogue line. Chat portraits stay with their line; a full-size sprite follows spoken NPC dialogue.';
     root.append(hint);
     const preview = document.createElement('img'); preview.hidden = true; preview.alt = 'Expression preview';
     preview.style.cssText = 'width:100%;max-height:240px;object-fit:contain'; root.append(preview);

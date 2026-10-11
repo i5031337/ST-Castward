@@ -25,7 +25,7 @@ export function createExpressionEngine({ classify, isCurrent, apply, limit = 128
         cached(key) { return cache.get(key); },
         enqueue(job) {
             const vocabulary = [...new Set((job.sprites || []).map(sprite => sprite.label))].sort();
-            const key = JSON.stringify([job.line.revision, job.line.npcId, job.line.text,
+            const key = JSON.stringify([job.line.revision, job.line.npcId, job.line.lineIndex, job.line.text,
                 job.config, job.preferences, vocabulary]);
             if (cache.has(key)) {
                 if (isCurrent(job)) apply(job, cache.get(key));

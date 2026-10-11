@@ -12,7 +12,7 @@ SillyTavern loads `index.js` and `style.css` from `manifest.json`. The JavaScrip
 | `src/generation/` | Staged System generation, canonical schema fragments, validation, requests, and isolated drafts. |
 | `src/characters/` | Character records, ownership, portraits, and transfer. |
 | `src/chat/` | Chat ownership, message decoration, and reprocessing. |
-| `src/expressions/` | NPC sprite packs, classifier adapter, completed-reply scheduling, and expression cache. |
+| `src/expressions/` | NPC sprite packs, per-line expression cache, static dialogue portraits, and full-size speech sprites. |
 | `src/lore/` | Lorebook entries and synchronization. |
 | `src/story/` | Story beats, mentions, and collection scans. |
 | `src/prompts/` | Built-in prompt templates, formatting rules, and prompt placement. |

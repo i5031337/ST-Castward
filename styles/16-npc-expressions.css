@@ -17,3 +17,29 @@
 .sillynpc-voice-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
 #sillynpc-tts-settings { margin-top: 12px; }
 .sillynpc-tts-play { margin-left: 6px; }
+
+/* Match the host's side-of-chat expression framing without its managed holders. */
+#sillynpc-speech-sprite {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    width: max(100px, calc((100vw - var(--sheldWidth, 50vw)) / 2));
+    height: calc(100vh - var(--topBarBlockSize, 40px));
+    max-width: 90vh;
+    max-height: 90vh;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    pointer-events: none;
+    z-index: 2;
+    filter: drop-shadow(2px 2px 2px #51515199);
+}
+#sillynpc-speech-sprite img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: bottom center;
+}
+@media (max-width: 768px) {
+    #sillynpc-speech-sprite { width: 35vw; height: 45vh; z-index: 1; }
+}

@@ -10,7 +10,8 @@ export function injectAtDialogueLines(container, characters, pickFace, isLastMes
         ignoredLabels: getIgnoredSpeakerLabels(), personaFor: resolvePersonaSpeaker,
     });
     const byNode = new Map();
-    for (const match of matches) {
+    for (const [lineIndex, match] of matches.entries()) {
+        match.lineIndex = lineIndex;
         if (!byNode.has(match.node)) byNode.set(match.node, []);
         byNode.get(match.node).push(match);
     }
@@ -19,15 +20,17 @@ export function injectAtDialogueLines(container, characters, pickFace, isLastMes
         const fragment = document.createDocumentFragment();
         let cursor = 0;
         let changed = false;
-        for (const { label, card, persona } of lines) {
+        for (const { label, card, persona, lineIndex } of lines) {
             fragment.appendChild(document.createTextNode(source.slice(cursor, label.start)));
-            fragment.appendChild(createAvatarImg({
+            const avatar = createAvatarImg({
                 char: card,
                 name: label.name,
                 defaultImage: pickFace(label.name, card),
                 isLastMessage,
                 persona,
-            }));
+            });
+            avatar.dataset.sillynpcDialogueLine = lineIndex;
+            fragment.appendChild(avatar);
             const name = document.createElement('span');
             name.className = 'sillynpc-speaker-name';
             name.textContent = source.slice(label.start, label.end);

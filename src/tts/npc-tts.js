@@ -10,6 +10,8 @@ import { hostSpeechEndpoint, synthesizeSpeech, playSpeechAudio } from './openai-
 import { normalizeTtsSettings, resolveUnitSpeech, ttsConfigError, QWEN_MODEL } from './tts-settings.js';
 import { builtInAutoTtsEnabled } from '../ui/tts/ui-tts-settings.js';
 import { wireSpeechEvents } from './speech-events.js';
+import { completeNpcExpressions, showNpcSpeechExpression } from '../expressions/npc-expressions.js';
+import { clearSpeechSprite } from '../expressions/speech-sprite.js';
 import { captureVoiceCues, cardWithVoiceCue } from './voice-cues.js';
 
 const messageElement = id => document.querySelector(`#chat .mes[mesid="${Number(id)}"]`);
@@ -29,17 +31,20 @@ function updateButtons() {
 const queue = createSpeechQueue({
     synthesize: (unit, signal) => synthesizeSpeech(unit, unit.config, signal),
     playAudio: playSpeechAudio,
+    prepare: job => completeNpcExpressions(job.messageId, { signal: job.controller.signal }),
     valid: job => getSettings().enabled && getSettings().tts.enabled
         && dialogueRevision(getContext(), job.messageId) === job.revision
         && JSON.stringify(normalizeTtsSettings(getSettings().tts)) === configSignature
         && hostSpeechEndpoint() === endpointSignature,
     onState: (state, _job, detail) => {
         updateButtons();
+        if (state === 'playing') showNpcSpeechExpression(detail);
         if (state === 'error') globalThis.toastr?.error(detail?.message || String(detail), 'SillyNPC speech');
     },
 });
 
 export function stopNpcTts() {
+    clearSpeechSprite();
     queue.stop();
     previewController?.abort();
     previewController = null;

@@ -6,7 +6,7 @@ import { resolvePersonaSpeaker } from '../tracker/status-logic.js';
 import { messageBeats } from '../story/beats.js';
 import { dialogueLabels } from '../chat/dialogue-line.js';
 import { dialogueContentClone, discoverDialogueLines } from '../chat/dialogue-discovery.js';
-import { dialogueRevision } from '../chat/dialogue-presentation.js';
+import { dialogueRevision, readDialogueRecords } from '../chat/dialogue-presentation.js';
 
 const QUOTES = new Map([['"', '"'], ['“', '”'], ['«', '»'], ['「', '」'], ['『', '』'], ['＂', '＂']]);
 const SKIP = 'pre, code, script, style, table, svg, canvas, video, summary, [hidden], '
@@ -77,6 +77,12 @@ export function readSpeechUnits(mesEl, {
         || !Number.isInteger(id) || id < 0) return [];
     const revision = dialogueRevision(context, id);
     const units = [];
+    const dialogueIndices = new Map();
+    for (const record of readDialogueRecords(mesEl, { context, characters, settings, ignoredLabels, personaFor })) {
+        const key = JSON.stringify([record.speakerLabel, record.text]);
+        if (!dialogueIndices.has(key)) dialogueIndices.set(key, []);
+        dialogueIndices.get(key).push(record.lineIndex);
+    }
     for (const beat of messageBeats(container)) {
         if (beat.kind !== 'paragraph') continue;
         const clone = dialogueContentClone(beat.element);
@@ -89,13 +95,17 @@ export function readSpeechUnits(mesEl, {
             if (!line) continue;
             const label = dialogueLabels(line)[0];
             const match = matches[nextMatch];
-            const recognized = label?.start === 0 && match?.label.name === label.name && match.dialogue?.text;
+            const matched = label?.start === 0 && match?.label.name === label.name;
+            const recognized = matched && match.dialogue?.text;
             const pieces = recognized ? splitSpeechLine(line, match) : [{ kind: 'narration', text: line }];
-            if (recognized) nextMatch++;
+            const dialogueIndex = recognized
+                ? dialogueIndices.get(JSON.stringify([match.label.name, match.dialogue.text]))?.shift() ?? null : null;
+            if (matched) nextMatch++;
             for (const piece of pieces) {
                 if (!piece.text) continue;
                 units.push({ messageId: id, revision, lineIndex: units.length, kind: piece.kind,
                     npcId: piece.kind === 'dialogue' && !match?.persona ? match?.card?.id || null : null,
+                    dialogueLineIndex: piece.kind === 'dialogue' ? dialogueIndex : null,
                     speakerLabel: piece.kind === 'dialogue' ? match?.label.name || '' : '', text: piece.text });
             }
         }
