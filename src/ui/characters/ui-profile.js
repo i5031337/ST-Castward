@@ -338,14 +338,24 @@ export async function renderProfileView(char, container) {
     if (identity.childElementCount) left.append(identity);
 
     const { stats, collections } = liveFactsFor(char);
-    const statChips = Object.entries(stats)
-        .filter(([, value]) => String(value ?? '').trim() !== '')
-        .map(([name, value]) => chip(name, value));
-    if (statChips.length) {
+    const readings = Object.entries(stats)
+        .filter(([, value]) => String(value ?? '').trim() !== '');
+    if (readings.length) {
         const statsSection = buildProfileSection('stats', 'Stats', { open: true });
         const row = document.createElement('div');
-        row.className = 'sillynpc-cv-chips';
-        row.append(...statChips);
+        row.className = 'sillynpc-attributes-grid';
+        for (const [name, value] of readings) {
+            const tile = document.createElement('div');
+            tile.className = 'sillynpc-attribute-item';
+            const label = document.createElement('span');
+            label.className = 'attr-name';
+            label.textContent = name;
+            const reading = document.createElement('span');
+            reading.className = 'attr-value';
+            reading.textContent = String(value);
+            tile.append(label, reading);
+            row.append(tile);
+        }
         statsSection.body.append(row);
         right.append(statsSection.section);
     }

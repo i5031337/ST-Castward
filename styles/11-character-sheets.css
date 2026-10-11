@@ -114,6 +114,44 @@
     padding-top: var(--sillynpc-space-md);
 }
 
+/* Stat tiles grow from their content, keeping long labels and readings readable. */
+.sillynpc-attributes-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.sillynpc-attribute-item {
+    background: var(--sillynpc-bg-secondary);
+    padding: var(--sillynpc-space-md);
+    border-radius: var(--sillynpc-radius-md);
+    border: 1px solid var(--sillynpc-border);
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    flex: 1 1 auto;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+    text-align: center;
+    align-items: center;
+    overflow-wrap: anywhere;
+}
+
+.sillynpc-attribute-item .attr-name {
+    font-size: var(--sillynpc-text-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    opacity: 0.6;
+}
+
+.sillynpc-attribute-item .attr-value {
+    font-size: var(--sillynpc-text-lg);
+    font-weight: bold;
+    color: var(--sillynpc-accent-text, var(--sillynpc-accent));
+    white-space: pre-wrap;
+}
+
 .sillynpc-editor-right,
 .collections-field-container {
     display: flex;

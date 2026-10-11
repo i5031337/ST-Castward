@@ -60,6 +60,11 @@ with browser_session() as browser:
             result[label+'Profile'] = !!host.querySelector('.sillynpc-cv-body')
               && !!host.querySelector('.sillynpc-cv-portrait') && host.textContent.includes('From the northern road')
               && [...host.querySelectorAll('.sillynpc-charview-tab')].slice(0,2).map(el=>el.textContent).join(',')==='Profile,Edit';
+            const tile = host.querySelector('[data-section-key="stats"] .sillynpc-attribute-item');
+            result[label+'StatTile'] = tile?.querySelector('.attr-name')?.textContent === 'Health'
+              && tile?.querySelector('.attr-value')?.textContent === '20'
+              && getComputedStyle(tile).flexDirection === 'column'
+              && getComputedStyle(tile.querySelector('.attr-name')).textTransform === 'uppercase';
             host.querySelector('[data-view="edit"]').click();
             result[label+'Edit'] = !!host.querySelector('.sillynpc-editor-main') && !!host.querySelector('.sillynpc-profile-input')
               && !!host.querySelector('.sillynpc-overrides-grid') && !!host.querySelector('.sillynpc-memory-section');
