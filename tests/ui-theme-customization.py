@@ -16,21 +16,25 @@ with browser_session() as browser:
         const {getSettings} = await import(base + 'src/core/settings.js');
         const {applyThemeAppearance} = await import(base + 'src/core/theme-customization.js');
         const {renderThemeCustomization} = await import(base + 'src/ui/settings/ui-theme-customization.js');
-        const {updateAllExtensionThemes} = await import(base + 'src/ui/shared/ui-theme.js');
+        const {updateAllExtensionThemes, updateExtensionTheme} = await import(base + 'src/ui/shared/ui-theme.js');
         const {SILLYNPC_THEMES} = await import(base + 'src/core/constants.js');
         const settings = getSettings();
         const saved = {menuStyle: settings.menuStyle, themeOverrides: settings.themeOverrides};
         const mount = document.createElement('div'); mount.className = 'popup';
         mount.style.cssText = 'display:block; position:fixed; inset:20px; width:700px; height:800px; z-index:9999';
         const menu = document.createElement('div'); menu.className = 'sillynpc-manage';
-        mount.append(menu); document.body.append(mount);
+        const wrapper = document.createElement('div');
+        wrapper.append(menu); mount.append(wrapper); document.body.append(mount);
         const assert = (value, message) => {if (!value) throw Error(message)};
         const result = {};
         try {
           settings.themeOverrides = {};
           for (const id of ['default', ...SILLYNPC_THEMES]) {
             settings.menuStyle = id; menu.replaceChildren();
-            applyThemeAppearance(menu, settings);
+            updateExtensionTheme(wrapper, {dlg: mount});
+            assert(menu.classList.contains('sillynpc-theme-' + id), 'Wrapped menu theme: ' + id);
+            const presetStyle = getComputedStyle(menu);
+            assert(presetStyle.backgroundColor !== 'rgba(0, 0, 0, 0)' || presetStyle.backgroundImage !== 'none', 'Preset background: ' + id);
             renderThemeCustomization(menu, new Set(['Customize theme']), {get: () => settings, save: () => {}});
             assert(menu.querySelectorAll('[data-theme-field]').length === 21, 'All controls: ' + id);
             const change = (key, value) => {

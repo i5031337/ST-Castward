@@ -59,7 +59,9 @@ export function updateAllExtensionThemes() {
  */
 export function updateExtensionTheme(root, popupInstance = null) {
     if (!root) return;
-    const container = root;
+    // The main menu passes its unstyled template wrapper; theme the visible panel.
+    const container = root.classList.contains('sillynpc-manage')
+        ? root : root.querySelector('.sillynpc-manage') || root;
     applyThemeAppearance(container, getSettings());
 
     // Text size, as a multiplier of whatever the theme sets rather than a size of its own,
