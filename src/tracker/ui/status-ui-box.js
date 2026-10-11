@@ -1,3 +1,4 @@
+import { applyThemeAppearance } from '../../core/theme-customization.js';
 import { getSettings } from '../../core/settings.js';
 import { getContext } from '../../../../../../st-context.js';
 import { eventSource } from '../../../../../../events.js';
@@ -184,6 +185,8 @@ export function buildTrackerBox(state, {
     const box = document.createElement('div');
     box.className = `sillynpc-status-box sillynpc-theme-${theme}`;
 
+    applyThemeAppearance(container, getSettings());
+    applyThemeAppearance(box, getSettings());
     applyTrackerScale(box);
     
     // Add header buttons inside the box

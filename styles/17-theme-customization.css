@@ -1,0 +1,71 @@
+/* Custom effects override preset decorations while retaining the shared layout. */
+[data-theme-surface="solid"]:is(.sillynpc-manage, .sillynpc-status-box, .sillynpc-hud-container) {
+    background: var(--sillynpc-bg-primary) !important;
+}
+[data-theme-surface="gradient"]:is(.sillynpc-manage, .sillynpc-status-box, .sillynpc-hud-container) {
+    background: linear-gradient(135deg, var(--sillynpc-bg-primary), var(--sillynpc-bg-secondary)) !important;
+}
+[data-theme-surface="paper"]:is(.sillynpc-manage, .sillynpc-status-box, .sillynpc-hud-container) {
+    background: repeating-linear-gradient(90deg, color-mix(in srgb, var(--sillynpc-border) 5%, transparent) 0 1px, transparent 1px 3px),
+        repeating-linear-gradient(0deg, color-mix(in srgb, var(--sillynpc-border) 4%, transparent) 0 1px, transparent 1px 4px),
+        linear-gradient(160deg, var(--sillynpc-bg-primary), var(--sillynpc-bg-secondary)) !important;
+}
+[data-theme-rounding]:is(.sillynpc-manage, .sillynpc-status-box, .sillynpc-hud-container),
+[data-theme-rounding] :is(.sillynpc-setting, .sillynpc-tab, .menu_button, .text_pole, .sillynpc-attribute-item) {
+    border-radius: var(--sillynpc-radius-md) !important;
+    clip-path: none !important;
+}
+[data-theme-border-width]:is(.sillynpc-manage, .sillynpc-status-box, .sillynpc-reader-report, .sillynpc-hud-container),
+[data-theme-border-width] :is(.sillynpc-setting, .sillynpc-tab, .menu_button, .text_pole, .sillynpc-attribute-item) {
+    border-width: var(--sillynpc-border-width) !important;
+}
+[data-theme-shadow]:is(.sillynpc-manage, .sillynpc-status-box, .sillynpc-hud-container),
+[data-theme-shadow] :is(.sillynpc-setting, .sillynpc-attribute-item) {
+    box-shadow: var(--sillynpc-custom-shadow) !important;
+}
+[data-theme-glow]:is(.sillynpc-manage, .sillynpc-status-box, .sillynpc-hud-container),
+[data-theme-glow] :is(.sillynpc-setting:hover, .sillynpc-tab.active, .sillynpc-hud-bar) {
+    box-shadow: var(--sillynpc-custom-shadow, var(--sillynpc-shadow)), var(--sillynpc-custom-glow) !important;
+}
+[data-theme-glow] .sillynpc-section-title {
+    text-shadow: var(--sillynpc-custom-glow) !important;
+}
+[data-theme-animations="off"],
+[data-theme-animations="off"] :is(.sillynpc-manage, .sillynpc-setting, .sillynpc-section-title, .sillynpc-status-box, .sillynpc-hud-container),
+[data-theme-animations="off"] .sillynpc-section-title::after {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+}
+[data-theme-decorations="off"]:is(.sillynpc-manage, .sillynpc-status-box, .sillynpc-hud-container)::before,
+[data-theme-decorations="off"]:is(.sillynpc-manage, .sillynpc-status-box, .sillynpc-hud-container)::after,
+[data-theme-decorations="off"] .sillynpc-manage::before,
+[data-theme-decorations="off"] .sillynpc-manage::after,
+[data-theme-decorations="off"] .sillynpc-status-box::before,
+[data-theme-decorations="off"] .sillynpc-section-title::after {
+    display: none !important;
+}
+.sillynpc-theme-editor { container-type: inline-size; }
+.sillynpc-theme-editor > p { color: var(--sillynpc-fg-secondary); }
+.sillynpc-theme-field {
+    display: grid;
+    grid-template-columns: minmax(100px, 1fr) minmax(0, 2fr);
+    align-items: center;
+    gap: var(--sillynpc-space-sm);
+}
+.sillynpc-theme-controls { display: flex; gap: 6px; align-items: center; min-width: 0; }
+.sillynpc-theme-controls .text_pole { flex: 1; min-width: 0; width: 100%; }
+.sillynpc-theme-controls input[type="color"] { width: 32px; height: 30px; padding: 2px; flex: 0 0 32px; }
+.sillynpc-theme-controls .menu_button { flex: 0 0 auto; }
+@container (max-width: 440px) {
+    .sillynpc-theme-field { grid-template-columns: 1fr; }
+}
+[data-theme-blur]:is(.sillynpc-manage, .sillynpc-status-box, .sillynpc-hud-container),
+[data-theme-blur] .sillynpc-setting {
+    backdrop-filter: var(--sillynpc-backdrop) !important;
+}
+[data-theme-border-width]:is(.sillynpc-manage, .sillynpc-status-box, .sillynpc-reader-report, .sillynpc-hud-container),
+[data-theme-border-width] .sillynpc-setting {
+    border-style: solid;
+    border-color: var(--sillynpc-border);
+}

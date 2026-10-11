@@ -1,3 +1,4 @@
+import { applyThemeAppearance } from '../../core/theme-customization.js';
 import { getExtractionReport } from '../extractor/status-extraction-report.js';
 import { getSettings } from '../../core/settings.js';
 import { getContext } from '../../../../../../st-context.js';
@@ -61,6 +62,7 @@ export function renderExtractionReport(mesEl, messageId) {
 
     const panel = document.createElement('div');
     panel.className = `sillynpc-reader-report sillynpc-theme-${getSettings().menuStyle || 'default'}`;
+    applyThemeAppearance(panel, getSettings());
     if (report.status === 'running') {
         panel.classList.add('sillynpc-reader-running');
         panel.setAttribute('role', 'status');

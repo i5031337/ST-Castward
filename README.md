@@ -79,7 +79,7 @@ SillyNPC operates across two core modules:
 * **Integrated Generation:** Generates lorebook entries and uses SillyTavern's Image Generation extension for portraits, with its configured provider.
 
 ### Theming & Analytics
-* **Built-in Themes:** Seamless Native, Terminal, Cyberpunk, Monochrome, Modern Dark, Fantasy HUD, Tabletop Parchment, Analog Horror, and Rosewater.
+* **Built-in Themes:** Seamless Native, Terminal, Cyberpunk, Monochrome, Modern Dark, Fantasy HUD, Tabletop Parchment, Analog Horror, and Rosewater. In **Appearance → Customize theme**, adjust colours, typography, shape, spacing, and effects with live updates. Each preset keeps its own changes; reset a field or the whole theme to restore its defaults.
 * **Token Tracking:** Monitors token consumption and average usage across tracker extractions, lore generation, and collection scans.
 * **Recommended for Better Visuals:** the [Moonlit Echoes](https://github.com/RivelleDays/SillyTavern-MoonlitEchoesTheme) theme.
 

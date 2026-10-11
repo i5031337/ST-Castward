@@ -98,7 +98,7 @@
     --sillynpc-font-size-base: 13px;
     --sillynpc-radius-md: 0px;
     --sillynpc-radius-lg: 0px;
-    --sillynpc-shadow: none;
+    --sillynpc-shadow: 0 0 0 transparent;
     --sillynpc-backdrop: none;
     --sillynpc-glow: 0 0 8px rgba(0, 255, 65, 0.4);
 }
@@ -109,13 +109,13 @@
 .sillynpc-theme-terminal.sillynpc-manage {
     background: var(--sillynpc-bg-primary);
     color: var(--sillynpc-fg-primary);
-    font-family: var(--sillynpc-font-mono);
+    font-family: var(--sillynpc-font-family);
 }
 
-.sillynpc-theme-terminal .sillynpc-manage *,
-.sillynpc-theme-terminal.sillynpc-hud-container *,
+.sillynpc-theme-terminal .sillynpc-manage *:not(.fa-solid):not(.fa-regular):not(.fa-brands),
+.sillynpc-theme-terminal.sillynpc-hud-container *:not(.fa-solid):not(.fa-regular):not(.fa-brands),
 .sillynpc-theme-terminal .sillynpc-status-box *:not(.fa-solid):not(.fa-regular):not(.fa-brands) {
-    font-family: var(--sillynpc-font-mono);
+    font-family: var(--sillynpc-font-family);
 }
 
 .sillynpc-theme-terminal .sillynpc-section-title::after {
@@ -132,13 +132,13 @@
 }
 
 .sillynpc-theme-terminal .sillynpc-setting:hover {
-    background: rgba(0, 255, 65, 0.1);
+    background: var(--sillynpc-custom-bg-secondary-a10, rgba(0, 255, 65, 0.1));
     border-color: var(--sillynpc-accent);
 }
 
 .sillynpc-theme-terminal .sillynpc-tab.active {
     background: var(--sillynpc-accent);
-    color: #000000;
+    color: var(--sillynpc-custom-bg-primary, #000000);
 }
 
 /* ── 6. Cyberpunk (Dark - Monospace) ──────────────────────────────────── */
@@ -165,17 +165,17 @@
 .sillynpc-theme-cyberpunk.sillynpc-manage {
     background: var(--sillynpc-bg-primary);
     color: var(--sillynpc-fg-primary);
-    font-family: var(--sillynpc-font-mono);
+    font-family: var(--sillynpc-font-family);
 }
 
 .sillynpc-theme-cyberpunk .sillynpc-manage *:not(.fa-solid):not(.fa-regular):not(.fa-brands),
 .sillynpc-theme-cyberpunk.sillynpc-hud-container *:not(.fa-solid):not(.fa-regular):not(.fa-brands),
 .sillynpc-theme-cyberpunk .sillynpc-status-box *:not(.fa-solid):not(.fa-regular):not(.fa-brands) {
-    font-family: var(--sillynpc-font-mono);
+    font-family: var(--sillynpc-font-family);
 }
 
 .sillynpc-theme-cyberpunk .sillynpc-section-title {
-    color: #fffb00;
+    color: var(--sillynpc-custom-accent-text, #fffb00);
     text-shadow: 2px 2px var(--sillynpc-border);
     border-bottom: 2px solid var(--sillynpc-accent);
 }
@@ -186,7 +186,7 @@
 
 .sillynpc-theme-cyberpunk .sillynpc-setting {
     border: 1px solid var(--sillynpc-border);
-    background: rgba(22, 22, 29, 0.9);
+    background: var(--sillynpc-custom-bg-secondary-a90, rgba(22, 22, 29, 0.9));
     clip-path: polygon(0 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%);
 }
 
@@ -222,9 +222,9 @@
     --sillynpc-font-size-base: 15px;
     --sillynpc-radius-md: 0px;
     --sillynpc-radius-lg: 0px;
-    --sillynpc-shadow: none;
+    --sillynpc-shadow: 0 0 0 transparent;
     --sillynpc-backdrop: none;
-    --sillynpc-glow: none;
+    --sillynpc-glow: 0 0 0 transparent;
 }
 
 .sillynpc-theme-monochrome .sillynpc-manage,
@@ -293,7 +293,7 @@
 .sillynpc-theme-modern-dark .sillynpc-status-box,
 .sillynpc-theme-modern-dark.sillynpc-hud-container,
 .sillynpc-theme-modern-dark.sillynpc-manage {
-    background: radial-gradient(circle at top left, #141418, #050506);
+    background: radial-gradient(circle at top left, var(--sillynpc-custom-bg-primary-light, #141418), var(--sillynpc-custom-bg-primary-dark, #050506));
 }
 
 .sillynpc-theme-modern-dark .sillynpc-setting {
@@ -307,35 +307,35 @@
 }
 
 .sillynpc-theme-modern-dark .sillynpc-setting:hover {
-    background: rgba(255, 255, 255, 0.06);
+    background: var(--sillynpc-custom-bg-secondary-a6, rgba(255, 255, 255, 0.06));
     transform: translateY(-3px) scale(1.01);
     box-shadow: var(--sillynpc-glow);
     border-color: var(--sillynpc-accent);
 }
 
 .sillynpc-theme-modern-dark .sillynpc-tab.active {
-    background: linear-gradient(90deg, rgba(59, 130, 246, 0.15), transparent);
+    background: linear-gradient(90deg, var(--sillynpc-custom-accent-a15, rgba(59, 130, 246, 0.15)), transparent);
     border-left: 4px solid var(--sillynpc-accent);
-    color: #60a5fa;
+    color: var(--sillynpc-custom-accent-text, #60a5fa);
 }
 
 @keyframes modern-glow-pulse {
-    0%   { box-shadow: 0 0  5px rgba(59, 130, 246, 0.1); }
-    50%  { box-shadow: 0 0 25px rgba(59, 130, 246, 0.3); }
-    100% { box-shadow: 0 0  5px rgba(59, 130, 246, 0.1); }
+    0%   { box-shadow: 0 0  5px var(--sillynpc-custom-accent-a10, rgba(59, 130, 246, 0.1)); }
+    50%  { box-shadow: 0 0 25px var(--sillynpc-custom-accent-a30, rgba(59, 130, 246, 0.3)); }
+    100% { box-shadow: 0 0  5px var(--sillynpc-custom-accent-a10, rgba(59, 130, 246, 0.1)); }
 }
 
 .sillynpc-theme-modern-dark .sillynpc-status-box {
     animation: modern-glow-pulse 5s infinite ease-in-out;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    background: radial-gradient(circle at top left, #141418, #050506);
+    border: 1px solid var(--sillynpc-custom-border-a15, rgba(255, 255, 255, 0.15));
+    background: radial-gradient(circle at top left, var(--sillynpc-custom-bg-primary-light, #141418), var(--sillynpc-custom-bg-primary-dark, #050506));
     color: var(--sillynpc-fg-primary);
 }
 
 .sillynpc-theme-modern-dark .sillynpc-attribute-item {
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.2);
+    background: var(--sillynpc-custom-bg-secondary-a2, rgba(255, 255, 255, 0.02));
+    border: 1px solid var(--sillynpc-custom-border-a5, rgba(255, 255, 255, 0.05));
+    box-shadow: inset 0 0 20px var(--sillynpc-custom-accent-a20, rgba(0, 0, 0, 0.2));
 }
 
 /* ── 9. Fantasy HUD (Dark - Serif) ────────────────────────────────────── */
@@ -363,36 +363,36 @@
 .sillynpc-theme-fantasy-hud.sillynpc-manage {
     background: var(--sillynpc-bg-primary);
     border: 1px solid var(--sillynpc-border);
-    font-family: var(--sillynpc-font-serif);
+    font-family: var(--sillynpc-font-family);
 }
 
 .sillynpc-theme-fantasy-hud .sillynpc-manage *:not(.fa-solid):not(.fa-regular):not(.fa-brands),
 .sillynpc-theme-fantasy-hud.sillynpc-hud-container *:not(.fa-solid):not(.fa-regular):not(.fa-brands),
 .sillynpc-theme-fantasy-hud .sillynpc-status-box *:not(.fa-solid):not(.fa-regular):not(.fa-brands) {
-    font-family: var(--sillynpc-font-serif);
+    font-family: var(--sillynpc-font-family);
 }
 
 .sillynpc-theme-fantasy-hud .sillynpc-section-title {
     border-bottom: 2px solid var(--sillynpc-accent);
     padding-bottom: 4px;
-    text-shadow: 0 0 5px rgba(212, 175, 55, 0.5);
+    text-shadow: 0 0 5px var(--sillynpc-custom-accent-a50, rgba(212, 175, 55, 0.5));
 }
 
 .sillynpc-theme-fantasy-hud .menu_button,
 .sillynpc-theme-fantasy-hud .sillynpc-tab.active {
-    background: rgba(212, 175, 55, 0.15);
+    background: var(--sillynpc-custom-bg-primary-a15, rgba(212, 175, 55, 0.15));
     border: 1px solid var(--sillynpc-accent);
-    box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+    box-shadow: 0 0 10px var(--sillynpc-custom-accent-a30, rgba(212, 175, 55, 0.3));
     color: var(--sillynpc-accent-text, var(--sillynpc-accent));
 }
 
 /* Glow only. The colour comes from the stat, so a theme adding its own here would
    silently override whatever the user chose. */
-.sillynpc-theme-fantasy-hud .sillynpc-hud-bar { box-shadow: 0 0 8px rgba(0, 0, 0, 0.45); }
+.sillynpc-theme-fantasy-hud .sillynpc-hud-bar { box-shadow: 0 0 8px var(--sillynpc-custom-accent-a45, rgba(0, 0, 0, 0.45)); }
 
 .sillynpc-theme-terminal .sillynpc-hud-bar { box-shadow: 0 0 5px currentColor; }
-.sillynpc-theme-terminal .sillynpc-hud-bar-wrap { border-color: var(--sillynpc-accent); background: #000; }
-.sillynpc-theme-terminal.sillynpc-hud-container { box-shadow: 0 0 15px rgba(0, 255, 65, 0.2); }
+.sillynpc-theme-terminal .sillynpc-hud-bar-wrap { border-color: var(--sillynpc-accent); background: var(--sillynpc-custom-bg-primary, #000); }
+.sillynpc-theme-terminal.sillynpc-hud-container { box-shadow: 0 0 15px var(--sillynpc-custom-accent-a20, rgba(0, 255, 65, 0.2)); }
 
 .sillynpc-theme-cyberpunk .sillynpc-hud-bar { filter: saturate(1.4) brightness(1.1); }
 .sillynpc-theme-cyberpunk.sillynpc-hud-container { 

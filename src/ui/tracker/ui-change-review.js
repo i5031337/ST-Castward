@@ -1,3 +1,4 @@
+import { applyThemeAppearance } from '../../core/theme-customization.js';
 import { buildNeverAgain } from './ui-review-item-rule.js';
 import { collectionAppliesTo } from '../../core/collection-targets.js';
 import { loadStateFromMetadata } from '../../tracker/status-logic.js';
@@ -89,6 +90,7 @@ function buildReviewPanel(messageId, review = {}) {
     // panel is the one part of the tracker that ignores the user's choice.
     const theme = getSettings().menuStyle || 'default';
     panel.className = `sillynpc-review-panel sillynpc-theme-${theme}`;
+    applyThemeAppearance(panel, getSettings());
     panel.dataset.messageId = String(messageId);
 
     const header = document.createElement('div');

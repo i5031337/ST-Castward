@@ -1,3 +1,4 @@
+import { normalizeThemeOverrides } from './theme-customization.js';
 import { normalizeTrackerProgression } from './progression-config.js';
 import { ensureCollectionIdentifier, ensureCollectionQuantity } from './collection-fields.js';
 import { debugLog, SPEAKER_PALETTE, NPC_LORE_FIELDS, normalizeHudLayoutId } from './constants.js';
@@ -305,6 +306,7 @@ export function normalizeSettings(settings) {
 
     normaliseBaseSettings(settings);
     settings.tts = normalizeTtsSettings(settings.tts);
+    settings.themeOverrides = normalizeThemeOverrides(settings.themeOverrides);
     normalizeCharactersAndCategories(settings);
     normalizeDefaultImagesAndPreferences(settings);
     migrateLegacyTrackerLayout(settings);

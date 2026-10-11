@@ -1,3 +1,4 @@
+import { renderThemeCustomization } from './ui-theme-customization.js';
 import { renderHudView } from '../hud/ui-hud-settings.js';
 import { getSettings } from '../../core/settings.js';
 import { buildSettingSelect, buildSettingToggle, buildSettingSlider, updateAllExtensionThemes, applyPortraitFraming, applySpeechPadding } from '../shared/ui-shared.js';
@@ -58,7 +59,7 @@ export function renderAppearanceView(view, onReprocessMessages, updateExtensionT
         label: 'Unified Theme Style',
         help: 'Unified appearance style that applies to extension menus, sheets, popups, and in-chat status tracker boxes.',
         options: [{ value: 'default', label: 'Seamless Native' }, ...THEME_OPTIONS],
-        onChange: () => { updateAllExtensionThemes(); reprocess(); },
+        onChange: () => { updateAllExtensionThemes(); reprocess(); rerender(); },
     }));
     view.append(buildSettingSlider({
         key: 'menuFontScale',
@@ -77,6 +78,7 @@ export function renderAppearanceView(view, onReprocessMessages, updateExtensionT
             + 'wanting it smaller there is not wanting the settings smaller too.',
         onChange: reprocess,
     }));
+    renderThemeCustomization(view, opened);
     const chatDetails = customize('Customize chat blocks', opened);
     chatDetails.append(buildSettingSelect({ key: 'dividerStyle', label: 'Speech Block Dividers', options: [{value:'subtle',label:'Subtle Fade'},{value:'bold',label:'Solid Accent'},{value:'dashed',label:'Dashed Line'},{value:'none',label:'No Dividers'}], onChange: reprocess }));
     chatDetails.append(buildSettingSlider({

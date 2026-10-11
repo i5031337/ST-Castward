@@ -405,3 +405,13 @@ paths have regression tests under `tests/`.
 | `tests/npc-tts.mjs` | Speech segmentation, queue ordering/cancellation, voice fallback, and completion gating. |
 | `tests/voice-cues.mjs` | Complete narrator cue syntax, speaker matching, and rejection of fenced or malformed cues. |
 | `tests/ui-npc-voices.cjs` | Windows headless Edge check of settings, manual/automatic routing, duplicate guard, and optional real preview. |
+
+## Theme customization
+
+| File | Responsibility |
+| --- | --- |
+| `src/core/theme-customization.js` | Validated per-preset overrides and shared application to theme roots. |
+| `src/ui/settings/ui-theme-customization.js` | Collapsed Appearance editor, live changes, and field/preset reset. |
+| `styles/17-theme-customization.css` | Custom effects and responsive editor layout. |
+| `tests/theme-customization.mjs` | Import validation, preset isolation, and stale-style cleanup. |
+| `tests/ui-theme-customization.py` | Unsaved live checks of all presets, themed surfaces, resets, and narrow layout. |

@@ -29,6 +29,7 @@ export const defaultSettings = {
        additionally meant a legitimately falsy value could never be stored: harmless for
        five strings, and the wrong idiom to copy. */
     menuStyle: 'default',
+    themeOverrides: {},
     dividerStyle: 'subtle',
     avatarShape: 'rounded',
     avatarSize: 'medium',

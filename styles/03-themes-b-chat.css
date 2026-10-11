@@ -26,19 +26,19 @@
 .sillynpc-theme-tabletop-parchment.sillynpc-manage {
     /* Blotching, then a faint fibre weave, over the base tone. All gradients, so the
        theme stays self-contained - no image to ship, cache, or fail to load. */
-    background-color: #e8d5ac;
+    background-color: var(--sillynpc-custom-bg-primary, #e8d5ac);
     background-image:
-        radial-gradient(ellipse at 18% 22%, rgba(150, 110, 60, 0.16) 0%, transparent 42%),
-        radial-gradient(ellipse at 82% 14%, rgba(120, 85, 45, 0.12) 0%, transparent 38%),
-        radial-gradient(ellipse at 68% 84%, rgba(150, 110, 60, 0.14) 0%, transparent 45%),
-        radial-gradient(ellipse at 8% 78%, rgba(120, 85, 45, 0.10) 0%, transparent 40%),
-        repeating-linear-gradient(90deg, rgba(120, 90, 50, 0.05) 0 1px, transparent 1px 3px),
-        repeating-linear-gradient(0deg, rgba(120, 90, 50, 0.04) 0 1px, transparent 1px 4px),
-        linear-gradient(160deg, #efdfbc 0%, #e3cda1 55%, #d8bf90 100%);
+        radial-gradient(ellipse at 18% 22%, var(--sillynpc-custom-bg-primary-a16, rgba(150, 110, 60, 0.16)) 0%, transparent 42%),
+        radial-gradient(ellipse at 82% 14%, var(--sillynpc-custom-bg-primary-a12, rgba(120, 85, 45, 0.12)) 0%, transparent 38%),
+        radial-gradient(ellipse at 68% 84%, var(--sillynpc-custom-bg-primary-a14, rgba(150, 110, 60, 0.14)) 0%, transparent 45%),
+        radial-gradient(ellipse at 8% 78%, var(--sillynpc-custom-bg-primary-a10, rgba(120, 85, 45, 0.10)) 0%, transparent 40%),
+        repeating-linear-gradient(90deg, var(--sillynpc-custom-bg-primary-a5, rgba(120, 90, 50, 0.05)) 0 1px, transparent 1px 3px),
+        repeating-linear-gradient(0deg, var(--sillynpc-custom-bg-primary-a4, rgba(120, 90, 50, 0.04)) 0 1px, transparent 1px 4px),
+        linear-gradient(160deg, var(--sillynpc-custom-bg-primary-light, #efdfbc) 0%, var(--sillynpc-custom-bg-primary, #e3cda1) 55%, var(--sillynpc-custom-bg-primary-dark, #d8bf90) 100%);
     border: 1px solid var(--sillynpc-border);
     color: var(--sillynpc-fg-primary);
     font-family: var(--sillynpc-font-family);
-    box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.1);
+    box-shadow: inset 0 0 50px var(--sillynpc-custom-accent-a10, rgba(0, 0, 0, 0.1));
     border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
 }
 
@@ -49,8 +49,8 @@
 }
 
 .sillynpc-theme-tabletop-parchment .sillynpc-setting {
-    border: 1px solid rgba(93, 64, 55, 0.3);
-    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid var(--sillynpc-custom-border-a30, rgba(93, 64, 55, 0.3));
+    background: var(--sillynpc-custom-bg-secondary-a20, rgba(255, 255, 255, 0.2));
     border-radius: 4px 10px 5px 12px / 10px 5px 12px 4px;
 }
 
@@ -102,14 +102,14 @@
 }
 
 @keyframes analog-vignette-pulse {
-    0%, 100% { box-shadow: inset 0 0 60px rgba(255, 0, 0, 0.08), var(--sillynpc-shadow); }
-    50%      { box-shadow: inset 0 0 90px rgba(255, 0, 0, 0.16), var(--sillynpc-shadow); }
+    0%, 100% { box-shadow: inset 0 0 60px var(--sillynpc-custom-accent-a8, rgba(255, 0, 0, 0.08)), var(--sillynpc-shadow); }
+    50%      { box-shadow: inset 0 0 90px var(--sillynpc-custom-accent-a16, rgba(255, 0, 0, 0.16)), var(--sillynpc-shadow); }
 }
 
 @keyframes analog-chromatic {
-    0%, 100% { text-shadow:  1px 0 rgba(255, 0, 0, 0.3), -1px 0 rgba(0, 255, 255, 0.2); }
-    33%       { text-shadow:  1.5px 0 rgba(255, 0, 0, 0.4), -0.5px 0 rgba(0, 255, 255, 0.2); }
-    66%       { text-shadow:  0.5px 0 rgba(255, 0, 0, 0.2), -1.5px 0 rgba(0, 255, 255, 0.4); }
+    0%, 100% { text-shadow:  1px 0 var(--sillynpc-custom-accent-a30, rgba(255, 0, 0, 0.3)), -1px 0 var(--sillynpc-custom-accent-a20, rgba(0, 255, 255, 0.2)); }
+    33%       { text-shadow:  1.5px 0 var(--sillynpc-custom-accent-a40, rgba(255, 0, 0, 0.4)), -0.5px 0 var(--sillynpc-custom-accent-a20, rgba(0, 255, 255, 0.2)); }
+    66%       { text-shadow:  0.5px 0 var(--sillynpc-custom-accent-a20, rgba(255, 0, 0, 0.2)), -1.5px 0 var(--sillynpc-custom-accent-a40, rgba(0, 255, 255, 0.4)); }
 }
 
 .sillynpc-theme-analog-horror .sillynpc-manage,
@@ -117,7 +117,7 @@
 .sillynpc-theme-analog-horror.sillynpc-manage {
     background: var(--sillynpc-bg-primary);
     color: var(--sillynpc-fg-primary);
-    font-family: var(--sillynpc-font-mono);
+    font-family: var(--sillynpc-font-family);
     position: relative;
     overflow: hidden;
     animation: analog-flicker 9s infinite steps(1), analog-vignette-pulse 10s infinite ease-in-out;
@@ -133,8 +133,8 @@
        over the text you were trying to read. Scanlines and a colour split instead, at a
        fraction of the weight. */
     background:
-        linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.14) 50%),
-        linear-gradient(90deg, rgba(255, 0, 0, 0.012), rgba(0, 255, 0, 0.006), rgba(0, 0, 255, 0.012));
+        linear-gradient(var(--sillynpc-custom-bg-primary-a0, rgba(18, 16, 16, 0)) 50%, var(--sillynpc-custom-bg-primary-a14, rgba(0, 0, 0, 0.14)) 50%),
+        linear-gradient(90deg, var(--sillynpc-custom-bg-primary-a1, rgba(255, 0, 0, 0.012)), var(--sillynpc-custom-bg-primary-a1, rgba(0, 255, 0, 0.006)), var(--sillynpc-custom-bg-primary-a1, rgba(0, 0, 255, 0.012)));
     background-blend-mode: normal;
     pointer-events: none;
     z-index: var(--sillynpc-z-overlay);
@@ -148,14 +148,14 @@
 .sillynpc-theme-analog-horror.sillynpc-hud-container {
     background: var(--sillynpc-bg-primary);
     color: var(--sillynpc-fg-primary);
-    font-family: var(--sillynpc-font-mono);
+    font-family: var(--sillynpc-font-family);
     position: relative;
     overflow: hidden;
     animation: none;
 }
 
 .sillynpc-theme-analog-horror.sillynpc-hud-container::before {
-    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.10) 50%);
+    background: linear-gradient(var(--sillynpc-custom-bg-primary-a0, rgba(18, 16, 16, 0)) 50%, var(--sillynpc-custom-bg-primary-a10, rgba(0, 0, 0, 0.10)) 50%);
     background-size: 100% 3px;
     opacity: 0.4;
     pointer-events: none;
@@ -163,24 +163,24 @@
 
 .sillynpc-theme-analog-horror .sillynpc-section-title {
     color: var(--sillynpc-accent-text, var(--sillynpc-accent));
-    text-shadow: 1px 0 rgba(255, 0, 0, 0.25), -1px 0 rgba(0, 255, 255, 0.18);
+    text-shadow: 1px 0 var(--sillynpc-custom-accent-a25, rgba(255, 0, 0, 0.25)), -1px 0 var(--sillynpc-custom-accent-a18, rgba(0, 255, 255, 0.18));
     border-bottom: 1px solid var(--sillynpc-accent);
 }
 
 .sillynpc-theme-analog-horror .sillynpc-setting {
     border: 1px solid var(--sillynpc-border);
-    background: rgba(10, 10, 10, 0.8);
+    background: var(--sillynpc-custom-bg-secondary-a80, rgba(10, 10, 10, 0.8));
     transition: border-color 0.1s;
 }
 
 .sillynpc-theme-analog-horror .sillynpc-setting:hover {
     border-color: var(--sillynpc-accent);
-    box-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
+    box-shadow: 0 0 10px var(--sillynpc-custom-accent-a30, rgba(255, 0, 0, 0.3));
 }
 
 .sillynpc-theme-analog-horror .sillynpc-tab.active {
     background: var(--sillynpc-accent);
-    color: #000;
+    color: var(--sillynpc-custom-bg-primary, #000);
 }
 
 /* ── 12. Rosewater (Light - Serif) ────────────────────────────────────── */
@@ -218,7 +218,7 @@
 .sillynpc-theme-rosewater.sillynpc-manage {
     background: var(--sillynpc-bg-primary);
     color: var(--sillynpc-fg-primary);
-    font-family: var(--sillynpc-font-serif);
+    font-family: var(--sillynpc-font-family);
     transition: background 0.5s cubic-bezier(0.4, 0, 0.2, 1),
                 color 0.5s cubic-bezier(0.4, 0, 0.2, 1),
                 border-color 0.5s cubic-bezier(0.4, 0, 0.2, 1);
@@ -240,19 +240,19 @@
                 transform 0.5s cubic-bezier(0.4, 0, 0.2, 1),
                 box-shadow 0.5s cubic-bezier(0.4, 0, 0.2, 1),
                 border-color 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    background: rgba(255, 255, 255, 0.5);
+    background: var(--sillynpc-custom-bg-secondary-a50, rgba(255, 255, 255, 0.5));
     border: 1px solid var(--sillynpc-accent);
 }
 
 .sillynpc-theme-rosewater .sillynpc-setting:hover {
     transform: translateY(-5px);
-    box-shadow: 0 15px 35px rgba(244, 209, 209, 0.4);
-    background: white;
-    border-color: #d4a373;
+    box-shadow: 0 15px 35px var(--sillynpc-custom-accent-a40, rgba(244, 209, 209, 0.4));
+    background: var(--sillynpc-custom-bg-secondary, white);
+    border-color: var(--sillynpc-custom-border, #d4a373);
 }
 
 .sillynpc-theme-rosewater .sillynpc-section-title {
-    color: #d4a373;
+    color: var(--sillynpc-custom-accent-text, #d4a373);
     font-style: italic;
     border-bottom: 2px solid var(--sillynpc-accent);
 }
@@ -260,7 +260,7 @@
 .sillynpc-theme-rosewater .sillynpc-tab.active {
     background: var(--sillynpc-accent);
     color: var(--sillynpc-fg-primary);
-    box-shadow: 0 4px 10px rgba(244, 209, 209, 0.5);
+    box-shadow: 0 4px 10px var(--sillynpc-custom-accent-a50, rgba(244, 209, 209, 0.5));
 }
 
 .sillynpc-theme-rosewater .sillynpc-status-box {

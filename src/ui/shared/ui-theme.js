@@ -1,8 +1,6 @@
 import { getSettings } from '../../core/settings.js';
 import { updateHUD } from '../hud/ui-hud.js';
-import { loadStateFromMetadata, findMatchingStatKey } from '../../tracker/status-logic.js';
-import { computeStatBar } from '../../core/utils.js';
-import { allThemeClasses, themeClassFor, SILLYNPC_THEMES } from '../../core/constants.js';
+import { applyThemeAppearance } from '../../core/theme-customization.js';
 
 const PORTRAIT_FRAMINGS = ['top', 'center', 'bottom'];
 
@@ -47,41 +45,8 @@ export function applyPortraitFraming() {
  * Updates the extension theme classes on all open extension windows.
  */
 export function updateAllExtensionThemes() {
-    // Target all active SillyNPC containers in the DOM
-    const manageContainers = document.querySelectorAll('.sillynpc-manage');
-    manageContainers.forEach(container => {
-        updateExtensionTheme(container);
-    });
-
-        // Target all status boxes in the chat
-        const statusContainers = document.querySelectorAll('.sillynpc-status-tracker-container');
-        statusContainers.forEach(container => {
-            const box = container.querySelector('.sillynpc-status-box') || container;
-            updateExtensionTheme(box);
-            
-            // Fix: Re-calculate progress bar widths if they exist in this box
-            const state = loadStateFromMetadata();
-            const playerStats = getSettings().statusTracker.playerStats;
-            
-            container.querySelectorAll('.sillynpc-hud-bar').forEach(bar => {
-                const statClass = Array.from(bar.classList).find(c => c !== 'sillynpc-hud-bar');
-                if (statClass) {
-                    const statDef = playerStats.find(s => s.name.toLowerCase().replace(/\s+/g, '-') === statClass);
-                    if (statDef && state.player && state.player.stats) {
-                        const actualKey = findMatchingStatKey(state.player.stats, statDef.name) || statDef.name;
-                        const rawValue = state.player.stats[actualKey] || statDef.defaultValue || '0';
-                        // No configured max: the value's own ceiling, the same reading the
-                        // HUD makes when it builds the bar. A disagreement here shows as the
-                        // bar jumping to a different width on the next refresh.
-                        const { percent } = computeStatBar({
-                            rawValue,
-                            min: statDef.min,
-                        });
-                        bar.style.width = `${percent}%`;
-                    }
-                }
-            });
-        });
+    document.querySelectorAll('.sillynpc-manage, .sillynpc-status-tracker-container, .sillynpc-status-box, .sillynpc-reader-report, .sillynpc-review-panel')
+        .forEach(root => updateExtensionTheme(root));
 
     // Update the HUD
     updateHUD();
@@ -94,22 +59,8 @@ export function updateAllExtensionThemes() {
  */
 export function updateExtensionTheme(root, popupInstance = null) {
     if (!root) return;
-    const style = getSettings().menuStyle || 'default';
-    const container = root.classList.contains('sillynpc-manage') ? root : root.querySelector('.sillynpc-manage');
-    if (!container) return;
-    
-    const themeClasses = allThemeClasses();
-    container.classList.remove(...themeClasses);
-
-    const isSillyNPCTheme = SILLYNPC_THEMES.includes(style);
-    const themeClass = themeClassFor(style);
-    
-    // Fallback: if it's a SillyTavern native theme not in our special list, still try to add it
-    // so CSS variables from that theme can be used.
-    container.classList.add(themeClass);
-    if (!isSillyNPCTheme && style !== 'default') {
-        container.classList.add(`sillynpc-theme-${style}`);
-    }
+    const container = root;
+    applyThemeAppearance(container, getSettings());
 
     // Text size, as a multiplier of whatever the theme sets rather than a size of its own,
     // so a theme that ships larger type stays proportionally itself. Set here because this
@@ -121,8 +72,7 @@ export function updateExtensionTheme(root, popupInstance = null) {
     // Target the actual SillyTavern Popup dialog element
     const dlg = popupInstance?.dlg || container.closest('.popup, #dialogue_popup');
     if (dlg) {
-        dlg.classList.remove(...themeClasses);
-        dlg.classList.add(themeClass);
+        applyThemeAppearance(dlg, getSettings());
         // Force theme inheritance on the popup dialog wrapper
         dlg.style.setProperty('color', 'var(--sillynpc-fg-primary)', 'important');
         dlg.style.setProperty('font-family', 'var(--sillynpc-font-family)', 'important');

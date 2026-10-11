@@ -1,3 +1,4 @@
+import { applyThemeAppearance } from '../../core/theme-customization.js';
 import { getSettings } from '../../core/settings.js';
 import { loadStateFromMetadata, findMatchingStatKey, getPersonaData, getPlayerImageUrl, drawsMeter, hasOpenChat } from '../../tracker/status-logic.js';
 import { allThemeClasses, themeClassFor, BUILT_IN_DEFAULT_AVATAR, hudLayoutFor } from '../../core/constants.js';
@@ -56,6 +57,7 @@ export function renderHUD(hudContainer, updatedState, { isDragging, applyHudZoom
         }
     }
 
+    applyThemeAppearance(hudContainer, allSettings);
     const state = updatedState || loadStateFromMetadata();
     if (!state || !state.player || !state.player.stats) {
         // Hidden rather than left standing. Everything above has already made the HUD

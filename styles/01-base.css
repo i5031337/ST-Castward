@@ -50,7 +50,7 @@
     /* Specialized Effects */
     --sillynpc-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
     --sillynpc-backdrop: blur(10px);
-    --sillynpc-glow: none;
+    --sillynpc-glow: 0 0 0 transparent;
 
     /* Z-index Scale — adjust these if SillyTavern conflicts arise */
     --sillynpc-z-tabs: 100;
