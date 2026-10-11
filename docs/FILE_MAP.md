@@ -397,7 +397,7 @@ paths have regression tests under `tests/`.
 | `src/tts/npc-tts.js` | SillyNPC Play/Stop controls, automatic gating, previews, and runtime voice routing. |
 | `src/tts/voice-cue-format.js` | Narrator cue validation and removal from rendered dialogue and narration. |
 | `src/tts/voice-cues.js` | Chat-scoped provisional voice identities and first-reply cue capture. |
-| `src/ui/tts/ui-tts-settings.js` | Shared built-in endpoint display, independent model and narrator settings, and automatic playback controls. |
+| `src/ui/tts/ui-tts-settings.js` | Menu Speech section with searchable model, narrator, and automatic playback controls and shared built-in endpoint display. |
 | `src/ui/characters/ui-voices.js` | Per-NPC voice selection, missing-binding status, and deliberate preview. |
 | `styles/16-npc-expressions.css` | NPC expression and voice editor layout. |
 | `tests/npc-expressions.mjs` | Classification order, caching, failure recovery, variants, cancellation, and event gating. |

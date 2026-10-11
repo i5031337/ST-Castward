@@ -16,7 +16,7 @@ with browser_session() as browser:
     assert execute("return !!document.querySelector('#sillynpc-writing-view').children.length")
     assert execute("""return [...document.querySelectorAll('.sillynpc-section')]
         .map(button => button.textContent.trim());""") == [
-        'Cast', 'System', 'Dialogue', 'Tracker', 'Lorebook', 'Images', 'Appearance', 'Extension'
+        'Cast', 'System', 'Dialogue', 'Speech', 'Tracker', 'Lorebook', 'Images', 'Appearance', 'Extension'
     ]
     for section, key, excluded in [
         ('lorebook', 'defaultLorebook', 'autoPortraitOnFill'),
@@ -31,6 +31,7 @@ with browser_session() as browser:
     for query, section, key in [
         ('Default Target Lorebook', 'lorebook', 'defaultLorebook'),
         ('Draw Portrait Automatically', 'images', 'autoPortraitOnFill'),
+        ('Narrator voice', 'speech', 'tts.narratorVoice'),
     ]:
         execute(f"""const input = document.querySelector('#sillynpc-settings-search input');
             input.value = '{query}'; input.dispatchEvent(new Event('input', {{bubbles: true}}));""")
@@ -39,7 +40,15 @@ with browser_session() as browser:
         execute("document.querySelector('.sillynpc-settings-search-hit').click()")
         assert execute(f"""return document.querySelector('.sillynpc-section.active')
             ?.dataset.section === '{section}'
-            && !!document.querySelector('[data-panel={section}] [data-setting={key}]');""")
+            && !!document.querySelector('[data-panel={section}] [data-setting="{key}"]');""")
+    assert execute("""return !document.querySelector('#extensions_settings2 #sillynpc-tts-settings')
+        && document.querySelector('#sillynpc-tts-settings input[type=url]').readOnly
+        && document.querySelectorAll('#sillynpc-tts-settings input').length === 7;""")
+    for _ in range(3):
+        execute("document.querySelector('.sillynpc-section[data-section=dialogue]').click()")
+        execute("document.querySelector('.sillynpc-section[data-section=speech]').click()")
+        assert execute("return document.querySelectorAll('#sillynpc-tts-settings').length === 1")
+        assert execute("return document.querySelectorAll('#sillynpc-tts-settings input').length === 7")
     execute("document.querySelector('.sillynpc-section[data-section=systems]').click()")
     system_nav = execute("""return {
         section: document.querySelector('.sillynpc-section.active')?.textContent.trim(),
@@ -72,4 +81,4 @@ with browser_session() as browser:
           visiblePages: [...document.querySelectorAll('.sillynpc-subtabs .sillynpc-tab')]
             .filter(tab => !tab.hidden).length};""")
     assert narrow == {'overflow': False, 'visiblePages': 0}, narrow
-    print('Settings navigation passed: eight sections, separate Lorebook/Images, search, narrow layout')
+    print('Settings navigation passed: nine sections, Speech controls and search, separate Lorebook/Images, narrow layout')

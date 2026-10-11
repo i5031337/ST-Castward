@@ -7,6 +7,8 @@ import { reprocessAllMessages, chatRenderSignature } from '../../chat/chat.js';
 import { resetLorebookState } from '../story/ui-lorebook-section.js';
 import { renderAppearanceView, renderWritingRulesView, renderAdvancedView, renderImageSettingsView, renderLoreSettingsView } from '../settings/ui-settings-tabs.js';
 import { renderStatusView } from '../tracker/ui-tracker-settings.js';
+import { renderTtsSettings } from '../tts/ui-tts-settings.js';
+import { stopNpcTts, previewNpcVoice } from '../../tts/npc-tts.js';
 import { buildSystemBuilder } from '../system/ui-system-builder.js';
 import { buildSystemManager } from '../system/ui-system-manager.js';
 import { updateExtensionTheme, repositionCloseButton, hideEmptySections } from '../shared/ui-shared.js';
@@ -303,6 +305,10 @@ function settingsTabs() {
           render: v => renderAppearanceView(v, reprocessAllMessages, updateManageTheme) },
         { id: 'writing', label: 'Dialogue', container: 'sillynpc-writing-view',
           render: v => renderWritingRulesView(v, reprocessAllMessages) },
+        { id: 'speech', label: 'Speech', container: 'sillynpc-speech-view',
+          render: v => renderTtsSettings(v, {
+              onChange: () => { stopNpcTts(); reprocessAllMessages(); }, preview: previewNpcVoice,
+          }) },
         { id: 'status', label: 'Tracker', container: 'sillynpc-status-view',
           render: v => renderStatusView(v) },
         { id: 'systems', label: 'System', container: 'sillynpc-systems-view',

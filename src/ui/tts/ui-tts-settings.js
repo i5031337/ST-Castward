@@ -7,12 +7,29 @@ import { hostSpeechEndpoint } from '../../tts/openai-speech.js';
 const nativeAuto = () => extension_settings.tts?.enabled
     && (extension_settings.tts.auto_generation || extension_settings.tts.periodic_auto_generation);
 
-export function renderTtsSettings({ onChange = () => {}, preview = () => {} } = {}) {
-    const root = document.getElementById('sillynpc-tts-settings');
-    if (!root) return;
+// Refresh mounted controls only; menu redraws and offscreen search indexing create new views.
+const refreshMountedSettings = event => {
+    if (!event.target?.matches?.('#tts_enabled, #tts_auto_generation, #tts_periodic_auto_generation, #openai_compatible_tts_endpoint')) return;
+    document.querySelectorAll('#sillynpc-tts-settings').forEach(root => {
+        root.dispatchEvent(new Event('sillynpc-tts-refresh'));
+    });
+};
+document.addEventListener('change', refreshMountedSettings);
+document.addEventListener('input', refreshMountedSettings);
+
+export function renderTtsSettings(view, { onChange = () => {}, preview = () => {} } = {}) {
+    view.replaceChildren();
+    const root = document.createElement('fieldset');
+    root.id = 'sillynpc-tts-settings'; root.className = 'sillynpc-voice-editor';
+    const legend = document.createElement('legend'); legend.textContent = 'SillyNPC speech';
+    const intro = document.createElement('p');
+    intro.textContent = 'One voice for narration, individual voices for NPC dialogue. Uses the built-in OpenAI Compatible endpoint and API key. Set each NPC voice in Cast → Characters.';
+    root.append(legend, intro); view.append(root);
     const config = getSettings().tts;
-    const field = (label, input) => {
-        const wrapper = document.createElement('label'); wrapper.textContent = label;
+    const field = (key, label, input) => {
+        const wrapper = document.createElement('label'); wrapper.dataset.setting = `tts.${key}`;
+        const caption = document.createElement('span'); caption.className = 'sillynpc-setting-label';
+        caption.textContent = label; wrapper.append(caption);
         wrapper.append(input); root.append(wrapper); return input;
     };
     const input = (type, value) => {
@@ -21,16 +38,16 @@ export function renderTtsSettings({ onChange = () => {}, preview = () => {} } = 
         if (type === 'checkbox') element.checked = value; else element.value = value;
         return element;
     };
-    const enabled = field('Enable SillyNPC speech', input('checkbox', config.enabled));
-    const auto = field('Automatically play completed replies', input('checkbox', config.autoPlay));
-    const endpoint = field('Built-in OpenAI Compatible endpoint', input('url', hostSpeechEndpoint()));
+    const enabled = field('enabled', 'Enable SillyNPC speech', input('checkbox', config.enabled));
+    const auto = field('autoPlay', 'Automatically play completed replies', input('checkbox', config.autoPlay));
+    const endpoint = field('endpoint', 'Built-in OpenAI Compatible endpoint', input('url', hostSpeechEndpoint()));
     endpoint.readOnly = true;
-    const model = field('Narrator model', input('text', config.model));
-    const npcModel = field('NPC dialogue model (optional)', input('text', config.npcModel || ''));
-    const voices = field('Available voices (comma separated)', input('text', config.voices.join(', ')));
+    const model = field('model', 'Narrator model', input('text', config.model));
+    const npcModel = field('npcModel', 'NPC dialogue model (optional)', input('text', config.npcModel || ''));
+    const voices = field('voices', 'Available voices (comma separated)', input('text', config.voices.join(', ')));
     const narrator = document.createElement('select'); narrator.className = 'text_pole';
-    field('Narrator voice', narrator);
-    const speed = field('Speed', input('number', config.speed)); speed.min = '0.25'; speed.max = '4'; speed.step = '0.05';
+    field('narratorVoice', 'Narrator voice', narrator);
+    const speed = field('speed', 'Speed', input('number', config.speed)); speed.min = '0.25'; speed.max = '4'; speed.step = '0.05';
     const actions = document.createElement('div'); actions.className = 'sillynpc-voice-actions'; root.append(actions);
     const copy = document.createElement('button'); copy.type = 'button'; copy.className = 'menu_button';
     copy.textContent = 'Copy built-in model and voices'; actions.append(copy);
@@ -80,12 +97,7 @@ export function renderTtsSettings({ onChange = () => {}, preview = () => {} } = 
         catch (error) { status.textContent = `Narrator preview failed: ${error?.message || error}`; }
         sample.disabled = false;
     });
-    document.addEventListener('change', event => {
-        if (event.target?.matches?.('#tts_enabled, #tts_auto_generation, #tts_periodic_auto_generation')) refreshStatus();
-    });
-    document.addEventListener('input', event => {
-        if (event.target?.matches?.('#openai_compatible_tts_endpoint')) refreshStatus();
-    });
+    root.addEventListener('sillynpc-tts-refresh', refreshStatus);
     refreshNarrator(); refreshStatus();
 }
 
