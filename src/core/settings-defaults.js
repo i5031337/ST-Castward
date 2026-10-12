@@ -71,6 +71,9 @@ export const defaultSettings = {
     autoColorUnknownSpeakers: true,
     /** Draw a missing portrait after empty-card Fill or reader-generated NPC profiles. */
     autoPortraitOnFill: true,
+    autoGenerateNpcExpressions: false,
+    npcExpressionWorkflow: '',
+    showPresentNpcSprites: false,
     hideSpeakerNames: false,
     caseInsensitive: true,
     /**

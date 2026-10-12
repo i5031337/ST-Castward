@@ -28,6 +28,13 @@ with browser_session() as browser:
             while (heading && heading.tagName !== 'H3') heading = heading.previousElementSibling;
             result.portraitUnderImages = heading?.textContent === 'Image Generation'
               && imageSettings.querySelectorAll('[data-setting=autoPortraitOnFill]').length === 1;
+            const expressionToggle = imageSettings.querySelector('[data-setting=autoGenerateNpcExpressions]');
+            result.expressionToggleBesidePortrait = expressionToggle?.previousElementSibling === portraitToggle
+              && expressionToggle.querySelector('input[type="checkbox"]').checked === !!getSettings().autoGenerateNpcExpressions;
+            result.sharedExpressionWorkflow = expressionToggle?.nextElementSibling?.dataset.setting === 'npcExpressionWorkflow'
+              && !!imageSettings.querySelector('[data-setting=npcExpressionWorkflow] select');
+            const sceneToggle=imageSettings.querySelector('[data-setting=showPresentNpcSprites]');
+            result.sceneSpriteSetting=!!sceneToggle&&sceneToggle.querySelector('input[type="checkbox"]').checked===!!getSettings().showPresentNpcSprites;
             const tracker = document.createElement('div');
             renderTrackerDisplayAndReading({ container: tracker,
               settings: { ...getSettings().statusTracker, extractionMode: 'extract' },

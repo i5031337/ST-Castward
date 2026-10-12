@@ -14,6 +14,8 @@
 }
 .sillynpc-expression-editor .text_pole, .sillynpc-voice-editor .text_pole { width: 100%; min-width: 0; }
 .sillynpc-expression-editor p, .sillynpc-voice-editor p { font-size: 0.9em; opacity: 0.8; }
+.sillynpc-expression-actions { display: flex; flex-wrap: wrap; gap: 6px; }
+.sillynpc-expression-editor details { margin-top: 8px; }
 .sillynpc-voice-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
 #sillynpc-tts-settings { margin-top: 12px; }
 .sillynpc-tts-play { margin-left: 6px; }
@@ -42,4 +44,28 @@
 }
 @media (max-width: 768px) {
     #sillynpc-speech-sprite { width: 35vw; height: 45vh; z-index: 1; }
+}
+
+#sillynpc-scene-sprites {
+    position: fixed;
+    inset: var(--topBarBlockSize, 40px) 0 0;
+    display: flex;
+    justify-content: space-between;
+    pointer-events: none;
+    z-index: 2;
+    filter: drop-shadow(2px 2px 2px #51515199);
+}
+.sillynpc-scene-sprite-side {
+    display: flex;
+    align-items: flex-end;
+    width: max(100px, calc((100vw - var(--sheldWidth, 50vw)) / 2));
+    max-height: 90vh;
+    align-self: flex-end;
+    height: 100%;
+}
+.sillynpc-scene-sprite { flex: 1; min-width: 0; height: 100%; }
+.sillynpc-scene-sprite img { width: 100%; height: 100%; object-fit: contain; object-position: bottom center; }
+@media (max-width: 768px) {
+    #sillynpc-scene-sprites { z-index: 1; }
+    .sillynpc-scene-sprite-side { width: 35vw; height: 35vh; }
 }

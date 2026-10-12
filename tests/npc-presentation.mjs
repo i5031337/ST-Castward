@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFileSync } from 'node:fs';
 import { normalizeNpcPresentation, normalizeCharacterPresentation, normalizeSpriteFolder } from '../src/core/npc-presentation.js';
+import { normalizeExpressionGeneration } from '../src/expressions/expression-prompts.js';
 
 const preferences = {
     expressions: { enabled: true, spriteFolder: 'Mira/casual', fallback: 'joy' },
@@ -21,16 +22,17 @@ function hostFunction(path, functionName, dependencies) {
     return new Function(...Object.keys(dependencies), `${source}\nreturn ${functionName};`)(...Object.values(dependencies));
 }
 
-test('old and malformed preferences gain disabled expressions and independent defaults', () => {
+test('old and malformed preferences gain independent expression defaults', () => {
     const first = normalizeNpcPresentation();
     const second = normalizeNpcPresentation([]);
     assert.deepEqual(first, second);
     assert.deepEqual(first, { expressions: {
-        enabled: false, spriteFolder: '', fallback: 'neutral', bindingStatus: 'unverified',
+        spriteFolder: '', fallback: 'neutral', bindingStatus: 'unverified',
+        generation: normalizeExpressionGeneration(),
     }, voiceDesign: { description: '', version: 1 }, voices: {} });
-    first.expressions.enabled = true;
-    assert.equal(second.expressions.enabled, false);
-    assert.equal(normalizeNpcPresentation({ expressions: { enabled: 'true' } }).expressions.enabled, false);
+    first.expressions.generation.prompts.joy = 'custom';
+    assert.notEqual(second.expressions.generation.prompts.joy, 'custom');
+    assert.equal(normalizeNpcPresentation({ expressions: { enabled: true } }).expressions.enabled, undefined);
 });
 
 test('only documented portable fields survive and provider selections remain separate', () => {
@@ -82,7 +84,7 @@ test('chat reads repair old metadata without writing into world cards or saving 
         saveSettings: () => saves++, CHAT_NPCS_KEY: 'sillynpc_npcs', normalizeCharacterPresentation,
     });
     assert.equal(read(), chat);
-    assert.equal(chat[0].presentation.expressions.enabled, false);
+    assert.equal(chat[0].presentation.expressions.spriteFolder, '');
     chat[0].presentation.voices.Edge = { mode: 'disabled' };
     assert.equal(world[0].presentation.voices.Edge.mode, 'voice');
     assert.equal(saves, 0);

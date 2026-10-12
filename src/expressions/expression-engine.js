@@ -24,7 +24,7 @@ export function createExpressionEngine({ classify, isCurrent, apply, limit = 128
         reset() { epoch++; cache.clear(); pending.clear(); },
         cached(key) { return cache.get(key); },
         enqueue(job) {
-            const vocabulary = [...new Set((job.sprites || []).map(sprite => sprite.label))].sort();
+            const vocabulary = [...new Set(job.labels || (job.sprites || []).map(sprite => sprite.label))].sort();
             const key = JSON.stringify([job.line.revision, job.line.npcId, job.line.lineIndex, job.line.text,
                 job.config, job.preferences, vocabulary]);
             if (cache.has(key)) {

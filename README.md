@@ -210,7 +210,7 @@ window.SILLYNPC_DEBUG = true;
 
 See the [file map](docs/FILE_MAP.md) for every source file and its responsibility.
 
-Run the focused tests with `node --experimental-default-type=module --test tests/*.mjs`. Tests are grouped by feature; shared generation data lives in `tests/fixtures/`. For live UI checks, use `python3 tests/ui-smoke.py` plus the relevant feature script (navigation, collections, or progression).
+Run the focused tests with `node --test tests/*.mjs`. Tests are grouped by feature; shared generation data lives in `tests/fixtures/`. For live UI checks, use `python3 tests/ui-smoke.py` plus the relevant feature script (navigation, collections, or progression).
 
 ---
 
@@ -223,3 +223,58 @@ Run the focused tests with `node --experimental-default-type=module --test tests
 A System can contain multiple reusable NPC templates, such as Human, Elf, and Pokémon. In **Systems → NPC Templates**, name each template and describe which characters belong to it. Define stats and profile fields once in **Stats** and **Profile fields**, then use **Applies to** to assign them to the player, all NPCs, or selected templates. Each NPC uses one template and keeps its own values.
 
 The background reader assigns an unassigned NPC when the story identifies its type. Uncertain assignments appear in review with a template dropdown, even when ordinary change review is disabled. Correct an assignment using **NPC template** on the character sheet. Assignments survive leaving and returning to the scene. New Systems have no fallback template; existing Systems retain their previous NPC schema as an editable **NPC** template so saved chats remain readable.
+
+### On-demand NPC expressions
+
+Install and enable **Image Edit** in the sibling `st-image-edit` folder and configure
+SillyTavern's ComfyUI URL and an API-format editing workflow with `%reference_image%`
+and `%prompt%` inputs. Select it in **Images → Expression Editing Workflow**;
+this is independent of ST’s portrait workflow.
+
+Enable **Images → Generate NPC Expressions Automatically**, directly below
+**Draw Portrait Automatically**, to classify dialogue and generate missing sprites
+for all NPCs on new completed replies. Select Local, Extras, or WebLLM in ST's
+Expressions settings. Local and Extras classify without an LLM; WebLLM uses the
+existing emotion classification call. The switch starts off and replaces the old
+per-NPC automatic controls. Switching it off stops automatic classification and
+editing; manual generation stays available.
+
+In **NPC Edit → Expressions**, choose one of the 28 emotions and click
+**Generate / retry**. The NPC's current portrait is selected automatically and its
+sprites go into a dedicated pack. Existing emotions are reused; **Regenerate**
+replaces the selected sprite. A changed portrait selects a fresh pack, preserving
+the previous one on disk.
+
+**Prompts and workflow** contains the saved emotion prompt, shared reference
+instructions, negative prompt, and optional workflow override. A blank
+override uses the shared **Expression Editing Workflow**. These prompts go directly to Image Edit
+without an LLM rewriting them. Adjust the shared instructions to suit your workflow;
+tag-based models may need explicit appearance and outfit tags. Background removal
+and preservation of identity depend on the ComfyUI workflow. **Sprite pack** contains
+folder, fallback, and refresh controls for existing packs.
+
+Dialogue portrait selections are saved in each reply's extra data, including its
+native swipe extra. Reloads restore the exact sprite and fallback without rerunning
+classification or generation. Edits and changed dialogue speakers reject stale
+selections; missing image files fall back to the profile portrait. This applies to
+selections recorded after installing this version; older unrecorded lines retain
+their profile portraits. Only small sprite references are stored, not image bytes.
+
+Opening history does not generate images. Missing sprites use the fallback or NPC
+portrait while edits run, and speech does not wait for generation. A late image
+never changes the currently playing speech sprite. Failed edits require an explicit
+retry in NPC Edit. Automatic failures show a warning with the NPC, emotion, and
+error; changing the workflow or prompt allows a new attempt. Prompts and sprite bindings save with the NPC and travel with
+exports; image and sprite files must be transferred separately.
+
+Enable **Images → Show Present NPC Sprites** to keep every NPC in the tracker's
+current scene visible beside the chat, independently of TTS and automatic image
+generation. Each NPC shows their latest available expression, saved with the chat;
+existing packs without a saved selection use their newest sprite, and NPCs without
+sprites use their profile portrait. NPCs disappear
+when they leave the scene. This display replaces the single TTS speaker display
+while enabled, and does not start image or classification requests.
+
+Changed chats, NPC bindings, references, or source messages discard stale automatic
+results. Cancel discards the result without interrupting unrelated ComfyUI work;
+the backend request may finish and leave an unused image in Image Edit's folder.

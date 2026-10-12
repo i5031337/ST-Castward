@@ -299,7 +299,8 @@ SillyTavern loads `index.js` and `style.css` from `manifest.json`. The JavaScrip
 | `src/ui/settings/ui-settings-defaults.js` | Default behavior settings. |
 | `src/ui/settings/ui-settings-generation.js` | Separate Lorebook and Images settings views. |
 | `src/ui/settings/ui-settings-generation-helpers.js` | Shared helpers for generation settings. |
-| `src/ui/settings/ui-settings-generation-image.js` | Portrait shape and prompt controls for SillyTavern Image Generation. |
+| `src/ui/settings/ui-settings-generation-image.js` | Portrait generation controls and the shared automatic NPC expression switch. |
+| `src/ui/settings/ui-expression-workflow.js` | Shared expression-edit workflow selector, independent of the ST portrait workflow. |
 | `src/ui/settings/ui-settings-generation-storage.js` | Portrait folder, image discovery, and orphan cleanup controls. |
 | `src/ui/shared/ui-shared.js` | Shared UI facade and choice helpers. |
 | `src/ui/shared/ui-choice.js` | Shared choice field controls. |
@@ -385,10 +386,18 @@ paths have regression tests under `tests/`.
 | File | Responsibility |
 | --- | --- |
 | `src/expressions/expression-engine.js` | Last NPC dialogue selection, deterministic sprite variants, serialized classification, and bounded result cache. |
-| `src/expressions/expression-events.js` | Completed foreground reply authorization and cancellation on source changes. |
+| `src/expressions/expression-events.js` | Completed foreground reply authorization, expected regeneration deletion, and cancellation on source changes. |
 | `src/expressions/host-expressions.js` | Host sprite listings, supported classifier modes, and dialogue-only classification. |
+| `src/expressions/expression-prompts.js` | Saved defaults for all 28 emotions, generation preference normalization, and portrait-specific pack naming. |
+| `src/expressions/expression-generation.js` | Serialized missing-sprite edits, duplicate prevention, freshness checks, and explicit failure retry. |
+| `src/expressions/host-expression-generation.js` | Direct Image Edit integration and generated image upload to host sprite packs. |
+| `src/expressions/scene-sprite-state.js` | Present-NPC matching and saved sprite freshness/order rules. |
+| `src/expressions/scene-sprites.js` | Chat-owned latest sprite records and persistent multi-NPC display independent of speech. |
+| `src/expressions/dialogue-portrait-state.js` | Compact per-line sprite selections, reply freshness, and native swipe-extra synchronization. |
+| `src/expressions/dialogue-portraits.js` | Save and restore exact dialogue portraits using the existing chat-save queue. |
 | `src/expressions/npc-expressions.js` | Runtime freshness guards, cached dialogue portraits, and event registration. |
-| `src/ui/characters/ui-expressions.js` | Owned sprite binding preferences, pack checks, and full-image previews in NPC Edit. |
+| `src/ui/characters/ui-expressions.js` | NPC sprite previews and folded sprite-pack controls in NPC Edit. |
+| `src/ui/characters/ui-expression-generation.js` | Compact manual emotion generation, saved prompts and workflow, and generate/retry/regenerate controls. |
 | `src/tts/tts-settings.js` | Independent speech settings normalization and per-NPC voice resolution. |
 | `src/tts/speech-units.js` | Ordered narration and quoted dialogue from rendered story paragraphs. |
 | `src/tts/speech-events.js` | Completed-reply authorization and stale-source cancellation. |
@@ -401,6 +410,11 @@ paths have regression tests under `tests/`.
 | `src/ui/characters/ui-voices.js` | Per-NPC voice selection, missing-binding status, and deliberate preview. |
 | `styles/16-npc-expressions.css` | NPC expression and voice editor layout. |
 | `tests/npc-expressions.mjs` | Classification order, caching, failure recovery, variants, cancellation, and event gating. |
+| `tests/foreground-replies.mjs` | Expression and speech authorization through regeneration's expected deletion, plus unrelated deletion and source-change guards. |
+| `tests/fixtures/ui-expression-regeneration.js`, `tests/fixtures/ui-expression-speech.js` | Page-context regeneration and speech helpers for the unsaved expression UI check. |
+| `tests/expression-generation.mjs` | Prompt persistence, pack isolation, missing-sprite reuse, duplicate jobs, cancellation, and explicit retry. |
+| `tests/scene-sprites.mjs` | Scene membership, saved sprite freshness, and ordering of delayed versus manual expressions. |
+| `tests/dialogue-portraits.mjs` | Portrait serialization, per-line identity, edit invalidation, generated updates, and swipe-extra preservation. |
 | `tests/ui-npc-expressions.py` | Unsaved live portrait and editor checks with mocked classification and sprite packs. |
 | `tests/npc-tts.mjs` | Speech segmentation, queue ordering/cancellation, voice fallback, and completion gating. |
 | `tests/voice-cues.mjs` | Complete narrator cue syntax, speaker matching, and rejection of fenced or malformed cues. |

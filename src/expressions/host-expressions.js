@@ -25,10 +25,10 @@ export async function loadSpritePack(folder) {
         && typeof sprite.path === 'string' && sprite.path.startsWith('/characters/')) : [];
 }
 
-export async function classifyDialogue({ line, sprites, config }) {
+export async function classifyDialogue({ line, sprites, config, labels: vocabulary }) {
     if (classifierHint(config)) return '';
     const host = await import('../../../../../extensions/expressions/index.js');
-    const labels = [...new Set(sprites.map(sprite => sprite.label))];
+    const labels = vocabulary || [...new Set(sprites.map(sprite => sprite.label))];
     if (!labels.length) return '';
     // Filtering in the host helper uses the native character's pack, so constrain our prompt explicitly.
     const customPrompt = `Classify the emotion of the supplied dialogue only. Return exactly one label from: ${labels.join(', ')}. No explanation.`;

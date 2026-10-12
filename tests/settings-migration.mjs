@@ -51,7 +51,7 @@ test('imports repair character data and retain a single default portrait on repe
     normalize(settings);
     assert.deepEqual(settings.characters[0].images, ['portrait.png']);
     assert.deepEqual(settings.characters[0].aliases, []);
-    assert.equal(settings.characters[0].presentation.expressions.enabled, false);
+    assert.equal(settings.characters[0].presentation.expressions.spriteFolder, '');
     assert.equal(settings.characters[0].profile.age, '');
     assert.equal(settings.characters[0].profile.history, '');
     assert.deepEqual(settings.categories, ['Crew']);

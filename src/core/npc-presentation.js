@@ -1,3 +1,5 @@
+import { normalizeExpressionGeneration } from '../expressions/expression-prompts.js';
+
 const object = value => value && typeof value === 'object' && !Array.isArray(value) ? value : {};
 const text = value => typeof value === 'string' ? value.trim() : '';
 
@@ -32,10 +34,10 @@ export function normalizeNpcPresentation(value, { imported = false } = {}) {
     }
     return {
         expressions: {
-            enabled: expressions.enabled === true,
             spriteFolder,
             fallback: text(expressions.fallback) || 'neutral',
             bindingStatus: bindingStatus(expressions, Boolean(spriteFolder)),
+            generation: normalizeExpressionGeneration(expressions.generation),
         },
         voiceDesign: {
             description: text(voiceDesign.description).slice(0, 500),
