@@ -28,13 +28,13 @@ with browser_session() as browser:
             if(id<0)throw new Error('Scene fixture needs a host character with a chat.');
             hostScript.setCharacterId(id);
           }
-          savedSettings={characters:settings.characters,enabled:settings.enabled,autoGenerateNpcExpressions:settings.autoGenerateNpcExpressions,npcExpressionWorkflow:settings.npcExpressionWorkflow,showPresentNpcSprites:settings.showPresentNpcSprites};
+          savedSettings={characters:settings.characters,enabled:settings.enabled,autoGenerateNpcExpressions:settings.autoGenerateNpcExpressions,npcExpressionWorkflow:settings.npcExpressionWorkflow,npcExpressionIpAdapterMode:settings.npcExpressionIpAdapterMode,showPresentNpcSprites:settings.showPresentNpcSprites};
           metadata={...context.chatMetadata}; chatLength=context.chat.length;
           expressionsSettings=context.extensionSettings.expressions;
           context.extensionSettings.expressions={...expressionsSettings,api:0};
           const cards=['A','B'].map(name=>({id:'expression-fixture-'+name,name:'Expression '+name,aliases:[],imageUrl:'/img/ai4.png',
             presentation:{expressions:{enabled:true,spriteFolder:'ExpressionPack/'+name,fallback:'neutral'}}}));
-          settings.characters=cards; settings.enabled=true;settings.autoGenerateNpcExpressions=true;settings.showPresentNpcSprites=false;
+          settings.characters=cards; settings.enabled=true;settings.autoGenerateNpcExpressions=true;settings.showPresentNpcSprites=false;settings.npcExpressionIpAdapterMode=false;
           context.chatMetadata.sillynpc_npcs=[];
           context.chatMetadata.sillynpc_expression_sprites={};
           context.chatMetadata.sillynpc_cast={categories:null,include:[],exclude:[]};
@@ -107,7 +107,25 @@ with browser_session() as browser:
           emotion.value='joy'; emotion.dispatchEvent(new Event('change'));
           const prompt=generationEditor.querySelector('[data-expression-field="prompt"]');
           prompt.value='Saved fixture smile.'; prompt.dispatchEvent(new Event('change'));
-          result.savedEmotionPrompt=config.generation.prompts.joy==='Saved fixture smile.';
+          result.savedEmotionPrompt=config.generation.prompts.joy[0]==='Saved fixture smile.';
+          result.threeEmotionPrompts=generationEditor.querySelectorAll('[data-expression-field^="prompt"]').length===3
+            &&new Set(config.generation.prompts.joy).size===3;
+          const secondPrompt=generationEditor.querySelector('[data-expression-field="prompt2"]');
+          secondPrompt.value='Saved second pose.';secondPrompt.dispatchEvent(new Event('change'));
+          result.savedSecondVariant=config.generation.prompts.joy[1]==='Saved second pose.';
+          const thirdPrompt=generationEditor.querySelector('[data-expression-field="prompt3"]');
+          thirdPrompt.value='';thirdPrompt.dispatchEvent(new Event('change'));
+          result.blankVariantResets=thirdPrompt.value===config.generation.prompts.joy[2]&&!!thirdPrompt.value;
+          result.noSharedExpressionInstructions=!generationEditor.querySelector('[data-expression-field="basePrompt"]');
+          const {expressionJob}=await import(root+'src/expressions/host-expression-generation.js');
+          const {buildCharacterImagePrompt}=await import(root+'src/api/api-image-generate.js');
+          const plainJob=await expressionJob(cards[0],'joy',()=>true);
+          result.expressionOnlyPrompt=plainJob.prompt===''&&JSON.stringify(plainJob.promptVariants)===JSON.stringify(config.generation.prompts.joy);
+          settings.npcExpressionIpAdapterMode=true;
+          const adapterJob=await expressionJob(cards[0],'joy',()=>true);
+          result.ipAdapterPortraitPrompt=adapterJob.prompt===await buildCharacterImagePrompt(cards[0])
+            &&JSON.stringify(adapterJob.promptVariants)===JSON.stringify(plainJob.promptVariants);
+          settings.npcExpressionIpAdapterMode=false;
           settings.autoGenerateNpcExpressions=false;
           imageSettings=context.extensionSettings.sd;
           context.extensionSettings.sd={...imageSettings,comfy_url:'http://fixture.invalid',comfy_workflow:'PortraitOnly.json'};
@@ -142,7 +160,8 @@ with browser_session() as browser:
           generate.click();
           for(let i=0;i<100&&generate.disabled;i++) await new Promise(r=>setTimeout(r,25));
           result.generatedFromReference=edits===1&&uploads===1&&uploadedFolder===config.spriteFolder
-            &&sentPrompt.endsWith('Saved fixture smile.')&&editor.querySelector('select').value==='joy';
+            &&config.generation.prompts.joy.includes(sentPrompt)
+            &&editor.querySelector('select').value==='joy';
           result.sharedEditingWorkflow=requestedWorkflow==='FixtureEdit.json'&&context.extensionSettings.sd.comfy_workflow==='PortraitOnly.json';
           generate.click();
           for(let i=0;i<100&&generate.disabled;i++) await new Promise(r=>setTimeout(r,25));
@@ -216,6 +235,19 @@ with browser_session() as browser:
           result.sceneToggleOff=!document.querySelector('#sillynpc-scene-sprites');
           result.sceneDisplayDoesNotGenerate=edits===3&&uploads===3;
           result.nativeHolderUntouched=!document.querySelector('#expression-holder [data-sillynpc-expression]');
+          settings.npcExpressionIpAdapterMode=true;
+          const portraitPrompt=await buildCharacterImagePrompt(cards[0]);
+          const regenerate=generationEditor.querySelector('[data-expression-action="regenerate"]');
+          regenerate.click();
+          for(let i=0;i<100&&(uploads<4||regenerate.disabled);i++) await new Promise(r=>setTimeout(r,25));
+          result.ipAdapterGeneration=uploads===4&&cards[0].presentation.expressions.generation.prompts.joy
+            .some(variant=>sentPrompt===portraitPrompt+String.fromCharCode(10)+variant);
+          pauseEdit=true;releaseEdit=undefined;regenerate.click();
+          for(let i=0;i<100&&!releaseEdit;i++) await new Promise(r=>setTimeout(r,25));
+          if(!releaseEdit)throw new Error('IP-Adapter cancellation fixture did not start.');
+          settings.npcExpressionIpAdapterMode=false;releaseEdit();
+          for(let i=0;i<100&&regenerate.disabled;i++) await new Promise(r=>setTimeout(r,25));
+          result.modeChangeCancelsPendingEdit=uploads===4&&generationEditor.querySelector('[role="status"]').textContent==='Cancelled.';
         } catch(error) {result.error=String(error.stack||error);}
         finally {
           runtime?.resetNpcExpressions();scene?.clearSceneSprites(); fixture?.remove(); editor?.remove();

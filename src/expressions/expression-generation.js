@@ -1,4 +1,4 @@
-import { EMOTION_LABELS } from './expression-prompts.js';
+import { EMOTION_LABELS, selectExpressionPrompt } from './expression-prompts.js';
 
 /** Serialize edits, reuse missing-emotion jobs, and leave automatic failures for explicit retry. */
 export function createExpressionGenerator({ edit, loadPack, upload }) {
@@ -7,7 +7,7 @@ export function createExpressionGenerator({ edit, loadPack, upload }) {
     return {
         generate(job, { retry = false, replace = false } = {}) {
             const key = JSON.stringify([job.owner, job.npcId, job.reference, job.folder, job.label,
-                job.workflow, job.prompt, job.negativePrompt]);
+                job.workflow, job.prompt, job.promptVariants, job.negativePrompt]);
             if (pending.has(key)) return pending.get(key);
             if (!retry && failed.has(key)) return Promise.reject(failed.get(key));
             if (retry) failed.delete(key);
@@ -17,11 +17,13 @@ export function createExpressionGenerator({ edit, loadPack, upload }) {
             const task = queue.then(async () => {
                 check();
                 if (!EMOTION_LABELS.includes(job.label)) throw new Error('Choose a supported emotion.');
-                if (!job.reference || !job.folder || !job.prompt?.trim()) throw new Error('Choose an NPC reference image, sprite folder and expression prompt first.');
+                if (!job.reference || !job.folder || !(job.promptVariants?.some(prompt => prompt?.trim()) || job.prompt?.trim())) {
+                    throw new Error('Choose an NPC reference image, sprite folder and expression prompt first.');
+                }
                 const sprites = await loadPack(job.folder);
                 check();
                 if (!replace && sprites.some(sprite => sprite.label === job.label)) return sprites;
-                const url = await edit({ reference: job.reference, prompt: job.prompt,
+                const url = await edit({ reference: job.reference, prompt: selectExpressionPrompt(job),
                     negativePrompt: job.negativePrompt, workflow: job.workflow || undefined, signal: job.signal });
                 check();
                 await upload({ url, folder: job.folder, label: job.label, signal: job.signal, check });

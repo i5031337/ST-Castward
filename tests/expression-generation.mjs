@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createExpressionGenerator } from '../src/expressions/expression-generation.js';
-import { EMOTION_LABELS, normalizeExpressionGeneration, expressionFolder, prepareExpressionReference, expressionWorkflow } from '../src/expressions/expression-prompts.js';
+import { EMOTION_LABELS, EMOTION_PROMPTS, normalizeExpressionGeneration, selectExpressionPrompt, expressionFolder, prepareExpressionReference, expressionWorkflow } from '../src/expressions/expression-prompts.js';
 import { normalizeNpcPresentation } from '../src/core/npc-presentation.js';
 
 function fixture() {
@@ -21,12 +21,61 @@ test('28 saved prompts normalize, round-trip with cards, and preserve custom ins
     assert.equal(EMOTION_LABELS.length, 28);
     const generation = normalizeExpressionGeneration({ enabled: true, reference: '/a.png',
         workflow: 'Edit.json', prompts: { joy: ' My custom smile ', nonsense: 'discard' } });
-    assert.equal(generation.prompts.joy, 'My custom smile');
+    assert.deepEqual(generation.prompts.joy, ['My custom smile', ...EMOTION_PROMPTS.joy.slice(1)]);
     assert.equal(generation.prompts.nonsense, undefined);
     assert.deepEqual(normalizeNpcPresentation({ expressions: { generation } }).expressions.generation, generation);
     const first = expressionFolder({ id: 'one' }, '/a.png');
     assert.notEqual(first, expressionFolder({ id: 'one' }, '/b.png'));
     assert.notEqual(first, expressionFolder({ id: 'two' }, '/a.png'));
+});
+
+test('all emotions have three distinct variants and random selection can reach each one', () => {
+    const generation = normalizeExpressionGeneration();
+    for (const label of EMOTION_LABELS) {
+        const variants = generation.prompts[label];
+        assert.equal(variants.length, 3, label);
+        assert.equal(new Set(variants).size, 3, label);
+        const job = { prompt: '', promptVariants: variants };
+        for (const [index, random] of [0, 0.34, 0.999].entries()) {
+            assert.equal(selectExpressionPrompt(job, () => random), variants[index]);
+            assert.equal(selectExpressionPrompt({ ...job, prompt: 'NPC portrait prompt' }, () => random), `NPC portrait prompt\n${variants[index]}`);
+        }
+    }
+});
+
+test('old built-in prompts adopt variants and body language while custom prompts survive', () => {
+    const generation = normalizeExpressionGeneration({
+        basePrompt: 'Use the reference image. Preserve the same character identity, hairstyle, outfit, art style, body proportions, framing and background. Change the facial expression only.',
+        prompts: { joy: 'Joyful expression, cheerful eyes, happy open smile.', anger: ['Custom fury', '', 'Custom shout'] },
+    });
+    assert.equal(generation.basePrompt, undefined);
+    assert.deepEqual(generation.prompts.joy, EMOTION_PROMPTS.joy);
+    assert.deepEqual(generation.prompts.anger, ['Custom fury', EMOTION_PROMPTS.anger[1], 'Custom shout']);
+    generation.prompts.joy[0] = 'Edited';
+    assert.notEqual(normalizeExpressionGeneration().prompts.joy[0], 'Edited');
+    assert.equal(normalizeExpressionGeneration({ basePrompt: 'Custom base' }).basePrompt, undefined);
+});
+
+test('expression-only jobs accept an empty prefix and send just a selected variant', async () => {
+    const { generator, calls, job } = fixture();
+    await generator.generate({ ...job, prompt: '', promptVariants: EMOTION_PROMPTS.joy });
+    assert.ok(EMOTION_PROMPTS.joy.includes(calls[0].prompt));
+});
+
+test('random variants share pending jobs and failure suppression; explicit retry draws again', async () => {
+    const { job } = fixture();
+    const inputs = [];
+    const generator = createExpressionGenerator({ loadPack: async () => [],
+        edit: async input => { inputs.push(input); throw new Error('offline'); }, upload: async () => {} });
+    const variantsJob = { ...job, promptVariants: EMOTION_PROMPTS.joy };
+    const task = generator.generate(variantsJob);
+    assert.equal(generator.generate({ ...variantsJob, promptVariants: [...EMOTION_PROMPTS.joy] }), task);
+    await assert.rejects(task, /offline/);
+    await assert.rejects(generator.generate(variantsJob), /offline/);
+    assert.equal(inputs.length, 1);
+    await assert.rejects(generator.generate(variantsJob, { retry: true }), /offline/);
+    assert.equal(inputs.length, 2);
+    for (const input of inputs) assert.ok(EMOTION_PROMPTS.joy.some(variant => input.prompt === `${job.prompt}\n${variant}`));
 });
 
 test('expressions use a shared editing workflow independently of the host portrait workflow', () => {

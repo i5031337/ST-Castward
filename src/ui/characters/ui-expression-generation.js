@@ -1,4 +1,4 @@
-import { BASE_EXPRESSION_PROMPT, EMOTION_LABELS, EMOTION_PROMPTS, prepareExpressionReference, expressionWorkflow } from '../../expressions/expression-prompts.js';
+import { EMOTION_LABELS, EMOTION_PROMPTS, prepareExpressionReference, expressionWorkflow } from '../../expressions/expression-prompts.js';
 import { expressionGenerator, expressionJob, expressionOwner } from '../../expressions/host-expression-generation.js';
 import { getSettings } from '../../core/settings.js';
 import { findCharacterRecord } from '../../characters/character-repository.js';
@@ -20,24 +20,30 @@ export function buildExpressionGeneration(card, { save, onPack, onReference, onS
     const status = document.createElement('p'); status.setAttribute('role', 'status'); root.append(status);
     const advanced = document.createElement('details');
     const summary = document.createElement('summary'); summary.textContent = 'Prompts and workflow'; advanced.append(summary); root.append(advanced);
-    const prompt = field(advanced, 'Emotion prompt', document.createElement('textarea'), 'prompt'); prompt.rows = 2;
-    prompt.value = generation.prompts[emotion.value];
-    emotion.addEventListener('change', () => { prompt.value = generation.prompts[emotion.value]; onSelect(emotion.value); });
-    prompt.addEventListener('change', () => {
-        generation.prompts[emotion.value] = prompt.value.trim() || EMOTION_PROMPTS[emotion.value];
-        prompt.value = generation.prompts[emotion.value]; save();
+    const hint = document.createElement('p'); hint.textContent = 'One of these three prompts is chosen at random for each generation.'; advanced.append(hint);
+    const prompts = [0, 1, 2].map(index => {
+        const prompt = field(advanced, `Emotion prompt ${index + 1}`, document.createElement('textarea'), index ? `prompt${index + 1}` : 'prompt');
+        prompt.rows = 3; prompt.value = generation.prompts[emotion.value][index];
+        prompt.addEventListener('change', () => {
+            generation.prompts[emotion.value][index] = prompt.value.trim() || EMOTION_PROMPTS[emotion.value][index];
+            prompt.value = generation.prompts[emotion.value][index]; save();
+        });
+        return prompt;
+    });
+    emotion.addEventListener('change', () => {
+        prompts.forEach((prompt, index) => { prompt.value = generation.prompts[emotion.value][index]; });
+        onSelect(emotion.value);
     });
     const textField = (title, key, multiline = false) => {
         const input = document.createElement(multiline ? 'textarea' : 'input'); input.value = generation[key];
         if (multiline) input.rows = 2;
         field(advanced, title, input, key);
         input.addEventListener('change', () => {
-            generation[key] = input.value.trim() || (key === 'basePrompt' ? BASE_EXPRESSION_PROMPT : '');
+            generation[key] = input.value.trim();
             input.value = generation[key]; save();
         });
         return input;
     };
-    textField('Shared instructions', 'basePrompt', true);
     textField('Negative prompt', 'negativePrompt', true);
     textField('Workflow override', 'workflow').placeholder = 'Shared Expression Editing Workflow';
     const button = (title, action, handler) => {
@@ -51,14 +57,20 @@ export function buildExpressionGeneration(card, { save, onPack, onReference, onS
         if (prepareExpressionReference(card)) { onReference(); save(); }
         const snapshot = JSON.stringify(config), image = card.imageUrl, owner = expressionOwner();
         const workflow = expressionWorkflow(card, getSettings());
+        const ipAdapterMode = getSettings().npcExpressionIpAdapterMode;
+        const portraitInputs = () => JSON.stringify([getSettings().imgGenPromptPrefix, card.profile, card.lorebook]);
+        const imagePromptInputs = portraitInputs();
         controller = new AbortController();
         const current = () => getSettings().enabled && expressionOwner() === owner && card.imageUrl === image
             && findCharacterRecord(card.id) === card && JSON.stringify(card.presentation.expressions) === snapshot
-            && expressionWorkflow(card, getSettings()) === workflow;
+            && expressionWorkflow(card, getSettings()) === workflow
+            && getSettings().npcExpressionIpAdapterMode === ipAdapterMode
+            && (!ipAdapterMode || portraitInputs() === imagePromptInputs);
         generate.disabled = regenerate.disabled = true; cancel.hidden = false;
         status.textContent = 'Generating…';
         try {
-            const sprites = await expressionGenerator.generate(expressionJob(card, emotion.value, current, controller.signal), { retry: true, replace });
+            const job = await expressionJob(card, emotion.value, current, controller.signal);
+            const sprites = await expressionGenerator.generate(job, { retry: true, replace });
             if (current()) { onPack(sprites, emotion.value); status.textContent = 'Expression saved.'; }
         } catch (error) { status.textContent = error.name === 'AbortError' ? 'Cancelled.' : error.message; }
         finally { generate.disabled = regenerate.disabled = false; cancel.hidden = true; controller = null; }

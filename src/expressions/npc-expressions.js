@@ -21,7 +21,11 @@ const resultKey = line => JSON.stringify([line.revision, line.npcId, line.lineIn
 let epoch = 0;
 let generationController = new AbortController();
 const cardFor = id => getActiveCharacters().find(card => card.id === id);
-const preferences = card => JSON.stringify([card?.presentation?.expressions, expressionWorkflow(card, getSettings())]);
+const preferences = card => {
+    const settings = getSettings();
+    return JSON.stringify([card?.presentation?.expressions, expressionWorkflow(card, settings),
+        settings.npcExpressionIpAdapterMode, settings.npcExpressionIpAdapterMode ? [settings.imgGenPromptPrefix, card?.profile, card?.lorebook] : null]);
+};
 const messageElement = id => document.querySelector(`#chat .mes[mesid="${Number(id)}"]`);
 function saveExpressionBinding(card) {
     if (isChatCharacter(card.id)) getContext()?.saveMetadataDebounced?.();
@@ -48,7 +52,7 @@ const engine = createExpressionEngine({ classify: job => job.classify(job), isCu
             const card = cardFor(job.line.npcId);
             const image = card?.imageUrl;
             const current = () => isCurrent(job) && cardFor(job.line.npcId) === card && card.imageUrl === image;
-            expressionGenerator.generate(expressionJob(card, label, current, generationController.signal)).then(sprites => {
+            expressionJob(card, label, current, generationController.signal).then(input => expressionGenerator.generate(input)).then(sprites => {
                 if (!current()) return;
                 job.rememberSprite(card, sprites, label, job.line);
                 for (const result of results.values()) {

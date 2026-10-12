@@ -5,6 +5,7 @@ import { loadSpritePack } from './host-expressions.js';
 import { createExpressionGenerator } from './expression-generation.js';
 import { getSettings } from '../core/settings.js';
 import { expressionWorkflow } from './expression-prompts.js';
+import { buildCharacterImagePrompt } from '../api/api-image-generate.js';
 
 export const expressionOwner = () => {
     const context = getContext();
@@ -40,10 +41,13 @@ export const expressionGenerator = createExpressionGenerator({
     },
 });
 
-export function expressionJob(card, label, isCurrent, signal) {
+export async function expressionJob(card, label, isCurrent, signal) {
     const config = card.presentation.expressions;
     const generation = config.generation;
-    return { owner: expressionOwner(), npcId: card.id, folder: config.spriteFolder, label,
-        reference: generation.reference, prompt: `${generation.basePrompt}\n${generation.prompts[label] || ''}`,
-        negativePrompt: generation.negativePrompt, workflow: expressionWorkflow(card, getSettings()), isCurrent, signal };
+    const settings = getSettings();
+    const job = { owner: expressionOwner(), npcId: card.id, folder: config.spriteFolder, label,
+        reference: generation.reference, prompt: '', promptVariants: generation.prompts[label]?.slice(),
+        negativePrompt: generation.negativePrompt, workflow: expressionWorkflow(card, settings), isCurrent, signal };
+    if (settings.npcExpressionIpAdapterMode === true) job.prompt = await buildCharacterImagePrompt(card);
+    return job;
 }

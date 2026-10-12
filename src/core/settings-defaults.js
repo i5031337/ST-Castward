@@ -73,6 +73,7 @@ export const defaultSettings = {
     autoPortraitOnFill: true,
     autoGenerateNpcExpressions: false,
     npcExpressionWorkflow: '',
+    npcExpressionIpAdapterMode: false,
     showPresentNpcSprites: false,
     hideSpeakerNames: false,
     caseInsensitive: true,

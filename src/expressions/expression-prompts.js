@@ -1,6 +1,7 @@
 import { fnv1a } from '../core/hash.js';
+import { EMOTION_PROMPT_VARIANTS } from './emotion-prompt-variants.js';
 
-export const EMOTION_PROMPTS = Object.freeze({
+const LEGACY_EMOTION_PROMPTS = Object.freeze({
     admiration: 'Admiring expression, bright attentive eyes, gentle smile.',
     amusement: 'Amused expression, playful smile, slightly raised eyebrows.',
     anger: 'Angry expression, furrowed brows, intense eyes, tense mouth.',
@@ -30,8 +31,15 @@ export const EMOTION_PROMPTS = Object.freeze({
     surprise: 'Surprised expression, wide eyes, lifted eyebrows, open mouth.',
     neutral: 'Neutral expression, relaxed face, calm eyes, closed mouth.',
 });
+export const EMOTION_PROMPTS = EMOTION_PROMPT_VARIANTS;
 export const EMOTION_LABELS = Object.freeze(Object.keys(EMOTION_PROMPTS));
-export const BASE_EXPRESSION_PROMPT = 'Use the reference image. Preserve the same character identity, hairstyle, outfit, art style, body proportions, framing and background. Change the facial expression only.';
+
+/** Select only when an edit starts, keeping queued and failed job identities stable. */
+export function selectExpressionPrompt(job, random = Math.random) {
+    if (!job.promptVariants?.length) return job.prompt;
+    const variant = job.promptVariants[Math.floor(random() * job.promptVariants.length)];
+    return [job.prompt, variant].filter(Boolean).join('\n');
+}
 
 export function expressionWorkflow(card, settings) {
     return card?.presentation?.expressions?.generation?.workflow?.trim()
@@ -41,9 +49,14 @@ export function expressionWorkflow(card, settings) {
 export function normalizeExpressionGeneration(raw = {}) {
     const text = value => typeof value === 'string' ? value.trim() : '';
     const prompts = {};
-    for (const label of EMOTION_LABELS) prompts[label] = text(raw?.prompts?.[label]) || EMOTION_PROMPTS[label];
+    for (const label of EMOTION_LABELS) {
+        const saved = raw?.prompts?.[label];
+        const variants = Array.isArray(saved) ? saved
+            : text(saved) && text(saved) !== LEGACY_EMOTION_PROMPTS[label] ? [saved] : [];
+        prompts[label] = EMOTION_PROMPTS[label].map((fallback, index) => text(variants[index]) || fallback);
+    }
     return { reference: text(raw?.reference), workflow: text(raw?.workflow),
-        basePrompt: text(raw?.basePrompt) || BASE_EXPRESSION_PROMPT, negativePrompt: text(raw?.negativePrompt), prompts };
+        negativePrompt: text(raw?.negativePrompt), prompts };
 }
 
 /** Each approved portrait has its own pack, including across chat-owned NPC copies. */

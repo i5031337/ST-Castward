@@ -33,6 +33,9 @@ with browser_session() as browser:
               && expressionToggle.querySelector('input[type="checkbox"]').checked === !!getSettings().autoGenerateNpcExpressions;
             result.sharedExpressionWorkflow = expressionToggle?.nextElementSibling?.dataset.setting === 'npcExpressionWorkflow'
               && !!imageSettings.querySelector('[data-setting=npcExpressionWorkflow] select');
+            const adapterToggle=imageSettings.querySelector('[data-setting=npcExpressionIpAdapterMode]');
+            result.ipAdapterModeSetting=adapterToggle?.previousElementSibling?.dataset.setting==='npcExpressionWorkflow'
+              &&adapterToggle.querySelector('input[type="checkbox"]').checked===!!getSettings().npcExpressionIpAdapterMode;
             const sceneToggle=imageSettings.querySelector('[data-setting=showPresentNpcSprites]');
             result.sceneSpriteSetting=!!sceneToggle&&sceneToggle.querySelector('input[type="checkbox"]').checked===!!getSettings().showPresentNpcSprites;
             const tracker = document.createElement('div');

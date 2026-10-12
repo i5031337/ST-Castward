@@ -27,6 +27,12 @@ export function renderImageGenerationSettings(view, rerender) {
     }));
     view.append(buildExpressionWorkflowSetting());
     view.append(buildSettingToggle({
+        key: 'npcExpressionIpAdapterMode', label: 'IP-Adapter mode',
+        help: 'Prepend each NPC’s default image prompt to the selected expression prompt. '
+            + 'When off, send only the expression prompt. Applies to automatic and manual expressions.',
+        onChange: () => resetNpcExpressions(),
+    }));
+    view.append(buildSettingToggle({
         key: 'showPresentNpcSprites', label: 'Show Present NPC Sprites',
         help: 'Keep the latest full-size sprite of every NPC in the current scene beside the chat, even with TTS off. '
             + 'Uses the newest sprite in an existing pack, or the portrait when no sprite is available. Displaying sprites does not generate images.',
