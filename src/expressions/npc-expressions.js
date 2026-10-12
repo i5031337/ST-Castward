@@ -5,6 +5,7 @@ import { getActiveCharacters } from '../characters/characters.js';
 import { isChatCharacter } from '../characters/character-repository.js';
 import { normalizeCharacterPresentation } from '../core/npc-presentation.js';
 import { readDialogueRecords, dialogueRevision } from '../chat/dialogue-presentation.js';
+import { dialogueLineCurrent } from '../chat/dialogue-stream-state.js';
 import { MESSAGE_RENDERED_EVENT } from '../story/beats.js';
 import { createExpressionEngine } from './expression-engine.js';
 import { classifierConfig, classifierHint, classifyDialogue, loadSpritePack } from './host-expressions.js';
@@ -35,16 +36,17 @@ function isCurrent(job, pending = true) {
     return (!pending || !job.signal?.aborted) && (!pending || job.epoch === epoch) && getSettings().enabled
         && getSettings().autoGenerateNpcExpressions === true
         && getContext().chat?.[job.line.messageId] === job.sourceToken
-        && dialogueRevision(getContext(), job.line.messageId) === job.line.revision
+        && dialogueLineCurrent(job.line)
         && preferences(cardFor(job.line.npcId)) === job.preferences
         && JSON.stringify(classifierConfig()) === JSON.stringify(job.config);
 }
 
 const engine = createExpressionEngine({ classify: job => job.classify(job), isCurrent,
     apply(job, label) {
-        results.set(resultKey(job.line), { ...job, label, classified: true });
+        Object.assign(job, { label, classified: true });
+        results.set(resultKey(job.line), job);
         job.savePortrait(job, label);
-        job.rememberSprite(cardFor(job.line.npcId), job.sprites, label, job.line);
+        if (!job.line.streamId) job.rememberSprite(cardFor(job.line.npcId), job.sprites, label, job.line);
         while (results.size > 128) results.delete(results.keys().next().value);
         renderNpcExpressions(messageElement(job.line.messageId), job.line);
         if (job.generate && EMOTION_LABELS.includes(label) && !job.sprites.some(sprite => sprite.label === label)) {
@@ -54,7 +56,7 @@ const engine = createExpressionEngine({ classify: job => job.classify(job), isCu
             const current = () => isCurrent(job) && cardFor(job.line.npcId) === card && card.imageUrl === image;
             expressionJob(card, label, current, generationController.signal).then(input => expressionGenerator.generate(input)).then(sprites => {
                 if (!current()) return;
-                job.rememberSprite(card, sprites, label, job.line);
+                if (!job.line.streamId) job.rememberSprite(card, sprites, label, job.line);
                 for (const result of results.values()) {
                     if (result.line.npcId === card.id && result.preferences === job.preferences && isCurrent(result, false)) {
                         result.sprites = sprites;
@@ -123,41 +125,60 @@ export function renderNpcExpressions(mesEl, targetLine) {
     }
 }
 
-/** Explicit completed-reply entry point. No history loading or DOM refresh calls this. */
+/** Authorized completed lines or replies; history and decoration never schedule work. */
 export async function completeNpcExpressions(messageId, {
     loadPack = loadSpritePack, classify = classifyDialogue, saveBinding = saveExpressionBinding,
-    rememberSprite = rememberNpcSprite, savePortrait = rememberDialoguePortrait, signal,
+    rememberSprite = rememberNpcSprite, savePortrait = rememberDialoguePortrait, signal, records,
 } = {}) {
     if (!getSettings().enabled || getSettings().autoGenerateNpcExpressions !== true) return;
     const message = getContext()?.chat?.[Number(messageId)];
     if (!message || message.is_user || message.is_system) return;
-    const lines = readDialogueRecords(messageElement(messageId)).filter(line => line.npcId && !line.isPersona);
+    const lines = (records ?? readDialogueRecords(messageElement(messageId))).filter(line => line.npcId && !line.isPersona);
     const version = epoch, packs = new Map();
     for (const line of lines) {
         if (signal?.aborted || version !== epoch) return;
         const cached = results.get(resultKey(line));
-        if (cached?.classified && isCurrent(cached, false)) continue;
+        if ((cached?.classified || cached?.pending) && isCurrent(cached, false)) continue;
         const card = cardFor(line.npcId);
         const settings = card ? normalizeCharacterPresentation(card).expressions : null;
         if (card && prepareExpressionReference(card)) saveBinding(card);
         if (!settings?.spriteFolder) continue;
         const job = { line, signal, sourceToken: message, epoch: version, preferences: preferences(card), config: classifierConfig(), classify, rememberSprite, savePortrait,
-            fallback: settings.fallback, sprites: [] };
+            fallback: settings.fallback, sprites: [], pending: true, label: '' };
         job.generate = Boolean(settings.generation?.reference)
             && settings.generation.reference === card.imageUrl;
         if (job.generate) job.labels = EMOTION_LABELS;
+        results.set(resultKey(line), job);
+        while (results.size > 128) results.delete(results.keys().next().value);
         try {
             if (!packs.has(settings.spriteFolder)) packs.set(settings.spriteFolder, loadPack(settings.spriteFolder));
             job.sprites = await packs.get(settings.spriteFolder);
             if (!isCurrent(job)) continue;
-            results.set(resultKey(line), { ...job, label: '' });
-            while (results.size > 128) results.delete(results.keys().next().value);
-            renderNpcExpressions(messageElement(messageId), line);
+            renderNpcExpressions(messageElement(messageId), job.line);
             if ((job.sprites.length || job.generate) && !classifierHint(job.config)) {
                 // The engine serializes all NPC classification, including WebLLM jobs.
                 await engine.enqueue(job);
             }
         } catch (error) { console.warn('[SillyNPC] Sprite pack unavailable', error); }
+        finally { job.pending = false; }
+    }
+}
+
+/** Transfer committed results and in-flight jobs to the finalized message identity. */
+export function adoptStreamExpressions(messageId, records) {
+    for (const [key, job] of [...results]) {
+        if (job.line.messageId !== Number(messageId) || !job.line.streamId) continue;
+        const line = records.find(candidate => candidate.lineIndex === job.line.lineIndex
+            && candidate.npcId === job.line.npcId && candidate.text === job.line.text);
+        results.delete(key);
+        if (!line) continue;
+        // The engine retains this job object, so a pending classification also adopts it.
+        job.line = line;
+        results.set(resultKey(line), job);
+        if (job.classified && isCurrent(job, false)) {
+            job.savePortrait(job, job.label);
+            job.rememberSprite(cardFor(line.npcId), job.sprites, job.label, line);
+        }
     }
 }
 
@@ -170,8 +191,10 @@ export function showNpcSpeechExpression(unit) {
         clearSpeechSprite(); return;
     }
     const line = { ...unit, lineIndex: unit.dialogueLineIndex };
-    const result = results.get(resultKey(line));
-    if (dialogueRevision(getContext(), unit.messageId) !== unit.revision) return;
+    const result = results.get(resultKey(line)) || (unit.streamId ? [...results.values()].find(candidate =>
+        candidate.line.messageId === line.messageId && candidate.line.lineIndex === line.lineIndex
+        && candidate.line.npcId === line.npcId && candidate.line.text === (line.dialogueText ?? line.text)) : null);
+    if (!dialogueLineCurrent(line)) return;
     const picture = (result && isCurrent(result, false) ? portraitFromResult(result) : null) || readDialoguePortrait(line);
     showSpeechSprite(card, picture?.path || '', picture?.fallbackPath || '', unit);
 }

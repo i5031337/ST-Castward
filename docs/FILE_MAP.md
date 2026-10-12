@@ -239,6 +239,7 @@ SillyTavern loads `index.js` and `style.css` from `manifest.json`. The JavaScrip
 | `src/chat/dialogue-line.js` | Recognize plain speaker dialogue lines. |
 | `src/chat/dialogue-discovery.js` | Shared DOM dialogue discovery, quote extraction, and card/alias matching for highlighting and presentation. |
 | `src/chat/dialogue-presentation.js` | Read ordered dialogue records with NPC/persona identity and chat/message revision keys. |
+| `src/chat/dialogue-stream-state.js` | Stable committed dialogue identities and current-generation validation while source text grows. |
 | `src/chat/chat-speech.js` | Attach portraits to recognized dialogue lines. |
 | `src/chat/chat-reprocess.js` | Reprocess message decorations and tracker controls. |
 | `src/chat/chat-listing.js` | List chat headers. |
@@ -402,7 +403,11 @@ paths have regression tests under `tests/`.
 | `src/tts/tts-settings.js` | Independent speech settings normalization and per-NPC voice resolution. |
 | `src/tts/speech-units.js` | Ordered narration and quoted dialogue from rendered story paragraphs. |
 | `src/tts/speech-events.js` | Completed-reply authorization and stale-source cancellation. |
-| `src/tts/speech-queue.js` | Cancellable sequential synthesis and audio playback. |
+| `src/tts/speech-queue.js` | Appendable, cancellable ordered playback with bounded synthesis prefetch. |
+| `src/tts/line-stream.js` | Completed raw line commitment, continuation boundaries, and committed-prefix rewrite detection. |
+| `src/tts/stream-format-source.js` | Withhold unresolved quotes, fences, and hidden markup before speech discovery. |
+| `src/tts/npc-streaming.js` | Generation-scoped completed-line producer and duplicate/final-flush guards. |
+| `src/tts/npc-stream-host.js` | Host streaming events, active-message decoration, provisional voice cues, and final expression adoption. |
 | `src/tts/openai-speech.js` | OpenAI-compatible synthesis through the host server proxy and HTML audio playback. |
 | `src/tts/npc-tts.js` | SillyNPC Play/Stop controls, automatic gating, previews, and runtime voice routing. |
 | `src/tts/voice-cue-format.js` | Narrator cue validation and removal from rendered dialogue and narration. |
@@ -417,7 +422,10 @@ paths have regression tests under `tests/`.
 | `tests/scene-sprites.mjs` | Scene membership, saved sprite freshness, and ordering of delayed versus manual expressions. |
 | `tests/dialogue-portraits.mjs` | Portrait serialization, per-line identity, edit invalidation, generated updates, and swipe-extra preservation. |
 | `tests/ui-npc-expressions.py` | Unsaved live portrait and editor checks with mocked classification and sprite packs. |
+| `tests/fixtures/ui-expression-streaming.js`, `ui-expression-editor.js`, `ui-expression-scene.js` | Shared live streaming-adoption, editor, and scene-display fixture sections. |
 | `tests/npc-tts.mjs` | Speech segmentation, queue ordering/cancellation, voice fallback, and completion gating. |
+| `tests/tts-line-stream.mjs`, `tests/stream-format-source.mjs`, `tests/npc-streaming.mjs`, `tests/npc-tts-stream-queue.mjs` | Streaming boundaries, markup exclusions, cancellation, final flushing, and appendable queue ordering. |
+| `tests/ui-npc-streaming.py` | Unsaved live streaming checks using the host formatter and controlled generation events. |
 | `tests/host-expressions.mjs` | Cancellable Local/Extras requests and the retained native WebLLM lock. |
 | `tests/ui-tts-routing.py`, `tests/fixtures/ui-tts-routing.js` | Unsaved Firefox checks for generic models, independent voice lists, previews, ordered playback and explicit voice-design routing using mocked audio. |
 | `tests/voice-cues.mjs` | Complete narrator cue syntax, speaker matching, and rejection of fenced or malformed cues. |

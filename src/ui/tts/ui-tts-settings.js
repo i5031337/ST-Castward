@@ -39,7 +39,7 @@ export function renderTtsSettings(view, { onChange = () => {}, preview = () => {
         return element;
     };
     const enabled = field('enabled', 'Enable SillyNPC speech', input('checkbox', config.enabled));
-    const auto = field('autoPlay', 'Automatically play completed replies', input('checkbox', config.autoPlay));
+    const auto = field('autoPlay', 'Automatically play replies as lines finish', input('checkbox', config.autoPlay));
     const endpoint = field('endpoint', 'Built-in OpenAI Compatible endpoint', input('url', hostSpeechEndpoint()));
     endpoint.readOnly = true;
     const model = field('model', 'Narrator model', input('text', config.model));

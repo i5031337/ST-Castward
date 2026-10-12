@@ -282,3 +282,24 @@ test('consumed audio can be collected while later segments are still playing', (
         finishLast(); await playing;
     `], { stdio: 'pipe' });
 });
+
+test('expected regenerate deletion preserves streaming authorization and completes replacement', async () => {
+    const listeners = new Map(), stopped = [];
+    const events = { on: (name, handler) => listeners.set(name, handler) };
+    const fire = (name, ...args) => listeners.get(name)?.(...args);
+    const types = Object.fromEntries(['GENERATION_STARTED', 'GENERATION_STOPPED', 'GENERATION_ENDED',
+        'CHAT_CHANGED', 'MESSAGE_SWIPED', 'MESSAGE_EDITED', 'MESSAGE_DELETED'].map(name => [name, name]));
+    let latest = 5, token = {}, identity = 'old', pending, completed;
+    wireSpeechEvents({ events, types, renderedEvent: 'rendered', render: () => {},
+        stop: options => stopped.push(options), latestId: () => latest, revision: () => identity,
+        sourceToken: () => token, defer: callback => { pending = callback; }, complete: id => { completed = id; } });
+    fire(types.GENERATION_STARTED, 'regenerate');
+    latest = 4;
+    fire(types.MESSAGE_DELETED, 5);
+    assert.deepEqual(stopped, [undefined, { preserveGeneration: true }]);
+    latest = 5; token = {}; identity = 'replacement';
+    fire(types.GENERATION_ENDED); pending(); await Promise.resolve();
+    assert.equal(completed, 5);
+    fire(types.MESSAGE_DELETED, 5);
+    assert.equal(stopped.at(-1), undefined, 'unrelated deletion still cancels streaming authorization');
+});

@@ -15,6 +15,8 @@ test('accepts only a complete first cue for a recognized NPC in the reply', () =
 
 test('rejects malformed, fenced, and multiline cue text', () => {
     assert.deepEqual(parseVoiceCues(`\`\`\`text\n${line}\n\`\`\``, records), []);
+    assert.deepEqual(parseVoiceCues(`~~~text\n${line}\n~~~`, records), []);
+    assert.deepEqual(parseVoiceCues(`\`\`\`\`text\n\`\`\`\n${line}\n\`\`\`\``, records), []);
     assert.deepEqual(parseVoiceCues(`Narration ${line}`, records), []);
     assert.deepEqual(parseVoiceCues(line.replace('voice, low', 'voice"\nmore, low'), records), []);
 });

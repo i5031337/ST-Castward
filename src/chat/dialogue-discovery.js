@@ -3,7 +3,7 @@ import { stripVoiceCueNodes } from '../tts/voice-cue-format.js';
 
 const OPEN_QUOTES = new Map([['"', '"'], ['“', '”'], ['«', '»'], ['「', '」'], ['『', '』'], ['＂', '＂']]);
 const BLOCKS = new Set(['P', 'BLOCKQUOTE', 'LI']);
-const EXCLUDED = 'pre, code, script, style, table, svg, canvas, video, summary, [hidden], '
+const EXCLUDED = 'pre, code, script, style, table, svg, canvas, video, summary, status_update, [hidden], '
     + '[data-sillynpc-hidden], .sillynpc-status-tracker-container, .sillynpc-review-panel, '
     + '.sillynpc-reader-report, .sillynpc-chat-avatar';
 

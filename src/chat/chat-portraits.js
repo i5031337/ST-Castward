@@ -113,6 +113,15 @@ export function injectCharacterImages(mesEl) {
     mesEl.setAttribute('data-sillynpc-processed', 'true');
 }
 
+/** Streaming decoration has no scene or metadata side effects. */
+export function decorateStreamingDialogue(mesEl) {
+    const container = mesEl?.querySelector('.mes_text');
+    if (!container || !getSettings().enabled) return;
+    clearDecorations(container);
+    injectAtDialogueLines(container, getActiveCharacters(), () => BUILT_IN_DEFAULT_AVATAR, false);
+    decorateSpeechBlocks(container);
+}
+
 export function clearDecorations(textContainer) {
     textContainer.querySelectorAll('.sillynpc-speech-text, .sillynpc-speaker-name, .sillynpc-speaker-colon').forEach(wrapper => {
         const parent = wrapper.parentNode;

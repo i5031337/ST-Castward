@@ -1,7 +1,8 @@
 # NPC expressions and TTS
 
-Updated 2026-10-11. Stages 1, 2, 4, and 5 are implemented. Stage 3 was
-superseded by SillyNPC-owned playback. Stage 6 remains optional future work.
+Updated 2026-10-12. Stages 1, 2, 4, and 5 and Stage 6 completed-line streaming
+are implemented. Stage 3 was superseded by SillyNPC-owned playback. Broader
+providers and delivery controls remain optional future work.
 This document describes the current behavior and remaining work; obsolete
 implementation proposals have been removed.
 
@@ -16,6 +17,7 @@ implementation proposals have been removed.
 | Audible synchronization | The sprite switches only when that dialogue's audio emits `playing`, never when synthesis completes or audio is merely queued. |
 | Independent TTS | SillyNPC Play/Stop, opt-in automatic playback, separate narrator/NPC models, narrator voice, per-card voices, silence, and speed. |
 | Ordered playback | Narration, dialogue, and actions play in message order, with bounded synthesis prefetch. |
+| Completed-line streaming | Completed source lines render and enter automatic speech while generation continues; the unfinished tail flushes once at completion. |
 | Designed NPC voices | Local Qwen VoiceDesign creates a persistent versioned NPC voice; narration can use Kokoro presets. |
 | First-appearance voice cues | The story narrator supplies an optional voice description without a separate model request; cardless speakers can use a chat-owned provisional voice. |
 | Ownership and transfer | Presentation preferences follow existing chat/reusable-card ownership. Imports mark asset/voice bindings unresolved and assign new card identities. |
@@ -44,11 +46,41 @@ recognized line share that line's expression. Fallback order is matching sprite,
 configured fallback sprite, then the existing NPC portrait. Automatic expression
 selection never writes the card's base `imageUrl`.
 
-New completed foreground replies authorize automatic classification and speech.
+New foreground replies authorize automatic classification and speech. Streaming
+replies commit completed source lines during generation; other replies start at completion.
 History loading, rendering, and decoration refreshes only read cached pictures.
-An explicit manual Play also prepares expressions for that message before
-synthesis starts. This can delay speech while uncached classification finishes;
-Stop remains available during preparation and prevents stale audio.
+An explicit manual Play also prepares expressions for that message alongside
+synthesis. Classification never blocks speech; a ready expression or portrait
+fallback is used when audio starts. Stop prevents stale audio and expression work.
+
+## Completed-line streaming
+
+The host's `STREAM_TOKEN_RECEIVED` event supplies cumulative generated text.
+SillyNPC commits newline-terminated source lines and holds the last unfinished
+line until generation finishes. It never uses host-added closing quotes or fences
+as evidence that dialogue is complete. Unresolved quotes, code fences, and hidden
+HTML blocks are withheld from speech discovery until their structure closes.
+Completed text goes through the host formatter and shared dialogue discovery, so
+speaker attribution, narration/action routing, and exclusions remain consistent.
+
+Generation identities and stable line indices keep committed work valid as text
+is appended. An open speech queue waits between arriving lines, synthesizes with
+bounded prefetch, and plays each unit once in message order. Final completion
+flushes the tail and closes the queue without restarting playback. Render updates
+decorate only the active message and reuse committed expression results; they do
+not run tracker extraction or whole-chat redraws per token.
+
+Continue skips previous text. If it resumes an unfinished previous line, that
+entire intersecting line is skipped for automatic speech; new lines are spoken.
+Stop, generation cancellation, edits, swipes, deletion, chat/configuration changes,
+and rewrites of committed text invalidate obsolete speech. Manual Play still
+replays a message deliberately. Existing automatic-play opt-in and the native
+automatic-TTS conflict gate apply during streaming as well.
+
+First-appearance voice cues receive provisional identities before their first
+committed dialogue is synthesized. Accepted cues and expression portraits are
+saved under the finalized reply; cancellation discards provisional bindings.
+Audio responses remain complete MP3 blobs through the unchanged host proxy.
 
 ## Full-size sprite behavior
 
@@ -137,8 +169,6 @@ Manual SillyNPC Play remains available.
 
 ## Remaining optional work
 
-- **Stage 6: streaming.** Emit each completed dialogue unit once while generation
-  continues, preserving order and cancelling obsolete work.
 - **Stage 6: broader providers and styling.** Add provider adapters and supported
   pitch, rate, or emotional-delivery controls. Global speed already exists.
 - **Main-LLM expressions.** Requires explicit host request coordination and a
@@ -151,6 +181,16 @@ Lip sync and animation are outside the implemented speech synchronization scope.
 The old host TTS prototype and its source patch were removed, not left unfinished.
 
 ## Verification
+
+On 2026-10-12, the Node suite passed 511 tests. Streaming tests cover raw line
+boundaries, mutable tails, committed rewrites, unresolved markup, repeated lines,
+Continue, final one-shot flushing, bounded queue prefetch, Stop, regeneration
+authorization, and provisional cue commitment. `tests/ui-npc-streaming.py`
+passed 36 checks of the host formatter and controlled streaming events without
+model or audio requests, including host-trimmed tails and changed final display
+cancellation. The full expression fixture passed with additional checks of stable
+streaming records, pending classification adoption, and speech portraits after
+finalization.
 
 On 2026-10-11, all 76 Node test files passed. Focused queue tests cover ordered
 prefetch, audio-start notifications, stale callbacks, and Stop during expression
@@ -180,6 +220,9 @@ are verification tasks, not unimplemented MVP features.
   portraits, and the independent full-size display.
 - `src/tts/speech-units.js`, `speech-queue.js`, `openai-speech.js`, `npc-tts.js`:
   ordered speech units, preparation, synthesis, audible playback, and controls.
+- `src/tts/line-stream.js`, `stream-format-source.js`, `npc-streaming.js`,
+  `npc-stream-host.js`, `src/chat/dialogue-stream-state.js`: raw line commitment,
+  safe formatting, generation ownership, incremental rendering, and final adoption.
 - `src/tts/tts-settings.js`, `voice-cues.js`, `voice-cue-format.js`: routing,
   designed voice payloads, and chat-owned narrator cues.
 - `src/ui/characters/ui-expressions.js`, `ui-voices.js`,

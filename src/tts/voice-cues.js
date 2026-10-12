@@ -14,14 +14,14 @@ function cueStore(context = getContext()) {
 }
 
 /** Existing assignments are sticky; an edited or repeated cue cannot redesign a clone. */
-export function saveVoiceCues(cues, context = getContext()) {
+export function saveVoiceCues(cues, context = getContext(), provisional = new Map()) {
     if (!cues.length || !context?.chatMetadata || context?.getCurrentChatId?.() === undefined) return 0;
     const store = cueStore(context) || (context.chatMetadata[KEY] = {});
     let added = 0;
     for (const { speaker, description } of cues) {
         const key = voiceCueKey(speaker);
         if (Object.hasOwn(store, key)) continue;
-        store[key] = { id: makeId(), description, version: 1 };
+        store[key] = { id: provisional.get(key)?.id || makeId(), description, version: 1 };
         added++;
     }
     if (added) context.saveMetadataDebounced?.();

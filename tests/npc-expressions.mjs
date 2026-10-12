@@ -152,3 +152,21 @@ test('caller cancellation releases the queue and suppresses late results', async
     await engine.enqueue(job('fresh')); release('joy'); await Promise.resolve();
     assert.deepEqual(applied, ['fresh']);
 });
+
+test('pending classification can adopt a completed line identity without another request', async () => {
+    let release, requests = 0;
+    const streaming = { ...job('a'), line: { ...line('a'), streamId: 'generation', revision: 'stream' } };
+    const finalLine = { ...line('a'), revision: 'completed' };
+    const applied = [];
+    const engine = createExpressionEngine({
+        classify: () => { requests++; return new Promise(resolve => { release = resolve; }); },
+        isCurrent: candidate => candidate.line.streamId === 'generation' || candidate.line === finalLine,
+        apply: candidate => applied.push(candidate.line),
+    });
+    const pending = engine.enqueue(streaming);
+    await Promise.resolve();
+    streaming.line = finalLine;
+    release('joy'); await pending;
+    assert.equal(requests, 1);
+    assert.deepEqual(applied, [finalLine]);
+});

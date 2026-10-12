@@ -9,7 +9,7 @@ import { dialogueContentClone, discoverDialogueLines } from '../chat/dialogue-di
 import { dialogueRevision, readDialogueRecords } from '../chat/dialogue-presentation.js';
 
 const QUOTES = new Map([['"', '"'], ['“', '”'], ['«', '»'], ['「', '」'], ['『', '』'], ['＂', '＂']]);
-const SKIP = 'pre, code, script, style, table, svg, canvas, video, summary, [hidden], '
+const SKIP = 'pre, code, script, style, table, svg, canvas, video, summary, status_update, [hidden], '
     + '[data-sillynpc-hidden], .sillynpc-status-tracker-container, .sillynpc-review-panel, '
     + '.sillynpc-reader-report, .sillynpc-chat-avatar';
 
@@ -69,16 +69,17 @@ function speakableText(element) {
 export function readSpeechUnits(mesEl, {
     context = getContext(), characters = getActiveCharacters(), settings = getSettings(),
     ignoredLabels = getIgnoredSpeakerLabels(), personaFor = resolvePersonaSpeaker,
+    revision: suppliedRevision, streaming = true,
 } = {}) {
     const container = mesEl?.querySelector('.mes_text');
     const idText = mesEl?.getAttribute('mesid');
     const id = Number(idText);
     if (!container || idText === null || idText === undefined || idText === ''
         || !Number.isInteger(id) || id < 0) return [];
-    const revision = dialogueRevision(context, id);
+    const revision = suppliedRevision ?? dialogueRevision(context, id);
     const units = [];
     const dialogueIndices = new Map();
-    for (const record of readDialogueRecords(mesEl, { context, characters, settings, ignoredLabels, personaFor })) {
+    for (const record of readDialogueRecords(mesEl, { context, characters, settings, ignoredLabels, personaFor, streaming })) {
         const key = JSON.stringify([record.speakerLabel, record.text]);
         if (!dialogueIndices.has(key)) dialogueIndices.set(key, []);
         dialogueIndices.get(key).push(record.lineIndex);

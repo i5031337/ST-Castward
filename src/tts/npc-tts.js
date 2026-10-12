@@ -13,11 +13,14 @@ import { wireSpeechEvents } from './speech-events.js';
 import { completeNpcExpressions, showNpcSpeechExpression } from '../expressions/npc-expressions.js';
 import { clearSpeechSprite } from '../expressions/speech-sprite.js';
 import { captureVoiceCues, cardWithVoiceCue } from './voice-cues.js';
+import { voiceCueKey } from './voice-cue-format.js';
+import { initNpcStreaming } from './npc-stream-host.js';
 
 const messageElement = id => document.querySelector(`#chat .mes[mesid="${Number(id)}"]`);
 let previewController = null;
 let configSignature = '';
 let endpointSignature = '';
+let streaming = null;
 
 function updateButtons() {
     const current = queue.current();
@@ -31,9 +34,11 @@ function updateButtons() {
 const queue = createSpeechQueue({
     synthesize: (unit, signal) => synthesizeSpeech(unit, unit.config, signal),
     playAudio: playSpeechAudio,
-    prepare: job => completeNpcExpressions(job.messageId, { signal: job.controller.signal }),
+    prepare: job => job.revision.startsWith('npc-stream-') ? undefined
+        : completeNpcExpressions(job.messageId, { signal: job.controller.signal }),
     valid: job => getSettings().enabled && getSettings().tts.enabled
-        && dialogueRevision(getContext(), job.messageId) === job.revision
+        && (job.revision.startsWith('npc-stream-') ? streaming?.valid(job) && !builtInAutoTtsEnabled()
+            : dialogueRevision(getContext(), job.messageId) === job.revision)
         && JSON.stringify(normalizeTtsSettings(getSettings().tts)) === configSignature
         && hostSpeechEndpoint() === endpointSignature,
     onState: (state, _job, detail) => {
@@ -44,8 +49,9 @@ const queue = createSpeechQueue({
     },
 });
 
-export function stopNpcTts() {
+export function stopNpcTts({ preserveGeneration = false } = {}) {
     clearSpeechSprite();
+    streaming?.stop({ preserveGeneration });
     queue.stop();
     previewController?.abort();
     previewController = null;
@@ -118,6 +124,10 @@ export function initNpcTts() {
     document.addEventListener('input', event => {
         if (event.target?.matches?.('#openai_compatible_tts_endpoint')) stopNpcTts();
     });
+    document.addEventListener('change', event => {
+        if (event.target?.matches?.('#tts_enabled, #tts_auto_generation, #tts_periodic_auto_generation')
+            && queue.current()?.revision.startsWith('npc-stream-') && builtInAutoTtsEnabled()) stopNpcTts();
+    });
     wireSpeechEvents({ events: eventSource, types: event_types, renderedEvent: MESSAGE_RENDERED_EVENT,
         render: renderNpcTtsControl, stop: stopNpcTts,
         latestId: () => (getContext()?.chat?.length ?? 0) - 1,
@@ -125,9 +135,37 @@ export function initNpcTts() {
         sourceToken: id => getContext()?.chat?.[id],
         defer: requestAnimationFrame,
         complete: id => {
+            if (streaming?.handled(id)) return;
             const settings = getSettings();
             if (settings.enabled && settings.tts?.enabled && usesDesignedNpcVoices(settings.tts))
                 captureVoiceCues(id);
             return playNpcMessage(id, { automatic: true });
+        } });
+    streaming = initNpcStreaming({ renderControl: renderNpcTtsControl,
+        cancelSpeech: () => { queue.stop(); clearSpeechSprite(); },
+        close: state => state.speech?.close(),
+        enqueue: (state, units) => {
+            const settings = getSettings(), config = normalizeTtsSettings(settings.tts);
+            if (!config.autoPlay || builtInAutoTtsEnabled() || !settings.enabled
+                || ttsConfigError(config, hostSpeechEndpoint())) {
+                if (state.speech) queue.stop();
+                return;
+            }
+            if (state.speech && !queue.current()) return;
+            if (!state.speech) {
+                configSignature = JSON.stringify(config); endpointSignature = hostSpeechEndpoint();
+                state.speech = queue.start(state.messageId, state.id);
+            }
+            const cards = new Map(getActiveCharacters().map(card => [card.id, card]));
+            state.speech.append(units.map(unit => {
+                let card = unit.kind === 'dialogue' ? cardWithVoiceCue(cards.get(unit.npcId), unit.speakerLabel) : null;
+                if (unit.kind === 'dialogue' && !card?.presentation?.voiceDesign?.description) {
+                    const provisional = state.cueCards?.get(voiceCueKey(unit.speakerLabel));
+                    if (provisional) card = { ...card, ...provisional, presentation: {
+                        ...card?.presentation, ...provisional.presentation,
+                    } };
+                }
+                return { ...unit, ...resolveUnitSpeech(unit, config, card), config };
+            }));
         } });
 }

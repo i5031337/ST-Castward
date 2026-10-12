@@ -17,6 +17,7 @@ export function readDialoguePortrait(line) {
 
 export function rememberDialoguePortrait(result, label, { save = saveChatSoon } = {}) {
     const context = getContext(), line = result.line;
+    if (line.streamId) return;
     if (dialogueRevision(context, line.messageId) !== line.revision) return;
     if (writeLinePortrait(context.chat?.[line.messageId], line, portraitFromResult(result, label))) save();
 }

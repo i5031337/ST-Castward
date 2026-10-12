@@ -28,7 +28,7 @@ export function wireSpeechEvents({ events, types, renderedEvent, render, stop,
         if (generation?.awaitingDeletion && Number(newLength) === generation.replacementId
             && latestId() === generation.replacementId - 1) {
             generation.awaitingDeletion = false;
-            version++; stop();
+            version++; stop({ preserveGeneration: true });
             return;
         }
         invalidate();

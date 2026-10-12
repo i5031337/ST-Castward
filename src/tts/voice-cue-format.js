@@ -1,3 +1,5 @@
+import { stripSpeechFences } from './stream-format-source.js';
+
 const CUE = /^\s*\[\[NPC_VOICE speaker="([^"\r\n]{1,80})" description="([^"\r\n]{1,200})"\]\]\s*$/u;
 const INLINE_CUE = /\[\[NPC_VOICE speaker="[^"\r\n]{1,80}" description="[^"\r\n]{1,200}"\]\]/gu;
 export const voiceCueKey = value => String(value ?? '').trim().toLowerCase();
@@ -7,10 +9,7 @@ export function parseVoiceCues(source, records) {
     const speakers = new Set(records.filter(record => !record.isPersona && record.text)
         .map(record => voiceCueKey(record.speakerLabel)));
     const found = new Map();
-    let fenced = false;
-    for (const line of String(source ?? '').split(/\r?\n/u)) {
-        if (/^\s*```/u.test(line)) { fenced = !fenced; continue; }
-        if (fenced) continue;
+    for (const line of stripSpeechFences(source).split(/\r?\n/u)) {
         const match = line.match(CUE);
         if (!match) continue;
         const speaker = match[1].trim(), description = match[2].trim();
