@@ -1,303 +1,99 @@
 <p align="center">
-  <img src="img/SillyNPCLogo.jpg" alt="SillyNPC" width="420">
+  <img src="img/SillyNPCLogo.jpg" alt="SillyNPC XP" width="360">
 </p>
 
 # SillyNPC XP
 
-For the source layout and each file's responsibility, see the [file map](docs/FILE_MAP.md).
+Give your roleplay a cast you can see, hear, and watch grow.
 
-This fork adds automatic player XP progression and chat-owned NPCs to SillyNPC. Install it **instead of**
-the original extension; both use the same settings and events and must not run together.
+NPC portraits, character sheets, and RPG tracking for SillyTavern. A background reader follows the story and updates stats, inventory, and XP. Let changes apply automatically or review them yourself.
 
-With the Status Tracker enabled, the reader can award XP for concrete accomplishments
-in the latest story message, including useful item acquisitions, resolved challenges,
-and successful NPC interactions. It reports the earned amount. For example,
-an award of 20 when XP is `90/100` is reported as a `+20` delta.
+This is a fork of [BrutalKoala's SillyNPC](https://github.com/BrutalKoala/SillyNPC), with more room to build your own game.
 
-The extension then automatically advances Level to 2 and stores `10/100` XP. The
-current XP maximum stays the threshold for subsequent levels, and large awards can
-cross multiple levels. On a level-up in separate extraction mode, the reader makes
-an additional request to choose a story-appropriate bonus. It may increase an
-eligible numeric player stat by 1–5, or write a narrative perk. The bonus follows
-the configured review policy. The latest accepted bonus appears in the
-player's `Level Bonus` field. In inline mode, the narrator is asked
-to supply that field with its status update. If no bonus can be read from the LLM,
-the level-up still occurs; the bonus can be entered on the Player tab.
+## What it does
 
-XP awards are model judgments and can be corrected on the Player tab. Each award
-should correspond to an accomplishment in the latest message; events already counted
-should not be awarded again. The tracker review settings still govern proposed
-changes, including a review mode that holds all changes for approval.
-The in-chat tracker offers one undo step for the latest state change. Swiping,
-regenerating, or editing the latest assistant reply rebases that turn's tracker
-changes from its pre-reply state. Older messages no longer show reconstructed
-tracker boxes; the current box appears under the latest message.
+- **Makes dialogue easy to follow.** Each speaker gets a portrait and their own colour. Narration stays between speech blocks, so you can tell who's talking at a glance. Click a portrait to open that character's sheet.
+- **Keeps the adventure's state in chat.** A tracker under the latest reply shows world details, player and NPC stats, inventory, and conditions. The reader proposes changes as the story unfolds; you can review them or edit values yourself.
+- **Puts your player stats within reach.** A floating HUD keeps your portrait and resource meters on screen. Drag it where you like, choose bars or rings, and click the portrait to open your sheet. Its controls are under **Appearance → Floating HUD**.
 
-[![SillyTavern Compatible](https://img.shields.io/badge/SillyTavern-Extension-crimson?style=for-the-badge&logo=electron&logoColor=white)](https://github.com/SillyTavern/SillyTavern)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=for-the-badge)](https://github.com/BrutalKoala/SillyNPC/pulls)
+[![NPC dialogue with individual portraits and coloured speech blocks](img/chatexmp.png)](img/chatexmp.png)
 
----
-
-## Overview
-
-SillyNPC operates across two core modules:
-
-1. **Character Stylist** — Detects speaker names in chat messages and automatically injects character portraits, customizable text/border accent colors, and speech dividers.
-2. **Status Tracker & HUD** — Maintains an RPG-style state (attributes, resource pools, inventory, conditions, and anything else you define) for the player and NPCs via an asynchronous background reading pass. Renders data inside chat messages, on full character sheets, or via a floating on-screen HUD.
-
----
-
-## Key Features
-
-### Dialogue & Speaker Stylist
-* **Automatic Speaker Detection:** Parses speaker prefixes (e.g., `**Character**: Dialogue`) directly from LLM output.
-* **Per-Character Visuals:** Configurable avatars, custom accent colors, and speech block borders per character card.
-* **Auto-Coloring for Minor NPCs:** Generates consistent, deterministic color shades for unrecognized or minor speakers without dedicated cards.
-* **Faces for Strangers:** Speakers without a card draw from a pool of fallback portraits, tagged so a guard draws from the guards. A stranger keeps the same face for as long as they keep appearing.
-
-### RPG Status Tracking & Character Sheets
-* **Comprehensive State Model:** Tracks attributes, resource pools (HP/Energy by default), conditions, inventory, and any collection you define. In **Systems → Stats**, **Profile fields**, and **Collections**, define each asset once and assign any combination of the player, all NPCs, and named NPC templates (for example, clothing for the player and humans, or moves for Pokémon).
-* **Dedicated Extraction Pass:** Processes state updates in a background pass to keep tracker logic from polluting the primary prompt context.
-* **Review Controls:** Valid reader changes apply automatically by default. You can switch to review modes that hold risky changes or all changes for approval.
-* **Interactive Sheets:** Edit the selected persona's profile, stats, items, and memories on the **Player** tab. The HUD opens the same view. NPC sheets use the active System's profile fields.
-
-### Memories
-* **Character Memories:** Add, edit, and remove memories on character sheets without configuring a profile field. Older entries move to an archive; only active entries are included in the NPC's linked lorebook.
-* **Occasional NPC Memory Reader:** Under **Systems → Builder → Profile fields**, enable memory capture and optionally describe memorable events for your genre. A separate request uses the reader connection every eight assistant replies by default. Suggestions use the existing collection review controls and always wait for approval, independently of tracker review mode.
-* **Read Memories Now:** The brain icon beside the send controls reads the oldest unread segment on demand. Long chats may need several passes; the button reports remaining replies. This is currently separate from the History reader. Progress and pending suggestions survive reloads. Changed supporting replies invalidate automatic memories; manual entries and corrections are preserved.
-
-### Floating HUD
-* **Four Meter Styles:** Bars, segmented bars, rings around the portrait, or text only.
-* **Real-Time Updates:** Syncs automatically as the background tracker extracts new values from the narrative.
-
-### Character & World Management
-* **Roster Categories:** Organize characters into distinct worlds, factions, or scenes — and limit a chat to only the categories it needs.
-* **Chat-Owned NPCs:** New characters created in a chat belong to that chat, survive persona changes, and do not appear in unrelated chats. Legacy world cards remain available as reusable sources; **Use in this chat** copies one, while **New profile in this chat** starts a blank NPC with the same name. New chat NPCs only link existing lorebook entries when you explicitly choose Sync.
-* **Portable Character Files:** Export identity, profile, linked lore text, and NPC stats marked Carry between adventures. Other stats, conditions, and inventory start from the destination System's defaults on import. Portrait image files are omitted from character exports.
-* **Export World Characters:** Under **Systems → Manager**, export reusable world cards and NPCs from every chat assigned to a Saved System, including chats that are closed and Systems that are not active. The existing full System export is still available separately.
-* **Integrated Generation:** Generates lorebook entries and uses SillyTavern's Image Generation extension for portraits, with its configured provider.
-
-### Theming & Analytics
-* **Built-in Themes:** Seamless Native, Terminal, Cyberpunk, Monochrome, Modern Dark, Fantasy HUD, Tabletop Parchment, Analog Horror, and Rosewater. In **Appearance → Customize theme**, adjust colours, typography, shape, spacing, and effects with live updates. Each preset keeps its own changes; reset a field or the whole theme to restore its defaults.
-* **Token Tracking:** Monitors token consumption and average usage across tracker extractions, lore generation, and collection scans.
-* **Recommended for Better Visuals:** the [Moonlit Echoes](https://github.com/RivelleDays/SillyTavern-MoonlitEchoesTheme) theme.
-
----
-
-## Screenshots
-
-| In-Chat Formatting | Character Profile |
+| In-chat tracker | Player HUD |
 | :---: | :---: |
-| ![Chat Formatting](img/chatexmp.png) | ![Character Profile](img/charcterexmp.png) |
+| [![World details, player stats, inventory, and conditions beneath a story reply](img/screenshots/in-chat-tracker.png)](img/screenshots/in-chat-tracker.png) | [![Floating player portrait with two resource bars](img/floathudbar.png)](img/floathudbar.png) |
 
-| Radial Floating HUD | Linear Floating HUD |
-| :---: | :---: |
-| ![Radial HUD](img/floathudcircle.png) | ![Horizontal HUD](img/floathudbar.png) |
+Dialogue and HUD examples are from upstream; the tracker shows the current fork with example data. Click any image for a closer look.
 
-| Character Roster / Worlds | Appearance & Themes |
-| :---: | :---: |
-| ![Roster](img/charactersexmp.png) | ![Themes](img/styleexmp.png) |
+## What's changed from upstream?
 
-| Player Sheet | Token Costs |
-| :---: | :---: |
-| ![Player Sheet](img/playerexmp.png) | ![Stats](img/stats.png) |
+The original dialogue styling, portraits, tracker, and floating HUD are still here. This fork adds:
 
----
+- **XP and level-ups.** Players and opted-in NPC templates can level up, earn skill points, and unlock collection rewards such as abilities or perks.
+- **A cast for each chat.** NPCs belong to the adventure where you meet them. Reuse world characters without sharing their current state.
+- **Your own rules.** Build stats, profile fields, and collections for the player and NPC templates such as sailors, robots, and spirits.
+- **Systems from a premise.** Describe the game you want. Generate a draft, edit its rules, and save it for a new adventure.
+- **Character memories.** Keep memories on sheets. Reader suggestions always wait for your approval.
+- **Individual TTS voices.** Give NPCs their own voices, with a separate narrator. Optional automatic playback starts as dialogue lines finish streaming.
+- **Expressions and scene sprites.** Use expression packs or generate missing emotions from NPC portraits. Keep the whole present cast visible beside the chat.
+- **A refreshed menu and editable themes.** Shared Player/NPC sheets, searchable settings, and nine presets you can customise.
 
-## Installation
+## Build your game
 
-### Method 1: SillyTavern Extension Installer
-1. Open SillyTavern and click **Extensions** (stacked blocks icon) -> **Install Extension**.
-2. Paste this fork's repository URL: `https://github.com/i5031337/SillyNPC-levels`.
-3. Click **Save / Install** and refresh the page.
+| Choose how characters grow | Start with a story idea | Give your cast a voice |
+| :---: | :---: | :---: |
+| [![Player progression with manual skill point allocation](img/screenshots/progression.png)](img/screenshots/progression.png) | [![Generate a System from an airship adventure premise](img/screenshots/system-premise.png)](img/screenshots/system-premise.png) | [![Narrator and NPC speech settings](img/screenshots/speech.png)](img/screenshots/speech.png) |
 
-### Method 2: Manual Clone
-Clone the repository directly into your SillyTavern installation directory:
+Current UI, with example settings. Click an image for the full view.
+
+## Install
+
+**Use this fork instead of the original SillyNPC.** They share settings and events, so keep only one installed. If you're switching, export a backup first; existing SillyNPC data remains readable.
+
+1. Open SillyTavern's **Extensions → Install Extension**.
+2. Paste `https://github.com/i5031337/SillyNPC-levels`.
+3. Install and refresh the page.
+
+Or clone it into your installation:
 
 ```bash
 cd SillyTavern/public/scripts/extensions/third-party
-git clone https://github.com/i5031337/SillyNPC-levels.git SillyNPC
-```
-Reload SillyTavern.
-
----
-
-## Quick Start
-
-1. **Dialogue Formatting:**
-   * **Ask The Model To Format Dialogue** is on out of the box — it asks for the `**Name**:` speaker line that everything else reads.
-   * If your chat is not being decorated, check it is still enabled under **Extensions -> SillyNPC -> Manage SillyNPC -> Writing Rules**. A persona or preset asking for a different layout is the usual cause.
-2. **Assigning Avatars:**
-   * Click an unknown speaker's placeholder portrait to create its chat-owned card and start Fill immediately. Fill writes missing lore and profile details, then offers a portrait; completed stages remain in place if a later stage fails. The tracker maintains stats and collections. Open the card and press **Fill** to retry.
-   * Use the adjacent **Link as alias** button if the speaker is another name for an existing NPC. Clicking a reusable card's portrait offers a new profile for this chat or its editor; clicking a chat NPC's portrait opens its editor.
-   * Automatic Fill draws a portrait by default when the NPC has none. Change **Draw Portrait Automatically** under **Generation → Image Generation**, or add a portrait in the editor. Your selected image provider may charge separately.
-   * Generated portraits use SillyTavern's Image Generation extension and its configured provider. Set **Generation → Image Generation → Image Prompt Prefix** for composition instructions (default: `Solo, profile picture`); clear it to omit them. The prefix applies to automatic portraits and is included in the editable manual prompt.
-3. **Enabling Tracker & HUD:**
-   * The tracker is **on by default** for new settings. If it is not reading messages, check **Enable Status Tracker** under the **Tracker** tab; previously saved settings may have it off.
-   * Under **Tracker → Customize display**, toggle **Show World Stats**, **Show Player Stats**, and **Show NPC Stats** independently. Hiding all three removes the tracker bar while background tracking continues. Turn off **Show Raw Tracker Output** to hide the reader’s progress and output dropdown. The HUD has its own visibility setting.
-   * To run the reader on demand, select **Tracker → How Stats Are Read → Method → Manual — run from the send bar**. Click the book icon (**Read latest reply**) beside the send controls after an assistant reply. It reads that reply with the configured lead-up, using the usual reader connection and review settings. Reading the same reply again replaces its previous reading without awarding XP twice.
-   * Enable **Tracker → How Stats Are Read → Generate Profiles For New NPCs** to create a chat-owned card and generate its configured profile fields when the separate reader identifies an NPC without a card. This is off by default and uses the lore generation connection and context settings, costing one extra request per new NPC. Existing cards and manual edits are preserved; unsupported details may stay blank. Failed attempts can be retried with **Fill** on the character sheet. The shared **Draw Portrait Automatically** setting also requests a missing portrait after these profiles are saved.
-   * The HUD appears once the tracker is running; choose Plate, Underlines, Pip Rows, or Split Ring under the **HUD** tab.
-
-### NPC stats and character transfers
-
-In **Systems → Builder → Stats**, **Show name** controls whether the tracker prefixes a stat’s value with its name. **Locked** prevents story reader changes after initialization. The reader may seed blank locked NPC fields once; direct edits and configured level-up increases remain available. A blank NPC Level may be initialized once, even when Locked; afterward progression manages it automatically. Keep XP unlocked so the reader can report earned XP.
-
-In the shared Stats editor, **NPC carryover** independently controls whether a stat travels with the character. Unchecked stats start from the destination System's defaults on import or when instantiated from a reusable world card. Existing Advancement fields migrate to Locked and retain NPC carryover; configured XP stays reader-writable. Stored character values are preserved.
-
-The progression controls select XP and Level fields, a growth policy, and eligible numeric stats; NPC progression is configured per template. Locked stats can be selected for growth. Numeric defaults such as `6/10` define resource pools whose current value and capacity grow together, preserving depletion. A new NPC may initialize its own pool capacity: `5/5` stays `5/5`, and a bare initial `8` becomes `8/8`. Ordinary reader updates preserve that established capacity. Plain defaults such as `3` define ratings with a fixed maximum. Pool capacity limits are optional and independent of locking or carryover.
-
-Under **Systems → Builder → Profile fields**, add, rename, reorder, retire, or restore profile fields. Use **Display as text section** for paragraphs, or leave it unchecked for compact badges. All profile value editors support multiple lines. Select **Include in image prompt** for any field that should describe portraits. Age and Appearance are selected by default; Appearance is optional, and custom visual fields work too. A field's ID stays stable when its label changes. Fill and manual lore generation can seed empty fields; manual edits and field regeneration can revise them. The tracker leaves profile and memory fields alone. Retired fields keep saved values. The memory limit is configurable per System and defaults to 50 active entries per character.
-
-In **Systems → Manager → Generate from premise**, describe a game and optional preferences. The generator uses the reader connection by default, with an explicit connection override. It plans the rules, then fills profiles, stats, NPC templates, collections, progression, and rewards in sequential requests suited to local models. It validates each section and attempts one repair before offering a retry that preserves completed work. Regenerate uses the current inputs and starts over.
-
-Review the summary and use **Edit draft** to adjust rules through the normal Builder controls. **Save as new System** requires a valid draft and a distinct name. Generation, editing, and saving do not activate the System or reset an adventure; select it deliberately when starting a new adventure. Cancellation stops subsequent steps and ignores late responses; a host API that cannot cancel its current request may finish that request in the background. Usage appears under **System Generation**. Local-model quality still needs evaluation on the chosen model and quantization.
-
-A chat chooses its System before play starts and keeps it after the first player message. Systems define reusable rules and fields; the current cast and player state belong to the chat. The selected persona's identity, profile, and portrait carry across chats, while stats, items, and memories are kept per chat and persona.
-
-**Export selected** on the Characters page previews which fields travel. Character files use version 2; older character files still import, with their mixed stat values classified by the destination System. Linked lore travels as text and can be recreated in the destination lorebook. Portrait paths are local to one installation, so exported files contain no portraits. **Export World Characters** retains each source chat and NPC ID in the file, allowing same-name NPCs from different chats to remain separate on import.
-
-Player and NPC Cast pages share the same **Profile** and **Edit** layout. The Profile page groups profile description and linked lore in **Description & Lore**. They remain in their respective card and lorebook fields so existing writing is preserved.
-
----
-
-## Menu Layout
-
-Advanced settings and fine-tuning parameters remain hidden until **Show Every Setting** is enabled in the **Advanced** tab. Every page has a search box above it, so a setting can be found without knowing which tab it is on.
-
-| Tab | Contents |
-| :--- | :--- |
-| **Characters** | Character cards, profiles, portraits, and roster categories |
-| **Player** | The selected persona's profile, portrait, stats, items, memories, and level; also opens from the HUD |
-| **Appearance** | Themes, speech dividers, spacing, avatar shapes, and fallback faces |
-| **Writing Rules** | Dialogue format, narrator rules, ban list, and how replies are parsed |
-| **Tracker** | Extraction passes, review settings, and history scans |
-| **HUD** | Floating on-screen widget configuration and display modes |
-| **Systems** | Reusable rules, player and NPC profile fields, update policies, and stat definitions |
-| **Generation** | Automated lorebook creation and portrait generation settings |
-| **Stats** | Token analytics and cost tracking for background LLM passes |
-| **Advanced** | Master switches, console logging, and UI sizing |
-
----
-
-## Development
-
-`manifest.json` loads `index.js` and `style.css`. The JavaScript entry point imports
-the feature modules in `src/`; the CSS entry point imports the ordered files in
-`styles/`. There is no build step — clone the extension into
-`public/scripts/extensions/third-party/` and reload.
-
-Verbose logging is off by default. Turn it on in **Advanced -> Log Requests To The
-Console**, or from DevTools:
-
-```js
-window.SILLYNPC_DEBUG = true;
+git clone https://github.com/i5031337/SillyNPC-levels.git SillyNPC-XP
 ```
 
-### Source layout
+## Your first adventure
 
-| Path | Responsibility |
-| --- | --- |
-| `index.js`, `src/entry/` | Extension startup and SillyTavern event handlers |
-| `src/core/`, `src/prompts/` | Settings, constants, helpers, and prompt rules |
-| `src/chat/`, `src/characters/`, `src/lore/`, `src/story/` | Message decoration, character ownership, lore, and story history |
-| `src/tracker/` | Current tracker state, extraction, review, memories, and XP |
-| `src/ui/` | Settings, character sheets, HUD, and other views |
-| `src/api/` | Lore and portrait generation and storage |
-| `style.css`, `styles/*.css` | Ordered theme and interface styling |
-| `tests/*.mjs` | Focused behavior tests |
+Open **Extensions → SillyNPC → Manage SillyNPC**.
 
-See the [file map](docs/FILE_MAP.md) for every source file and its responsibility.
+1. **Pick your rules.** In **System → Manager**, choose a System or **Generate from premise**. Review, save, and select generated rules before your first player message.
+2. **Start chatting.** **Dialogue → Ask The Model To Format Dialogue** requests lines like `**Mira**: "All aboard!"` so portraits and colours follow each speaker.
+3. **Meet the cast.** Click an unknown speaker's portrait to create a profile and **Fill** missing details, lore, and a portrait. Use **Link as alias** for another name for an existing NPC.
+4. **Check the reader.** Under **Tracker**, choose automatic, manual, or inline reading and set **Ask Before Applying**. The tracker starts enabled for new settings; manual mode adds a book button beside Send.
+5. **Make it yours.** Edit sheets under **Cast**, choose a theme under **Appearance**, or search for a setting. **Extension → Detailed Settings** reveals extra controls.
 
-Run the focused tests with `node --test tests/*.mjs`. Tests are grouped by feature; shared generation data lives in `tests/fixtures/`. For live UI checks, use `python3 tests/ui-smoke.py` plus the relevant feature script (navigation, collections, or progression).
+## How leveling works
 
----
+At level 1 with `90/100` XP, earning `+20` takes you to level 2 with `10/100` left over. Larger awards can cross several levels.
 
-## License
+Configure points and manual or random allocation under **System → Builder → Player progression**, or per NPC template. Each point adds 1 to an eligible stat. Pools grow their current value and capacity together; ratings respect their caps. The extension handles the maths.
 
-[MIT](LICENSE)
+Collections can unlock scheduled or reader-chosen rewards. XP awards are model judgments you can correct on the sheet. One-step undo and rereading/swipe handling help keep changes tied to the latest reply.
 
-### NPC templates
+## Voices and expressions
 
-A System can contain multiple reusable NPC templates, such as Human, Elf, and Pokémon. In **Systems → NPC Templates**, name each template and describe which characters belong to it. Define stats and profile fields once in **Stats** and **Profile fields**, then use **Applies to** to assign them to the player, all NPCs, or selected templates. Each NPC uses one template and keeps its own values.
+**Speech** uses SillyTavern's built-in **OpenAI Compatible** TTS endpoint and API key. Enter supported model and voice IDs, then choose each NPC's **Dialogue voice** in their Edit view. Use Play on a reply or enable automatic playback. Narration and dialogue can use different models. Designed voices need a service supporting the SillyNPC voice-design protocol.
 
-The background reader assigns an unassigned NPC when the story identifies its type. Uncertain assignments appear in review with a template dropdown, even when ordinary change review is disabled. Correct an assignment using **NPC template** on the character sheet. Assignments survive leaving and returning to the scene. New Systems have no fallback template; existing Systems retain their previous NPC schema as an editable **NPC** template so saved chats remain readable.
+Portraits use SillyTavern's **Image Generation** extension. Toggle automatic portraits under **Images**.
 
-### On-demand NPC expressions
+Generated expressions need **Image Edit** installed in `st-image-edit`, ComfyUI, and an API editing workflow with `%reference_image%` and `%prompt%` inputs. Select it under **Images → Expression Editing Workflow**, and choose Local, Extras, or WebLLM in SillyTavern's Expressions settings.
 
-Install and enable **Image Edit** in the sibling `st-image-edit` folder and configure
-SillyTavern's ComfyUI URL and an API-format editing workflow with `%reference_image%`
-and `%prompt%` inputs. Select it in **Images → Expression Editing Workflow**;
-this is independent of ST’s portrait workflow.
+Generate emotions in **NPC Edit → Expressions**, or turn on automatic generation under **Images**. Existing sprites are reused. **Show Present NPC Sprites** keeps the cast visible even with speech off. Extra reader passes and image generation may add provider costs.
 
-Enable **Images → Generate NPC Expressions Automatically**, directly below
-**Draw Portrait Automatically**, to classify dialogue and generate missing sprites
-for all NPCs on new completed replies. Select Local, Extras, or WebLLM in ST's
-Expressions settings. Local and Extras classify without an LLM; WebLLM uses the
-existing emotion classification call. The switch starts off and replaces the old
-per-NPC automatic controls. Switching it off stops automatic classification and
-editing; manual generation stays available.
+## Moving between adventures
 
-In **NPC Edit → Expressions**, choose one of the 28 emotions and click
-**Generate** to create, retry, or replace the selected sprite. The NPC's current
-portrait is selected automatically and its sprites go into a dedicated pack.
-Automatic generation reuses existing emotions. A changed portrait selects a fresh pack, preserving
-the previous one on disk.
+Export characters or Systems to reuse them. Characters carry profiles, lore text, and stats marked **NPC carryover**; other adventure state starts fresh. Transfer portrait and sprite files separately. **Extension → Export everything** makes a full extension backup.
 
-**Prompts and workflow** contains three emotion prompt variants, a negative prompt,
-and an optional workflow override. Each generation chooses one variant at random.
-Only custom prompt overrides are saved with the NPC. A blank
-workflow override uses the shared **Expression Editing Workflow**. These prompts go directly to Image Edit
-without an LLM rewriting them. Adjust the variants to suit your workflow;
-tag-based models may need explicit appearance and outfit tags. Background removal
-and preservation of identity depend on the ComfyUI workflow. **Sprite pack** contains
-folder, fallback, and refresh controls for existing packs.
+## Contributing
 
-Dialogue portrait selections are saved in each reply's extra data, including its
-native swipe extra. Reloads restore the exact sprite and fallback without rerunning
-classification or generation. Edits and changed dialogue speakers reject stale
-selections; missing image files fall back to the profile portrait. This applies to
-selections recorded after installing this version; older unrecorded lines retain
-their profile portraits. Only small sprite references are stored, not image bytes.
+Issues and PRs are welcome [on this fork](https://github.com/i5031337/SillyNPC-levels). There's no build step. See the [file map](docs/FILE_MAP.md) for the source layout; run focused tests with `node --test tests/*.mjs`. UI checks also need a running SillyTavern instance.
 
-Opening history does not generate images. Missing sprites use the fallback or NPC
-portrait while edits run, and speech does not wait for classification or generation. A late image
-never changes the currently playing speech sprite. Failed edits require an explicit
-retry in NPC Edit. Automatic failures show a warning with the NPC, emotion, and
-error; changing the workflow or prompt allows a new attempt. Prompts and sprite bindings save with the NPC and travel with
-exports; image and sprite files must be transferred separately.
-
-Cancelling returns control immediately. An already running image edit finishes in
-the background, and its generated source is discarded without uploading a sprite.
-After successful generation, the sprite is kept and the temporary Image Edit
-source is deleted. Classification requests time out after 15 seconds. If native
-WebLLM is still busy after cancellation, subsequent lines use the fallback until
-its request finishes.
-
-### NPC speech models
-
-**Speech** accepts any model and voice IDs supported by the built-in OpenAI
-Compatible endpoint. Narration and NPC dialogue may use different models and
-voice lists; blank NPC settings inherit the narrator model/list. Choose each NPC's
-voice in **NPC Edit → Dialogue voice**. Default or unassigned dialogue uses the
-narrator model and voice, and previews follow the same routing as playback.
-
-Choose **Listed voices** for standard OpenAI-compatible speech. **Designed voices**
-is an explicit option for a local service implementing the SillyNPC voice-design
-protocol, independent of its model name. Existing Qwen configurations retain
-their designed voice setting. Both models share the host endpoint and API key;
-the endpoint must accept MP3 speech requests with `model`, `input`, `voice`, and
-`speed`. Other cloning or instruction APIs require a dedicated adapter.
-
-Enable **Images → Show Present NPC Sprites** to keep every NPC in the tracker's
-current scene visible beside the chat, independently of TTS and automatic image
-generation. Each NPC shows their latest available expression, saved with the chat;
-existing packs without a saved selection use their newest sprite, and NPCs without
-sprites use their profile portrait. NPCs disappear
-when they leave the scene. This display replaces the single TTS speaker display
-while enabled, and does not start image or classification requests.
-
-Changed chats, NPC bindings, references, or source messages discard stale automatic
-results. Cancel discards the result without interrupting unrelated ComfyUI work;
-the backend request may finish and leave an unused image in Image Edit's folder.
+Built on [SillyNPC by BrutalKoala](https://github.com/BrutalKoala/SillyNPC). [MIT license](LICENSE).
