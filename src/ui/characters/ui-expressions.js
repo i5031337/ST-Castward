@@ -23,6 +23,7 @@ export function buildExpressionsSection(card, { save = () => {
     const show = () => {
         const path = selectSprite(sprites, selected, config.fallback, card.id) || card.imageUrl;
         preview.hidden = !path; if (path) preview.src = path;
+        generation.refreshAvailability();
     };
     preview.onerror = () => { preview.hidden = true; status.textContent = 'Sprite unavailable; using the NPC portrait.'; };
     const load = async () => {
@@ -53,14 +54,16 @@ export function buildExpressionsSection(card, { save = () => {
     const refresh = document.createElement('button'); refresh.type = 'button'; refresh.className = 'menu_button';
     refresh.textContent = 'Refresh pack'; refresh.dataset.expressionAction = 'refresh'; refresh.addEventListener('click', load);
     pack.append(refresh, status);
-    root.append(buildExpressionGeneration(card, { save,
+    const generation = buildExpressionGeneration(card, { save,
+        hasExpression: label => sprites.some(sprite => sprite.label === label && sprite.path),
         onSelect: label => { selected = label; show(); },
         onPack: (loaded, label) => {
             request++; sprites = loaded; selected = label; show(); status.textContent = `${loaded.length} sprites available.`;
             rememberNpcSprite(card, loaded, label, null, { save });
         },
         onReference: () => { request++; folder.value = config.spriteFolder; sprites = []; show(); },
-    }), pack);
+    });
+    root.append(generation.root, pack);
     show();
     if (config.spriteFolder) void load();
     return root;

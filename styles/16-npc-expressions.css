@@ -15,6 +15,7 @@
 .sillynpc-expression-editor .text_pole, .sillynpc-voice-editor .text_pole { width: 100%; min-width: 0; }
 .sillynpc-expression-editor p, .sillynpc-voice-editor p { font-size: 0.9em; opacity: 0.8; }
 .sillynpc-expression-actions { display: flex; flex-wrap: wrap; gap: 6px; }
+.sillynpc-expression-availability[data-missing="true"] { font-weight: 600; }
 .sillynpc-expression-editor details { margin-top: 8px; }
 .sillynpc-voice-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
 #sillynpc-tts-settings { margin-top: 12px; }

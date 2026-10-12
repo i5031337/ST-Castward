@@ -3,7 +3,7 @@ import { expressionGenerator, expressionJob, expressionOwner } from '../../expre
 import { getSettings } from '../../core/settings.js';
 import { findCharacterRecord } from '../../characters/character-repository.js';
 
-export function buildExpressionGeneration(card, { save, onPack, onReference, onSelect }) {
+export function buildExpressionGeneration(card, { save, onPack, onReference, onSelect, hasExpression }) {
     const config = card.presentation.expressions, generation = config.generation;
     const root = document.createElement('div'); root.className = 'sillynpc-expression-generation';
     const field = (parent, title, input, key) => {
@@ -16,6 +16,13 @@ export function buildExpressionGeneration(card, { save, onPack, onReference, onS
         const option = document.createElement('option'); option.value = label; option.textContent = label; emotion.append(option);
     }
     emotion.value = 'neutral';
+    const availability = document.createElement('p'); availability.className = 'sillynpc-expression-availability';
+    availability.setAttribute('aria-live', 'polite'); root.append(availability);
+    const refreshAvailability = () => {
+        const exists = hasExpression(emotion.value);
+        availability.dataset.missing = String(!exists);
+        availability.textContent = exists ? `${emotion.value} expression available.` : `${emotion.value} expression missing.`;
+    };
     const actions = document.createElement('div'); actions.className = 'sillynpc-expression-actions'; root.append(actions);
     const status = document.createElement('p'); status.setAttribute('role', 'status'); root.append(status);
     const advanced = document.createElement('details');
@@ -32,6 +39,7 @@ export function buildExpressionGeneration(card, { save, onPack, onReference, onS
     });
     emotion.addEventListener('change', () => {
         prompts.forEach((prompt, index) => { prompt.value = generation.prompts[emotion.value][index]; });
+        status.textContent = '';
         onSelect(emotion.value);
     });
     const textField = (title, key, multiline = false) => {
@@ -52,7 +60,7 @@ export function buildExpressionGeneration(card, { save, onPack, onReference, onS
         element.addEventListener('click', handler); actions.append(element); return element;
     };
     let controller;
-    const run = async replace => {
+    const run = async () => {
         if (!card.imageUrl) { status.textContent = 'Add an NPC portrait first.'; return; }
         if (prepareExpressionReference(card)) { onReference(); save(); }
         const snapshot = JSON.stringify(config), image = card.imageUrl, owner = expressionOwner();
@@ -66,17 +74,17 @@ export function buildExpressionGeneration(card, { save, onPack, onReference, onS
             && expressionWorkflow(card, getSettings()) === workflow
             && getSettings().npcExpressionIpAdapterMode === ipAdapterMode
             && (!ipAdapterMode || portraitInputs() === imagePromptInputs);
-        generate.disabled = regenerate.disabled = true; cancel.hidden = false;
+        const label = emotion.value;
+        generate.disabled = emotion.disabled = true; cancel.hidden = false;
         status.textContent = 'Generating…';
         try {
-            const job = await expressionJob(card, emotion.value, current, controller.signal);
-            const sprites = await expressionGenerator.generate(job, { retry: true, replace });
-            if (current()) { onPack(sprites, emotion.value); status.textContent = 'Expression saved.'; }
+            const job = await expressionJob(card, label, current, controller.signal);
+            const sprites = await expressionGenerator.generate(job, { retry: true, replace: true });
+            if (current()) { onPack(sprites, label); status.textContent = 'Expression saved.'; }
         } catch (error) { status.textContent = error.name === 'AbortError' ? 'Cancelled.' : error.message; }
-        finally { generate.disabled = regenerate.disabled = false; cancel.hidden = true; controller = null; }
+        finally { generate.disabled = emotion.disabled = false; cancel.hidden = true; controller = null; }
     };
-    const generate = button('Generate / retry', 'generate', () => run(false));
-    const regenerate = button('Regenerate', 'regenerate', () => run(true));
+    const generate = button('Generate', 'generate', run);
     const cancel = button('Cancel', 'cancel', () => controller?.abort()); cancel.hidden = true;
-    return root;
+    return { root, refreshAvailability };
 }

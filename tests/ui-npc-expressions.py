@@ -100,6 +100,13 @@ with browser_session() as browser:
           result.noNpcAutomaticToggles=!editor.querySelector('input[type="checkbox"]');
           result.conciseEditor=[...editor.querySelectorAll('details')].every(d=>!d.open);
           const generationEditor=editor.querySelector('.sillynpc-expression-generation');
+          const availability=generationEditor.querySelector('.sillynpc-expression-availability');
+          result.existingExpressionIndicator=availability.dataset.missing==='false'&&availability.textContent.includes('neutral');
+          const selection=generationEditor.querySelector('select');
+          selection.value='fear';selection.dispatchEvent(new Event('change'));
+          result.missingExpressionIndicator=availability.dataset.missing==='true'&&availability.textContent.includes('fear')&&!editor.querySelector('img').hidden;
+          selection.value='joy';selection.dispatchEvent(new Event('change'));
+          result.selectionUpdatesIndicator=availability.dataset.missing==='false'&&availability.textContent.includes('joy');
           const config=cards[0].presentation.expressions;
           config.generation.reference='';folder.value='';folder.dispatchEvent(new Event('change'));
           const emotion=generationEditor.querySelector('select');
@@ -157,16 +164,19 @@ with browser_session() as browser:
             return originalFetch(url,options);
           };
           const generate=generationEditor.querySelector('[data-expression-action=generate]');
+          result.singleGenerateButton=generate.textContent==='Generate'&&!generationEditor.querySelector('[data-expression-action=regenerate]');
+          result.clearedPackIndicator=availability.dataset.missing==='true';
           generate.click();
           for(let i=0;i<100&&generate.disabled;i++) await new Promise(r=>setTimeout(r,25));
           result.generatedFromReference=edits===1&&uploads===1&&uploadedFolder===config.spriteFolder
             &&config.generation.prompts.joy.includes(sentPrompt)
             &&editor.querySelector('select').value==='joy';
           result.sharedEditingWorkflow=requestedWorkflow==='FixtureEdit.json'&&context.extensionSettings.sd.comfy_workflow==='PortraitOnly.json';
+          result.generatedExpressionIndicator=availability.dataset.missing==='false'&&availability.textContent.includes('joy');
           generate.click();
           for(let i=0;i<100&&generate.disabled;i++) await new Promise(r=>setTimeout(r,25));
-          result.reusedGeneratedSprite=edits===1&&uploads===1;
-          result.manualWorksWithAutomaticOff=edits===1&&uploads===1&&!settings.autoGenerateNpcExpressions;
+          result.generateReplacesExistingSprite=edits===2&&uploads===2;
+          result.manualWorksWithAutomaticOff=edits===2&&uploads===2&&!settings.autoGenerateNpcExpressions;
           config.generation.reference='';config.spriteFolder='';
           let disabledCalls=0;
           runtime.resetNpcExpressions();
@@ -184,12 +194,12 @@ with browser_session() as browser:
           result.globalOnPreparesReference=bindingSaves===1&&config.generation.reference===cards[0].imageUrl
             &&config.spriteFolder.startsWith('SillyNPC/');
           for(let i=0;i<100&&!releaseEdit;i++) await new Promise(r=>setTimeout(r,25));
-          result.editDoesNotBlockClassification=!!releaseEdit&&uploads===1;
+          result.editDoesNotBlockClassification=!!releaseEdit&&uploads===2;
           runtime.showNpcSpeechExpression(readSpeechUnits(fixture)[0]);
           const speechPortrait=document.querySelector('#sillynpc-speech-sprite img').src;
           releaseEdit();
           for(let i=0;i<100&&fixture.querySelector('.sillynpc-chat-avatar').dataset.sillynpcExpression!=='joy';i++) await new Promise(r=>setTimeout(r,25));
-          result.emptyPackGeneration=classificationLabels?.length===28&&edits===2&&uploads===2;
+          result.emptyPackGeneration=classificationLabels?.length===28&&edits===3&&uploads===3;
           result.generatedApplied=fixture.querySelector('.sillynpc-chat-avatar').dataset.sillynpcExpression==='joy';
           result.lateEditKeepsSpeechPortrait=document.querySelector('#sillynpc-speech-sprite img').src===speechPortrait;
           runtime.resetNpcExpressions();runtime.renderNpcExpressions(fixture);
@@ -199,14 +209,14 @@ with browser_session() as browser:
           const failedAdapters={rememberSprite,savePortrait,loadPack:async()=>[],saveBinding:()=>{},classify:async()=> 'sadness'};
           await runtime.completeNpcExpressions(chatLength,failedAdapters);
           for(let i=0;i<100&&!warnings.length;i++) await new Promise(r=>setTimeout(r,25));
-          result.visibleWorkflowFailure=warnings.length===1&&warnings[0][0].includes('Expression Editing Workflow')&&edits===2;
+          result.visibleWorkflowFailure=warnings.length===1&&warnings[0][0].includes('Expression Editing Workflow')&&edits===3;
           runtime.resetNpcExpressions();await runtime.completeNpcExpressions(chatLength,failedAdapters);
           await new Promise(r=>setTimeout(r,50));
-          result.noRepeatedFailureWarnings=warnings.length===1&&edits===2;
+          result.noRepeatedFailureWarnings=warnings.length===1&&edits===3;
           settings.npcExpressionWorkflow='FixtureEdit.json';
           await runtime.completeNpcExpressions(chatLength,failedAdapters);
-          for(let i=0;i<100&&uploads<3;i++) await new Promise(r=>setTimeout(r,25));
-          result.workflowCorrectionRecovers=edits===3&&uploads===3;
+          for(let i=0;i<100&&uploads<4;i++) await new Promise(r=>setTimeout(r,25));
+          result.workflowCorrectionRecovers=edits===4&&uploads===4;
           for(let i=0;i<100&&context.chatMetadata.sillynpc_expression_sprites?.[cards[0].id]?.label!=='sadness';i++) await new Promise(r=>setTimeout(r,25));
           cards[1].imageUrl='/img/ai4.png';
           context.chatMetadata.sillynpc_status_state={player:{name:'Scene Player'},characters:cards.map(c=>({name:c.name}))};
@@ -233,21 +243,20 @@ with browser_session() as browser:
           await scene.refreshSceneSprites({loadPack:async()=>sprites});
           settings.showPresentNpcSprites=false;await scene.refreshSceneSprites();
           result.sceneToggleOff=!document.querySelector('#sillynpc-scene-sprites');
-          result.sceneDisplayDoesNotGenerate=edits===3&&uploads===3;
+          result.sceneDisplayDoesNotGenerate=edits===4&&uploads===4;
           result.nativeHolderUntouched=!document.querySelector('#expression-holder [data-sillynpc-expression]');
           settings.npcExpressionIpAdapterMode=true;
           const portraitPrompt=await buildCharacterImagePrompt(cards[0]);
-          const regenerate=generationEditor.querySelector('[data-expression-action="regenerate"]');
-          regenerate.click();
-          for(let i=0;i<100&&(uploads<4||regenerate.disabled);i++) await new Promise(r=>setTimeout(r,25));
-          result.ipAdapterGeneration=uploads===4&&cards[0].presentation.expressions.generation.prompts.joy
+          generate.click();
+          for(let i=0;i<100&&(uploads<5||generate.disabled);i++) await new Promise(r=>setTimeout(r,25));
+          result.ipAdapterGeneration=uploads===5&&cards[0].presentation.expressions.generation.prompts.joy
             .some(variant=>sentPrompt===portraitPrompt+String.fromCharCode(10)+variant);
-          pauseEdit=true;releaseEdit=undefined;regenerate.click();
+          pauseEdit=true;releaseEdit=undefined;generate.click();
           for(let i=0;i<100&&!releaseEdit;i++) await new Promise(r=>setTimeout(r,25));
           if(!releaseEdit)throw new Error('IP-Adapter cancellation fixture did not start.');
           settings.npcExpressionIpAdapterMode=false;releaseEdit();
-          for(let i=0;i<100&&regenerate.disabled;i++) await new Promise(r=>setTimeout(r,25));
-          result.modeChangeCancelsPendingEdit=uploads===4&&generationEditor.querySelector('[role="status"]').textContent==='Cancelled.';
+          for(let i=0;i<100&&generate.disabled;i++) await new Promise(r=>setTimeout(r,25));
+          result.modeChangeCancelsPendingEdit=uploads===5&&generationEditor.querySelector('[role="status"]').textContent==='Cancelled.';
         } catch(error) {result.error=String(error.stack||error);}
         finally {
           runtime?.resetNpcExpressions();scene?.clearSceneSprites(); fixture?.remove(); editor?.remove();
