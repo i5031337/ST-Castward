@@ -33,7 +33,7 @@ class Browser:
 
 
 @contextmanager
-def browser_session():
+def browser_session(*, allow_audio=False):
     with socket.socket() as listener:
         listener.bind(('127.0.0.1', 0))
         port = listener.getsockname()[1]
@@ -50,7 +50,10 @@ def browser_session():
                     raise
                 time.sleep(0.25)
         browser.session = browser.request('POST', '/session', {'capabilities': {'alwaysMatch': {
-            'browserName': 'firefox', 'moz:firefoxOptions': {'args': ['-headless']},
+            'browserName': 'firefox', 'moz:firefoxOptions': {'args': ['-headless'], 'prefs': {
+                'media.autoplay.default': 0 if allow_audio else 1,
+                'media.autoplay.blocking_policy': 0 if allow_audio else 2,
+            }},
         }}})['sessionId']
         browser.request('POST', f'/session/{browser.session}/url', {'url': 'http://127.0.0.1:8000/'})
         time.sleep(5)

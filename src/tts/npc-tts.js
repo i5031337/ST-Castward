@@ -7,7 +7,7 @@ import { MESSAGE_RENDERED_EVENT } from '../story/beats.js';
 import { readSpeechUnits } from './speech-units.js';
 import { createSpeechQueue } from './speech-queue.js';
 import { hostSpeechEndpoint, synthesizeSpeech, playSpeechAudio } from './openai-speech.js';
-import { normalizeTtsSettings, resolveUnitSpeech, ttsConfigError, QWEN_MODEL } from './tts-settings.js';
+import { normalizeTtsSettings, resolveUnitSpeech, ttsConfigError, resolvePreviewSpeech, usesDesignedNpcVoices } from './tts-settings.js';
 import { builtInAutoTtsEnabled } from '../ui/tts/ui-tts-settings.js';
 import { wireSpeechEvents } from './speech-events.js';
 import { completeNpcExpressions, showNpcSpeechExpression } from '../expressions/npc-expressions.js';
@@ -39,6 +39,7 @@ const queue = createSpeechQueue({
     onState: (state, _job, detail) => {
         updateButtons();
         if (state === 'playing') showNpcSpeechExpression(detail);
+        if (state === 'prepare-error') globalThis.toastr?.warning(detail?.message || String(detail), 'SillyNPC expressions');
         if (state === 'error') globalThis.toastr?.error(detail?.message || String(detail), 'SillyNPC speech');
     },
 });
@@ -58,13 +59,7 @@ export async function previewNpcVoice(voice, card) {
     if (issue) throw new Error(issue);
     const unit = { kind: 'dialogue', text: 'Hello. It is good to meet you.' };
     const designCard = cardWithVoiceCue(card, card?.name);
-    if (card && config.npcModel === QWEN_MODEL && !designCard?.presentation?.voiceDesign?.description)
-        throw new Error('Describe this NPC voice first.');
-    const choice = card && config.npcModel === QWEN_MODEL
-        ? resolveUnitSpeech(unit, config, designCard) : { voice, model: config.model };
-    if (config.npcModel !== QWEN_MODEL && !config.voices.includes(voice))
-        throw new Error('Voice is not in the SillyNPC voice list.');
-    if (!choice.voice) throw new Error('Describe this NPC voice first.');
+    const choice = resolvePreviewSpeech(voice, config, designCard, unit.text);
     const controller = new AbortController(); previewController = controller;
     try {
         const blob = await synthesizeSpeech({ ...unit, ...choice }, config, controller.signal);
@@ -131,7 +126,7 @@ export function initNpcTts() {
         defer: requestAnimationFrame,
         complete: id => {
             const settings = getSettings();
-            if (settings.enabled && settings.tts?.enabled && settings.tts.npcModel === QWEN_MODEL)
+            if (settings.enabled && settings.tts?.enabled && usesDesignedNpcVoices(settings.tts))
                 captureVoiceCues(id);
             return playNpcMessage(id, { automatic: true });
         } });

@@ -240,15 +240,16 @@ per-NPC automatic controls. Switching it off stops automatic classification and
 editing; manual generation stays available.
 
 In **NPC Edit → Expressions**, choose one of the 28 emotions and click
-**Generate / retry**. The NPC's current portrait is selected automatically and its
-sprites go into a dedicated pack. Existing emotions are reused; **Regenerate**
-replaces the selected sprite. A changed portrait selects a fresh pack, preserving
+**Generate** to create, retry, or replace the selected sprite. The NPC's current
+portrait is selected automatically and its sprites go into a dedicated pack.
+Automatic generation reuses existing emotions. A changed portrait selects a fresh pack, preserving
 the previous one on disk.
 
-**Prompts and workflow** contains the saved emotion prompt, shared reference
-instructions, negative prompt, and optional workflow override. A blank
-override uses the shared **Expression Editing Workflow**. These prompts go directly to Image Edit
-without an LLM rewriting them. Adjust the shared instructions to suit your workflow;
+**Prompts and workflow** contains three emotion prompt variants, a negative prompt,
+and an optional workflow override. Each generation chooses one variant at random.
+Only custom prompt overrides are saved with the NPC. A blank
+workflow override uses the shared **Expression Editing Workflow**. These prompts go directly to Image Edit
+without an LLM rewriting them. Adjust the variants to suit your workflow;
 tag-based models may need explicit appearance and outfit tags. Background removal
 and preservation of identity depend on the ComfyUI workflow. **Sprite pack** contains
 folder, fallback, and refresh controls for existing packs.
@@ -261,11 +262,33 @@ selections recorded after installing this version; older unrecorded lines retain
 their profile portraits. Only small sprite references are stored, not image bytes.
 
 Opening history does not generate images. Missing sprites use the fallback or NPC
-portrait while edits run, and speech does not wait for generation. A late image
+portrait while edits run, and speech does not wait for classification or generation. A late image
 never changes the currently playing speech sprite. Failed edits require an explicit
 retry in NPC Edit. Automatic failures show a warning with the NPC, emotion, and
 error; changing the workflow or prompt allows a new attempt. Prompts and sprite bindings save with the NPC and travel with
 exports; image and sprite files must be transferred separately.
+
+Cancelling returns control immediately. An already running image edit finishes in
+the background, and its generated source is discarded without uploading a sprite.
+After successful generation, the sprite is kept and the temporary Image Edit
+source is deleted. Classification requests time out after 15 seconds. If native
+WebLLM is still busy after cancellation, subsequent lines use the fallback until
+its request finishes.
+
+### NPC speech models
+
+**Speech** accepts any model and voice IDs supported by the built-in OpenAI
+Compatible endpoint. Narration and NPC dialogue may use different models and
+voice lists; blank NPC settings inherit the narrator model/list. Choose each NPC's
+voice in **NPC Edit → Dialogue voice**. Default or unassigned dialogue uses the
+narrator model and voice, and previews follow the same routing as playback.
+
+Choose **Listed voices** for standard OpenAI-compatible speech. **Designed voices**
+is an explicit option for a local service implementing the SillyNPC voice-design
+protocol, independent of its model name. Existing Qwen configurations retain
+their designed voice setting. Both models share the host endpoint and API key;
+the endpoint must accept MP3 speech requests with `model`, `input`, `voice`, and
+`speed`. Other cloning or instruction APIs require a dedicated adapter.
 
 Enable **Images → Show Present NPC Sprites** to keep every NPC in the tracker's
 current scene visible beside the chat, independently of TTS and automatic image

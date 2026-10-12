@@ -4,7 +4,8 @@ import { extension_settings } from '../../../../../extensions.js';
 import { loadSpritePack } from './host-expressions.js';
 import { createExpressionGenerator } from './expression-generation.js';
 import { getSettings } from '../core/settings.js';
-import { expressionWorkflow } from './expression-prompts.js';
+import { expressionWorkflow, expressionPromptVariants } from './expression-prompts.js';
+import { cleanupExpressionSource } from './expression-image-cleanup.js';
 import { buildCharacterImagePrompt } from '../api/api-image-generate.js';
 
 export const expressionOwner = () => {
@@ -22,8 +23,11 @@ export const expressionGenerator = createExpressionGenerator({
         let editor;
         try { editor = await import('../../../st-image-edit/index.js'); }
         catch { throw new Error('Install and enable Image Edit in the st-image-edit folder, then reload SillyTavern.'); }
-        return editor.edit(input);
+        // Image Edit checks cancellation after saving, which would hide the output URL.
+        // Let active edits finish; the generator checks cancellation and deletes the source.
+        return editor.edit({ ...input, signal: undefined });
     },
+    cleanup: url => cleanupExpressionSource(url, { fetch, headers: getRequestHeaders }),
     async upload({ url, folder, label, signal, check }) {
         const image = await fetch(url, { signal });
         if (!image.ok) throw new Error('Generated image could not be loaded.');
@@ -46,7 +50,7 @@ export async function expressionJob(card, label, isCurrent, signal) {
     const generation = config.generation;
     const settings = getSettings();
     const job = { owner: expressionOwner(), npcId: card.id, folder: config.spriteFolder, label,
-        reference: generation.reference, prompt: '', promptVariants: generation.prompts[label]?.slice(),
+        reference: generation.reference, prompt: '', promptVariants: expressionPromptVariants(generation, label),
         negativePrompt: generation.negativePrompt, workflow: expressionWorkflow(card, settings), isCurrent, signal };
     if (settings.npcExpressionIpAdapterMode === true) job.prompt = await buildCharacterImagePrompt(card);
     return job;

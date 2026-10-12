@@ -13,12 +13,12 @@ export function createSpeechQueue({ synthesize, playAudio, valid, prepare = asyn
         stop();
         const job = { id: ++serial, messageId, revision, controller: new AbortController() };
         active = job;
+        const current = () => active === job && !job.controller.signal.aborted && valid(job);
         onState('working', job);
-        try { await prepare(job); }
-        catch (error) {
-            if (active === job) { onState('error', job, error); stop(); }
-            return;
-        }
+        // Expression classification must not delay or prevent speech.
+        Promise.resolve().then(() => current() && prepare(job)).catch(error => {
+            if (current()) onState('prepare-error', job, error);
+        });
         if (active !== job || job.controller.signal.aborted || !valid(job)) {
             if (active === job) stop();
             return;
@@ -29,7 +29,6 @@ export function createSpeechQueue({ synthesize, playAudio, valid, prepare = asyn
             const promise = new Promise(resolve => { release = resolve; });
             return { promise, release };
         });
-        const current = () => active === job && !job.controller.signal.aborted && valid(job);
         const ready = [];
         for (let i = 0; i < spoken.length; i++) {
             const previous = i ? ready[i - 1] : Promise.resolve(null);
@@ -42,12 +41,15 @@ export function createSpeechQueue({ synthesize, playAudio, valid, prepare = asyn
         try {
             for (let i = 0; i < spoken.length; i++) {
                 const result = await ready[i];
-                if (!current()) break;
+                ready[i] = null;
+                if (!current()) { delete result.blob; break; }
                 if (result.error) throw result.error;
                 if (result.skip) break;
-                await playAudio(result.blob, job.controller.signal, () => {
-                    if (current()) onState('playing', job, spoken[i]);
-                });
+                try {
+                    await playAudio(result.blob, job.controller.signal, () => {
+                        if (current()) onState('playing', job, spoken[i]);
+                    });
+                } finally { delete result.blob; }
                 if (current()) onState('ended', job, spoken[i]);
                 consumed[i].release();
             }
@@ -56,6 +58,9 @@ export function createSpeechQueue({ synthesize, playAudio, valid, prepare = asyn
         } finally {
             job.controller.abort();
             consumed.forEach(item => item.release());
+            // Pending synthesis can settle after Stop; discard its retained audio too.
+            for (const result of ready) result?.then(value => { delete value.blob; });
+            ready.length = 0;
             if (active === job) { active = null; onState('idle', job); }
         }
     };

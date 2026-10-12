@@ -105,3 +105,50 @@ test('tracker cleanup before the deferred frame uses the final revision without 
     events.emit(types.GENERATION_ENDED); message = { text: 'different chat message' }; deferred();
     assert.deepEqual(completed, ['new cleaned']);
 });
+
+test('reset aborts a stalled request and fresh classification starts without its completion', async () => {
+    let oldSignal;
+    const applied = [];
+    const engine = createExpressionEngine({
+        classify: job => {
+            if (job.line.npcId === 'old') { oldSignal = job.signal; return new Promise(() => {}); }
+            return Promise.resolve('joy');
+        }, isCurrent: () => true, apply: job => applied.push(job.line.npcId),
+    });
+    const old = engine.enqueue(job('old'));
+    await Promise.resolve();
+    engine.reset();
+    await engine.enqueue(job('fresh'));
+    await old;
+    assert.equal(oldSignal.aborted, true);
+    assert.deepEqual(applied, ['fresh']);
+});
+
+test('deadline aborts stalled classification and releases subsequent jobs', async () => {
+    let stalledSignal;
+    const applied = [];
+    const engine = createExpressionEngine({ timeoutMs: 10,
+        classify: job => {
+            if (job.line.npcId === 'stalled') { stalledSignal = job.signal; return new Promise(() => {}); }
+            return Promise.resolve('neutral');
+        }, isCurrent: () => true, apply: job => applied.push(job.line.npcId),
+    });
+    await assert.rejects(engine.enqueue(job('stalled')), { name: 'TimeoutError' });
+    await engine.enqueue(job('fresh'));
+    assert.equal(stalledSignal.aborted, true);
+    assert.deepEqual(applied, ['fresh']);
+});
+
+test('caller cancellation releases the queue and suppresses late results', async () => {
+    const controller = new AbortController();
+    let release;
+    const applied = [];
+    const engine = createExpressionEngine({
+        classify: job => job.line.npcId === 'cancelled' ? new Promise(resolve => { release = resolve; }) : Promise.resolve('neutral'),
+        isCurrent: () => true, apply: job => applied.push(job.line.npcId),
+    });
+    const pending = engine.enqueue({ ...job('cancelled'), signal: controller.signal });
+    await Promise.resolve(); controller.abort(); await pending;
+    await engine.enqueue(job('fresh')); release('joy'); await Promise.resolve();
+    assert.deepEqual(applied, ['fresh']);
+});

@@ -11,7 +11,7 @@ export function showSpeechSprite(card, path, fallback, unit) {
     holder.id = 'sillynpc-speech-sprite';
     holder.dataset.npcId = card.id;
     holder.dataset.lineIndex = unit.dialogueLineIndex;
-    holder.setAttribute('aria-label', `${card.name} speaking`);
+    holder.setAttribute('aria-label', `${card.name} dialogue portrait`);
     const image = document.createElement('img');
     image.alt = card.name;
     const sources = [...new Set([source, fallback, card.imageUrl].filter(Boolean))];

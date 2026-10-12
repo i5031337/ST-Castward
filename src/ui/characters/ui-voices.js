@@ -1,7 +1,7 @@
 import { normalizeCharacterPresentation } from '../../core/npc-presentation.js';
 import { isChatCharacter } from '../../characters/character-repository.js';
 import { saveSettings, getSettings } from '../../core/settings.js';
-import { NPC_TTS_PROVIDER, QWEN_MODEL } from '../../tts/tts-settings.js';
+import { NPC_TTS_PROVIDER, dialogueVoices, usesDesignedNpcVoices } from '../../tts/tts-settings.js';
 import { previewNpcVoice, stopNpcTts } from '../../tts/npc-tts.js';
 import { getContext } from '../../../../../../st-context.js';
 import { voiceCueFor } from '../../tts/voice-cues.js';
@@ -33,19 +33,20 @@ export function buildVoicesSection(card, { save = () => {
         const cue = voiceCueFor(card.name, card);
         const saved = presentation.voices;
         const binding = saved[NPC_TTS_PROVIDER] || saved['OpenAI Compatible'];
-        const designed = config.npcModel === QWEN_MODEL;
+        const designed = usesDesignedNpcVoices(config);
+        const voices = dialogueVoices(config);
         descriptionLabel.hidden = !designed;
         version.hidden = !designed;
         description.value = presentation.voiceDesign.description || cue?.description || '';
         version.textContent = `Voice version ${presentation.voiceDesign.version}. Changing the description creates a new voice on the next spoken line.`;
         select.replaceChildren();
         for (const [value, label] of [['default', 'Use narrator voice'], ['disabled', 'Silent'],
-            ...(designed ? [] : config.voices.map(voice => [`voice:${voice}`, voice]))]) {
+            ...(designed ? [] : voices.map(voice => [`voice:${voice}`, voice]))]) {
             const option = document.createElement('option'); option.value = value; option.textContent = label; select.append(option);
         }
-        if (designed) select.options[0].textContent = 'Use designed voice';
-        const voice = config.voices.find(id => id === binding?.voiceId)
-            || config.voices.find(id => id === binding?.voiceName);
+        if (designed) select.options[0].textContent = 'Use designed voice (narrator if undescribed)';
+        const voice = voices.find(id => id === binding?.voiceId)
+            || voices.find(id => id === binding?.voiceName);
         if (!designed && binding?.mode === 'voice' && !voice) {
             const option = document.createElement('option'); option.value = 'missing';
             option.textContent = `Missing voice: ${binding.voiceName || binding.voiceId}`;
@@ -56,13 +57,11 @@ export function buildVoicesSection(card, { save = () => {
                 : binding?.mode === 'voice' ? `voice:${voice}` : binding?.mode || 'default';
             status.textContent = designed ? (cue && !presentation.voiceDesign.description
                 ? 'Using the narrator voice cue for this chat. Edit to create a new voice version.'
-                : 'Describe this NPC voice before playback. Preview also creates its persistent voice.')
-                : config.voices.length ? `${config.voices.length} voices configured.`
+                : 'A described voice uses the local service’s SillyNPC voice-design protocol. Without a description, dialogue uses the narrator model and voice. Preview creates the described voice.')
+                : voices.length ? `${voices.length} voices configured.`
                     : 'Add voices in SillyNPC speech settings.';
         }
-        preview.disabled = !config.enabled || (designed
-            ? select.value === 'disabled' || !description.value
-            : !select.value.startsWith('voice:'));
+        preview.disabled = !config.enabled || ['disabled', 'missing'].includes(select.value);
     };
     select.addEventListener('change', () => {
         if (select.value === 'missing') return;
@@ -73,8 +72,7 @@ export function buildVoicesSection(card, { save = () => {
         };
         stopNpcTts();
         save();
-        preview.disabled = !config.enabled || (config.npcModel === QWEN_MODEL
-            ? select.value === 'disabled' || !description.value : !voice);
+        preview.disabled = !config.enabled || ['disabled', 'missing'].includes(select.value);
         status.textContent = 'SillyNPC voice preference saved.';
     });
     description.addEventListener('change', () => {
@@ -87,13 +85,10 @@ export function buildVoicesSection(card, { save = () => {
     });
     preview.addEventListener('click', async () => {
         const voice = select.value.startsWith('voice:') ? select.value.slice(6) : '';
-        if (!voice && config.npcModel !== QWEN_MODEL) return;
         preview.disabled = true; status.textContent = 'Starting voice preview…';
         try { await previewVoice(voice, card); status.textContent = 'Voice preview finished.'; }
         catch (error) { status.textContent = `Voice preview failed: ${error?.message || error}`; }
-        preview.disabled = !config.enabled || (config.npcModel === QWEN_MODEL
-            ? select.value === 'disabled' || !description.value
-            : !select.value.startsWith('voice:'));
+        preview.disabled = !config.enabled || ['disabled', 'missing'].includes(select.value);
     });
     refresh();
     return root;

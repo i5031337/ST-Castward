@@ -1,12 +1,23 @@
 const nameKey = value => String(value || '').trim().toLowerCase();
+const matchesName = (card, value) => {
+    const name = nameKey(value);
+    if (!name) return false;
+    if (nameKey(card.name) === name) return true;
+    return (card.aliases || []).some(alias => {
+        const pattern = typeof alias === 'string' ? alias : alias?.pattern;
+        if (!pattern) return false;
+        if (!alias.isRegex) return nameKey(pattern) === name;
+        try { return new RegExp(`^(?:${pattern})$`, 'iu').test(String(value).trim()); }
+        catch { return false; }
+    });
+};
 
 /** The tracker scene, rather than the whole chat library, defines who is present. */
 export function presentSpriteCards(cards, state) {
     const actors = state?.characters || [];
     const player = nameKey(state?.player?.name);
     return cards.filter(card => {
-        const names = [card.name, ...(card.aliases || [])].map(nameKey).filter(Boolean);
-        return !names.includes(player) && actors.some(actor => actor.id === card.id || names.includes(nameKey(actor.name)));
+        return !matchesName(card, player) && actors.some(actor => actor.id === card.id || matchesName(card, actor.name));
     });
 }
 

@@ -19,13 +19,21 @@ export function buildExpressionsSection(card, { save = () => {
     const preview = document.createElement('img'); preview.alt = 'Expression preview';
     preview.style.cssText = 'width:100%;max-height:240px;object-fit:contain'; root.append(preview);
     const status = document.createElement('p'); status.setAttribute('role', 'status');
-    let sprites = [], request = 0, selected = 'neutral';
+    let sprites = [], request = 0, selected = 'neutral', showingPortrait = false;
     const show = () => {
         const path = selectSprite(sprites, selected, config.fallback, card.id) || card.imageUrl;
+        showingPortrait = path === card.imageUrl;
         preview.hidden = !path; if (path) preview.src = path;
         generation.refreshAvailability();
     };
-    preview.onerror = () => { preview.hidden = true; status.textContent = 'Sprite unavailable; using the NPC portrait.'; };
+    preview.onerror = () => {
+        if (!showingPortrait && card.imageUrl) {
+            showingPortrait = true; preview.src = card.imageUrl; preview.hidden = false;
+            status.textContent = 'Sprite unavailable; using the NPC portrait.';
+        } else {
+            preview.hidden = true; status.textContent = 'Preview image unavailable.';
+        }
+    };
     const load = async () => {
         const version = ++request;
         try {

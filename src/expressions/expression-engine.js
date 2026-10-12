@@ -14,14 +14,15 @@ export function selectSprite(sprites, label, fallback, identity) {
     return '';
 }
 
-/** One serialized queue and a bounded session cache; freshness is checked on both sides of requests. */
-export function createExpressionEngine({ classify, isCurrent, apply, limit = 128 }) {
-    const cache = new Map();
-    const pending = new Map();
-    let queue = Promise.resolve();
-    let epoch = 0;
+/** Bound each request and invalidate the queue without retaining obsolete work. */
+export function createExpressionEngine({ classify, isCurrent, apply, limit = 128, timeoutMs = 15000 }) {
+    const cache = new Map(), pending = new Map();
+    let queue = Promise.resolve(), epoch = 0, controller = new AbortController();
     return {
-        reset() { epoch++; cache.clear(); pending.clear(); },
+        reset() {
+            epoch++; controller.abort(); controller = new AbortController();
+            cache.clear(); pending.clear(); queue = Promise.resolve();
+        },
         cached(key) { return cache.get(key); },
         enqueue(job) {
             const vocabulary = [...new Set(job.labels || (job.sprites || []).map(sprite => sprite.label))].sort();
@@ -31,19 +32,34 @@ export function createExpressionEngine({ classify, isCurrent, apply, limit = 128
                 if (isCurrent(job)) apply(job, cache.get(key));
                 return Promise.resolve(cache.get(key));
             }
-            if (pending.has(key)) return pending.get(key);
-            const version = epoch;
-            const current = () => version === epoch && isCurrent(job);
+            const existing = pending.get(key);
+            if (existing && !existing.signal?.aborted) return existing.task;
+            const version = epoch, ownerSignal = controller.signal;
+            const current = () => version === epoch && !job.signal?.aborted && isCurrent(job);
             const task = queue.then(async () => {
                 if (!current()) return;
-                const label = await classify(job);
-                if (!current()) return;
-                cache.set(key, label);
-                if (cache.size > limit) cache.delete(cache.keys().next().value);
-                apply(job, label);
-                return label;
-            }).finally(() => { if (pending.get(key) === task) pending.delete(key); });
-            pending.set(key, task);
+                const request = new AbortController();
+                const signal = AbortSignal.any([ownerSignal, request.signal, ...(job.signal ? [job.signal] : [])]);
+                let timer, onAbort;
+                const interrupted = new Promise((_, reject) => {
+                    onAbort = () => reject(signal.reason || new DOMException('Cancelled', 'AbortError'));
+                    signal.addEventListener('abort', onAbort, { once: true });
+                    timer = setTimeout(() => request.abort(new DOMException('Expression classification timed out', 'TimeoutError')), timeoutMs);
+                });
+                try {
+                    const label = await Promise.race([classify({ ...job, signal }), interrupted]);
+                    if (!current()) return;
+                    cache.set(key, label);
+                    if (cache.size > limit) cache.delete(cache.keys().next().value);
+                    apply(job, label);
+                    return label;
+                } catch (error) {
+                    if (error.name !== 'AbortError') throw error;
+                } finally {
+                    clearTimeout(timer); signal.removeEventListener('abort', onAbort);
+                }
+            }).finally(() => { if (pending.get(key)?.task === task) pending.delete(key); });
+            pending.set(key, { task, signal: job.signal });
             queue = task.catch(() => {});
             return task;
         },

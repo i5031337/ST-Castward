@@ -15,6 +15,7 @@ with browser_session() as browser:
           const {getSettings}=await import(root+'src/core/settings.js');
           const {buildExpressionsSection}=await import(root+'src/ui/characters/ui-expressions.js');
           const {classifierHint}=await import(root+'src/expressions/host-expressions.js');
+          const {expressionPromptVariants}=await import(root+'src/expressions/expression-prompts.js');
           const {injectAtDialogueLines}=await import(root+'src/chat/chat-speech.js');
           runtime=await import(root+'src/expressions/npc-expressions.js');
           scene=await import(root+'src/expressions/scene-sprites.js');
@@ -50,11 +51,15 @@ with browser_session() as browser:
           window.fetch=(url,...args)=>String(url).startsWith('/api/sprites/get?')
             ? (packRequests++,Promise.resolve(new Response(JSON.stringify(sprites),{headers:{'Content-Type':'application/json'}})))
             : originalFetch(url,...args);
-          let calls=[];
-          const adapters={rememberSprite,savePortrait,saveBinding:()=>{},loadPack:async()=>sprites,classify:async job=>{calls.push([job.line.npcId,job.line.text]);return job.line.text==='First.'?'neutral':'joy';}};
+          let calls=[], completionPackRequests=0;
+          const adapters={rememberSprite,savePortrait,saveBinding:()=>{},loadPack:async()=>{completionPackRequests++;return sprites;},classify:async job=>{calls.push([job.line.npcId,job.line.text]);return job.line.text==='First.'?'neutral':'joy';}};
           await runtime.completeNpcExpressions(chatLength,adapters);
           result.eachLine=JSON.stringify(calls)===JSON.stringify([[cards[0].id,'First.'],[cards[1].id,'Second.'],[cards[0].id,'Last.']]);
+          result.sharedCompletionPacks=completionPackRequests===2;
           result.portraits=[...fixture.querySelectorAll('.sillynpc-chat-avatar')].map(a=>a.dataset.sillynpcExpression).join(',')==='neutral,joy,joy';
+          const preservedPortraits=[...fixture.querySelectorAll('.sillynpc-chat-avatar')].map(a=>a.src).join('|');
+          runtime.resetNpcExpressions({clear:false});
+          result.generationPreservesHistory=preservedPortraits===[...fixture.querySelectorAll('.sillynpc-chat-avatar')].map(a=>a.src).join('|');
           runtime.renderNpcExpressions(fixture); await runtime.completeNpcExpressions(chatLength,adapters);
           result.cached=calls.length===3;
           context.chat[chatLength]=JSON.parse(JSON.stringify(context.chat[chatLength]));
@@ -94,6 +99,11 @@ with browser_session() as browser:
           editor=buildExpressionsSection(cards[0],{save:()=>writes++}); document.body.append(editor);
           for(let i=0;i<50&&!editor.textContent.includes('sprites available');i++) await new Promise(r=>setTimeout(r,10));
           result.preview=editor.textContent.includes('2 sprites available')&&!editor.querySelector('img').hidden&&packRequests===1;
+          const editorPreview=editor.querySelector('img');
+          editorPreview.dispatchEvent(new Event('error'));
+          result.editorPortraitFallback=!editorPreview.hidden&&editorPreview.src.endsWith('/img/ai4.png');
+          editorPreview.dispatchEvent(new Event('error'));
+          result.editorMissingPortrait=editorPreview.hidden&&editor.textContent.includes('Preview image unavailable.');
           const folder=editor.querySelector('[data-expression-field="folder"]');
           folder.value='Pack/too/deep';folder.dispatchEvent(new Event('change'));
           result.invalidFolder=cards[0].presentation.expressions.spriteFolder==='ExpressionPack/A'&&writes===0;
@@ -116,18 +126,18 @@ with browser_session() as browser:
           prompt.value='Saved fixture smile.'; prompt.dispatchEvent(new Event('change'));
           result.savedEmotionPrompt=config.generation.prompts.joy[0]==='Saved fixture smile.';
           result.threeEmotionPrompts=generationEditor.querySelectorAll('[data-expression-field^="prompt"]').length===3
-            &&new Set(config.generation.prompts.joy).size===3;
+            &&new Set(expressionPromptVariants(config.generation,'joy')).size===3;
           const secondPrompt=generationEditor.querySelector('[data-expression-field="prompt2"]');
           secondPrompt.value='Saved second pose.';secondPrompt.dispatchEvent(new Event('change'));
           result.savedSecondVariant=config.generation.prompts.joy[1]==='Saved second pose.';
           const thirdPrompt=generationEditor.querySelector('[data-expression-field="prompt3"]');
           thirdPrompt.value='';thirdPrompt.dispatchEvent(new Event('change'));
-          result.blankVariantResets=thirdPrompt.value===config.generation.prompts.joy[2]&&!!thirdPrompt.value;
+          result.blankVariantResets=thirdPrompt.value===expressionPromptVariants(config.generation,'joy')[2]&&!!thirdPrompt.value;
           result.noSharedExpressionInstructions=!generationEditor.querySelector('[data-expression-field="basePrompt"]');
           const {expressionJob}=await import(root+'src/expressions/host-expression-generation.js');
           const {buildCharacterImagePrompt}=await import(root+'src/api/api-image-generate.js');
           const plainJob=await expressionJob(cards[0],'joy',()=>true);
-          result.expressionOnlyPrompt=plainJob.prompt===''&&JSON.stringify(plainJob.promptVariants)===JSON.stringify(config.generation.prompts.joy);
+          result.expressionOnlyPrompt=plainJob.prompt===''&&JSON.stringify(plainJob.promptVariants)===JSON.stringify(expressionPromptVariants(config.generation,'joy'));
           settings.npcExpressionIpAdapterMode=true;
           const adapterJob=await expressionJob(cards[0],'joy',()=>true);
           result.ipAdapterPortraitPrompt=adapterJob.prompt===await buildCharacterImagePrompt(cards[0])
@@ -154,6 +164,7 @@ with browser_session() as browser:
               return mockJson({format:'png',data:png});
             }
             if(path==='/api/images/upload') return mockJson({path:'/user/images/image-edit/fixture.png'});
+            if(path==='/api/images/delete') return mockJson({ok:true});
             if(path==='/user/images/image-edit/fixture.png'||path==='/img/ai4.png') return originalFetch('data:image/png;base64,'+png);
             if(path==='/api/sprites/upload'){
               uploads++;uploadedFolder=options.body.get('name');
@@ -169,7 +180,7 @@ with browser_session() as browser:
           generate.click();
           for(let i=0;i<100&&generate.disabled;i++) await new Promise(r=>setTimeout(r,25));
           result.generatedFromReference=edits===1&&uploads===1&&uploadedFolder===config.spriteFolder
-            &&config.generation.prompts.joy.includes(sentPrompt)
+            &&expressionPromptVariants(config.generation,'joy').includes(sentPrompt)
             &&editor.querySelector('select').value==='joy';
           result.sharedEditingWorkflow=requestedWorkflow==='FixtureEdit.json'&&context.extensionSettings.sd.comfy_workflow==='PortraitOnly.json';
           result.generatedExpressionIndicator=availability.dataset.missing==='false'&&availability.textContent.includes('joy');
@@ -249,7 +260,7 @@ with browser_session() as browser:
           const portraitPrompt=await buildCharacterImagePrompt(cards[0]);
           generate.click();
           for(let i=0;i<100&&(uploads<5||generate.disabled);i++) await new Promise(r=>setTimeout(r,25));
-          result.ipAdapterGeneration=uploads===5&&cards[0].presentation.expressions.generation.prompts.joy
+          result.ipAdapterGeneration=uploads===5&&expressionPromptVariants(cards[0].presentation.expressions.generation,'joy')
             .some(variant=>sentPrompt===portraitPrompt+String.fromCharCode(10)+variant);
           pauseEdit=true;releaseEdit=undefined;generate.click();
           for(let i=0;i<100&&!releaseEdit;i++) await new Promise(r=>setTimeout(r,25));

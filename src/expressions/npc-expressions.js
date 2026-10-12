@@ -46,7 +46,7 @@ const engine = createExpressionEngine({ classify: job => job.classify(job), isCu
         job.savePortrait(job, label);
         job.rememberSprite(cardFor(job.line.npcId), job.sprites, label, job.line);
         while (results.size > 128) results.delete(results.keys().next().value);
-        renderNpcExpressions(messageElement(job.line.messageId));
+        renderNpcExpressions(messageElement(job.line.messageId), job.line);
         if (job.generate && EMOTION_LABELS.includes(label) && !job.sprites.some(sprite => sprite.label === label)) {
             // Editing runs in the background; classification and speech remain free to proceed.
             const card = cardFor(job.line.npcId);
@@ -59,7 +59,7 @@ const engine = createExpressionEngine({ classify: job => job.classify(job), isCu
                     if (result.line.npcId === card.id && result.preferences === job.preferences && isCurrent(result, false)) {
                         result.sprites = sprites;
                         result.savePortrait(result, result.label);
-                        renderNpcExpressions(messageElement(result.line.messageId));
+                        renderNpcExpressions(messageElement(result.line.messageId), result.line);
                     }
                 }
                 // Speech portraits advance only on the next audio playing event.
@@ -81,7 +81,8 @@ export function resetNpcExpressions({ clear = true } = {}) {
     generationController.abort(); generationController = new AbortController();
     clearSpeechSprite();
     epoch++; engine.reset();
-    if (clear) results.clear();
+    if (!clear) return;
+    results.clear();
     document.querySelectorAll('.sillynpc-chat-avatar[data-sillynpc-base-portrait]').forEach(avatar => {
         avatar.src = avatar.dataset.sillynpcBasePortrait;
         delete avatar.dataset.sillynpcExpression;
@@ -90,11 +91,13 @@ export function resetNpcExpressions({ clear = true } = {}) {
 }
 
 /** Decoration notifications may read cached pictures, never schedule classification. */
-export function renderNpcExpressions(mesEl) {
+export function renderNpcExpressions(mesEl, targetLine) {
     if (!mesEl || !getSettings().enabled) return;
-    const records = readDialogueRecords(mesEl);
+    const records = targetLine ? [targetLine] : readDialogueRecords(mesEl);
     const byLine = new Map(records.map(line => [line.lineIndex, line]));
-    for (const avatar of mesEl.querySelectorAll('.sillynpc-chat-avatar[data-char-id]')) {
+    const selector = targetLine ? `.sillynpc-chat-avatar[data-char-id][data-sillynpc-dialogue-line="${Number(targetLine.lineIndex)}"]`
+        : '.sillynpc-chat-avatar[data-char-id]';
+    for (const avatar of mesEl.querySelectorAll(selector)) {
         if (avatar.dataset.sillynpcBasePortrait) avatar.src = avatar.dataset.sillynpcBasePortrait;
         delete avatar.dataset.sillynpcExpression;
         const line = byLine.get(Number(avatar.dataset.sillynpcDialogueLine));
@@ -129,7 +132,7 @@ export async function completeNpcExpressions(messageId, {
     const message = getContext()?.chat?.[Number(messageId)];
     if (!message || message.is_user || message.is_system) return;
     const lines = readDialogueRecords(messageElement(messageId)).filter(line => line.npcId && !line.isPersona);
-    const version = epoch;
+    const version = epoch, packs = new Map();
     for (const line of lines) {
         if (signal?.aborted || version !== epoch) return;
         const cached = results.get(resultKey(line));
@@ -144,11 +147,12 @@ export async function completeNpcExpressions(messageId, {
             && settings.generation.reference === card.imageUrl;
         if (job.generate) job.labels = EMOTION_LABELS;
         try {
-            job.sprites = await loadPack(settings.spriteFolder);
+            if (!packs.has(settings.spriteFolder)) packs.set(settings.spriteFolder, loadPack(settings.spriteFolder));
+            job.sprites = await packs.get(settings.spriteFolder);
             if (!isCurrent(job)) continue;
             results.set(resultKey(line), { ...job, label: '' });
             while (results.size > 128) results.delete(results.keys().next().value);
-            renderNpcExpressions(messageElement(messageId));
+            renderNpcExpressions(messageElement(messageId), line);
             if ((job.sprites.length || job.generate) && !classifierHint(job.config)) {
                 // The engine serializes all NPC classification, including WebLLM jobs.
                 await engine.enqueue(job);

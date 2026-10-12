@@ -5,6 +5,7 @@ import { visibleCharacters } from './character-scope.js';
 import { normalizeCharacterPresentation } from '../core/npc-presentation.js';
 
 export { CHAT_NPCS_KEY };
+const normalizedCards = new WeakMap();
 
 /** Chat metadata is copied with a chat and deleted with it. */
 export function getChatCharacters() {
@@ -12,7 +13,11 @@ export function getChatCharacters() {
     if (context?.getCurrentChatId?.() === undefined) return [];
     const records = context.chatMetadata?.[CHAT_NPCS_KEY];
     if (!Array.isArray(records)) return [];
-    for (const card of records) normalizeCharacterPresentation(card);
+    for (const card of records) {
+        if (normalizedCards.has(card) && normalizedCards.get(card) === card.presentation) continue;
+        normalizeCharacterPresentation(card);
+        normalizedCards.set(card, card.presentation);
+    }
     return records;
 }
 

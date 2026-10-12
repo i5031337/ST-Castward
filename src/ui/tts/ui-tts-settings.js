@@ -43,8 +43,19 @@ export function renderTtsSettings(view, { onChange = () => {}, preview = () => {
     const endpoint = field('endpoint', 'Built-in OpenAI Compatible endpoint', input('url', hostSpeechEndpoint()));
     endpoint.readOnly = true;
     const model = field('model', 'Narrator model', input('text', config.model));
-    const npcModel = field('npcModel', 'NPC dialogue model (optional)', input('text', config.npcModel || ''));
-    const voices = field('voices', 'Available voices (comma separated)', input('text', config.voices.join(', ')));
+    const npcModel = field('npcModel', 'NPC dialogue model (blank uses narrator model)', input('text', config.npcModel || ''));
+    const voices = field('voices', 'Narrator voices (comma separated)', input('text', config.voices.join(', ')));
+    const npcVoices = field('npcVoices', 'NPC voices (comma separated; blank uses narrator voices)', input('text', (config.npcVoices || []).join(', ')));
+    const npcVoiceMode = document.createElement('select'); npcVoiceMode.className = 'text_pole';
+    for (const [value, label] of [['listed', 'Listed voices (OpenAI compatible)'],
+        ['designed', 'Designed voices (local SillyNPC voice-design protocol)']]) {
+        const option = document.createElement('option'); option.value = value; option.textContent = label; npcVoiceMode.append(option);
+    }
+    npcVoiceMode.value = config.npcVoiceMode;
+    field('npcVoiceMode', 'NPC voice support', npcVoiceMode);
+    const compatibility = document.createElement('p');
+    compatibility.textContent = 'Use model and voice IDs supported by your endpoint. Both models use this endpoint and API key. Designed voices require the local service’s SillyNPC protocol; ordinary OpenAI compatible models use listed voices.';
+    root.append(compatibility);
     const narrator = document.createElement('select'); narrator.className = 'text_pole';
     field('narratorVoice', 'Narrator voice', narrator);
     const speed = field('speed', 'Speed', input('number', config.speed)); speed.min = '0.25'; speed.max = '4'; speed.step = '0.05';
@@ -67,13 +78,17 @@ export function renderTtsSettings(view, { onChange = () => {}, preview = () => {
         const issue = ttsConfigError(config, endpoint.value);
         status.textContent = config.enabled && config.autoPlay && nativeAuto()
             ? 'Built-in TTS automatic narration is also on. Turn it off to avoid duplicate speech.'
-            : issue || 'SillyNPC uses the built-in OpenAI Compatible endpoint and API key. Use kokoro for narration and qwen3-tts for designed NPC voices on the local service.';
+            : issue || 'SillyNPC uses the built-in OpenAI Compatible endpoint and API key.';
     };
     const persist = () => { onChange(); saveSettingsDebounced(); refreshStatus(); };
     enabled.addEventListener('change', () => { config.enabled = enabled.checked; persist(); });
     auto.addEventListener('change', () => { config.autoPlay = auto.checked; persist(); });
     model.addEventListener('change', () => { config.model = model.value.trim(); persist(); });
     npcModel.addEventListener('change', () => { config.npcModel = npcModel.value.trim(); persist(); });
+    npcVoiceMode.addEventListener('change', () => { config.npcVoiceMode = npcVoiceMode.value; persist(); });
+    npcVoices.addEventListener('change', () => {
+        config.npcVoices = normalizeTtsSettings({ npcVoices: npcVoices.value.split(',') }).npcVoices; persist();
+    });
     voices.addEventListener('change', () => {
         config.voices = [...new Set(voices.value.split(',').map(value => value.trim()).filter(Boolean))].slice(0, 100);
         refreshNarrator(); persist();

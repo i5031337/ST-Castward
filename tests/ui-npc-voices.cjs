@@ -174,7 +174,7 @@ async function main() {
                     await playNpcMessage(chatLength);
                     out.liveEndpoint=out.calls.at(-3)?.provider_endpoint;
                 }finally{host.provider_endpoint=originalEndpoint}
-                settings.tts.model='kokoro';settings.tts.npcModel='qwen3-tts';
+                settings.tts.model='kokoro';settings.tts.npcModel='qwen3-tts';settings.tts.npcVoiceMode='designed';
                 settings.tts.voices=['af_alloy'];settings.tts.narratorVoice='af_alloy';
                 const activeCard=settings.characters.at(-1);
                 activeCard.presentation.voiceDesign={description:'A calm, clear voice.',version:2};

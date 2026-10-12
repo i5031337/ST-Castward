@@ -39,7 +39,7 @@ export function rememberNpcSprite(card, sprites, label, line, { save = () => get
     const records = context.chatMetadata[METADATA_KEY] ||= {};
     if (!mayRememberSprite(records[card.id], record, sourceFor)) return;
     if (JSON.stringify(records[card.id]) !== JSON.stringify(record)) { records[card.id] = record; save(); }
-    packs.clear();
+    packs.set(JSON.stringify([owner(), config.spriteFolder]), Promise.resolve(sprites));
     void refreshSceneSprites();
 }
 

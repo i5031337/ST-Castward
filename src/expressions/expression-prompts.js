@@ -53,10 +53,28 @@ export function normalizeExpressionGeneration(raw = {}) {
         const saved = raw?.prompts?.[label];
         const variants = Array.isArray(saved) ? saved
             : text(saved) && text(saved) !== LEGACY_EMOTION_PROMPTS[label] ? [saved] : [];
-        prompts[label] = EMOTION_PROMPTS[label].map((fallback, index) => text(variants[index]) || fallback);
+        const overrides = EMOTION_PROMPTS[label].map((fallback, index) => {
+            const value = text(variants[index]);
+            return value && value !== fallback ? value : null;
+        });
+        if (overrides.some(Boolean)) prompts[label] = overrides;
     }
     return { reference: text(raw?.reference), workflow: text(raw?.workflow),
         negativePrompt: text(raw?.negativePrompt), prompts };
+}
+
+/** Built-in variants stay in code; saved generations contain only custom overrides. */
+export function expressionPromptVariants(generation, label) {
+    return (EMOTION_PROMPTS[label] || []).map((fallback, index) => generation?.prompts?.[label]?.[index] || fallback);
+}
+
+export function setExpressionPrompt(generation, label, index, value) {
+    const variants = expressionPromptVariants(generation, label);
+    variants[index] = String(value || '').trim() || EMOTION_PROMPTS[label][index];
+    const overrides = variants.map((prompt, slot) => prompt === EMOTION_PROMPTS[label][slot] ? null : prompt);
+    if (overrides.some(Boolean)) generation.prompts[label] = overrides;
+    else delete generation.prompts[label];
+    return variants[index];
 }
 
 /** Each approved portrait has its own pack, including across chat-owned NPC copies. */

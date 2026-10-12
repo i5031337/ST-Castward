@@ -391,6 +391,7 @@ paths have regression tests under `tests/`.
 | `src/expressions/expression-prompts.js` | Saved defaults for all 28 emotions, generation preference normalization, and portrait-specific pack naming. |
 | `src/expressions/expression-generation.js` | Serialized missing-sprite edits, duplicate prevention, freshness checks, and explicit failure retry. |
 | `src/expressions/host-expression-generation.js` | Direct Image Edit integration and generated image upload to host sprite packs. |
+| `src/expressions/expression-image-cleanup.js` | Delete only unique Image Edit sources returned to expression generation after transfer or cancellation. |
 | `src/expressions/scene-sprite-state.js` | Present-NPC matching and saved sprite freshness/order rules. |
 | `src/expressions/scene-sprites.js` | Chat-owned latest sprite records and persistent multi-NPC display independent of speech. |
 | `src/expressions/dialogue-portrait-state.js` | Compact per-line sprite selections, reply freshness, and native swipe-extra synchronization. |
@@ -417,6 +418,8 @@ paths have regression tests under `tests/`.
 | `tests/dialogue-portraits.mjs` | Portrait serialization, per-line identity, edit invalidation, generated updates, and swipe-extra preservation. |
 | `tests/ui-npc-expressions.py` | Unsaved live portrait and editor checks with mocked classification and sprite packs. |
 | `tests/npc-tts.mjs` | Speech segmentation, queue ordering/cancellation, voice fallback, and completion gating. |
+| `tests/host-expressions.mjs` | Cancellable Local/Extras requests and the retained native WebLLM lock. |
+| `tests/ui-tts-routing.py`, `tests/fixtures/ui-tts-routing.js` | Unsaved Firefox checks for generic models, independent voice lists, previews, ordered playback and explicit voice-design routing using mocked audio. |
 | `tests/voice-cues.mjs` | Complete narrator cue syntax, speaker matching, and rejection of fenced or malformed cues. |
 | `tests/ui-npc-voices.cjs` | Windows headless Edge check of settings, manual/automatic routing, duplicate guard, and optional real preview. |
 

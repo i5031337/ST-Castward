@@ -1,10 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
 import { dialogueLabels } from '../src/chat/dialogue-line.js';
 import { createSpeechQueue } from '../src/tts/speech-queue.js';
 import { wireSpeechEvents } from '../src/tts/speech-events.js';
-import { normalizeTtsSettings, resolveUnitVoice, resolveUnitSpeech, ttsConfigError, NPC_TTS_PROVIDER } from '../src/tts/tts-settings.js';
+import { normalizeTtsSettings, resolveUnitVoice, resolveUnitSpeech, ttsConfigError, NPC_TTS_PROVIDER, resolvePreviewSpeech, dialogueVoices } from '../src/tts/tts-settings.js';
 
 const source = readFileSync(new URL('../src/tts/speech-units.js', import.meta.url), 'utf8')
     .replace(/^import\s+[\s\S]*?\s+from\s+['"][^'"]+['"];\s*/gm, '')
@@ -193,6 +194,91 @@ test('Stop during expression preparation prevents synthesis and stale playback',
         prepare: () => new Promise(resolve => {release=resolve;}),
         synthesize: async () => calls.push('synthesize'), playAudio: async () => calls.push('audio')});
     const task=queue.play(1,'revision',[{voice:'a',text:'hello'}]);
-    queue.stop(); release(); await task;
+    queue.stop(); if (release) release(); await task;
     assert.deepEqual(calls, []);
+});
+
+
+test('narrator fallbacks use narrator model for cardless, default and undescribed dialogue', () => {
+    const config = normalizeTtsSettings({ model: 'narration-model', npcModel: 'dialogue-model',
+        voices: ['narrator'], npcVoices: ['npc-only'], narratorVoice: 'narrator' });
+    const unit = { kind: 'dialogue', text: 'Hello.' };
+    const narrator = { voice: 'narrator', model: 'narration-model' };
+    assert.deepEqual(resolveUnitSpeech(unit, config, null), narrator);
+    assert.deepEqual(resolveUnitSpeech(unit, config, { id: 'npc' }), narrator);
+    const binding = { [NPC_TTS_PROVIDER]: { mode: 'voice', voiceId: 'npc-only' } };
+    const card = { id: 'npc', presentation: { voices: binding } };
+    assert.deepEqual(resolveUnitSpeech(unit, config, card), { voice: 'npc-only', model: 'dialogue-model' });
+    assert.deepEqual(resolvePreviewSpeech('npc-only', config, card, unit.text), resolveUnitSpeech(unit, config, card));
+    assert.deepEqual(resolvePreviewSpeech('', config, { id: 'npc' }, unit.text), narrator);
+    assert.deepEqual(resolvePreviewSpeech('narrator', config, null, unit.text), narrator);
+    assert.throws(() => resolvePreviewSpeech('npc-only', config, null, unit.text), /narrator voice list/);
+    assert.deepEqual(dialogueVoices(normalizeTtsSettings({ voices: ['narrator'] })), ['narrator']);
+    config.npcVoiceMode = 'designed';
+    assert.deepEqual(resolveUnitSpeech(unit, config, card), narrator);
+});
+
+test('local voice design is an explicit capability independent of model identifier', () => {
+    const card = { id: 'npc', presentation: { voiceDesign: { description: 'A low gentle voice.', version: 1 } } };
+    const config = normalizeTtsSettings({ model: 'narration-model', npcModel: 'custom-design-model',
+        npcVoiceMode: 'designed', voices: ['narrator'], narratorVoice: 'narrator' });
+    const unit = { kind: 'dialogue', text: 'Hello.' };
+    const designed = resolveUnitSpeech(unit, config, card);
+    assert.equal(designed.model, 'custom-design-model');
+    assert.match(designed.voice, /^sillynpc-v1:/u);
+    assert.deepEqual(resolvePreviewSpeech('', config, card, unit.text), designed);
+    const ordinaryQwen = normalizeTtsSettings({ ...config, npcModel: 'qwen3-tts', npcVoiceMode: 'listed' });
+    assert.deepEqual(resolveUnitSpeech(unit, ordinaryQwen, card), { voice: 'narrator', model: 'narration-model' });
+    assert.equal(normalizeTtsSettings({ npcModel: 'qwen3-tts' }).npcVoiceMode, 'designed');
+});
+
+test('expression preparation runs alongside speech and fails independently', async () => {
+    const calls = []; let release;
+    const queue = createSpeechQueue({ valid: () => true,
+        prepare: () => new Promise((_, reject) => { release = reject; }),
+        synthesize: async () => { calls.push('synthesis'); return 'audio'; },
+        playAudio: async () => {
+            calls.push('playback'); release(new Error('classifier unavailable'));
+            await new Promise(resolve => setImmediate(resolve));
+        },
+        onState: state => calls.push(state),
+    });
+    await queue.play(1, 'revision', [{ voice: 'a', text: 'Hello.' }]);
+    assert.ok(calls.includes('synthesis'));
+    assert.ok(calls.includes('playback'));
+    assert.ok(calls.includes('prepare-error'));
+    assert.ok(!calls.includes('error'));
+});
+
+
+test('consumed audio can be collected while later segments are still playing', () => {
+    const queueUrl = new URL('../src/tts/speech-queue.js', import.meta.url).href;
+    execFileSync(process.execPath, ['--expose-gc', '--input-type=module', '-e', `
+        import assert from 'node:assert/strict';
+        const { createSpeechQueue } = await import(${JSON.stringify(queueUrl)});
+        let firstAudio, finishLast, startedLast;
+        const lastPlaying = new Promise(resolve => { startedLast = resolve; });
+        const queue = createSpeechQueue({ valid: () => true,
+            synthesize: async unit => {
+                const audio = { index: unit.text, data: new Uint8Array(1024 * 1024) };
+                if (unit.text === '0') firstAudio = new WeakRef(audio);
+                return audio;
+            },
+            playAudio: audio => {
+                if (audio.index !== '5') return Promise.resolve();
+                startedLast();
+                return new Promise(resolve => { finishLast = resolve; });
+            },
+        });
+        const playing = queue.play(1, 'revision', Array.from({length: 6}, (_, index) => ({
+            text: String(index), voice: 'a',
+        })));
+        await lastPlaying;
+        for (let i = 0; i < 5; i++) {
+            await new Promise(resolve => setImmediate(resolve));
+            global.gc();
+        }
+        assert.equal(firstAudio.deref(), undefined, 'earlier audio retained during later playback');
+        finishLast(); await playing;
+    `], { stdio: 'pipe' });
 });

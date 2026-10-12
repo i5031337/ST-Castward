@@ -4,16 +4,20 @@ export const defaultTtsSettings = Object.freeze({
     autoPlay: false,
     model: '',
     npcModel: '',
+    npcVoices: [],
+    npcVoiceMode: 'listed',
     voices: ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer'],
     narratorVoice: 'alloy',
     speed: 1,
 });
 
+export const QWEN_MODEL = 'qwen3-tts';
+
+const voiceList = values => [...new Set(values.map(voice => typeof voice === 'string' ? voice.trim() : '').filter(Boolean))].slice(0, 100);
 const object = value => value && typeof value === 'object' && !Array.isArray(value) ? value : {};
 export function normalizeTtsSettings(value) {
     const raw = object(value);
-    const voices = [...new Set((Array.isArray(raw.voices) ? raw.voices : defaultTtsSettings.voices)
-        .map(voice => typeof voice === 'string' ? voice.trim() : '').filter(Boolean))].slice(0, 100);
+    const voices = voiceList(Array.isArray(raw.voices) ? raw.voices : defaultTtsSettings.voices);
     const speed = Number(raw.speed);
     return {
         enabled: raw.enabled === true,
@@ -21,12 +25,17 @@ export function normalizeTtsSettings(value) {
         model: typeof raw.model === 'string' ? raw.model.trim().slice(0, 200) : '',
         npcModel: typeof raw.npcModel === 'string' ? raw.npcModel.trim().slice(0, 200) : '',
         voices,
+        npcVoices: voiceList(Array.isArray(raw.npcVoices) ? raw.npcVoices : []),
+        // Preserve the previously implicit local adapter setting when loading old settings.
+        npcVoiceMode: raw.npcVoiceMode === 'designed' || (raw.npcVoiceMode === undefined && raw.npcModel === QWEN_MODEL)
+            ? 'designed' : 'listed',
         narratorVoice: typeof raw.narratorVoice === 'string' ? raw.narratorVoice.trim() : '',
         speed: Number.isFinite(speed) && speed >= 0.25 && speed <= 4 ? speed : 1,
     };
 }
 
-export const QWEN_MODEL = 'qwen3-tts';
+export const usesDesignedNpcVoices = config => config?.npcVoiceMode === 'designed';
+export const dialogueVoices = config => config.npcVoices?.length ? config.npcVoices : config.voices;
 
 /** The host proxy forwards voice but drops the local service's NPC fields. */
 export function encodeDesignedVoice(card, text) {
@@ -43,16 +52,29 @@ export function encodeDesignedVoice(card, text) {
 }
 
 export function resolveUnitSpeech(unit, config, card) {
-    if (unit.kind === 'dialogue' && card && config.npcModel === QWEN_MODEL) {
-        const binding = card.presentation?.voices?.[NPC_TTS_PROVIDER]
-            || card.presentation?.voices?.['OpenAI Compatible'];
-        if (binding?.mode === 'disabled') return { voice: null, model: '' };
+    const narrator = { voice: config.narratorVoice, model: config.model };
+    if (unit.kind !== 'dialogue' || !card) return narrator;
+    const binding = card.presentation?.voices?.[NPC_TTS_PROVIDER]
+        || card.presentation?.voices?.['OpenAI Compatible'];
+    if (binding?.mode === 'disabled') return { voice: null, model: '' };
+    if (usesDesignedNpcVoices(config)) {
         const designed = encodeDesignedVoice(card, unit.text);
-        return designed ? { voice: designed, model: QWEN_MODEL } : { voice: config.narratorVoice, model: config.model };
+        return designed ? { voice: designed, model: config.npcModel || config.model } : narrator;
     }
+    if (binding?.mode !== 'voice') return narrator;
     const voice = resolveUnitVoice(unit, config, card);
-    if (!voice) return { voice: null, model: '' };
-    return { voice, model: unit.kind === 'dialogue' ? config.npcModel || config.model : config.model };
+    return voice ? { voice, model: config.npcModel || config.model } : { voice: null, model: '' };
+}
+
+/** Preview the same binding/fallback used in dialogue; no card means narrator preview. */
+export function resolvePreviewSpeech(voice, config, card, text) {
+    if (!card) {
+        if (!config.voices.includes(voice)) throw new Error('Voice is not in the narrator voice list.');
+        return { voice, model: config.model };
+    }
+    const choice = resolveUnitSpeech({ kind: 'dialogue', text }, config, card);
+    if (!choice.voice) throw new Error('This NPC is silent or its selected voice is unavailable.');
+    return choice;
 }
 
 export function ttsConfigError(config, endpoint) {
@@ -72,7 +94,8 @@ export function resolveUnitVoice(unit, config, card) {
         || card.presentation?.voices?.['OpenAI Compatible'];
     if (binding?.mode === 'disabled') return null;
     if (binding?.mode !== 'voice') return config.narratorVoice;
-    const voice = config.voices.find(id => id === binding.voiceId)
-        || config.voices.find(id => id === binding.voiceName);
+    const voices = dialogueVoices(config);
+    const voice = voices.find(id => id === binding.voiceId)
+        || voices.find(id => id === binding.voiceName);
     return voice || null;
 }

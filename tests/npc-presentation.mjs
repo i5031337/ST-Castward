@@ -76,17 +76,23 @@ test('rename preserves folder and valid card preference references', () => {
 test('chat reads repair old metadata without writing into world cards or saving a fixture', () => {
     const world = [{ id: 'world', name: 'Mira', presentation: normalizeNpcPresentation(preferences) }];
     const chat = [{ id: 'chat', name: 'Mira' }];
-    let saves = 0;
+    let saves = 0, normalizations = 0;
     const context = { getCurrentChatId: () => 'chat A', chatMetadata: { sillynpc_npcs: chat },
         saveMetadataDebounced: () => saves++ };
     const read = hostFunction('../src/characters/character-repository.js', 'getChatCharacters', {
         getContext: () => context, getSettings: () => ({ characters: world }),
-        saveSettings: () => saves++, CHAT_NPCS_KEY: 'sillynpc_npcs', normalizeCharacterPresentation,
+        saveSettings: () => saves++, CHAT_NPCS_KEY: 'sillynpc_npcs',
+        normalizeCharacterPresentation: card => { normalizations++; return normalizeCharacterPresentation(card); },
     });
     assert.equal(read(), chat);
+    read(); read();
+    assert.equal(normalizations, 1);
     assert.equal(chat[0].presentation.expressions.spriteFolder, '');
     chat[0].presentation.voices.Edge = { mode: 'disabled' };
     assert.equal(world[0].presentation.voices.Edge.mode, 'voice');
+    chat[0].presentation = {};
+    read();
+    assert.equal(normalizations, 2);
     assert.equal(saves, 0);
 });
 

@@ -34,7 +34,7 @@ with browser_session() as browser:
             result.units = units.map(unit => [unit.kind, unit.text]);
             result.cues = parseVoiceCues(source, [{speakerLabel: 'Yvonna', text: dialogue}]);
             const config = normalizeTtsSettings({ enabled: true, model: 'kokoro',
-                npcModel: 'qwen3-tts', voices: ['af_heart'], narratorVoice: 'af_heart' });
+                npcModel: 'qwen3-tts', npcVoiceMode: 'designed', voices: ['af_heart'], narratorVoice: 'af_heart' });
             const card = { id: 'cue-fixture', presentation: {
                 voiceDesign: { description: result.cues[0].description, version: 1 } } };
             const unit = units.find(unit => unit.kind === 'dialogue');

@@ -1,4 +1,4 @@
-import { EMOTION_LABELS, EMOTION_PROMPTS, prepareExpressionReference, expressionWorkflow } from '../../expressions/expression-prompts.js';
+import { EMOTION_LABELS, expressionPromptVariants, setExpressionPrompt, prepareExpressionReference, expressionWorkflow } from '../../expressions/expression-prompts.js';
 import { expressionGenerator, expressionJob, expressionOwner } from '../../expressions/host-expression-generation.js';
 import { getSettings } from '../../core/settings.js';
 import { findCharacterRecord } from '../../characters/character-repository.js';
@@ -30,15 +30,15 @@ export function buildExpressionGeneration(card, { save, onPack, onReference, onS
     const hint = document.createElement('p'); hint.textContent = 'One of these three prompts is chosen at random for each generation.'; advanced.append(hint);
     const prompts = [0, 1, 2].map(index => {
         const prompt = field(advanced, `Emotion prompt ${index + 1}`, document.createElement('textarea'), index ? `prompt${index + 1}` : 'prompt');
-        prompt.rows = 3; prompt.value = generation.prompts[emotion.value][index];
+        prompt.rows = 3; prompt.value = expressionPromptVariants(generation, emotion.value)[index];
         prompt.addEventListener('change', () => {
-            generation.prompts[emotion.value][index] = prompt.value.trim() || EMOTION_PROMPTS[emotion.value][index];
-            prompt.value = generation.prompts[emotion.value][index]; save();
+            setExpressionPrompt(generation, emotion.value, index, prompt.value);
+            prompt.value = expressionPromptVariants(generation, emotion.value)[index]; save();
         });
         return prompt;
     });
     emotion.addEventListener('change', () => {
-        prompts.forEach((prompt, index) => { prompt.value = generation.prompts[emotion.value][index]; });
+        prompts.forEach((prompt, index) => { prompt.value = expressionPromptVariants(generation, emotion.value)[index]; });
         status.textContent = '';
         onSelect(emotion.value);
     });

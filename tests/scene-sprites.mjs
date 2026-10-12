@@ -44,3 +44,16 @@ test('existing packs show their most recently saved sprite before a selection ha
     assert.equal(latestPackSprite([{ label: 'joy', path: '/joy' }]), '/joy');
     assert.equal(latestPackSprite([]), '');
 });
+
+test('scene matching reads normalized alias patterns without mistaking alias objects for names', () => {
+    const aliased = { ...card, aliases: [{ pattern: 'Receptionist', isRegex: false }] };
+    assert.deepEqual(presentSpriteCards([aliased], { characters: [{ name: ' receptionist ' }] }), [aliased]);
+    assert.deepEqual(presentSpriteCards([aliased], { characters: [{ name: '[object Object]' }] }), []);
+    assert.deepEqual(presentSpriteCards([aliased], { player: { name: 'Receptionist' }, characters: [{ id: card.id }] }), []);
+});
+
+test('scene matching respects valid regex aliases and ignores malformed patterns', () => {
+    const aliased = { ...card, aliases: [{ pattern: 'Receptionist \u005cd+', isRegex: true }, { pattern: '[', isRegex: true }] };
+    assert.deepEqual(presentSpriteCards([aliased], { characters: [{ name: 'Receptionist 2' }] }), [aliased]);
+    assert.deepEqual(presentSpriteCards([aliased], { characters: [{ name: 'Other' }] }), []);
+});

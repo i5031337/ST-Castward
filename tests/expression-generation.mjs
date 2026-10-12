@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createExpressionGenerator } from '../src/expressions/expression-generation.js';
-import { EMOTION_LABELS, EMOTION_PROMPTS, normalizeExpressionGeneration, selectExpressionPrompt, expressionFolder, prepareExpressionReference, expressionWorkflow } from '../src/expressions/expression-prompts.js';
+import { EMOTION_LABELS, EMOTION_PROMPTS, normalizeExpressionGeneration, expressionPromptVariants, setExpressionPrompt, selectExpressionPrompt, expressionFolder, prepareExpressionReference, expressionWorkflow } from '../src/expressions/expression-prompts.js';
 import { normalizeNpcPresentation } from '../src/core/npc-presentation.js';
 
 function fixture() {
@@ -21,7 +21,8 @@ test('28 saved prompts normalize, round-trip with cards, and preserve custom ins
     assert.equal(EMOTION_LABELS.length, 28);
     const generation = normalizeExpressionGeneration({ enabled: true, reference: '/a.png',
         workflow: 'Edit.json', prompts: { joy: ' My custom smile ', nonsense: 'discard' } });
-    assert.deepEqual(generation.prompts.joy, ['My custom smile', ...EMOTION_PROMPTS.joy.slice(1)]);
+    assert.deepEqual(generation.prompts.joy, ['My custom smile', null, null]);
+    assert.deepEqual(expressionPromptVariants(generation, 'joy'), ['My custom smile', ...EMOTION_PROMPTS.joy.slice(1)]);
     assert.equal(generation.prompts.nonsense, undefined);
     assert.deepEqual(normalizeNpcPresentation({ expressions: { generation } }).expressions.generation, generation);
     const first = expressionFolder({ id: 'one' }, '/a.png');
@@ -32,7 +33,7 @@ test('28 saved prompts normalize, round-trip with cards, and preserve custom ins
 test('all emotions have three distinct variants and random selection can reach each one', () => {
     const generation = normalizeExpressionGeneration();
     for (const label of EMOTION_LABELS) {
-        const variants = generation.prompts[label];
+        const variants = expressionPromptVariants(generation, label);
         assert.equal(variants.length, 3, label);
         assert.equal(new Set(variants).size, 3, label);
         const job = { prompt: '', promptVariants: variants };
@@ -49,11 +50,25 @@ test('old built-in prompts adopt variants and body language while custom prompts
         prompts: { joy: 'Joyful expression, cheerful eyes, happy open smile.', anger: ['Custom fury', '', 'Custom shout'] },
     });
     assert.equal(generation.basePrompt, undefined);
-    assert.deepEqual(generation.prompts.joy, EMOTION_PROMPTS.joy);
-    assert.deepEqual(generation.prompts.anger, ['Custom fury', EMOTION_PROMPTS.anger[1], 'Custom shout']);
-    generation.prompts.joy[0] = 'Edited';
-    assert.notEqual(normalizeExpressionGeneration().prompts.joy[0], 'Edited');
+    assert.equal(generation.prompts.joy, undefined);
+    assert.deepEqual(expressionPromptVariants(generation, 'joy'), EMOTION_PROMPTS.joy);
+    assert.deepEqual(generation.prompts.anger, ['Custom fury', null, 'Custom shout']);
+    setExpressionPrompt(generation, 'joy', 0, 'Edited');
+    assert.notEqual(expressionPromptVariants(normalizeExpressionGeneration(), 'joy')[0], 'Edited');
     assert.equal(normalizeExpressionGeneration({ basePrompt: 'Custom base' }).basePrompt, undefined);
+});
+
+test('default prompt storage is sparse and resetting overrides removes them', () => {
+    const generation = normalizeExpressionGeneration({ prompts: EMOTION_PROMPTS });
+    assert.deepEqual(generation.prompts, {});
+    assert.ok(JSON.stringify(normalizeNpcPresentation()).length < 1000);
+    setExpressionPrompt(generation, 'joy', 1, 'Custom pose');
+    assert.deepEqual(generation.prompts.joy, [null, 'Custom pose', null]);
+    setExpressionPrompt(generation, 'joy', 1, '');
+    assert.deepEqual(generation.prompts, {});
+    const variants = expressionPromptVariants(generation, 'joy');
+    variants[0] = 'Mutated copy';
+    assert.equal(expressionPromptVariants(generation, 'joy')[0], EMOTION_PROMPTS.joy[0]);
 });
 
 test('expression-only jobs accept an empty prefix and send just a selected variant', async () => {
@@ -157,4 +172,86 @@ test('failures do not repeat automatically or block other emotions; explicit ret
     label = null;
     await generator.generate(job, { retry: true });
     assert.equal(calls, 4);
+});
+
+test('cancelled pending jobs settle promptly and fresh retries run after the old edit completes', async () => {
+    const { job } = fixture();
+    let finish, edits = 0;
+    const cleaned = [], packs = [];
+    const generator = createExpressionGenerator({ loadPack: async () => packs,
+        edit: async () => { edits++; if (edits === 1) return new Promise(resolve => { finish = resolve; }); return '/fresh.png'; },
+        upload: async ({ label }) => packs.push({ label, path: '/sprite.png' }),
+        cleanup: async url => cleaned.push(url) });
+    const controller = new AbortController();
+    const cancelled = generator.generate({ ...job, signal: controller.signal });
+    while (!finish) await new Promise(resolve => setImmediate(resolve));
+    controller.abort();
+    await assert.rejects(cancelled, { name: 'AbortError' });
+    const fresh = generator.generate(job, { retry: true });
+    assert.notEqual(fresh, cancelled);
+    assert.equal(edits, 1);
+    finish('/cancelled.png');
+    await fresh;
+    assert.equal(edits, 2);
+    assert.deepEqual(cleaned, ['/cancelled.png', '/fresh.png']);
+    assert.equal(packs.length, 1);
+});
+
+test('manual replace work has its own cancellation and does not reuse automatic work', async () => {
+    const { job } = fixture();
+    let finish, edits = 0;
+    const packs = [];
+    const generator = createExpressionGenerator({ loadPack: async () => packs,
+        edit: () => { edits++; return new Promise(resolve => { finish = resolve; }); },
+        upload: async ({ label }) => packs.push({ label, path: '/sprite.png' }) });
+    const automatic = generator.generate(job);
+    while (!finish) await new Promise(resolve => setImmediate(resolve));
+    const controller = new AbortController();
+    const manual = generator.generate({ ...job, signal: controller.signal }, { replace: true });
+    assert.notEqual(manual, automatic);
+    controller.abort();
+    await assert.rejects(manual, { name: 'AbortError' });
+    finish('/automatic.png');
+    await automatic;
+    assert.equal(edits, 1);
+});
+
+test('replace requests independently regenerate a pending missing-expression job', async () => {
+    const { job } = fixture();
+    const packs = [];
+    let edits = 0;
+    const generator = createExpressionGenerator({ loadPack: async () => packs,
+        edit: async () => { edits++; return '/generated.png'; },
+        upload: async ({ label }) => { packs.splice(0, packs.length, { label, path: '/sprite.png' }); } });
+    const missing = generator.generate(job);
+    const replace = generator.generate(job, { retry: true, replace: true });
+    assert.notEqual(missing, replace);
+    await Promise.all([missing, replace]);
+    assert.equal(edits, 2);
+});
+
+test('upload failures still clean generated sources and preserve the upload error', async () => {
+    const { job } = fixture();
+    const cleaned = [];
+    const generator = createExpressionGenerator({ loadPack: async () => [], edit: async () => '/output.png',
+        upload: async () => { throw new Error('upload offline'); }, cleanup: async url => cleaned.push(url) });
+    await assert.rejects(generator.generate(job), /upload offline/);
+    assert.deepEqual(cleaned, ['/output.png']);
+});
+
+test('source cleanup deletes only the exact unique Image Edit image path', async () => {
+    const { cleanupExpressionSource } = await import('../src/expressions/expression-image-cleanup.js');
+    const calls = [];
+    const deps = { fetch: async (...args) => { calls.push(args); return { ok: true }; }, headers: () => ({ token: 'fixture' }) };
+    const url = '/user/images/image-edit/01234567-89ab-cdef-0123-456789abcdef.png';
+    for (const unsafe of ['/portrait.png', url + '?x=1', url.replace('image-edit/', 'image-edit/../'),
+        'https://example.org' + url, '/user/images/image-edit/manual.png']) {
+        await cleanupExpressionSource(unsafe, deps);
+    }
+    assert.equal(calls.length, 0);
+    await cleanupExpressionSource(url, deps);
+    assert.equal(calls.length, 1);
+    assert.equal(calls[0][0], '/api/images/delete');
+    assert.deepEqual(JSON.parse(calls[0][1].body), { path: url.slice(1) });
+    assert.equal(calls[0][1].signal, undefined);
 });
