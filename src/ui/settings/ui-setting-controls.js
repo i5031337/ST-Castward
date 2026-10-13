@@ -364,17 +364,16 @@ export function buildSettingNumber(options) {
         onChange?.();
     });
 
+    const box = document.createElement('div');
+    box.className = 'sillynpc-number-container';
+    box.append(field);
     if (suffix) {
         const unit = document.createElement('span');
         unit.className = 'sillynpc-number-suffix';
         unit.textContent = suffix;
-        const box = document.createElement('div');
-        box.className = 'sillynpc-number-container';
-        box.append(field, unit);
-        row.append(text, box);
-    } else {
-        row.append(text, field);
+        box.append(unit);
     }
+    row.append(text, box);
     wrap.append(row);
 
     appendSettingHelp(wrap, help);

@@ -74,5 +74,5 @@ export function renderLoreSettingsView(view) {
     }));
     view.append(buildLastLoreConnectionNote());
     view.append(buildSettingNumber({ key: 'loreMaxTokens', advanced: true, label: 'Lore Reply Budget',
-        suffix: 'tokens', help: 'Maximum tokens the lore writer may reply with.' }));
+        suffix: 'tokens', step: 256, help: 'Maximum tokens the lore writer may reply with.' }));
 }

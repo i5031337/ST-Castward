@@ -170,7 +170,7 @@ export const defaultSettings = {
      *
      * The combined named fields and lore sections need room for a complete reply.
      */
-    loreMaxTokens: 1200,
+    loreMaxTokens: 2048,
     // What each generator has cost so far. Kept out of a System on purpose: a system is
     // a world and its rules, and rolling one back should not rewrite what you spent.
     usage: {},

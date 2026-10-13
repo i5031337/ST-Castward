@@ -400,12 +400,14 @@
     max-width: 60%;
     display: flex;
     align-items: center;
+    justify-content: flex-end;
     gap: var(--sillynpc-space-md);
 }
 
 .sillynpc-setting input.sillynpc-number-input {
-    flex: 1;
+    flex: 0 1 108px;
     min-width: 0;
+    max-width: 60%;
     text-align: right;
     font-family: var(--sillynpc-font-mono);
 }

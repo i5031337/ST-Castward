@@ -121,13 +121,12 @@ export function renderTrackerDisplayAndReading({ container, settings, onApply, o
         onChange: onApply
     }));
 
-    container.append(buildSettingSlider({
+    container.append(buildSettingNumber({
         key: 'statusTracker.extractionMaxTokens',
         advanced: true,
         label: 'Extraction Reply Budget',
-        min: 300,
-        max: 4000,
-        step: 100,
+        step: '256',
+        suffix: 'tokens',
         help: 'Raise this if updates come back truncated while tracking many stats.',
         onChange: onApply
     }));
@@ -138,7 +137,6 @@ export function renderTrackerDisplayAndReading({ container, settings, onApply, o
         step: 0.05,
         max: 2,
         allowEmpty: true,
-        placeholder: 'the model\'s own',
         help: 'How steady the reader is: 0 reads the same message the same way every time, '
             + 'higher invents more. Around 0.2 suits a job whose answer is facts and JSON. '
             + 'Empty sends none, leaving it to the model - usually 1.0, which is loose for '

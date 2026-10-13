@@ -57,7 +57,7 @@ export const defaultTrackerSettings = {
         /** Connection Manager profile for the extraction request. Empty = main API. */
         extractionProfileId: '',
         /** Token budget for the extraction reply. */
-        extractionMaxTokens: 1200,
+        extractionMaxTokens: 1280,
 
         /**
          * What the reader is told to be: 0 for as steady as the model gets, higher for more

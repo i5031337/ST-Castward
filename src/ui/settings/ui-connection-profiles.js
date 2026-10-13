@@ -1,5 +1,6 @@
 import { getSettings, saveSettings } from '../../core/settings.js';
 import { getContext } from '../../../../../../st-context.js';
+import { appendSettingHelp } from './ui-setting-help.js';
 
 /**
  * Which connection answers which request.
@@ -60,10 +61,6 @@ export function buildConnectionProfilePicker(onChange, options = {}) {
     label.className = 'sillynpc-setting-label';
     label.textContent = labelText;
 
-    const note = document.createElement('small');
-    note.className = 'notes';
-    note.style.cssText = 'margin-top:4px; display:block;';
-
     let profiles = null;
     try {
         profiles = getContext().ConnectionManagerRequestService.getSupportedProfiles();
@@ -72,9 +69,9 @@ export function buildConnectionProfilePicker(onChange, options = {}) {
     }
 
     if (!profiles) {
-        note.textContent = unavailableText;
         row.append(label);
-        wrap.append(row, note);
+        wrap.append(row);
+        appendSettingHelp(wrap, unavailableText);
         return wrap;
     }
 
@@ -96,9 +93,9 @@ export function buildConnectionProfilePicker(onChange, options = {}) {
         onChange?.();
     });
 
-    note.textContent = noteText;
     row.append(label, select);
-    wrap.append(row, note);
+    wrap.append(row);
+    appendSettingHelp(wrap, noteText);
     return wrap;
 }
 
