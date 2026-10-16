@@ -73,6 +73,8 @@ SillyTavern loads `index.js` and `style.css` from `manifest.json`. The JavaScrip
 | `tests/shared-stat-renames.mjs` | Assignment-scoped stat renames and inactive persona readings. |
 | `tests/ui-cast-shared.py` | Isolated player/NPC Cast layouts, complete stat commits, and chat/persona guards. |
 | `tests/system-schema.mjs` | System definition normalization, legacy imports, and retired HUD layouts. |
+| `tests/builtin-systems.mjs` | Shipped starter validation, actor assignments, and Creature HP progression shape. |
+| `tests/ui-system-starters.mjs` | Starter picker activation and chat-lock behavior with a local DOM fixture. |
 | `tests/profile-fields-ui.mjs` | Profile rendering and System profile field edit operations. |
 | `tests/stat-model-bounds.mjs` | Numeric bounds, model sanitization, and rejection warnings. |
 | `tests/profile-memories.mjs` | Profile memory list normalization and capacity behavior. |
@@ -120,6 +122,8 @@ SillyTavern loads `index.js` and `style.css` from `manifest.json`. The JavaScrip
 | `src/generation/draft-context.js` | Isolated Builder projection, draft capture, and local rename callbacks. |
 | `src/core/system-fields.js` | Resolve shared stat and profile catalogs for player, NPC, and template assignments. |
 | `src/core/system-schema.js` | Versioned shared System catalogs, target assignments, and bounded legacy preset normalization. |
+| `src/core/builtin-systems.js` | Fresh editable Fantasy Adventure, Dating Sim, and Creature Trainer System definitions. |
+| `src/core/settings-initial.js` | Seed a new install with the Fantasy Adventure System and matching tracker fields. |
 | `src/core/progression-config.js` | Canonical player and per-template progression configuration and configured stat resolution. |
 | `src/core/collection-rewards.js` | Pure collection reward normalization, typed entries, schedules, guided intervals, targeting, and duplicate checks. |
 | `src/core/utils.js` | Image preparation, JSON repair, stat display, downloads, and DOM helpers. |
@@ -333,7 +337,7 @@ SillyTavern loads `index.js` and `style.css` from `manifest.json`. The JavaScrip
 | `tests/ui-system-generation.py` | Mocked, unsaved Firefox generator workflow and live-state isolation checks. |
 | `tests/fixtures/system-generation.mjs` | Shared staged-generation plan and mock responses; excluded from the test entry glob. |
 | `tests/fixtures/generated-expedition-system.json` | Canonical generated example with targeted progression and scheduled technique rewards. |
-| `src/ui/system/ui-system-manager.js` | Reusable System manager, import, export, and selection. |
+| `src/ui/system/ui-system-manager.js` | Reusable System manager, starter selection, import, export, and activation. |
 | `src/ui/shared/ui-template-tidy.js` | Prompt template cleanup UI. |
 | `src/ui/shared/ui-theme.js` | Apply themes and portrait/speech display options. |
 | `src/ui/tracker/ui-tracker-settings.js` | Tracker settings entry point. |

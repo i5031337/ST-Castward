@@ -3,6 +3,7 @@ import { saveSettingsDebounced } from '../../../../../../script.js';
 import { extension_settings } from '../../../../../extensions.js';
 import { IMAGE_PROMPT } from './constants.js';
 import { defaultSettings } from './settings-defaults.js';
+import { createInitialSettings } from './settings-initial.js';
 import { normalizeSettings } from './settings-migration.js';
 import { setProfileSettingsProvider } from './profile-fields.js';
 import { normalizeCharacterPresentation } from './npc-presentation.js';
@@ -12,7 +13,7 @@ export { normaliseStatDefs } from './settings-migration.js';
 
 export function initSettings() {
     if (!extension_settings.sillynpc) {
-        extension_settings.sillynpc = structuredClone(defaultSettings);
+        extension_settings.sillynpc = createInitialSettings();
     }
     normalizeSettings(extension_settings.sillynpc);
 }

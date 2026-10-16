@@ -31,11 +31,23 @@ The original dialogue styling, portraits, tracker, and floating HUD are still he
 - **XP and level-ups.** Players and opted-in NPC templates can level up, earn skill points, and unlock collection rewards such as abilities or perks.
 - **A cast for each chat.** NPCs belong to the adventure where you meet them. Reuse world characters without sharing their current state.
 - **Your own rules.** Build stats, profile fields, and collections for the player and NPC templates such as sailors, robots, and spirits.
-- **Systems from a premise.** Describe the game you want. Generate a draft, edit its rules, and save it for a new adventure.
+- **Complete starter Systems.** Begin with Fantasy Adventure, Dating Sim, or Creature Trainer. Each gives the reader a cast, stats, collections, and a matching HUD; edit any rule to suit your story. You can also generate a System from your own premise.
 - **Character memories.** Keep memories on sheets. Reader suggestions always wait for your approval.
 - **Individual TTS voices.** Give NPCs their own voices, with a separate narrator. Optional automatic playback starts as dialogue lines finish streaming.
 - **Expressions and scene sprites.** Use expression packs or generate missing emotions from NPC portraits. Keep the whole present cast visible beside the chat.
 - **A refreshed menu and editable themes.** Shared Player/NPC sheets, searchable settings, and nine presets you can customise.
+
+## Choose a starter System
+
+A fresh install starts with **Fantasy Adventure**. Open **System → Manager** and use **Start from template** to make an editable copy of another starter before your first player message.
+
+| System | What it includes |
+| --- | --- |
+| **Fantasy Adventure** | One character template for adventurers and beasts; HP, armor, familiar attributes, equipment, and abilities and spells that can be proposed as level-up rewards. |
+| **Dating Sim** | One NPC template with affection, trust, comfort, and relationship tracking; Clothing and Items collections; personal memories. |
+| **Creature Trainer** | Separate trainer and creature templates; teams, moves, and Items; creature HP and five combat ratings that can grow with levels. |
+
+The stats have prose descriptions so the reader can judge changes from the story. Systems work without a separate rules engine, and you can adjust or replace any starter in the Builder.
 
 ## Build your game
 
@@ -64,7 +76,7 @@ git clone https://github.com/i5031337/SillyNPC-levels.git SillyNPC-XP
 
 Open **Extensions → SillyNPC → Manage SillyNPC**.
 
-1. **Pick your rules.** In **System → Manager**, choose a System or **Generate from premise**. Review, save, and select generated rules before your first player message.
+1. **Pick your rules.** Keep the default Fantasy Adventure System, choose another [starter System](#choose-a-starter-system), or use **Generate from premise** in **System → Manager**. Select new rules before your first player message.
 2. **Start chatting.** **Dialogue → Ask The Model To Format Dialogue** requests lines like `**Mira**: "All aboard!"` so portraits and colours follow each speaker.
 3. **Meet the cast.** Click an unknown speaker's portrait to create a profile and **Fill** missing details, lore, and a portrait. Use **Link as alias** for another name for an existing NPC.
 4. **Check the reader.** Under **Tracker**, choose automatic, manual, or inline reading and set **Ask Before Applying**. The tracker starts enabled for new settings; manual mode adds a book button beside Send.

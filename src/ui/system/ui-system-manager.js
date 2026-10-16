@@ -1,5 +1,5 @@
 import { buildSystemGeneration } from './ui-system-generation.js';
-import { getSettings } from '../../core/settings.js';
+import { getSettings, defaultSettings } from '../../core/settings.js';
 import { offerDownload } from '../../core/utils.js';
 import { updateAllExtensionThemes } from '../shared/ui-shared.js';
 import { deleteSystemPreset, importSystemPreset, getActiveSystem, getChatSystem, chatHasStarted, setActiveSystem, createSystem } from '../../tracker/status-logic.js';
@@ -10,6 +10,7 @@ import { openItemLibrary } from '../collections/ui-item-library.js';
 import { exportWorldCharacters } from '../../characters/world-character-export.js';
 import { carriesNpcStat } from '../../tracker/stat-persistence.js';
 import { normalizeSystemDefinition } from '../../core/system-schema.js';
+import { builtinSystemChoices, createBuiltinSystem } from '../../core/builtin-systems.js';
 import { refreshMemoryButton } from '../tracker/ui-memory-button.js';
 
 /**
@@ -181,6 +182,44 @@ export function buildSystemManager(onRefresh) {
         triggerReprocess();
     });
 
+    const starterSelect = document.createElement('select');
+    starterSelect.className = 'text_pole';
+    starterSelect.setAttribute('aria-label', 'Starter System');
+    starterSelect.title = 'Choose an editable System to start from.';
+    for (const choice of builtinSystemChoices) {
+        const option = document.createElement('option');
+        option.value = choice.id;
+        option.textContent = choice.name;
+        option.title = choice.description;
+        starterSelect.append(option);
+    }
+
+    const starterBtn = document.createElement('button');
+    starterBtn.type = 'button';
+    starterBtn.className = 'menu_button';
+    starterBtn.textContent = 'Start from template';
+    starterBtn.disabled = Boolean(chatSystem);
+    starterBtn.title = chatSystem ? 'Open a new chat before choosing a different System.'
+        : 'Add a fresh, editable copy of the selected System and use it in this chat.';
+    starterBtn.addEventListener('click', () => {
+        const definition = createBuiltinSystem(starterSelect.value);
+        if (!definition) return;
+        const profile = importSystemPreset(JSON.stringify({
+            metadata: { name: definition.name, ...definition.metadata },
+            definition,
+            config: defaultSettings,
+        }));
+        if (!setActiveSystem(profile.metadata.name)) {
+            toastr.error('Could not activate the starter System.', 'SillyNPC');
+            onRefresh();
+            return;
+        }
+        updateAllExtensionThemes();
+        refreshMemoryButton();
+        onRefresh();
+        triggerReprocess();
+    });
+
     const importBtn = document.createElement('button');
     importBtn.className = 'menu_button';
     importBtn.style.flex = '1';
@@ -223,7 +262,7 @@ export function buildSystemManager(onRefresh) {
             onRefresh();
         }));
     });
-    globalActions.append(newBtn, generateBtn, importBtn, libraryBtn);
+    globalActions.append(newBtn, starterSelect, starterBtn, generateBtn, importBtn, libraryBtn);
     wrap.append(listWrap, globalActions);
     return wrap;
 }

@@ -30,9 +30,10 @@ character-transfer files are separate formats with different import behavior.
 System profile fields have stable IDs and editable labels and guidance.
 Retirement hides a field without discarding its stored prose. Fill and lore generation
 seed empty fields; manual edits and explicit regeneration can revise them. The turn
-reader currently updates tracked stats and collections; it does not
-update profile fields or append memories. Optional new-NPC profile generation is a
-separate request, disabled by default, which preserves existing cards and edits.
+reader updates tracked stats and collections, while a separate opt-in memory reader
+periodically proposes NPC memories for review. The turn reader does not update profile
+fields. Optional new-NPC profile generation is a separate request, disabled by
+default, which preserves existing cards and edits.
 
 Memory lists are manually editable and bounded by the System's configured active
 limit, default 50, with older entries archived.

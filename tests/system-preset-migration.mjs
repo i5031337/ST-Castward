@@ -5,6 +5,9 @@ import { readFileSync } from 'node:fs';
 import { normalizeSystemDefinition, projectSystemTracker, SYSTEM_SCHEMA_VERSION } from '../src/core/system-schema.js';
 
 import { systemStatFields, systemProfileFields } from '../src/core/system-fields.js';
+import { createBuiltinSystem } from '../src/core/builtin-systems.js';
+import { createInitialSettings } from '../src/core/settings-initial.js';
+import { defaultSettings as shippedDefaults } from '../src/core/settings-defaults.js';
 
 const settings = {
     activeSystem: 'Harbor RPG', characters: [{ id: 'live', name: 'Live' }],
@@ -26,6 +29,32 @@ const bindPresets = loadBind('status-system-presets.js', [
 ], [() => settings, () => { saves++; }, { statusTracker: {}, characters: [], personaData: {}, master_items: {} },
     () => {}, () => {}, () => {}, normalizeSystemDefinition, () => {}, normalizeTrackerProgression, projectSystemTracker, SYSTEM_SCHEMA_VERSION, systemStatFields]);
 bindPresets(deps);
+
+test('a fresh install adopts an editable Fantasy Adventure System', () => {
+    const previous = structuredClone(settings);
+    const remember = deps.rememberChatSystem;
+    let remembered = 0;
+    try {
+        for (const key of Object.keys(settings)) delete settings[key];
+        Object.assign(settings, createInitialSettings());
+        deps.rememberChatSystem = () => { remembered++; };
+        assert.equal(settings.activeSystem, '');
+        assert.deepEqual(Object.keys(settings.statusTracker.presets), ['Fantasy Adventure']);
+        assert.deepEqual(settings.statusTracker.playerStats.map(stat => stat.name),
+            ['HP', 'Armor', 'Strength', 'Dexterity', 'Constitution', 'Intelligence', 'Wisdom',
+                'Charisma', 'Condition', 'Currency', 'XP', 'Level']);
+        assert.equal(deps.migrateToActiveSystem(), true);
+        assert.equal(settings.activeSystem, 'Fantasy Adventure');
+        assert.deepEqual(Object.keys(settings.statusTracker.presets), ['Fantasy Adventure']);
+        assert.equal(settings.statusTracker.presets['Fantasy Adventure'].definition.id, 'fantasy-adventure');
+        assert.equal(remembered, 1);
+        assert.deepEqual(shippedDefaults.statusTracker.presets, {});
+    } finally {
+        for (const key of Object.keys(settings)) delete settings[key];
+        Object.assign(settings, previous);
+        deps.rememberChatSystem = remember;
+    }
+});
 
 test('System switches and creation preserve the user menu text size', () => {
     settings.menuFontScale = 1.1;
@@ -214,4 +243,36 @@ test('capture retains collection and HUD edits made through tracker controls', (
     assert.deepEqual(captured.hud.playerStatIds, ['health']);
     assert.deepEqual(captured.hud.npcStatIds, ['health']);
     assert.deepEqual(captured.stats, definition.stats);
+});
+
+test('starter import resets System-owned settings and activates without changing saved story data', () => {
+    const before = structuredClone(settings);
+    try {
+        const definition = createBuiltinSystem('creature');
+        const imported = deps.importSystemPreset(JSON.stringify({
+            metadata: { name: definition.name, ...definition.metadata }, definition,
+            config: shippedDefaults,
+        }));
+        assert.equal(imported.definition.id, 'creature-trainer');
+        assert.equal(imported.config.statusTracker.presets, undefined);
+        assert.equal(imported.config.characters, undefined);
+        assert.equal(imported.config.personaData, undefined);
+        assert.equal(settings.activeSystem, before.activeSystem);
+        assert.deepEqual(settings.characters, before.characters);
+        assert.deepEqual(settings.personaData, before.personaData);
+
+        settings.statusTracker.extractionMode = 'inline';
+        deps.chatHasStarted = () => false;
+        deps.hasOpenChat = () => false;
+        assert.equal(deps.setActiveSystem(imported.metadata.name), true);
+        assert.equal(settings.statusTracker.extractionMode, shippedDefaults.statusTracker.extractionMode);
+        assert.equal(settings.activeSystem, imported.metadata.name);
+        assert.equal(settings.statusTracker.npcTemplates.find(template => template.id === 'creature')
+            .progression.enabled, true);
+        assert.deepEqual(settings.characters, before.characters);
+        assert.deepEqual(settings.personaData, before.personaData);
+    } finally {
+        for (const key of Object.keys(settings)) delete settings[key];
+        Object.assign(settings, before);
+    }
 });
