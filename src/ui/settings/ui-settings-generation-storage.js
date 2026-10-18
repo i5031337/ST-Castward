@@ -100,15 +100,15 @@ function buildImageScanSetting() {
         try {
             const { scanned, added, characters } = await scanFolderForCharacterImages();
             if (!added) {
-                toastr.info(`Looked at ${scanned} file${scanned === 1 ? '' : 's'}; nothing new to add.`, 'SillyNPC');
+                toastr.info(`Looked at ${scanned} file${scanned === 1 ? '' : 's'}; nothing new to add.`, 'Castward');
             } else {
                 toastr.success(
                     `Added ${added} image${added === 1 ? '' : 's'} to ${characters} character${characters === 1 ? '' : 's'}.`,
-                    'SillyNPC',
+                    'Castward',
                 );
             }
         } catch (err) {
-            toastr.error(err.message, 'SillyNPC');
+            toastr.error(err.message, 'Castward');
         } finally {
             scanBtn.disabled = false;
         }
@@ -119,7 +119,7 @@ function buildImageScanSetting() {
     scanNote.style.cssText = 'display:block; margin-top:4px;';
     scanNote.textContent = 'Matches files in the folder above to characters by the name they '
         + "were saved under, and adds anything missing to that character's image list. "
-        + "Only finds images SillyNPC generated: pictures made through SillyTavern's own "
+        + "Only finds images Castward generated: pictures made through SillyTavern's own "
         + 'gallery are named after the character card, so there is nothing in the filename '
         + 'to match them by.';
 
@@ -149,7 +149,7 @@ function buildImageCleanupSetting() {
             if (!files.length) {
                 toastr.info(
                     `Looked at ${scanned} file${scanned === 1 ? '' : 's'}; every one is still in use.`,
-                    'SillyNPC');
+                    'Castward');
                 return;
             }
 
@@ -165,12 +165,12 @@ function buildImageCleanupSetting() {
 
             const { deleted, failed } = await deleteImageFiles(files);
             if (failed) {
-                toastr.warning(`Deleted ${deleted}; ${failed} could not be removed.`, 'SillyNPC');
+                toastr.warning(`Deleted ${deleted}; ${failed} could not be removed.`, 'Castward');
             } else {
-                toastr.success(`Deleted ${deleted} unused portrait${deleted === 1 ? '' : 's'}.`, 'SillyNPC');
+                toastr.success(`Deleted ${deleted} unused portrait${deleted === 1 ? '' : 's'}.`, 'Castward');
             }
         } catch (err) {
-            toastr.error(err.message, 'SillyNPC');
+            toastr.error(err.message, 'Castward');
         } finally {
             tidyBtn.disabled = false;
         }

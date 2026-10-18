@@ -21,7 +21,7 @@ export function wireSpeechEvents({ events, types, renderedEvent, render, stop,
         if (after === before.before && token === before.token) return;
         defer(() => {
             if (version !== captured || sourceToken(id) !== token) return;
-            Promise.resolve(complete(id)).catch(error => console.warn('[SillyNPC] Automatic speech failed', error));
+            Promise.resolve(complete(id)).catch(error => console.warn('[Castward] Automatic speech failed', error));
         });
     });
     events.on(types.MESSAGE_DELETED, newLength => {

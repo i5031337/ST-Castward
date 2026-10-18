@@ -269,7 +269,7 @@ export async function tryAutoSyncLorebook(char, { silent = false, worlds: only =
                 char.lorebook = { world: worldName, uid: match.uid };
                 saveSettings();
                 if (!silent) {
-                    toastr.info(`Auto-linked Lorebook entry: "${match.comment || match.uid}" from "${worldName}"`, 'SillyNPC');
+                    toastr.info(`Auto-linked Lorebook entry: "${match.comment || match.uid}" from "${worldName}"`, 'Castward');
                 }
                 return true;
             }
@@ -283,7 +283,7 @@ export async function tryAutoSyncLorebook(char, { silent = false, worlds: only =
 /**
  * Turns the lore entries this extension owns on or off to match the chat's cast.
  *
- * Filtering stops SillyNPC injecting an out-of-chat character, but it cannot stop
+ * Filtering stops Castward injecting an out-of-chat character, but it cannot stop
  * SillyTavern firing their entry on its own when a keyword happens to match. Only entries
  * a character card actually points at are touched - anything you wrote by hand is left
  * exactly as you set it, including its own disable state.

@@ -101,5 +101,5 @@ export function buildConnectionProfilePicker(onChange, options = {}) {
 
 /** Console noise from an optional integration is not worth a hard failure. */
 function debugLogSafe(message, err) {
-    try { console.debug('[SillyNPC]', message, err); } catch { /* ignore */ }
+    try { console.debug('[Castward]', message, err); } catch { /* ignore */ }
 }

@@ -44,7 +44,7 @@ export async function offerChatScope() {
     help.className = 'notes';
     help.style.cssText = 'display:block; margin-top:8px;';
     help.textContent = 'Tick nothing to include every character. '
-        + 'You can change it any time from Manage SillyNPC.';
+        + 'You can change it any time from Manage Castward.';
     wrap.append(help);
 
     const result = await new Popup(wrap, POPUP_TYPE.CONFIRM, '', {

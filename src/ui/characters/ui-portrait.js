@@ -153,7 +153,7 @@ export function buildPortraitBlock(char, { onChange }) {
             if (answer === 'delete' && result.removed && !result.deletedFile) {
                 toastr.info(
                     'Taken off this character, but the file was kept: another character is using it.',
-                    'SillyNPC',
+                    'Castward',
                 );
             }
             onChange();

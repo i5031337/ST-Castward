@@ -142,4 +142,4 @@ with browser_session() as browser:
         time.sleep(0.2)
     execute("document.querySelector('#sillynpc-generation-smoke')?.remove(); document.documentElement.removeAttribute('data-generation-smoke');")
     assert result and all(value is True for value in result.values()), result
-    print('SillyNPC generator UI passed:', json.dumps(result))
+    print('Castward generator UI passed:', json.dumps(result))

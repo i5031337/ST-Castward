@@ -155,11 +155,11 @@ export async function openItemLibrary() {
             // What happened, not what was asked for. Reporting the size of the selection
             // is how a delete that quietly matched nothing still claimed to have worked.
             if (forgotten === ids.length) {
-                toastr.success(`Forgot ${forgotten} entr${forgotten === 1 ? 'y' : 'ies'}.`, 'SillyNPC');
+                toastr.success(`Forgot ${forgotten} entr${forgotten === 1 ? 'y' : 'ies'}.`, 'Castward');
             } else {
                 toastr.warning(
                     `Forgot ${forgotten} of ${ids.length} selected - the rest were no longer there.`,
-                    'SillyNPC');
+                    'Castward');
             }
         },
         onRefresh: () => render(content, libraryFilter),
@@ -250,7 +250,7 @@ export function render(root, filter = '') {
             }
         }
         if (doomed.length === 0) {
-            toastr.info('Every remembered entry is currently held by someone.', 'SillyNPC');
+            toastr.info('Every remembered entry is currently held by someone.', 'Castward');
             return;
         }
         const ok = await Popup.show.confirm(
@@ -260,7 +260,7 @@ export function render(root, filter = '') {
         if (!ok) return;
         for (const { colId, key } of doomed) delete master[colId][key];
         saveSettings();
-        toastr.success(`Forgot ${doomed.length} unreferenced entr${doomed.length === 1 ? 'y' : 'ies'}.`, 'SillyNPC');
+        toastr.success(`Forgot ${doomed.length} unreferenced entr${doomed.length === 1 ? 'y' : 'ies'}.`, 'Castward');
         render(root, search.value);
     });
 

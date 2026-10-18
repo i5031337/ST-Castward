@@ -109,7 +109,7 @@ function wireFieldRename(fRow, col, field, onRefresh, context) {
             return;
         }
         if (col.fields.some(f => f !== field && f.name === newName)) {
-            toastr.error(`This collection already has a field called "${newName}".`, 'SillyNPC');
+            toastr.error(`This collection already has a field called "${newName}".`, 'Castward');
             e.target.value = oldName;
             return;
         }
@@ -119,7 +119,7 @@ function wireFieldRename(fRow, col, field, onRefresh, context) {
         // A rename that moved nothing and one that moved forty items look the
         // same afterwards, and the difference is worth knowing.
         if (moved) {
-            toastr.success(`Renamed to "${newName}" and carried ${moved} item${moved === 1 ? '' : 's'} across.`, 'SillyNPC');
+            toastr.success(`Renamed to "${newName}" and carried ${moved} item${moved === 1 ? '' : 's'} across.`, 'Castward');
         }
         onRefresh();
     });

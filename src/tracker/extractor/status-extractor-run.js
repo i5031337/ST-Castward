@@ -87,7 +87,7 @@ let lastReportedProblem = '';
 function reportExtractionProblem(message) {
     if (message === lastReportedProblem) return;
     lastReportedProblem = message;
-    if (typeof toastr !== 'undefined') toastr.warning(message, 'SillyNPC');
+    if (typeof toastr !== 'undefined') toastr.warning(message, 'Castward');
 }
 
 export async function extractStateFromMessage(messageText, messageId, options = {}) {

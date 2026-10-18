@@ -12,13 +12,13 @@ export function buildManualLevelUpSection(card, { onChange = () => {}, service =
     const run = async action => {
         button.disabled = true;
         try { await action(); onChange(); }
-        catch (error) { globalThis.toastr?.warning(error.message || String(error), 'SillyNPC'); }
+        catch (error) { globalThis.toastr?.warning(error.message || String(error), 'Castward'); }
         finally { if (button.isConnected) button.disabled = !service.info(card.id).enabled || service.isBusy(card.id); }
     };
     button.addEventListener('click', () => run(async () => {
         const record = await service.trigger(card.id);
         globalThis.toastr?.success(`${card.name} is now level ${record.newLevel}.`
-            + (record.pending.length || record.failures.length ? ' Review the rewards below.' : ''), 'SillyNPC');
+            + (record.pending.length || record.failures.length ? ' Review the rewards below.' : ''), 'Castward');
     }));
     section.append(button);
     if (!info.enabled) {

@@ -32,7 +32,7 @@ const fantasyActors = ['player', 'template:character'];
 
 const fantasy = {
     schemaVersion: 2, id: 'fantasy-adventure', name: 'Fantasy Adventure',
-    metadata: { description: 'Characters of every kind, quests, gear, and magic.', author: 'SillyNPC' },
+    metadata: { description: 'Characters of every kind, quests, gear, and magic.', author: 'Castward' },
     profiles: [
         profile('background', 'Background', fantasyActors, 'Origin and formative history.'),
         profile('ancestry', 'Ancestry or Species', fantasyActors, 'Heritage or species, whether person or beast.'),
@@ -98,7 +98,7 @@ const fantasy = {
 
 const dating = {
     schemaVersion: 2, id: 'dating-sim', name: 'Dating Sim',
-    metadata: { description: 'Relationships, outfits, useful items, and personal memories.', author: 'SillyNPC' },
+    metadata: { description: 'Relationships, outfits, useful items, and personal memories.', author: 'Castward' },
     profiles: [
         profile('personality', 'Personality', ['player', 'template:character'],
             'Stable traits and social style.'),
@@ -154,7 +154,7 @@ const dating = {
 
 const creature = {
     schemaVersion: 2, id: 'creature-trainer', name: 'Creature Trainer',
-    metadata: { description: 'Trainers, creatures, moves, teams, items, and growing stats.', author: 'SillyNPC' },
+    metadata: { description: 'Trainers, creatures, moves, teams, items, and growing stats.', author: 'Castward' },
     profiles: [
         profile('appearance', 'Appearance', ['player', 'template:trainer', 'template:creature'],
             'Visible appearance.'),

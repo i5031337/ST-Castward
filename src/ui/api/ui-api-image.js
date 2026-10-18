@@ -45,7 +45,7 @@ async function askGenerationPrompt(char) {
         okButton: 'Generate', cancelButton: 'Cancel',
         onClosing: popup => {
             if (popup.result === POPUP_RESULT.AFFIRMATIVE && !prompt.value.trim()) {
-                toastr.warning('Enter an image prompt first.', 'SillyNPC');
+                toastr.warning('Enter an image prompt first.', 'Castward');
                 return false;
             }
             return true;
@@ -98,10 +98,10 @@ export async function generateCharacterImage(char, { onSave } = {}) {
     try {
         const prompt = await askGenerationPrompt(char);
         if (prompt === null) return;
-        toastr.info('Requesting image generation...', 'SillyNPC');
+        toastr.info('Requesting image generation...', 'Castward');
         imageUrl = await generateCharacterImageLogic(char, { prompt });
     } catch (err) {
-        toastr.error(`Generation failed: ${err.message}`, 'SillyNPC');
+        toastr.error(`Generation failed: ${err.message}`, 'Castward');
         return;
     }
 
@@ -109,7 +109,7 @@ export async function generateCharacterImage(char, { onSave } = {}) {
 
     if (action === 'discard') {
         await deleteGeneratedImage(imageUrl);
-        toastr.info('Generated image discarded.', 'SillyNPC');
+        toastr.info('Generated image discarded.', 'Castward');
         return;
     }
 
@@ -121,7 +121,7 @@ export async function generateCharacterImage(char, { onSave } = {}) {
 
     toastr.success(
         action === 'use' ? 'Character image updated.' : 'Image saved to this character.',
-        'SillyNPC',
+        'Castward',
     );
     onSave?.();
 }

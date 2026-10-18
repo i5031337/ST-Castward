@@ -49,7 +49,7 @@ async function addSettingsPanel() {
         $('#extensions_settings2').append(html);
         document.getElementById('sillynpc-enable-setting')?.append(buildSettingToggle({
             key: 'enabled',
-            label: 'Enable SillyNPC',
+            label: 'Enable Castward',
             help: 'Turn off chat decorations, prompts, the HUD and background reading. Saved characters and tracker data are kept.',
             onChange: refreshExtensionEnabled,
         }));

@@ -10,7 +10,7 @@ test('Fill uses a chosen chat book before a default and ignores stale names', ()
 
 test('a Fill chat book has a safe, unique name', () => {
     const first = newChatLorebookName('Alice/Chapter:1');
-    assert.equal(first, 'SillyNPC Chat Alice_Chapter_1');
+    assert.equal(first, 'Castward Chat Alice_Chapter_1');
     assert.equal(newChatLorebookName('Alice/Chapter:1', [first]), `${first} 2`);
     assert.ok(newChatLorebookName('x'.repeat(100)).length <= 64);
 });

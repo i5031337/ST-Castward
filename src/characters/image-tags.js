@@ -6,7 +6,7 @@
  * fact about the card, so it lives on the card - beside the picture it describes, carried
  * by every copy of the settings, and removed when the picture is.
  *
- * Nothing in SillyNPC acts on a tag. Deciding *which* field wins when two of them name a
+ * Nothing in Castward acts on a tag. Deciding *which* field wins when two of them name a
  * picture is policy, and policy belongs to whatever is asking - see registerImageTagFields.
  * This module stores explicit tags and reads values encoded in filenames.
  *
@@ -18,12 +18,12 @@ import { getSettings, saveSettings } from '../core/settings.js';
 /**
  * Who wants pictures tagged, and by which fields.
  *
- * SillyNPC has no use for tags of its own, so the character page draws no tagging control
+ * Castward has no use for tags of its own, so the character page draws no tagging control
  * until something registers an interest. That is the whole reason it is a registration
  * rather than a check for a particular extension: this file is told "these fields want
  * tagging", never "such-and-such is installed", so no addon's name appears here and the
  * next one to want the same thing needs no edit. A check in the test suite asserts that
- * nothing in SillyNPC names an addon, because a comment is the first step towards code.
+ * nothing in Castward names an addon, because a comment is the first step towards code.
  *
  * A function rather than a list, because the fields are a setting on the other side and
  * asking each time is the difference between a live answer and a copy taken at load.

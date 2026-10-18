@@ -5,7 +5,7 @@ import { offerDownload } from '../../core/utils.js';
 
 export function exportData() {
     offerDownload(exportSettingsData(),
-        `sillynpc-export-${new Date().toISOString().slice(0, 10)}.json`);
+        `castward-export-${new Date().toISOString().slice(0, 10)}.json`);
 }
 
 export async function importData(refreshView) {
@@ -17,7 +17,7 @@ export async function importData(refreshView) {
         if (!file) return;
         try {
             const text = await file.text();
-            const confirm = await Popup.show.confirm('Import Data', 'This will overwrite your current SillyNPC characters and settings. Continue?');
+            const confirm = await Popup.show.confirm('Import Data', 'This will overwrite your current Castward characters and settings. Continue?');
             if (!confirm) return;
 
             importSettingsData(text);

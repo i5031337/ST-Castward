@@ -33,7 +33,7 @@ export function createManualLevelUpService(deps) {
         const current = origin();
         const unavailable = reason => ({ enabled: false, reason });
         if (current.chatId === undefined) return unavailable('Open a chat to trigger a level-up.');
-        if (!deps.getSettings().enabled) return unavailable('Enable SillyNPC to trigger a level-up.');
+        if (!deps.getSettings().enabled) return unavailable('Enable Castward to trigger a level-up.');
         const cards = deps.getCards(), card = cards.find(card => card.id === cardId);
         if (!card || card.isPlayer) return unavailable('This NPC card is not available in the current chat.');
         const tracker = deps.getSettings().statusTracker, state = deps.loadState();

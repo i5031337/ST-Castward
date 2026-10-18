@@ -142,16 +142,16 @@ export function renderProfileFields(char, container) {
             try {
                 const result = await fillProfile(char, { fields: [field.id] });
                 if (!result.ok) {
-                    toastr.error(result.reason || 'That did not work.', 'SillyNPC');
+                    toastr.error(result.reason || 'That did not work.', 'Castward');
                 } else if (!result.filled.length) {
-                    toastr.info(result.reason || 'Nothing came back for that field.', 'SillyNPC');
+                    toastr.info(result.reason || 'Nothing came back for that field.', 'Castward');
                 } else {
                     input.value = String(profileFieldValue(char.profile, field));
                     undo.offer(previous);
                 }
             } catch (err) {
                 console.error(LOG_PREFIX, 'Regenerating a profile field failed', err);
-                toastr.error(String(err?.message || err), 'SillyNPC');
+                toastr.error(String(err?.message || err), 'Castward');
             } finally {
                 redo.disabled = false;
                 redo.innerHTML = '<i class="fa-solid fa-rotate"></i>';

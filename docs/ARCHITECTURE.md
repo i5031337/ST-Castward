@@ -1,6 +1,6 @@
 # Runtime and storage boundaries
 
-SillyNPC XP recognizes dialogue, manages NPC identities and portraits, and tracks
+Castward recognizes dialogue, manages NPC identities and portraits, and tracks
 chat-owned story state. SillyTavern loads `index.js` and `style.css` directly; there
 is no build step. [FILE_MAP.md](FILE_MAP.md) locates the implementation.
 

@@ -7,7 +7,7 @@ from ui_webdriver import browser_session
 with browser_session() as browser:
     browser.execute(r"""
         const entry = [...document.scripts].find(script => script.src.includes('/SillyNPC-XP/index.js'));
-        if (!entry) throw new Error('SillyNPC entry script not loaded');
+        if (!entry) throw new Error('Castward entry script not loaded');
         const script = document.createElement('script');
         script.type = 'module'; script.id = 'sillynpc-connection-smoke';
         script.onerror = () => document.documentElement.setAttribute('data-sillynpc-connection-smoke',
@@ -21,7 +21,7 @@ with browser_session() as browser:
             const api = Object.keys(context.CONNECT_API_MAP).find(key =>
               context.CONNECT_API_MAP[key].selected === 'openai' && context.CONNECT_API_MAP[key].source === 'custom');
             const profile = { id: 'sillynpc-fixture', api, model: 'fixture',
-              preset: 'SillyNPC fixture preset', 'api-url': 'http://sillynpc-fixture.invalid' };
+              preset: 'Castward fixture preset', 'api-url': 'http://sillynpc-fixture.invalid' };
             const preset = { custom_include_body: 'temperature: 0.9\\nmax_tokens: 900',
               custom_exclude_body: '', custom_include_headers: 'X-User: {{user}}',
               temperature: 1.8, top_p: 0.3 };

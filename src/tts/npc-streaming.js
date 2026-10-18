@@ -33,7 +33,7 @@ export function createNpcStreaming({ read, publish, enqueue, classify, finalize,
             publish(job);
             const added = records.filter(line => !previous.some(old => old.lineIndex === line.lineIndex
                 && old.npcId === line.npcId && old.text === line.text));
-            Promise.resolve(classify(job, added)).catch(error => console.warn('[SillyNPC] Streaming expressions failed', error));
+            Promise.resolve(classify(job, added)).catch(error => console.warn('[Castward] Streaming expressions failed', error));
             enqueue(job, units.slice(job.keys.length));
             job.keys = keys;
         }

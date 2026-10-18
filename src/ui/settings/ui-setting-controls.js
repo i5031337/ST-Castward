@@ -35,7 +35,7 @@ function markAdvanced(wrap, spec) {
  *
  * These builders carry the label, the help text, the advanced gating and the saving, which
  * is why every settings surface here is made of them - and why an addon wants them too. But
- * they read SillyNPC's own settings by name, so an addon using them as they stood would
+ * they read Castward's own settings by name, so an addon using them as they stood would
  * write its settings into this extension's file.
  *
  * An optional store is the whole of the fix. Omitted, which is every existing call, it is
@@ -47,7 +47,7 @@ function markAdvanced(wrap, spec) {
  * about one person's screen, not a per-extension preference.
  *
  * defaults comes with it because the slider and number controls fall back to the schema
- * default for their key when nothing is stored - and reading SillyNPC's schema for somebody
+ * default for their key when nothing is stored - and reading Castward's schema for somebody
  * else's key finds nothing, which puts a slider at its minimum rather than where the addon
  * says it starts.
  *
@@ -130,7 +130,7 @@ export function buildSettingTextArea(options) {
         restore.title = 'Replace this with the recommended template.';
         restore.addEventListener('click', async () => {
             if (textarea.value.trim() === String(recommended).trim()) {
-                toastr.info('This is already the recommended template.', 'SillyNPC');
+                toastr.info('This is already the recommended template.', 'Castward');
                 return;
             }
             // It replaces work someone may have spent time on, so it asks.

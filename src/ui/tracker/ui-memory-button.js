@@ -46,18 +46,18 @@ async function onMemoryClicked() {
     try {
         const result = await readMemories({ manual: true });
         if (!result.ok) {
-            toastr.info(result.reason || 'The memory reading did not complete.', 'SillyNPC');
+            toastr.info(result.reason || 'The memory reading did not complete.', 'Castward');
         } else if (result.pending) {
-            toastr.info(`${result.pending} memor${result.pending === 1 ? 'y' : 'ies'} awaiting review under the last message.`, 'SillyNPC');
+            toastr.info(`${result.pending} memor${result.pending === 1 ? 'y' : 'ies'} awaiting review under the last message.`, 'Castward');
         } else {
-            toastr.success('Memory reading complete. Nothing to add.', 'SillyNPC');
+            toastr.success('Memory reading complete. Nothing to add.', 'Castward');
         }
         if (result.ok && result.remainingReplies > 0) {
-            toastr.info(`${result.remainingReplies} unread repl${result.remainingReplies === 1 ? 'y remains' : 'ies remain'}. Use Read memories now again to continue.`, 'SillyNPC');
+            toastr.info(`${result.remainingReplies} unread repl${result.remainingReplies === 1 ? 'y remains' : 'ies remain'}. Use Read memories now again to continue.`, 'Castward');
         }
     } catch (error) {
         console.error(LOG_PREFIX, 'Memory reading failed', error);
-        toastr.error(String(error?.message || error), 'SillyNPC');
+        toastr.error(String(error?.message || error), 'Castward');
     } finally {
         clicked = false;
         refreshMemoryButton();

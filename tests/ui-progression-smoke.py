@@ -180,4 +180,4 @@ with browser_session() as browser:
     expected = ['playerRollover', 'npcRollover', 'disabledUnchanged', 'dryRunPure', 'grantCounts', 'reviewRecipients',
                 'reviewRewards', 'keyboard', 'dependencies', 'dependenciesRestored', 'narrowLayout', 'acceptanceMath', 'confirmedRatings', 'manualBudget', 'manualRemainder', 'rejectedXpBlocks']
     assert result and all(result.get(key) for key in expected), result
-    print('SillyNPC level rewards UI passed:', json.dumps(result))
+    print('Castward level rewards UI passed:', json.dumps(result))

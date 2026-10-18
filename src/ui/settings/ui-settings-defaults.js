@@ -113,10 +113,10 @@ export function renderDefaultView(view, rerender) {
                 settings.defaultImages.push({ src: stored, tags: [] });
             }
             saveSettings();
-            toastr.success(`Added ${picked.length} face${picked.length === 1 ? '' : 's'}.`, 'SillyNPC');
+            toastr.success(`Added ${picked.length} face${picked.length === 1 ? '' : 's'}.`, 'Castward');
         } catch (err) {
             console.error(LOG_PREFIX, 'Could not add fallback portraits', err);
-            toastr.error(String(err.message || err), 'SillyNPC');
+            toastr.error(String(err.message || err), 'Castward');
         } finally {
             addBtn.disabled = false;
             rerender?.();

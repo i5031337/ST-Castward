@@ -80,6 +80,7 @@ export function setExpressionPrompt(generation, label, index, value) {
 /** Each approved portrait has its own pack, including across chat-owned NPC copies. */
 export function expressionFolder(card, reference) {
     const id = String(card.id).replace(/[^a-zA-Z0-9_]/g, '_').slice(0, 80);
+    // Keep the on-disk namespace so existing expression packs remain reusable.
     return `SillyNPC/${id}_${fnv1a(String(card.id) + reference).toString(16)}`;
 }
 

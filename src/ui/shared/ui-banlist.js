@@ -170,11 +170,11 @@ export function renderBanList(container) {
                 const ignored = addNotPeople(chosen.notPeople);
                 toastr.success(
                     `Banned ${banned} phrase(s), and added ${ignored} to Not Speakers.`,
-                    'SillyNPC');
+                    'Castward');
             }
         } catch (err) {
             console.error(LOG_PREFIX, 'Ban scan failed', err);
-            toastr.error(String(err?.message || err), 'SillyNPC');
+            toastr.error(String(err?.message || err), 'Castward');
         } finally {
             redraw();
         }

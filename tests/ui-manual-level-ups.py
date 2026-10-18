@@ -78,4 +78,4 @@ with browser_session() as browser:
     browser.execute("document.querySelector('#manual-level-fixture')?.remove();document.documentElement.removeAttribute('data-manual-level-fixture');")
     expected = ['editorButton', 'editOnly', 'advanced', 'review', 'waitsForReview', 'pool', 'completed', 'disabled']
     assert result and all(result.get(key) for key in expected), result
-    print('SillyNPC manual level-up UI passed:', json.dumps(result))
+    print('Castward manual level-up UI passed:', json.dumps(result))

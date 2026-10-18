@@ -106,7 +106,7 @@ export function buildSystemManager(onRefresh) {
                 try {
                     const payload = await exportWorldCharacters(name);
                     if (!payload.characters.length) {
-                        toastr.info(`No characters found for "${name}".`, 'SillyNPC');
+                        toastr.info(`No characters found for "${name}".`, 'Castward');
                         return;
                     }
                     const defs = name === getActiveSystem()
@@ -121,9 +121,9 @@ export function buildSystemManager(onRefresh) {
                     if (!confirmed) return;
                     offerDownload(payload,
                         `${name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_characters.json`);
-                    toastr.success(`Exported ${payload.characters.length} characters.`, 'SillyNPC');
+                    toastr.success(`Exported ${payload.characters.length} characters.`, 'Castward');
                 } catch (err) {
-                    toastr.error(String(err?.message || err), 'SillyNPC');
+                    toastr.error(String(err?.message || err), 'Castward');
                 } finally {
                     charsBtn.disabled = false;
                 }
@@ -137,7 +137,7 @@ export function buildSystemManager(onRefresh) {
             delBtn.addEventListener('click', async () => {
                 // The active configuration still needs its System.
                 if (name === getActiveSystem()) {
-                    toastr.info('Switch to another system before deleting this one.', 'SillyNPC');
+                    toastr.info('Switch to another system before deleting this one.', 'Castward');
                     return;
                 }
                 if (await Popup.show.confirm('Delete system', `Delete the saved system "${name}"?`)) {
@@ -173,7 +173,7 @@ export function buildSystemManager(onRefresh) {
         const name = (await Popup.show.input('New system', 'Name for this system:'))?.trim();
         if (!name) return;
         if (!createSystem(name)) {
-            toastr.error(`A system called "${name}" already exists.`, 'SillyNPC');
+            toastr.error(`A system called "${name}" already exists.`, 'Castward');
             return;
         }
         updateAllExtensionThemes();
@@ -210,7 +210,7 @@ export function buildSystemManager(onRefresh) {
             config: defaultSettings,
         }));
         if (!setActiveSystem(profile.metadata.name)) {
-            toastr.error('Could not activate the starter System.', 'SillyNPC');
+            toastr.error('Could not activate the starter System.', 'Castward');
             onRefresh();
             return;
         }
@@ -237,7 +237,7 @@ export function buildSystemManager(onRefresh) {
                     refreshMemoryButton();
                     onRefresh();
                 } catch (err) {
-                    toastr.error(`Failed to import system: ${err.message}`, 'SillyNPC');
+                    toastr.error(`Failed to import system: ${err.message}`, 'Castward');
                 }
             }
         };
@@ -257,7 +257,7 @@ export function buildSystemManager(onRefresh) {
     generateBtn.addEventListener('click', () => {
         if (wrap.querySelector('.sillynpc-system-generation')) return;
         wrap.append(buildSystemGeneration(name => {
-            toastr.success(`Saved “${name}” as a new System.`, 'SillyNPC');
+            toastr.success(`Saved “${name}” as a new System.`, 'Castward');
             refreshMemoryButton();
             onRefresh();
         }));

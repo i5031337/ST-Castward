@@ -1,6 +1,6 @@
 /* ─── Popup Button Overrides ───────────────────────────────────────────── */
 
-/* Target SillyTavern Popup buttons inside SillyNPC modals */
+/* Target SillyTavern Popup buttons inside Castward modals */
 .popup:has(.sillynpc-manage),
 #dialogue_popup:has(.sillynpc-manage) {
     --button-border: var(--sillynpc-border);

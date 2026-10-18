@@ -38,7 +38,7 @@ export function renderWritingRulesView(view, onReprocessMessages) {
             view.append(buildSettingToggle({
                 key: 'dialogueFormatInPromptList',
                 label: "Manage In SillyTavern's Prompt List",
-                help: "Puts the dialogue format into SillyTavern's own prompt list, under AI Response Configuration, where it can be dragged among the system prompts, given another depth, or switched off beside everything else. It goes in as In-Chat at depth 0, which is where it already sits, so switching this on moves nothing until you move it. The entry is kept in your chat completion preset: it is exported with that preset, and loading a different one drops it until SillyNPC puts it back. The extension supplies the built-in wording; the list controls where it goes and whether it is sent. Chat Completion only: there is no such list on Text Completion.",
+                help: "Puts the dialogue format into SillyTavern's own prompt list, under AI Response Configuration, where it can be dragged among the system prompts, given another depth, or switched off beside everything else. It goes in as In-Chat at depth 0, which is where it already sits, so switching this on moves nothing until you move it. The entry is kept in your chat completion preset: it is exported with that preset, and loading a different one drops it until Castward puts it back. The extension supplies the built-in wording; the list controls where it goes and whether it is sent. Chat Completion only: there is no such list on Text Completion.",
                 onChange: () => {
                     // At once rather than at the next message: the list entry is
                     // what makes the block appear there at all, and a setting whose

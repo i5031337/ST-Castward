@@ -11,7 +11,7 @@ function build(context) {
     const request = new Function('getContext', 'applyMacros', 'LOG_PREFIX', 'debugLog', 'SYSTEM_PROMPT',
         'describeConnection', 'extractJSON', 'safeJsonParse', 'recordUsage', 'extractMessageFromData', 'toastr', 'console', 'customProfilePayload',
         `${source}\nreturn requestExtraction;`)(
-        () => context, value => value, '[SillyNPC]', () => {}, 'System', () => 'Connection',
+        () => context, value => value, '[Castward]', () => {}, 'System', () => 'Connection',
         value => value, JSON.parse, (...args) => usage.push(args), raw => raw.choices[0].message.content,
         { warning: (...args) => events.push(['warning', ...args]) }, { warn: () => {} }, customProfilePayload);
     return { request, events, usage };
@@ -70,7 +70,7 @@ for (const failure of ['deleted profile', 'network failure', 'authentication fai
         assert.equal(events.length, 2);
         assert.equal(events[0][0], 'warning');
         assert.match(events[0][1], /selected reader connection failed.*main API/);
-        assert.equal(events[0][2], 'SillyNPC');
+        assert.equal(events[0][2], 'Castward');
         assert.deepEqual(events[1], ['main']);
         assert.equal(usage.length, 1);
     });

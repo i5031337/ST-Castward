@@ -64,7 +64,7 @@ export async function openAdvancedSettingsPopup() {
         const box = templateField.querySelector('textarea');
         if (box) box.value = tracker.template;
         triggerReprocess();
-        toastr.success('Layout reset. Your old template is kept as a backup.', 'SillyNPC');
+        toastr.success('Layout reset. Your old template is kept as a backup.', 'Castward');
     });
     container.append(resetBtn);
 

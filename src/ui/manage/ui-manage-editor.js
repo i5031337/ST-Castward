@@ -172,23 +172,23 @@ function buildEditorNameField(char, title, refreshEditor) {
         if (!from || !char.name.trim()) return;
         moveFolder(char, char.name, { from })
             .then(({ moved, left, refused, folder, note }) => {
-                if (note) toastr.info(`About the picture folder: ${note}`, 'SillyNPC', { timeOut: 12000 });
+                if (note) toastr.info(`About the picture folder: ${note}`, 'Castward', { timeOut: 12000 });
                 if (refused) {
-                    toastr.warning(`The pictures stay in user/images/${from}/: ${refused}.`, 'SillyNPC');
+                    toastr.warning(`The pictures stay in user/images/${from}/: ${refused}.`, 'Castward');
                     // The folder a refused move leaves in use is the old one.
                     char.imageFolder = from;
                     saveSettings();
                 } else if (left.length) {
                     toastr.warning(`Moved ${moved} file(s) to user/images/${folder}/. `
-                        + `${left.length} could not be moved and are still in user/images/${from}/.`, 'SillyNPC');
+                        + `${left.length} could not be moved and are still in user/images/${from}/.`, 'Castward');
                 } else if (moved) {
-                    toastr.success(`Moved ${moved} file(s) to user/images/${folder}/.`, 'SillyNPC');
+                    toastr.success(`Moved ${moved} file(s) to user/images/${folder}/.`, 'Castward');
                 }
                 folderBeforeRename = folderFor(char);
             })
             .catch(err => {
                 console.error(LOG_PREFIX, 'Could not move the picture folder', err);
-                toastr.error(`The pictures could not be moved: ${err?.message ?? err}`, 'SillyNPC');
+                toastr.error(`The pictures could not be moved: ${err?.message ?? err}`, 'Castward');
             });
     });
     nameField.appendChild(nameInput);

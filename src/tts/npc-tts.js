@@ -27,7 +27,7 @@ function updateButtons() {
     document.querySelectorAll('.sillynpc-tts-play').forEach(button => {
         const playing = Number(button.dataset.messageId) === current?.messageId;
         button.textContent = playing ? 'Stop speech' : 'Play speech';
-        button.title = playing ? 'Stop SillyNPC speech' : 'Play this message with SillyNPC voices';
+        button.title = playing ? 'Stop Castward speech' : 'Play this message with Castward voices';
     });
 }
 
@@ -44,8 +44,8 @@ const queue = createSpeechQueue({
     onState: (state, _job, detail) => {
         updateButtons();
         if (state === 'playing') showNpcSpeechExpression(detail);
-        if (state === 'prepare-error') globalThis.toastr?.warning(detail?.message || String(detail), 'SillyNPC expressions');
-        if (state === 'error') globalThis.toastr?.error(detail?.message || String(detail), 'SillyNPC speech');
+        if (state === 'prepare-error') globalThis.toastr?.warning(detail?.message || String(detail), 'Castward expressions');
+        if (state === 'error') globalThis.toastr?.error(detail?.message || String(detail), 'Castward speech');
     },
 });
 
@@ -77,8 +77,8 @@ export async function playNpcMessage(messageId, { automatic = false } = {}) {
     stopNpcTts();
     const settings = getSettings();
     const config = normalizeTtsSettings(settings.tts);
-    const issue = !settings.enabled ? 'Enable SillyNPC first.' : ttsConfigError(config, hostSpeechEndpoint());
-    if (issue) { if (!automatic) globalThis.toastr?.warning(issue, 'SillyNPC speech'); return; }
+    const issue = !settings.enabled ? 'Enable Castward first.' : ttsConfigError(config, hostSpeechEndpoint());
+    if (issue) { if (!automatic) globalThis.toastr?.warning(issue, 'Castward speech'); return; }
     if (automatic && (!config.autoPlay || builtInAutoTtsEnabled())) return;
     const id = Number(messageId);
     const message = getContext()?.chat?.[id];
@@ -111,10 +111,10 @@ export function renderNpcTtsControl(mesEl) {
     button.type = 'button'; button.className = 'menu_button sillynpc-tts-play';
     button.dataset.messageId = String(id);
     button.textContent = 'Play speech';
-    button.title = 'Play this message with SillyNPC voices';
+    button.title = 'Play this message with Castward voices';
     button.addEventListener('click', () => {
         if (queue.current()?.messageId === id) stopNpcTts();
-        else playNpcMessage(id).catch(error => globalThis.toastr?.error(error.message, 'SillyNPC speech'));
+        else playNpcMessage(id).catch(error => globalThis.toastr?.error(error.message, 'Castward speech'));
     });
     (mesEl.querySelector('.mes_buttons') || mesEl.querySelector('.mes_header') || mesEl).append(button);
 }

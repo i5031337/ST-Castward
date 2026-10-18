@@ -34,7 +34,7 @@ function rowFor(field, fields, onRefresh, context) {
     name.setAttribute('aria-label', 'Profile field name');
     name.addEventListener('change', () => {
         if (fieldAssignmentConflicts(fields, field, { name: name.value }).length) {
-            toastr.error('These actors already have a profile field with this name.', 'SillyNPC');
+            toastr.error('These actors already have a profile field with this name.', 'Castward');
             name.value = field.label;
             return;
         }
@@ -57,7 +57,7 @@ function rowFor(field, fields, onRefresh, context) {
         field.retired ? 'Show this field again' : 'Hide this field while preserving existing values',
         () => {
             if (field.retired && fieldAssignmentConflicts(fields, field).length) {
-                toastr.error('These actors already have a profile field with this name. Change its name or targets before restoring it.', 'SillyNPC');
+                toastr.error('These actors already have a profile field with this name. Change its name or targets before restoring it.', 'Castward');
                 return;
             }
             retireProfileField(field, !field.retired); saveSettings(); onRefresh();
@@ -100,7 +100,7 @@ function rowFor(field, fields, onRefresh, context) {
     displayOptions.append(multiline, imageLabel);
     row.append(header, buildTargetsEditor(field, () => {
         if (fieldAssignmentConflicts(fields, field).length) {
-            toastr.error('These actors already have a profile field with this name. Rename it or choose other targets.', 'SillyNPC');
+            toastr.error('These actors already have a profile field with this name. Rename it or choose other targets.', 'Castward');
             return false;
         }
         saveSettings(); onRefresh();
@@ -127,7 +127,7 @@ export function buildProfilesEditor(onRefresh, context = liveSystemContext) {
     label.setAttribute('aria-label', 'New profile field name');
     const addField = () => {
         if (fieldAssignmentConflicts(fields, { label: label.value, targets: ['player', 'npc'] }).length) {
-            toastr.error('A profile field with this name already exists. Assign that field to more actors instead.', 'SillyNPC');
+            toastr.error('A profile field with this name already exists. Assign that field to more actors instead.', 'Castward');
             return;
         }
         if (!addProfileField(fields, label.value)) return;

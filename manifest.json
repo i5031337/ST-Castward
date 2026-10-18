@@ -1,14 +1,14 @@
 {
-    "display_name": "SillyNPC XP - Character Stylist & Status Tracker",
+    "display_name": "Castward - Character Profiles & RPG Tracking",
     "loading_order": 100,
     "requires": [],
     "optional": [],
     "js": "index.js",
     "generate_interceptor": "sillyNpcHistoryNotes",
     "css": "style.css",
-    "author": "BrutalKoala",
-    "version": "0.7.0",
-    "homePage": "https://github.com/i5031337/SillyNPC-levels",
+    "author": "i5031337 (based on SillyNPC by BrutalKoala)",
+    "version": "0.8.0",
+    "homePage": "https://github.com/i5031337/ST-Castward",
     "auto_update": false,
-    "description": "SillyNPC fork with automatic XP level-ups, story-based XP awards, and player-sheet level bonuses."
+    "description": "Character profiles, portraits, voices, memories, and RPG progression for your player and NPC cast."
 }

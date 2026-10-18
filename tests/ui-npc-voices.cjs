@@ -58,10 +58,10 @@ async function main() {
             }
         };
         for (let i = 0; i < 100; i++) {
-            if (await evaluate(`Boolean([...document.scripts].find(s => s.src.includes('SillyNPC-levels/index.js') || s.src.includes('SillyNPC-XP/index.js')))`)) break;
+            if (await evaluate(`Boolean([...document.scripts].find(s => s.src.includes('ST-Castward/index.js') || s.src.includes('SillyNPC-levels/index.js') || s.src.includes('SillyNPC-XP/index.js')))`)) break;
             await sleep(100);
         }
-        const root = await evaluate(`new URL('.', [...document.scripts].find(s => s.src.includes('SillyNPC-levels/index.js') || s.src.includes('SillyNPC-XP/index.js')).src).href`);
+        const root = await evaluate(`new URL('.', [...document.scripts].find(s => s.src.includes('ST-Castward/index.js') || s.src.includes('SillyNPC-levels/index.js') || s.src.includes('SillyNPC-XP/index.js')).src).href`);
         const fixture = `const out={root:${JSON.stringify(root)}};let section,designSection,settings,savedTts,savedCharacters,hostContext,chatLength,fixtureMes,cueMes,originalFetch,originalPlay,nativeTts,savedNative;try {
             try{await import(${JSON.stringify(root + 'index.js')});out.entryOk=true}catch(error){out.entryError=String(error.stack||error)}
             for(let i=0;i<200&&!document.getElementById('sillynpc-open-manage');i++)

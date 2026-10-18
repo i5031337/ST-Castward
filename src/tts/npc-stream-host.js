@@ -148,7 +148,7 @@ export function initNpcStreaming({ enqueue, close, cancelSpeech, renderControl,
         }
         state.parserSource = state.baseline + raw;
         try { streaming.push(raw); scheduleRender(); }
-        catch (error) { streaming.stop(); console.warn('[SillyNPC] Streaming failed', error); }
+        catch (error) { streaming.stop(); console.warn('[Castward] Streaming failed', error); }
     });
     events.on(types.GENERATION_ENDED, () => {
         authorized = null;
@@ -158,7 +158,7 @@ export function initNpcStreaming({ enqueue, close, cancelSpeech, renderControl,
         requestAnimationFrame(() => {
             if (streaming.current() !== state) return;
             try { streaming.push(state.raw, { final: true }); }
-            catch (error) { streaming.stop(); console.warn('[SillyNPC] Streaming finalization failed', error); }
+            catch (error) { streaming.stop(); console.warn('[Castward] Streaming finalization failed', error); }
         });
     });
     return { stop: ({ preserveGeneration = false } = {}) => {

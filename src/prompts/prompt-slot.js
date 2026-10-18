@@ -95,9 +95,10 @@ function orderFor(pm) {
  * @param {string} text What the block says now.
  * @param {string} name What the list should call it.
  * @param {number} depth Where to start it. Used only when the entry is created.
+ * @param {string} [previousName] Exact former default name to rename; custom names stay.
  * @returns {boolean} Whether the list now holds the block.
  */
-function writeListEntry(key, text, name, depth) {
+function writeListEntry(key, text, name, depth, previousName) {
     const pm = readyManager();
     if (!pm) return false;
 
@@ -108,6 +109,7 @@ function writeListEntry(key, text, name, depth) {
     let entry = pm.serviceSettings.prompts.find(p => p && p.identifier === identifier) ?? null;
     let added = false;
     let changed = false;
+    let renamed = false;
 
     if (!entry) {
         entry = {
@@ -138,10 +140,16 @@ function writeListEntry(key, text, name, depth) {
         };
         pm.serviceSettings.prompts.push(entry);
         added = true;
-    } else if (entry.content !== text) {
-        // The text is the extension's; the placement is not. Only this is written back.
-        entry.content = text;
-        changed = true;
+    } else {
+        // The text is the extension's; placement and custom names belong to the user.
+        if (entry.content !== text) {
+            entry.content = text;
+            changed = true;
+        }
+        if (previousName && entry.name === previousName && entry.name !== name) {
+            entry.name = name;
+            renamed = true;
+        }
     }
 
     if (!order.some(item => item && item.identifier === identifier)) {
@@ -151,9 +159,9 @@ function writeListEntry(key, text, name, depth) {
         added = true;
     }
 
-    if (added || changed) saveSettingsDebounced();
-    // Only a structural change is worth a redraw - the content is rewritten on every send.
-    if (added) pm.render(false);
+    if (added || changed || renamed) saveSettingsDebounced();
+    // Content is rewritten on every send; redraw only when the visible list changes.
+    if (added || renamed) pm.render(false);
     return true;
 }
 
@@ -200,12 +208,12 @@ function removeListEntry(key) {
  *
  * @param {string} key The extension prompt key.
  * @param {string} text What to send. Empty sends nothing.
- * @param {{ inList?: boolean, depth?: number, name?: string }} [options]
+ * @param {{ inList?: boolean, depth?: number, name?: string, previousName?: string }} [options]
  *   `inList` hands placement to SillyTavern's prompt list; `depth` is used when it does not,
  *   and as the starting depth of a list entry being created; `name` is what the list calls
- *   it.
+ *   it. `previousName` renames only an exact former default, preserving custom names.
  */
-export function placeWritingPrompt(key, text, { inList = false, depth = 0, name = key } = {}) {
+export function placeWritingPrompt(key, text, { inList = false, depth = 0, name = key, previousName } = {}) {
     const body = String(text ?? '');
     const at = Number(depth);
     const start = Number.isFinite(at) ? at : 0;
@@ -215,7 +223,7 @@ export function placeWritingPrompt(key, text, { inList = false, depth = 0, name 
     // list must not throw the user's placement away on the way past.
     if (!wantsList) removeListEntry(key);
 
-    if (wantsList && promptListAvailable() && writeListEntry(key, body, name, start)) {
+    if (wantsList && promptListAvailable() && writeListEntry(key, body, name, start, previousName)) {
         // The list holds it now, so nothing may be injected under this key as well: the
         // two are separate paths into the prompt and the model would be told twice. An
         // empty write is how that is said, since extension_prompts is keyed by name and

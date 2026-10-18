@@ -290,7 +290,7 @@ export function resolvePendingChanges(messageId, accepted, dismissed = [], { dis
                 && getSettings().activeSystem === systemId;
             for (const { card, store } of memories.changed) {
                 syncProfileToLore(card, store, { isCurrent }).catch(error =>
-                    console.error('SillyNPC: Could not sync reviewed memories', error));
+                    console.error('Castward: Could not sync reviewed memories', error));
             }
         }
     }

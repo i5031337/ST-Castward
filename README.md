@@ -1,14 +1,10 @@
-<p align="center">
-  <img src="img/SillyNPCLogo.jpg" alt="SillyNPC XP" width="360">
-</p>
-
-# SillyNPC XP
+# Castward
 
 Give your roleplay a cast you can see, hear, and watch grow.
 
-NPC portraits, character sheets, and RPG tracking for SillyTavern. A background reader follows the story and updates stats, inventory, and XP. Let changes apply automatically or review them yourself.
+Player and NPC profiles, portraits, voices, and RPG tracking for SillyTavern. A background reader follows the story and updates stats, inventory, and XP. Let changes apply automatically or review them yourself.
 
-This is a fork of [BrutalKoala's SillyNPC](https://github.com/BrutalKoala/SillyNPC), with more room to build your own game.
+Castward (formerly **SillyNPC XP**) is maintained by **i5031337**. Built on [SillyNPC by BrutalKoala](https://github.com/BrutalKoala/SillyNPC), it puts player and NPC profiles at the center of your adventure.
 
 ## What it does
 
@@ -59,22 +55,24 @@ Current UI, with example settings. Click an image for the full view.
 
 ## Install
 
-**Use this fork instead of the original SillyNPC.** They share settings and events, so keep only one installed. If you're switching, export a backup first; existing SillyNPC data remains readable.
+**Use Castward instead of the original SillyNPC.** They share settings and events, so keep only one installed. If you're switching, export a backup first; existing SillyNPC data remains readable.
+
+**Already using SillyNPC XP?** Update your existing installation and refresh SillyTavern. No reinstall or data migration is needed: Castward keeps the same settings and chat data. Keep your existing extension folder; installing a second copy would run both together. The repository is now `i5031337/ST-Castward`; old GitHub links redirect to it. The `SillyNPC-XP` folder example below keeps the existing local folder name.
 
 1. Open SillyTavern's **Extensions → Install Extension**.
-2. Paste `https://github.com/i5031337/SillyNPC-levels`.
+2. Paste `https://github.com/i5031337/ST-Castward`.
 3. Install and refresh the page.
 
 Or clone it into your installation:
 
 ```bash
 cd SillyTavern/public/scripts/extensions/third-party
-git clone https://github.com/i5031337/SillyNPC-levels.git SillyNPC-XP
+git clone https://github.com/i5031337/ST-Castward.git SillyNPC-XP
 ```
 
 ## Your first adventure
 
-Open **Extensions → SillyNPC → Manage SillyNPC**.
+Open **Extensions → Castward → Manage Castward**.
 
 1. **Pick your rules.** Keep the default Fantasy Adventure System, choose another [starter System](#choose-a-starter-system), or use **Generate from premise** in **System → Manager**. Select new rules before your first player message.
 2. **Start chatting.** **Dialogue → Ask The Model To Format Dialogue** requests lines like `**Mira**: "All aboard!"` so portraits and colours follow each speaker.
@@ -92,7 +90,7 @@ Collections can unlock scheduled or reader-chosen rewards. XP awards are model j
 
 ## Voices and expressions
 
-**Speech** uses SillyTavern's built-in **OpenAI Compatible** TTS endpoint and API key. Enter supported model and voice IDs, then choose each NPC's **Dialogue voice** in their Edit view. Use Play on a reply or enable automatic playback. Narration and dialogue can use different models. Designed voices need a service supporting the SillyNPC voice-design protocol.
+**Speech** uses SillyTavern's built-in **OpenAI Compatible** TTS endpoint and API key. Enter supported model and voice IDs, then choose each NPC's **Dialogue voice** in their Edit view. Use Play on a reply or enable automatic playback. Narration and dialogue can use different models. Designed voices need a service supporting the Castward voice-design protocol.
 
 Portraits use SillyTavern's **Image Generation** extension. Toggle automatic portraits under **Images**.
 
@@ -106,6 +104,6 @@ Export characters or Systems to reuse them. Characters carry profiles, lore text
 
 ## Contributing
 
-Issues and PRs are welcome [on this fork](https://github.com/i5031337/SillyNPC-levels). There's no build step. See the [file map](docs/FILE_MAP.md) for the source layout; run focused tests with `node --test tests/*.mjs`. UI checks also need a running SillyTavern instance.
+Issues and PRs are welcome [on this fork](https://github.com/i5031337/ST-Castward). There's no build step. See the [file map](docs/FILE_MAP.md) for the source layout; run focused tests with `node --test tests/*.mjs`. UI checks also need a running SillyTavern instance.
 
-Built on [SillyNPC by BrutalKoala](https://github.com/BrutalKoala/SillyNPC). [MIT license](LICENSE).
+Castward by **i5031337**. Originally based on [SillyNPC by BrutalKoala](https://github.com/BrutalKoala/SillyNPC). [MIT license](LICENSE).

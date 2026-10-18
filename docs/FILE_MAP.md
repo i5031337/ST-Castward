@@ -35,7 +35,7 @@ SillyTavern loads `index.js` and `style.css` from `manifest.json`. The JavaScrip
 | `docs/REWRITE_HOST_SMOKE.md` | Dated user-reported host results and remaining manual checks. |
 | `docs/level-up-rewards-plan.md` | Implemented progression/reward contract and verification criteria. |
 | `docs/system-generation-plan.md` | Implemented staged System generator design, verification criteria, and schema simplification candidates. |
-| `img/SillyNPCLogo.jpg` | Extension logo. |
+| `img/SillyNPCLogo.jpg` | Retained upstream SillyNPC logo; not used for Castward branding. |
 | `img/charactersexmp.png`, `img/charcterexmp.png`, `img/chatexmp.png` | Character and chat screenshots in the README. |
 | `img/floathudbar.png`, `img/floathudcircle.png`, `img/playerexmp.png` | HUD and player screenshots in the README. |
 | `img/stats.png`, `img/styleexmp.png` | Stats and appearance screenshots in the README. |
@@ -207,6 +207,7 @@ SillyTavern loads `index.js` and `style.css` from `manifest.json`. The JavaScrip
 | `src/prompts/prompt-texts-other.js` | Other built-in prompt templates. |
 | `src/prompts/fill-preset.js` | Automatic character fill stage selection. |
 | `src/prompts/prompt-slot.js` | Place writing prompts in SillyTavern's prompt manager. |
+| `tests/prompt-slot-rebrand.mjs` | Rename the former default dialogue prompt without changing custom names, placement, order, or toggles. |
 | `src/prompts/macros.js` | Expand extension template macros. |
 | `src/prompts/dialogue-format.js` | Dialogue formatting instructions. |
 | `src/prompts/banlist.js` | Banned phrase rules and scan prompts. |
@@ -413,7 +414,7 @@ paths have regression tests under `tests/`.
 | `src/tts/npc-streaming.js` | Generation-scoped completed-line producer and duplicate/final-flush guards. |
 | `src/tts/npc-stream-host.js` | Host streaming events, active-message decoration, provisional voice cues, and final expression adoption. |
 | `src/tts/openai-speech.js` | OpenAI-compatible synthesis through the host server proxy and HTML audio playback. |
-| `src/tts/npc-tts.js` | SillyNPC Play/Stop controls, automatic gating, previews, and runtime voice routing. |
+| `src/tts/npc-tts.js` | Castward Play/Stop controls, automatic gating, previews, and runtime voice routing. |
 | `src/tts/voice-cue-format.js` | Narrator cue validation and removal from rendered dialogue and narration. |
 | `src/tts/voice-cues.js` | Chat-scoped provisional voice identities and first-reply cue capture. |
 | `src/ui/tts/ui-tts-settings.js` | Menu Speech section with searchable model, narrator, and automatic playback controls and shared built-in endpoint display. |

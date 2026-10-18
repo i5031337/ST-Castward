@@ -64,7 +64,7 @@ export function buildContextReport(onChange) {
             toastr.success(
                 `Cleaned ${result.cleaned} message(s), recovering about `
                 + `${estimateTokens(result.removedChars).toLocaleString()} tokens.`,
-                'SillyNPC');
+                'Castward');
             render();
             onChange?.();
         });

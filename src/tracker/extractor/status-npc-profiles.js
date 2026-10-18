@@ -75,7 +75,7 @@ export async function generateNewNpcProfiles(names, isCurrent) {
                     console.warn(LOG_PREFIX, `Could not generate ${name}'s portrait`, error);
                     if (typeof toastr !== 'undefined') toastr.warning(
                         `${name}'s profile was saved, but portrait generation failed: ${error.message || error}. Retry from the character sheet.`,
-                        'SillyNPC',
+                        'Castward',
                     );
                 }
             }
@@ -85,7 +85,7 @@ export async function generateNewNpcProfiles(names, isCurrent) {
             console.warn(LOG_PREFIX, `Could not generate ${name}'s profile`, error);
             if (typeof toastr !== 'undefined') toastr.warning(
                 `Could not generate ${name}'s profile: ${error.message || error}. Retry with Fill on the character sheet.`,
-                'SillyNPC',
+                'Castward',
             );
         }
     }

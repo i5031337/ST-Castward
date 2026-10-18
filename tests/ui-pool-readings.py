@@ -79,6 +79,6 @@ with browser_session() as browser:
                 break
             time.sleep(.25)
         assert result and all(value is True for value in result.values()), result
-        print('SillyNPC pool readings UI passed:', json.dumps(result))
+        print('Castward pool readings UI passed:', json.dumps(result))
     finally:
         browser.execute("document.querySelector('#pool-readings-smoke')?.remove();document.documentElement.removeAttribute('data-pool-readings-smoke')")

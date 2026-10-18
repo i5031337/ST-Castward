@@ -16,7 +16,7 @@ export const expressionOwner = () => {
 export const expressionGenerator = createExpressionGenerator({
     loadPack: loadSpritePack,
     async edit(input) {
-        if (!input.workflow) throw new Error('Choose an Expression Editing Workflow in SillyNPC Images settings.');
+        if (!input.workflow) throw new Error('Choose an Expression Editing Workflow in Castward Images settings.');
         if (extension_settings.disabledExtensions?.includes('third-party/st-image-edit')) {
             throw new Error('Enable Image Edit and reload SillyTavern before generating expressions.');
         }

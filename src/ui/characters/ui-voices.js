@@ -13,7 +13,7 @@ export function buildVoicesSection(card, { save = () => {
     const root = document.createElement('fieldset'); root.className = 'sillynpc-voice-editor';
     const legend = document.createElement('legend'); legend.textContent = 'Dialogue voice'; root.append(legend);
     const note = document.createElement('p');
-    note.textContent = 'Uses the built-in OpenAI Compatible endpoint and API key. Set speech models in SillyNPC settings.';
+    note.textContent = 'Uses the built-in OpenAI Compatible endpoint and API key. Set speech models in Castward settings.';
     root.append(note);
     const select = document.createElement('select'); select.className = 'text_pole';
     select.setAttribute('aria-label', 'NPC dialogue voice'); root.append(select);
@@ -57,9 +57,9 @@ export function buildVoicesSection(card, { save = () => {
                 : binding?.mode === 'voice' ? `voice:${voice}` : binding?.mode || 'default';
             status.textContent = designed ? (cue && !presentation.voiceDesign.description
                 ? 'Using the narrator voice cue for this chat. Edit to create a new voice version.'
-                : 'A described voice uses the local service’s SillyNPC voice-design protocol. Without a description, dialogue uses the narrator model and voice. Preview creates the described voice.')
+                : 'A described voice uses the local service’s Castward voice-design protocol. Without a description, dialogue uses the narrator model and voice. Preview creates the described voice.')
                 : voices.length ? `${voices.length} voices configured.`
-                    : 'Add voices in SillyNPC speech settings.';
+                    : 'Add voices in Castward speech settings.';
         }
         preview.disabled = !config.enabled || ['disabled', 'missing'].includes(select.value);
     };
@@ -73,7 +73,7 @@ export function buildVoicesSection(card, { save = () => {
         stopNpcTts();
         save();
         preview.disabled = !config.enabled || ['disabled', 'missing'].includes(select.value);
-        status.textContent = 'SillyNPC voice preference saved.';
+        status.textContent = 'Castward voice preference saved.';
     });
     description.addEventListener('change', () => {
         const design = normalizeCharacterPresentation(card).voiceDesign;

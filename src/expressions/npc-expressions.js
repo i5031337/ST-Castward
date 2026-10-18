@@ -71,9 +71,9 @@ const engine = createExpressionEngine({ classify: job => job.classify(job), isCu
                 if (warned.has(key)) return;
                 warned.add(key);
                 if (warned.size > 128) warned.delete(warned.values().next().value);
-                console.warn(`[SillyNPC] ${card.name}: ${label} expression generation failed`, error);
+                console.warn(`[Castward] ${card.name}: ${label} expression generation failed`, error);
                 if (typeof toastr !== 'undefined') toastr.warning(
-                    `${card.name}: ${label} expression failed. ${error.message} Retry in NPC Edit.`, 'SillyNPC');
+                    `${card.name}: ${label} expression failed. ${error.message} Retry in NPC Edit.`, 'Castward');
             });
         }
     },
@@ -159,7 +159,7 @@ export async function completeNpcExpressions(messageId, {
                 // The engine serializes all NPC classification, including WebLLM jobs.
                 await engine.enqueue(job);
             }
-        } catch (error) { console.warn('[SillyNPC] Sprite pack unavailable', error); }
+        } catch (error) { console.warn('[Castward] Sprite pack unavailable', error); }
         finally { job.pending = false; }
     }
 }

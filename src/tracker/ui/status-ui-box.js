@@ -205,9 +205,9 @@ export function buildTrackerBox(state, {
             e.stopPropagation();
             const entry = undoLastChange();
             if (entry) {
-                toastr.info(`Reverted: ${entry.label}`, 'SillyNPC');
+                toastr.info(`Reverted: ${entry.label}`, 'Castward');
             } else {
-                toastr.warning('Nothing left to undo.', 'SillyNPC');
+                toastr.warning('Nothing left to undo.', 'Castward');
             }
         });
         headerBtns.appendChild(undoBtn);

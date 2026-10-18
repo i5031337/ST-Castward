@@ -23,7 +23,7 @@ export { createLoreEntry } from '../lore/lore-entries.js';
  * Reads the scene first and falls back to the card, since a character who is not in the
  * room right now still has everything they own recorded there.
  *
- * @param {object} char The SillyNPC character card.
+ * @param {object} char The Castward character card.
  * @returns {string} Empty when nothing is known, so the caller can substitute a note.
  */
 /**

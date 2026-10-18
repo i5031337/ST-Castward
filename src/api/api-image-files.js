@@ -83,9 +83,9 @@ export function characterImagePrefix(name) {
  * character could have six pictures in the folder and know about one. This walks the
  * configured folder and hands each file to the character whose prefix it carries.
  *
- * Only finds what SillyNPC itself wrote. Images generated through SillyTavern's own
+ * Only finds what Castward itself wrote. Images generated through SillyTavern's own
  * gallery are named after the character *card* - "The Dungeon Master_2026-05-28@...jpg" -
- * so they carry no clue about which SillyNPC character uses them, and are left alone
+ * so they carry no clue about which Castward character uses them, and are left alone
  * rather than guessed at.
  *
  * @returns {Promise<{ scanned: number, added: number, characters: number }>}

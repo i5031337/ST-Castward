@@ -21,7 +21,7 @@ export function renderTtsSettings(view, { onChange = () => {}, preview = () => {
     view.replaceChildren();
     const root = document.createElement('fieldset');
     root.id = 'sillynpc-tts-settings'; root.className = 'sillynpc-voice-editor';
-    const legend = document.createElement('legend'); legend.textContent = 'SillyNPC speech';
+    const legend = document.createElement('legend'); legend.textContent = 'Castward speech';
     const intro = document.createElement('p');
     intro.textContent = 'One voice for narration, individual voices for NPC dialogue. Uses the built-in OpenAI Compatible endpoint and API key. Set each NPC voice in Cast → Characters.';
     root.append(legend, intro); view.append(root);
@@ -38,7 +38,7 @@ export function renderTtsSettings(view, { onChange = () => {}, preview = () => {
         if (type === 'checkbox') element.checked = value; else element.value = value;
         return element;
     };
-    const enabled = field('enabled', 'Enable SillyNPC speech', input('checkbox', config.enabled));
+    const enabled = field('enabled', 'Enable Castward speech', input('checkbox', config.enabled));
     const auto = field('autoPlay', 'Automatically play replies as lines finish', input('checkbox', config.autoPlay));
     const endpoint = field('endpoint', 'Built-in OpenAI Compatible endpoint', input('url', hostSpeechEndpoint()));
     endpoint.readOnly = true;
@@ -48,13 +48,13 @@ export function renderTtsSettings(view, { onChange = () => {}, preview = () => {
     const npcVoices = field('npcVoices', 'NPC voices (comma separated; blank uses narrator voices)', input('text', (config.npcVoices || []).join(', ')));
     const npcVoiceMode = document.createElement('select'); npcVoiceMode.className = 'text_pole';
     for (const [value, label] of [['listed', 'Listed voices (OpenAI compatible)'],
-        ['designed', 'Designed voices (local SillyNPC voice-design protocol)']]) {
+        ['designed', 'Designed voices (Castward voice-design protocol)']]) {
         const option = document.createElement('option'); option.value = value; option.textContent = label; npcVoiceMode.append(option);
     }
     npcVoiceMode.value = config.npcVoiceMode;
     field('npcVoiceMode', 'NPC voice support', npcVoiceMode);
     const compatibility = document.createElement('p');
-    compatibility.textContent = 'Use model and voice IDs supported by your endpoint. Both models use this endpoint and API key. Designed voices require the local service’s SillyNPC protocol; ordinary OpenAI compatible models use listed voices.';
+    compatibility.textContent = 'Use model and voice IDs supported by your endpoint. Both models use this endpoint and API key. Designed voices require the local service’s Castward voice-design protocol; ordinary OpenAI compatible models use listed voices.';
     root.append(compatibility);
     const narrator = document.createElement('select'); narrator.className = 'text_pole';
     field('narratorVoice', 'Narrator voice', narrator);
@@ -78,7 +78,7 @@ export function renderTtsSettings(view, { onChange = () => {}, preview = () => {
         const issue = ttsConfigError(config, endpoint.value);
         status.textContent = config.enabled && config.autoPlay && nativeAuto()
             ? 'Built-in TTS automatic narration is also on. Turn it off to avoid duplicate speech.'
-            : issue || 'SillyNPC uses the built-in OpenAI Compatible endpoint and API key.';
+            : issue || 'Castward uses the built-in OpenAI Compatible endpoint and API key.';
     };
     const persist = () => { onChange(); saveSettingsDebounced(); refreshStatus(); };
     enabled.addEventListener('change', () => { config.enabled = enabled.checked; persist(); });

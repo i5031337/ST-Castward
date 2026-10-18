@@ -166,7 +166,7 @@ function buildLoreDialog(char, defaultWorld) {
 
 export async function generateLoreEntry(char, { onSave, template, facts, defaultWorld } = {}) {
     if (!char.name) {
-        toastr.warning('Please give the character a name first.', 'SillyNPC');
+        toastr.warning('Please give the character a name first.', 'Castward');
         return;
     }
 
@@ -187,7 +187,7 @@ export async function generateLoreEntry(char, { onSave, template, facts, default
         onOpen: (p) => { p.dlg.style.width = '650px'; },
         onClosing: () => {
             if (isGenerating) {
-                toastr.info('Generation in progress, please wait.', 'SillyNPC');
+                toastr.info('Generation in progress, please wait.', 'Castward');
                 return false;
             }
             return true;
@@ -215,7 +215,7 @@ export async function generateLoreEntry(char, { onSave, template, facts, default
             createBtn.style.display = 'none';
         } catch (err) {
             console.error(LOG_PREFIX, 'Failed to create lore entry', err);
-            toastr.error(String(err?.message || err), 'SillyNPC');
+            toastr.error(String(err?.message || err), 'Castward');
             createBtn.disabled = false;
         }
     });
@@ -246,7 +246,7 @@ export async function generateLoreEntry(char, { onSave, template, facts, default
             }
             if (truncated) {
                 warnings.push('The model stopped at its reply token limit. This lore may be incomplete; check it before saving.');
-                toastr.warning('Lore reply may be incomplete (reply token limit).', 'SillyNPC');
+                toastr.warning('Lore reply may be incomplete (reply token limit).', 'Castward');
             }
             resultWarning.textContent = warnings.join(' ');
 
@@ -254,12 +254,12 @@ export async function generateLoreEntry(char, { onSave, template, facts, default
             if (excerpt?.trimmed) {
                 toastr.info(
                     `Read ${excerpt.used} of ${excerpt.available} messages (excerpt size limit).`,
-                    'SillyNPC');
+                    'Castward');
             }
             toastr.success('Generation complete.');
         } catch (err) {
             console.error(LOG_PREFIX, 'Lore generation failed', err);
-            toastr.error(String(err?.message || err), 'SillyNPC');
+            toastr.error(String(err?.message || err), 'Castward');
         } finally {
             genBtn.disabled = false;
             isGenerating = false;

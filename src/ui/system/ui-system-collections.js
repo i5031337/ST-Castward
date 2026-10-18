@@ -150,7 +150,7 @@ function wireCollectionControls(colWrap, col, index, collections, bulk, onRefres
     colWrap.querySelector('.col-quantity').addEventListener('change', e => {
         if (e.target.checked && col.fields[0]?.name === 'quantity') {
             e.target.checked = false;
-            toastr.error('Choose a different identifier key to enable the built-in quantity field.', 'SillyNPC');
+            toastr.error('Choose a different identifier key to enable the built-in quantity field.', 'Castward');
             return;
         }
         const field = collectionQuantityField(col);
@@ -216,7 +216,7 @@ function wireCollectionIdRename(colWrap, col, collections, onRefresh, context) {
             return;
         }
         if (collections.some(c => c !== col && c.id === newId)) {
-            toastr.error(`A collection with the id "${newId}" already exists.`, 'SillyNPC');
+            toastr.error(`A collection with the id "${newId}" already exists.`, 'Castward');
             e.target.value = oldId;
             return;
         }
@@ -224,7 +224,7 @@ function wireCollectionIdRename(colWrap, col, collections, onRefresh, context) {
         const moved = renameCollectionId(oldId, newId);
         saveSettings();
         if (moved) {
-            toastr.success(`Renamed to "${newId}" and carried ${moved} item${moved === 1 ? '' : 's'} across.`, 'SillyNPC');
+            toastr.success(`Renamed to "${newId}" and carried ${moved} item${moved === 1 ? '' : 's'} across.`, 'Castward');
         }
         onRefresh();
     });

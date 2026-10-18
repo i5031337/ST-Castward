@@ -149,7 +149,7 @@ export function buildBackendDestinationNote() {
 
     note.textContent = `Sends to the Image Generation extension, currently set to: ${where}. `
         + `${size}. Its own prompt prefix and negative prompt are added to yours. `
-        + 'The key is whichever SillyTavern has active for that source; SillyNPC cannot choose it on this path.';
+        + 'The key is whichever SillyTavern has active for that source; Castward cannot choose it on this path.';
     return note;
 }
 

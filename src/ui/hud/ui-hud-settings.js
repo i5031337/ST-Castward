@@ -198,7 +198,7 @@ export function renderHudView(container) {
         resetHudBtn.title = 'Discard the dragged position and snap the HUD back to its corner.';
         resetHudBtn.addEventListener('click', () => {
             resetHudPosition();
-            toastr.info('HUD position reset.', 'SillyNPC');
+            toastr.info('HUD position reset.', 'Castward');
         });
         resetHudWrap.appendChild(resetHudBtn);
         container.append(resetHudWrap);

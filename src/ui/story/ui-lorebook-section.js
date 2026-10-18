@@ -206,10 +206,10 @@ async function buildLorebookView(char) {
                     await deleteLorebookEntry(char.lorebook.world, char.lorebook.uid);
                     char.lorebook = null;
                     saveSettings();
-                    toastr.success(`Deleted "${name}".`, 'SillyNPC');
+                    toastr.success(`Deleted "${name}".`, 'Castward');
                 } catch (err) {
                     console.error(LOG_PREFIX, 'Failed to delete lorebook entry', err);
-                    toastr.error(`Could not delete the entry: ${err.message || err}`, 'SillyNPC');
+                    toastr.error(`Could not delete the entry: ${err.message || err}`, 'Castward');
                 }
                 onChange();
             });

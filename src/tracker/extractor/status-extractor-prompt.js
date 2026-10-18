@@ -15,9 +15,9 @@ import { progressionFields } from '../progression-fields.js';
 /**
  * Extra notes for the reader, from whoever registered one.
  *
- * A registration rather than a list of things SillyNPC knows about, so something built
+ * A registration rather than a list of things Castward knows about, so something built
  * beside the tracker - a registry of places the story has been, say - can tell the reader
- * what it needs to without SillyNPC knowing it exists. Each provider is asked on every
+ * what it needs to without Castward knowing it exists. Each provider is asked on every
  * extraction and may answer nothing.
  *
  * @type {Array<(context: { state: object, messageText: string }) => ({ heading: string, text: string }|null|undefined)>}

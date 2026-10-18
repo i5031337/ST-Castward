@@ -15,12 +15,12 @@ export function renderAdvancedView(view, handlers = {}) {
 
     const title = document.createElement('h3');
     title.className = 'sillynpc-section-title';
-    title.textContent = 'SillyNPC';
+    title.textContent = 'Castward';
     view.appendChild(title);
 
     view.append(buildSettingToggle({
         key: 'enabled',
-        label: 'Enable SillyNPC',
+        label: 'Enable Castward',
         help: 'Turn off chat decorations, prompts, the HUD and background reading. Saved characters and tracker data are kept.',
         onChange: refreshExtensionEnabled,
     }));
@@ -81,7 +81,7 @@ export function renderAdvancedView(view, handlers = {}) {
     view.append(buildSettingToggle({
         key: 'debugLogging',
         label: 'Log Requests To The Console',
-        help: 'Prints one line in the browser console for every request SillyNPC makes - '
+        help: 'Prints one line in the browser console for every request Castward makes - '
             + 'lore, extraction and portraits - naming the connection, the model and which '
             + 'API key it used. Off by default because extraction runs after every message. '
             + 'Open the console with F12.',

@@ -49,7 +49,7 @@ export function createExpressionGenerator({ edit, loadPack, upload, cleanup = as
                     return refreshed;
                 } finally {
                     if (url) await Promise.resolve().then(() => cleanup(url))
-                        .catch(error => console.warn('[SillyNPC] Expression source cleanup failed:', error));
+                        .catch(error => console.warn('[Castward] Expression source cleanup failed:', error));
                 }
             }).catch(error => {
                 if (error.name !== 'AbortError' && !job.signal?.aborted && job.isCurrent()) {

@@ -45,11 +45,11 @@ async function onScanClicked() {
 
     const estimate = estimateScan();
     if (estimate.error) {
-        toastr.error(estimate.error, 'SillyNPC');
+        toastr.error(estimate.error, 'Castward');
         return;
     }
     if (!estimate.messages) {
-        toastr.info('Nothing in this chat to scan yet.', 'SillyNPC');
+        toastr.info('Nothing in this chat to scan yet.', 'Castward');
         return;
     }
 
@@ -69,7 +69,7 @@ async function onScanClicked() {
             if (of > 1) button.title = `Reading the history - pass ${chunk} of ${of}...`;
         });
         if (!result.ok) {
-            toastr.error(result.reason || 'The scan did not complete.', 'SillyNPC');
+            toastr.error(result.reason || 'The scan did not complete.', 'Castward');
             return;
         }
         const scope = result.passes > 1
@@ -81,21 +81,21 @@ async function onScanClicked() {
             toastr.warning(
                 `${result.skipped.length} finding${result.skipped.length === 1 ? '' : 's'} ignored: `
                 + `${names}${rest} ${result.skipped.length === 1 ? 'has' : 'have'} no character card.`,
-                'SillyNPC');
+                'Castward');
         }
         if (result.failures) {
-            toastr.warning(`${result.failures} of ${result.passes} passes came back unusable.`, 'SillyNPC');
+            toastr.warning(`${result.failures} of ${result.passes} passes came back unusable.`, 'Castward');
         }
         if (!result.pending) {
-            toastr.success(`Read ${scope}. Nothing to change.`, 'SillyNPC');
+            toastr.success(`Read ${scope}. Nothing to change.`, 'Castward');
             return;
         }
         toastr.info(
             `${result.pending} proposed change${result.pending === 1 ? '' : 's'} waiting under the last message.`,
-            'SillyNPC');
+            'Castward');
     } catch (err) {
         console.error(LOG_PREFIX, 'Scan failed', err);
-        toastr.error(String(err?.message || err), 'SillyNPC');
+        toastr.error(String(err?.message || err), 'Castward');
     } finally {
         button?.classList.remove('sillynpc-scanning');
         if (button && restingTitle !== undefined) button.title = restingTitle;

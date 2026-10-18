@@ -22,7 +22,7 @@ export function wireExpressionEvents({ events, types, renderedEvent, render, res
         const token = sourceToken(id);
         defer(() => {
             if (version === captured && sourceToken(id) === token) {
-                Promise.resolve(complete(id)).catch(error => console.warn('[SillyNPC] Expressions failed', error));
+                Promise.resolve(complete(id)).catch(error => console.warn('[Castward] Expressions failed', error));
             }
         });
     });

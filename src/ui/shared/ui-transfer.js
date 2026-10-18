@@ -41,16 +41,16 @@ export async function exportCharacterFile(chars) {
         if (!await Popup.show.confirm('Character export preview', preview)) return;
         const payload = await exportCharacters(list);
         const fileName = list.length === 1
-            ? `sillynpc-${safeFileName(list[0].name)}.json`
-            : `sillynpc-${list.length}-characters.json`;
+            ? `castward-${safeFileName(list[0].name)}.json`
+            : `castward-${list.length}-characters.json`;
         offerDownload(payload, fileName);
 
         toastr.success(
             list.length === 1 ? `Exported ${list[0].name || 'the character'}.` : `Exported ${list.length} characters.`,
-            'SillyNPC');
+            'Castward');
     } catch (err) {
         console.error(LOG_PREFIX, 'Character export failed', err);
-        toastr.error(String(err.message || err), 'SillyNPC');
+        toastr.error(String(err.message || err), 'Castward');
     }
 }
 
@@ -149,14 +149,14 @@ export async function importCharacterFile(onDone) {
             }
 
             const result = await importCharacters(payload, { onCollision: async () => choice });
-            toastr.success(describeResult(result), 'SillyNPC');
+            toastr.success(describeResult(result), 'Castward');
             // Anything the import could not do exactly as asked - a lorebook it had
             // nowhere to write, or an entry already kept for that name.
-            for (const note of result.notes) toastr.info(note, 'SillyNPC');
+            for (const note of result.notes) toastr.info(note, 'Castward');
             onDone?.();
         } catch (err) {
             console.error(LOG_PREFIX, 'Character import failed', err);
-            toastr.error(String(err.message || err), 'SillyNPC');
+            toastr.error(String(err.message || err), 'Castward');
         }
     };
 

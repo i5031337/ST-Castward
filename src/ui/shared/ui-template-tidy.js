@@ -51,7 +51,7 @@ export async function tidyTemplateLabels(onDone) {
     const found = findTemplateLabels(template, configuredFieldNames());
 
     if (!found.length) {
-        toastr.info('No hand-written labels found in the template.', 'SillyNPC');
+        toastr.info('No hand-written labels found in the template.', 'Castward');
         return;
     }
 
@@ -90,6 +90,6 @@ export async function tidyTemplateLabels(onDone) {
     toastr.success(
         `Removed ${chosen.length} label${chosen.length === 1 ? '' : 's'}. `
         + 'Tick Name on a field to have its own name shown instead.',
-        'SillyNPC');
+        'Castward');
     onDone?.();
 }

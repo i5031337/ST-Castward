@@ -20,7 +20,7 @@ test('shipped Systems validate and remain independent editable copies', () => {
         assert.deepEqual(validateDefinition(structuredClone(definition)), []);
         assert.ok(projectSystemTracker(definition).collections.length > 0);
         assert.ok(definition.npcTemplates.length >= 1);
-        assert.equal(definition.metadata.author, 'SillyNPC');
+        assert.equal(definition.metadata.author, 'Castward');
         definition.name = 'Edited';
         assert.equal(createBuiltinSystem(choice.id).name, choice.name);
     }

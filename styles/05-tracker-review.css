@@ -153,7 +153,7 @@
 .sillynpc-status-settings-btn:hover {
     opacity: 1 !important;
     /* Use the theme's readable accent rather than a raw SillyTavern variable, so the
-       hover colour follows the selected SillyNPC theme like everything else. */
+       hover colour follows the selected Castward theme like everything else. */
     color: var(--sillynpc-accent-text, var(--sillynpc-accent)) !important;
 }
 

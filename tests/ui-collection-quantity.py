@@ -68,4 +68,4 @@ with browser_session() as browser:
     browser.execute("document.getElementById('sillynpc-quantity-check')?.remove(); document.documentElement.removeAttribute('data-quantity-check');")
     if result is None or 'error' in result:
         raise RuntimeError(json.dumps(result))
-    print('SillyNPC quantity UI passed:', json.dumps(result))
+    print('Castward quantity UI passed:', json.dumps(result))

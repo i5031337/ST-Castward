@@ -123,7 +123,7 @@ export function buildStatsEditor(settingsKey, onRefresh, context = liveSystemCon
                 return;
             }
             if (fieldAssignmentConflicts(stats, stat, { name: newName }).length) {
-                toastr.error(`These actors already have a stat called "${newName}".`, 'SillyNPC');
+                toastr.error(`These actors already have a stat called "${newName}".`, 'Castward');
                 e.target.value = oldName;
                 return;
             }
@@ -142,11 +142,11 @@ export function buildStatsEditor(settingsKey, onRefresh, context = liveSystemCon
             if (carried.values) parts.push(`${carried.values} stored value${carried.values === 1 ? '' : 's'}`);
             if (carried.templateUpdated) parts.push('the display template');
             if (parts.length) {
-                toastr.success(`Renamed to "${newName}" and carried ${parts.join(', ')} across.`, 'SillyNPC');
+                toastr.success(`Renamed to "${newName}" and carried ${parts.join(', ')} across.`, 'Castward');
             }
 
             if (carried.cssMentions) {
-                toastr.warning(`Your custom CSS still mentions "${oldName}". Check it by hand.`, 'SillyNPC');
+                toastr.warning(`Your custom CSS still mentions "${oldName}". Check it by hand.`, 'Castward');
             }
             onRefresh();
         });
@@ -216,7 +216,7 @@ export function buildStatsEditor(settingsKey, onRefresh, context = liveSystemCon
 
         if (settingsKey === 'characterStats') row.appendChild(buildTargetsEditor(stat, () => {
             if (fieldAssignmentConflicts(stats, stat).length) {
-                toastr.error(`These actors already have a stat called "${stat.name}". Rename it or choose other targets.`, 'SillyNPC');
+                toastr.error(`These actors already have a stat called "${stat.name}". Rename it or choose other targets.`, 'Castward');
                 return false;
             }
             saveSettings(); updateHUD(); onRefresh();

@@ -37,7 +37,7 @@ async function onReadClicked() {
     const messageId = trackerMessageIndex(chat);
     const message = chat[messageId];
     if (!message || message.is_user || message.is_system || !String(message.mes ?? '').trim()) {
-        toastr.info('Wait for an assistant reply before reading the tracker.', 'SillyNPC');
+        toastr.info('Wait for an assistant reply before reading the tracker.', 'Castward');
         return;
     }
     button.classList.add('sillynpc-scanning');
@@ -50,13 +50,13 @@ async function onReadClicked() {
         if (result.applied) {
             toastr.success(result.pending
                 ? `Tracker read: ${result.pending} changes awaiting review.`
-                : 'Tracker reading complete.', 'SillyNPC');
+                : 'Tracker reading complete.', 'Castward');
         } else {
-            toastr.info(`Tracker did not run: ${result.reason || 'no update'}.`, 'SillyNPC');
+            toastr.info(`Tracker did not run: ${result.reason || 'no update'}.`, 'Castward');
         }
     } catch (err) {
         console.error(LOG_PREFIX, 'Manual tracker reading failed', err);
-        toastr.error(String(err?.message || err), 'SillyNPC');
+        toastr.error(String(err?.message || err), 'Castward');
     } finally {
         button.classList.remove('sillynpc-scanning');
         button.removeAttribute('aria-busy');

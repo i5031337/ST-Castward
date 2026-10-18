@@ -1,7 +1,7 @@
 # NPC expressions and TTS
 
 Updated 2026-10-12. Stages 1, 2, 4, and 5 and Stage 6 completed-line streaming
-are implemented. Stage 3 was superseded by SillyNPC-owned playback. Broader
+are implemented. Stage 3 was superseded by Castward-owned playback. Broader
 providers and delivery controls remain optional future work.
 This document describes the current behavior and remaining work; obsolete
 implementation proposals have been removed.
@@ -15,7 +15,7 @@ implementation proposals have been removed.
 | Static dialogue portraits | Each recognized NPC dialogue line gets its own expression. Playback never changes another line's portrait. |
 | Full-size speech sprites | A separate, bottom-aligned display beside the chat shows the speaking NPC, preserving the full image with `object-fit: contain`. |
 | Audible synchronization | The sprite switches only when that dialogue's audio emits `playing`, never when synthesis completes or audio is merely queued. |
-| Independent TTS | SillyNPC Play/Stop, opt-in automatic playback, separate narrator/NPC models, narrator voice, per-card voices, silence, and speed. |
+| Independent TTS | Castward Play/Stop, opt-in automatic playback, separate narrator/NPC models, narrator voice, per-card voices, silence, and speed. |
 | Ordered playback | Narration, dialogue, and actions play in message order, with bounded synthesis prefetch. |
 | Completed-line streaming | Completed source lines render and enter automatic speech while generation continues; the unfinished tail flushes once at completion. |
 | Designed NPC voices | Local Qwen VoiceDesign creates a persistent versioned NPC voice; narration can use Kokoro presets. |
@@ -56,7 +56,7 @@ fallback is used when audio starts. Stop prevents stale audio and expression wor
 ## Completed-line streaming
 
 The host's `STREAM_TOKEN_RECEIVED` event supplies cumulative generated text.
-SillyNPC commits newline-terminated source lines and holds the last unfinished
+Castward commits newline-terminated source lines and holds the last unfinished
 line until generation finishes. It never uses host-added closing quotes or fences
 as evidence that dialogue is complete. Unresolved quotes, code fences, and hidden
 HTML blocks are withheld from speech discovery until their structure closes.
@@ -84,7 +84,7 @@ Audio responses remain complete MP3 blobs through the unchanged host proxy.
 
 ## Full-size sprite behavior
 
-SillyNPC owns `#sillynpc-speech-sprite`, independently of native Expressions
+Castward owns `#sillynpc-speech-sprite`, independently of native Expressions
 holders and Visual Novel layers. The display sits on the right side of the chat,
 uses full-body framing like native ST expressions, and scales down on narrow
 screens. It does not intercept clicks.
@@ -100,7 +100,7 @@ pack fallback and base portrait.
 The queue emits playing/end state with the speech unit. The `playing` state comes
 from the HTML audio element's actual playback event. Synthesis completion cannot
 advance the speaker. Native TTS's megaphone remains independent; synchronization
-currently applies to SillyNPC's own HTML audio playback.
+currently applies to Castward's own HTML audio playback.
 
 ## Classifier support and assets
 
@@ -123,9 +123,9 @@ Imported older cards receive disabled/empty presentation defaults.
 
 ## Speech routing and designed voices
 
-SillyNPC reads the built-in OpenAI Compatible endpoint at synthesis time and
+Castward reads the built-in OpenAI Compatible endpoint at synthesis time and
 shares its server-side TTS secret. Its endpoint display is read-only; stale
-SillyNPC endpoint settings are discarded. Requests use SillyTavern's custom
+legacy SillyNPC endpoint settings are discarded. Requests use SillyTavern's custom
 speech proxy, keeping the key out of extension settings.
 
 Narration and actions use the narrator model and preset voice. Recognized NPC
@@ -164,8 +164,8 @@ aliases. Missing cues keep the narrator fallback without another model request.
 
 Stop and source/configuration changes invalidate synthesis and playback. Revision
 is rechecked before requests and audio starts. Built-in automatic TTS blocks
-SillyNPC automatic playback and shows a warning without changing host settings.
-Manual SillyNPC Play remains available.
+Castward automatic playback and shows a warning without changing host settings.
+Manual Castward Play remains available.
 
 ## Remaining optional work
 

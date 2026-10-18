@@ -240,7 +240,7 @@ function addRefreshButtonToMessage(mesEl) {
         reprocessAllMessages();
         updateHUD();
         if (typeof toastr !== 'undefined') {
-            toastr.info('Tracker and chat redrawn.', 'SillyNPC');
+            toastr.info('Tracker and chat redrawn.', 'Castward');
         }
     });
     toolbar.insertBefore(btn, toolbar.firstChild);

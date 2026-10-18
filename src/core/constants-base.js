@@ -11,7 +11,7 @@ export const extensionName = _match
     ? (_scriptUrl.includes('third-party') ? `third-party/${_match[1]}` : _match[1]) 
     : 'third-party/SillyNPC';
 
-export const LOG_PREFIX = '[SillyNPC]';
+export const LOG_PREFIX = '[Castward]';
 
 // Auto-downscale uploaded images to keep extension_settings small.
 /**
@@ -52,7 +52,7 @@ export const BUILT_IN_DEFAULT_AVATAR = 'data:image/svg+xml;charset=utf-8,' + enc
  * that decided whether migrations ran, so bumping one without the other silently
  * skipped them. Migrations now always run; this value is informational.
  */
-export const EXTENSION_VERSION = '0.7.0';
+export const EXTENSION_VERSION = '0.8.0';
 
 /**
  * Themes shipped by the extension (each has a `.sillynpc-theme-<id>` block in

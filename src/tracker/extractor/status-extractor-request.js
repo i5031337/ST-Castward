@@ -66,7 +66,7 @@ export async function requestExtraction(userPrompt, schema, trackerSettings, sys
             if (typeof toastr !== 'undefined') toastr.warning(
                 `The selected ${usageKind === 'scan' ? 'history scan' : 'reader'} connection failed. `
                 + 'Retrying with the main API (the same connection as chat).',
-                'SillyNPC',
+                'Castward',
             );
         }
     }

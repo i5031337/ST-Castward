@@ -94,13 +94,13 @@ async function askPlan(char, audit) {
  */
 export async function fillCharacter(char, { onSave, preset } = {}) {
     if (!char?.name) {
-        toastr.warning('Give the character a name first.', 'SillyNPC');
+        toastr.warning('Give the character a name first.', 'Castward');
         return;
     }
 
     const audit = await auditCharacter(char);
     if (!audit.anything) {
-        toastr.info(`${char.name} is already filled in.`, 'SillyNPC');
+        toastr.info(`${char.name} is already filled in.`, 'Castward');
         return;
     }
 
@@ -135,7 +135,7 @@ export async function fillCharacter(char, { onSave, preset } = {}) {
 
     /** @returns {Promise<boolean>} False when the run should stop. */
     const runLore = async () => {
-        toastr.info('Looking for a lore entry...', 'SillyNPC');
+        toastr.info('Looking for a lore entry...', 'Castward');
         const result = await retryStage('Lore', () => fillLore(char));
         if (!result) return false;
         done.push(`Lore: ${result.action}`);
@@ -148,7 +148,7 @@ export async function fillCharacter(char, { onSave, preset } = {}) {
         if (chosen.lore && !(await runLore())) return;
 
         if (chosen.image) {
-            toastr.info('Drawing a portrait...', 'SillyNPC');
+            toastr.info('Drawing a portrait...', 'Castward');
             const imageUrl = await retryStage('Portrait',
                 () => generateCharacterImageLogic(char), Boolean);
             if (!imageUrl) return;
@@ -163,12 +163,12 @@ export async function fillCharacter(char, { onSave, preset } = {}) {
         }
     } catch (err) {
         console.error(LOG_PREFIX, 'Fill failed', err);
-        toastr.error(`Stopped: ${err?.message || err}`, 'SillyNPC');
+        toastr.error(`Stopped: ${err?.message || err}`, 'Castward');
         onSave?.();
         return;
     }
 
     debugLog('Filled in', char.name, done);
-    toastr.success(done.join('. ') + '.', 'SillyNPC');
+    toastr.success(done.join('. ') + '.', 'Castward');
     onSave?.();
 }

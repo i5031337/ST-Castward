@@ -24,7 +24,7 @@ export async function fillNewCharacter(rawName, { onSave } = {}) {
         return char;
     } catch (err) {
         console.error(LOG_PREFIX, 'Could not start character Fill', err);
-        toastr.error(`Fill could not start: ${err?.message || err}`, 'SillyNPC');
+        toastr.error(`Fill could not start: ${err?.message || err}`, 'Castward');
     } finally {
         filling.delete(key);
     }

@@ -87,8 +87,8 @@ export function queueInlineReading(update, messageId, mesEl, fingerprint) {
             output: structuredClone(update) });
         renderStatusTrackerBox(mesEl);
     }).catch(error => {
-        console.warn('[SillyNPC] Inline tracker reading failed:', error);
-        if (fresh() && typeof toastr !== 'undefined') toastr.warning(String(error?.message || error), 'SillyNPC');
+        console.warn('[Castward] Inline tracker reading failed:', error);
+        if (fresh() && typeof toastr !== 'undefined') toastr.warning(String(error?.message || error), 'Castward');
     }).finally(() => {
         if (queued.get(message) === token) queued.delete(message);
     });

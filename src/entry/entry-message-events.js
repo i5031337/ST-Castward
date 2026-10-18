@@ -81,7 +81,7 @@ export function onSwipe(messageId) {
             // Never a silent disagreement between the tracker and the reply on screen.
             toastr.warning(
                 'The tracker could not follow that swipe, so it may not match this reply.',
-                'SillyNPC');
+                'Castward');
         }
     } catch (err) {
         console.error(LOG_PREFIX, 'onSwipe error', err);
@@ -108,7 +108,7 @@ export function onRegenerateStarted(type, _data, dryRun) {
             toastr.warning(
                 'The tracker could not undo the reply being regenerated, so it may not '
                 + 'match the new one.',
-                'SillyNPC');
+                'Castward');
         }
     } catch (err) {
         console.error(LOG_PREFIX, 'onRegenerateStarted error', err);
@@ -131,7 +131,7 @@ export function onMessageDeleted(newLength) {
             message?.extra?.sillynpc_turn_id === base.turnId);
         if (!survives) revertToBase(base.messageId);
         else toastr.warning(
-            'An earlier message was deleted. Review the tracker before continuing.', 'SillyNPC');
+            'An earlier message was deleted. Review the tracker before continuing.', 'Castward');
     } catch (err) {
         console.error(LOG_PREFIX, 'onMessageDeleted error', err);
     }
@@ -147,7 +147,7 @@ export function onMessageEdited(messageId) {
     if (!message || id !== context.chat.length - 1 || message.is_user || message.is_system) return;
     const result = revertToBase(id);
     if (!result.reverted) {
-        toastr.warning('The tracker could not rebase this edited reply.', 'SillyNPC');
+        toastr.warning('The tracker could not rebase this edited reply.', 'Castward');
         return;
     }
     clearTurnRecord(id);

@@ -36,11 +36,11 @@ function buildSyncAllRow(characters, refreshGrid) {
         btn.disabled = true;
         try {
             const { linked, checked } = await syncAllLorebooks();
-            if (linked) toastr.success(`Linked ${linked} of ${checked}.`, 'SillyNPC');
-            else toastr.info(`No matching entries found for ${checked}.`, 'SillyNPC');
+            if (linked) toastr.success(`Linked ${linked} of ${checked}.`, 'Castward');
+            else toastr.info(`No matching entries found for ${checked}.`, 'Castward');
         } catch (err) {
             console.error(LOG_PREFIX, 'Sync all failed', err);
-            toastr.error(String(err.message || err), 'SillyNPC');
+            toastr.error(String(err.message || err), 'Castward');
         }
         refreshGrid();
     });
@@ -57,7 +57,7 @@ function buildSyncAllRow(characters, refreshGrid) {
         const name = (await Popup.show.input('New category', 'Enter a name:'))?.trim();
         if (!name) return;
         if (!createCategory(name)) {
-            toastr.info(`"${name}" already exists.`, 'SillyNPC');
+            toastr.info(`"${name}" already exists.`, 'Castward');
             return;
         }
         refreshGrid();
@@ -262,7 +262,7 @@ async function rewriteFieldOnMany(chars, refreshGrid) {
     const field = fields.find(f => f.id === pick.value);
     if (!field) return;
 
-    toastr.info(`Rewriting ${field.label} on ${chars.length}...`, 'SillyNPC');
+    toastr.info(`Rewriting ${field.label} on ${chars.length}...`, 'Castward');
 
     const done = [];
     const empty = [];
@@ -285,8 +285,8 @@ async function rewriteFieldOnMany(chars, refreshGrid) {
     if (empty.length) parts.push(`${empty.length} had nothing to go on`);
     if (failed.length) parts.push(`${failed.length} failed`);
     const report = parts.join(', ') + '.';
-    if (failed.length) toastr.warning(report, 'SillyNPC');
-    else toastr.success(report, 'SillyNPC');
+    if (failed.length) toastr.warning(report, 'Castward');
+    else toastr.success(report, 'Castward');
 }
 
 export function ensureGridBulk(refreshGrid) {
@@ -296,7 +296,7 @@ export function ensureGridBulk(refreshGrid) {
         allIds: () => getLibraryCharacters().map(c => c.id),
         onDelete: (ids) => {
             for (const id of ids) deleteCharacter(id);
-            toastr.success(`Deleted ${ids.length} character(s).`, 'SillyNPC');
+            toastr.success(`Deleted ${ids.length} character(s).`, 'Castward');
         },
         onRefresh: refreshGrid,
         extra: [

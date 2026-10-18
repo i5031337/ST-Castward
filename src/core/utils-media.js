@@ -7,7 +7,7 @@ import { getSecretLabelById, resolveSecretKey, secret_state } from '../../../../
  *
  * SillyTavern never logs this, and a normal generation sends no secret_id at all - the
  * server falls back to whichever secret is marked active - so there was no way to compare
- * the chat against SillyNPC's own requests. Seeing one without the other is what made two
+ * the chat against Castward's own requests. Seeing one without the other is what made two
  * profiles that shared a key look like they were separated.
  *
  * Read the same way the server resolves it: the active entry for whatever secret key the
@@ -289,7 +289,7 @@ export async function pickAndProcessImages({ fullSize = false, multiple = true }
                 toastr.error(
                     files.length === 1 ? 'Could not read that image.'
                         : `Could not read ${failed} of ${files.length} images.`,
-                    'SillyNPC');
+                    'Castward');
             }
             resolve(out);
         }, { once: true });

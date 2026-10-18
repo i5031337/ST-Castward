@@ -1,3 +1,4 @@
+// Persisted voice-binding key; keep existing character voices through the rebrand.
 export const NPC_TTS_PROVIDER = 'SillyNPC OpenAI Compatible';
 export const defaultTtsSettings = Object.freeze({
     enabled: false,
@@ -78,7 +79,7 @@ export function resolvePreviewSpeech(voice, config, card, text) {
 }
 
 export function ttsConfigError(config, endpoint) {
-    if (!config.enabled) return 'SillyNPC speech is disabled.';
+    if (!config.enabled) return 'Castward speech is disabled.';
     try {
         const url = new URL(endpoint);
         if (!['http:', 'https:'].includes(url.protocol)) return 'Set an HTTP or HTTPS endpoint in built-in OpenAI Compatible TTS.';

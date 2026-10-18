@@ -348,4 +348,4 @@ with browser_session() as browser:
     assert result['compactRows'] == result['rows'] and result['uniformFonts'] == result['rows'], result
     assert result['obsoletePolicies'] == 0
     assert result['numericOptions'] == 0 and result['wrongMaxLabels'] == 0, result
-    print('SillyNPC live UI passed:', json.dumps(result))
+    print('Castward live UI passed:', json.dumps(result))
