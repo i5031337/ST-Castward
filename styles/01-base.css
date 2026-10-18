@@ -485,3 +485,15 @@
     90%  { clip-path: inset(10% 0 80% 0); }
     100% { clip-path: inset(0 0 95% 0); }
 }
+
+/* Castward emblem in the host extension drawer. */
+#sillynpc-settings .sillynpc-brand-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+#sillynpc-settings .sillynpc-brand-icon {
+    flex: 0 0 32px;
+    object-fit: contain;
+}

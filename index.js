@@ -46,7 +46,9 @@ import { applyBanList } from './src/prompts/banlist.js';
 async function addSettingsPanel() {
     try {
         const html = await renderExtensionTemplateAsync(extensionName, 'index');
-        $('#extensions_settings2').append(html);
+        const panel = $(html);
+        panel.find('.sillynpc-brand-icon').attr('src', new URL('./img/branding/castward-icon.svg', import.meta.url).href);
+        $('#extensions_settings2').append(panel);
         document.getElementById('sillynpc-enable-setting')?.append(buildSettingToggle({
             key: 'enabled',
             label: 'Enable Castward',

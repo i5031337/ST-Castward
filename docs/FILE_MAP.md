@@ -35,6 +35,7 @@ SillyTavern loads `index.js` and `style.css` from `manifest.json`. The JavaScrip
 | `docs/REWRITE_HOST_SMOKE.md` | Dated user-reported host results and remaining manual checks. |
 | `docs/level-up-rewards-plan.md` | Implemented progression/reward contract and verification criteria. |
 | `docs/system-generation-plan.md` | Implemented staged System generator design, verification criteria, and schema simplification candidates. |
+| `img/branding/castward-logo.svg`, `img/branding/castward-icon.svg` | README logo and extension-header character emblem; outlined lettering and transparent backgrounds. |
 | `img/SillyNPCLogo.jpg` | Retained upstream SillyNPC logo; not used for Castward branding. |
 | `img/charactersexmp.png`, `img/charcterexmp.png`, `img/chatexmp.png` | Character and chat screenshots in the README. |
 | `img/floathudbar.png`, `img/floathudcircle.png`, `img/playerexmp.png` | HUD and player screenshots in the README. |

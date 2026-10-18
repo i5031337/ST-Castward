@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="img/branding/castward-logo.svg" alt="Castward — Your cast. Full of character." width="720">
+</p>
+
 # Castward
 
 Give your roleplay a cast you can see, hear, and watch grow.

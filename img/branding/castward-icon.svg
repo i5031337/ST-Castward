@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="290" height="280" viewBox="0 0 290 280" role="img" aria-labelledby="title desc">
+  <title id="title">Castward icon</title>
+  <desc id="desc">A mischievous elf, a winking adventurer, and a smiling robot in colorful speech bubbles with little sparkles.</desc>
+  <g stroke="#252238" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+    <!-- A mischievous elf, an enthusiastic adventurer, and a cheerful robot. -->
+    <g transform="rotate(-13 80 148)">
+      <path d="M35 78h81q23 0 23 24v80q0 24-24 24H69l-29 20 3-22q-25-1-25-26v-76q0-24 17-24Z" fill="#16bfae"/>
+      <path d="m43 135-14-10 6 30 17 4m53-24 15-10-6 30-17 4" fill="#f7e6df"/>
+      <path d="M47 129q0-34 31-34t30 34v27q-1 27-30 27t-31-27Z" fill="#f7e6df"/>
+      <path d="M44 133q-8-35 14-41l-6-13 23 9q20-15 33 8l12 5-13 35-12-23-16 11-10-14Z" fill="#264c57"/>
+      <path d="m57 144 10-4m23 0 10 4m-36 16q13 12 27-3" fill="none"/>
+      <path d="m44 200 15-23 20 14 19-14 16 23" fill="#264c57"/>
+    </g>
+    <g transform="rotate(13 218 145)">
+      <path d="M174 76h79q22 0 22 24v80q0 24-23 24h-39l-2 21-26-21h-12q-21 0-21-24v-80q0-24 22-24Z" fill="#ec68a5"/>
+      <path d="M214 108V92" fill="none"/>
+      <circle cx="214" cy="87" r="6" fill="#45d8c7"/>
+      <rect x="172" y="112" width="83" height="67" rx="20" fill="#3d355f"/>
+      <path d="M188 140v9m50-9v9" stroke="#c2ffde" stroke-width="8"/>
+      <path d="M202 157q12 12 24 0" fill="none" stroke="#c2ffde" stroke-width="4"/>
+      <path d="m187 196 8-15m37 0 8 15" fill="none"/>
+    </g>
+    <path d="M100 38h87q26 0 26 28v110q0 28-27 28h-26l-25 23-7-23h-28q-26 0-26-28V66q0-28 26-28Z" fill="#8a70ee" stroke="#f7f0ff" stroke-width="12"/>
+    <path d="M100 38h87q26 0 26 28v110q0 28-27 28h-26l-25 23-7-23h-28q-26 0-26-28V66q0-28 26-28Z" fill="#8a70ee"/>
+    <path d="M102 180q5-28 41-28t42 28v5h-83Z" fill="#5b4799"/>
+    <path d="m130 154 13 14 13-14" fill="#f7f0ff"/>
+    <path d="M106 103q0-34 37-34t37 34v19q0 32-37 32t-37-32Z" fill="#ffe6e5"/>
+    <path d="m101 111-4-24 15-18-3-16 23 7 17-12 10 13 20-1-3 16 14 13-12 26-13-22-13 8-11-14-11 17-14-9Z" fill="#633c52"/>
+    <path d="M123 119v6m28-4q7-8 14 0" fill="none"/>
+    <path d="M131 134q12 16 25-2Z" fill="#da6a9a" stroke-width="3"/>
+    <path d="m37 42 5-13 5 13 14 5-14 5-5 13-5-13-13-5Zm193-15 4-11 4 11 12 4-12 4-4 12-4-12-11-4Z" fill="#45d8c7" stroke-width="3"/>
+    <path d="m242 240 5-12 5 12 12 5-12 5-5 12-5-12-12-5Z" fill="#ec68a5" stroke-width="3"/>
+    <path d="m62 239 6 9m-24-4 2 10" fill="none" stroke="#a679ee" stroke-width="5"/>
+  </g>
+</svg>
