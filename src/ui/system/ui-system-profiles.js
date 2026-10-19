@@ -1,7 +1,8 @@
+import { attachReorder } from '../shared/ui-reorder.js';
 import { fieldAssignmentConflicts } from '../../core/system-fields.js';
 import { buildTargetsEditor } from './ui-collection-targets.js';
 import { liveSystemContext, saveSystemEditor } from './ui-system-context.js';
-import { addProfileField, renameProfileField, moveProfileField, retireProfileField } from './ui-system-profile-operations.js';
+import { addProfileField, renameProfileField, retireProfileField } from './ui-system-profile-operations.js';
 
 function control(tag, className, value) {
     const element = document.createElement(tag);
@@ -44,15 +45,7 @@ function rowFor(field, fields, onRefresh, context) {
     const id = document.createElement('small');
     id.textContent = `ID: ${field.id}`;
     id.title = 'Stable storage key. Renaming this field never changes its ID or stored values.';
-    const active = fields.filter(item => !item.retired);
-    const at = active.indexOf(field);
     header.append(name, id);
-    if (!field.retired) {
-        header.append(
-            button('↑', 'Move field up', () => { if (moveProfileField(fields, field.id, -1)) { saveSettings(); onRefresh(); } }, at === 0),
-            button('↓', 'Move field down', () => { if (moveProfileField(fields, field.id, 1)) { saveSettings(); onRefresh(); } }, at === active.length - 1),
-        );
-    }
     header.append(button(field.retired ? 'Restore' : 'Retire',
         field.retired ? 'Show this field again' : 'Hide this field while preserving existing values',
         () => {
@@ -98,6 +91,8 @@ function rowFor(field, fields, onRefresh, context) {
     const displayOptions = document.createElement('div');
     displayOptions.className = 'sillynpc-system-profile-options';
     displayOptions.append(multiline, imageLabel);
+    if (!field.retired) attachReorder(row, header, fields, field, () => { saveSettings(); onRefresh(); },
+        { canMove: item => !item.retired });
     row.append(header, buildTargetsEditor(field, () => {
         if (fieldAssignmentConflicts(fields, field).length) {
             toastr.error('These actors already have a profile field with this name. Rename it or choose other targets.', 'Castward');

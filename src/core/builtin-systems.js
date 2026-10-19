@@ -36,7 +36,8 @@ const fantasy = {
     metadata: { description: 'Characters of every kind, quests, gear, and magic.', author: 'Castward' },
     profiles: [
         profile('background', 'Background', fantasyActors, 'Origin and formative history.'),
-        profile('ancestry', 'Ancestry or Species', fantasyActors, 'Heritage or species, whether person or beast.'),
+        { ...profile('ancestry', 'Ancestry or Species', fantasyActors, 'Heritage or species, whether person or beast.'),
+            includeInImagePrompt: true },
         profile('calling', 'Role', fantasyActors, 'Place in the story, profession, or natural role.'),
         profile('appearance', 'Appearance', fantasyActors, 'Visible appearance.'),
         profile('motivation', 'Motivation', fantasyActors, 'What this character wants or instinctively seeks.'),
@@ -52,6 +53,9 @@ const fantasy = {
             number('hp', 'HP', fantasyActors, '12/12',
                 'Physical well-being. Wounds lower current HP; healing restores it. Maximum HP reflects lasting resilience.',
                 { isPrimary: true, color: '#e03131', carryOver: true }),
+            number('mana', 'Mana', fantasyActors, '10/10',
+                'Magical energy. Casting spells spends current Mana; rest or magical recovery restores it. Maximum Mana reflects lasting magical capacity.',
+                { isPrimary: true, color: '#3b5bdb', carryOver: true }),
             number('armor', 'Armor', fantasyActors, '10',
                 'Protection from worn gear, natural hide, or magic. Higher values suggest that a blow is less threatening.',
                 { carryOver: true }),
@@ -71,7 +75,8 @@ const fantasy = {
             number('currency', 'Currency', fantasyActors, '0',
                 'Money held by this character; change it when the story establishes a gain or expense.',
                 { carryOver: true, visible: false }),
-            xp(fantasyActors), level(fantasyActors),
+            { ...xp(fantasyActors), isPrimary: true, color: '#f59f00' },
+            { ...level(fantasyActors), isPrimary: true },
         ],
     },
     collections: [
@@ -92,8 +97,8 @@ const fantasy = {
     ],
     progression: { player: progression(true, ['hp'], 1) }, memories,
     hud: { layout: 'plate', showWorld: true, showNpcPortraits: true,
-        playerStatIds: ['hp', 'armor', 'condition', 'level', 'xp'],
-        npcStatIds: ['hp', 'armor', 'condition', 'level'], worldStatIds: ['time', 'quest'] },
+        playerStatIds: ['hp', 'mana', 'armor', 'condition', 'level', 'xp'],
+        npcStatIds: ['hp', 'mana', 'armor', 'condition', 'level', 'xp'], worldStatIds: ['time', 'quest'] },
 };
 
 const dating = {

@@ -1,5 +1,6 @@
+import { attachReorder } from '../shared/ui-reorder.js';
 import { attachRangeValidation } from './ui-system-range.js';
-import { ensureCollectionIdentifier, ensureCollectionQuantity, collectionQuantityField, moveCollectionField, deleteCollectionField } from '../../core/collection-fields.js';
+import { ensureCollectionIdentifier, ensureCollectionQuantity, collectionQuantityField, deleteCollectionField } from '../../core/collection-fields.js';
 import { liveSystemContext } from './ui-system-context.js';
 import { escapeHtml } from '../../core/utils.js';
 import { parseOptions } from './ui-system-stats.js';
@@ -17,6 +18,10 @@ export function renderCollectionFields(col, fieldsList, onRefresh, context = liv
             row.querySelectorAll('input, select, button').forEach(control => { control.disabled = true; });
             row.title = 'Built-in quantity: gains and consumption use add/remove amounts. Default 1.';
         } else wireFieldControls(row, col, field, index, fieldsList, onRefresh, context);
+        attachReorder(box, row, col.fields, field, () => {
+            saveSettings();
+            renderCollectionFields(col, fieldsList, onRefresh, context);
+        }, { minIndex: 1, canMove: entry => entry !== collectionQuantityField(col) });
         box.append(row, createFieldHint(field, context));
         fieldsList.appendChild(box);
     });
@@ -76,8 +81,6 @@ function createFieldControls(col, field, fIdx) {
                style="width:110px; font-size:var(--sillynpc-text-sm);">`}
         ${fIdx === 0 ? '' : `
         <span class="sillynpc-collection-field-actions">
-        <button type="button" class="menu_button move-field-up" title="Move up" style="padding:0 5px;" ${fIdx === 1 ? 'disabled' : ''}><i class="fa-solid fa-arrow-up"></i></button>
-        <button type="button" class="menu_button move-field-down" title="Move down" style="padding:0 5px;" ${fIdx === col.fields.length - 1 ? 'disabled' : ''}><i class="fa-solid fa-arrow-down"></i></button>
         <button type="button" class="menu_button delete-field-btn" style="padding:0 5px; color:var(--red);"><i class="fa-solid fa-xmark"></i></button></span>`}
 
     `;
@@ -153,14 +156,6 @@ function wireFieldProperties(fRow, col, field, fieldsList, onRefresh, context) {
 
 function wireFieldStructure(fRow, col, fIdx, fieldsList, onRefresh, context) {
     const { saveSettings } = context;
-    for (const [selector, delta] of [['.move-field-up', -1], ['.move-field-down', 1]]) {
-        fRow.querySelector(selector)?.addEventListener('click', () => {
-            if (!moveCollectionField(col, fIdx, delta)) return;
-            saveSettings();
-            renderCollectionFields(col, fieldsList, onRefresh, context);
-        });
-    }
-
     fRow.querySelector('.delete-field-btn')?.addEventListener('click', () => {
         if (!deleteCollectionField(col, fIdx)) return;
         saveSettings();

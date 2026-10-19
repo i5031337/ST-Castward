@@ -31,8 +31,9 @@ NPC memories:
 
 Catalogs:
 - Profile attributes may display as compact badges or text sections; both use editors that support multiple lines.
-- Plan visual profile attributes when useful for portraits; Appearance is optional. Profile generation will mark visible attributes with includeInImagePrompt.
+- Plan visual profile attributes such as Ancestry or Species when useful for portraits; Appearance is optional. Profile generation will mark visible attributes with includeInImagePrompt.
 - profiles is a shared list of character attributes such as Background, Appearance, Species, or Occupation. Trainer and Creature are actor/template names, not profile attributes.
+- For magic-based adventures, plan a Mana resource for actors who can cast spells.
 - stats.character is ONE shared catalog for player and ALL NPC templates. Define a field once and assign targets: player, npc (all NPCs), or an exact template name. Shared XP, Health, or Appearance gets one definition and multiple targets. Names must be unique in each catalog.
 - Assign targets on every profile and character stat. Templates contain only their name, description, and independent progression. Do not add field membership lists to templates.
 

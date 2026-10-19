@@ -1,3 +1,4 @@
+import { attachReorder } from '../shared/ui-reorder.js';
 import { fieldTargets, fieldAssignmentConflicts } from '../../core/system-fields.js';
 import { isPoolStat } from '../../tracker/numeric-stat-bounds.js';
 import { attachRangeValidation } from './ui-system-range.js';
@@ -5,7 +6,7 @@ import { normalizeSystemDefinition } from '../../core/system-schema.js';
 import { buildTargetsEditor } from './ui-collection-targets.js';
 import { liveSystemContext, saveSystemEditor } from './ui-system-context.js';
 import { Popup } from '../../../../../../popup.js';
-import { escapeHtml, moveInList } from '../../core/utils.js';
+import { escapeHtml } from '../../core/utils.js';
 import { isNumericStat } from '../../tracker/status-logic.js';
 import { statPolicyMarkup, bindStatPolicy } from './ui-system-stat-policy.js';
 
@@ -33,8 +34,6 @@ export function buildStatsEditor(settingsKey, onRefresh, context = liveSystemCon
             <div class="sillynpc-stat-header">
                 <input type="text" class="text_pole stat-name" value="${escapeHtml(stat.name)}" placeholder="Stat Name" style="flex:1">
                 <input type="text" class="text_pole stat-default" value="${escapeHtml(stat.defaultValue || '')}" placeholder="Default Value" style="flex:1">
-                <button type="button" class="menu_button stat-up-btn" title="Move up - this order is the order the tracker, the character page and the reader all use" ${index === 0 ? 'disabled' : ''}><i class="fa-solid fa-arrow-up"></i></button>
-                <button type="button" class="menu_button stat-down-btn" title="Move down" ${index === stats.length - 1 ? 'disabled' : ''}><i class="fa-solid fa-arrow-down"></i></button>
                 <button type="button" class="menu_button delete-btn"><i class="fa-solid fa-trash"></i></button>
             </div>
             <div class="sillynpc-stat-definition">
@@ -166,14 +165,9 @@ export function buildStatsEditor(settingsKey, onRefresh, context = liveSystemCon
             stat.maxLength = e.target.value.trim();
             saveSettings();
         });
-        for (const [selector, delta] of [['.stat-up-btn', -1], ['.stat-down-btn', 1]]) {
-            row.querySelector(selector)?.addEventListener('click', () => {
-                if (!moveInList(stats, index, delta)) return;
-                saveSettings();
-                updateHUD();
-                onRefresh();
-            });
-        }
+        attachReorder(row, row.querySelector('.sillynpc-stat-header'), stats, stat, () => {
+            saveSettings(); updateHUD(); onRefresh();
+        });
         row.querySelector('.stat-type').addEventListener('change', (e) => {
             stat.type = e.target.value;
             if (stat.type === 'number') stat.options = [];

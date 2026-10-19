@@ -11,6 +11,8 @@ import { isReaderStat } from '../src/tracker/stat-update-policy.js';
 import { describeReaderStats } from '../src/tracker/stat-prompt-definitions.js';
 import { guidedRewardLevels, collectionRewardAppliesTo } from '../src/core/collection-rewards.js';
 import { imageItemsFromCollections } from '../src/api/api-image-items.js';
+import { characterImageDescription } from '../src/api/api-image-description.js';
+import { setProfileSettingsProvider } from '../src/core/profile-fields.js';
 
 test('shipped Systems validate and remain independent editable copies', () => {
     assert.deepEqual(builtinSystemChoices.map(choice => choice.id), ['fantasy', 'dating', 'creature']);
@@ -63,6 +65,35 @@ test('fantasy starter gives people and beasts the same prose-described stats', (
     assert.doesNotMatch(JSON.stringify(system), /external rules|rules pipeline|rules engine/i);
     assert.equal(system.progression.player.enabled, true);
     assert.equal(system.npcTemplates[0].progression.enabled, true);
+    const floatingHud = projectSystemTracker(system).playerStats.filter(stat => stat.isPrimary);
+    assert.deepEqual(floatingHud.map(stat => stat.id), ['hp', 'mana', 'xp', 'level']);
+});
+
+test('fantasy starter tracks Mana as a spendable pool for player and NPCs', () => {
+    const system = createBuiltinSystem('fantasy');
+    for (const target of ['player', 'npc']) {
+        const mana = systemStatFields(system, target, { npcTemplateId: 'character' })
+            .find(field => field.id === 'mana');
+        assert.equal(mana.type, 'number');
+        assert.equal(mana.defaultValue, '10/10');
+        assert.equal(isReaderStat(mana), true);
+        assert.equal(mana.carryOver, true);
+        assert.equal(constrainNumericStat(mana, '7/10', '10/10'), '7/10');
+        assert.ok(system.hud[`${target}StatIds`].includes('mana'));
+    }
+    system.stats.character.find(field => field.id === 'mana').defaultValue = '11/10';
+    assert.ok(validateDefinition(system).some(error => error.includes('invalid pool capacity')));
+});
+
+test('fantasy portraits include species alongside appearance and exclude background', () => {
+    const definition = createBuiltinSystem('fantasy');
+    setProfileSettingsProvider(() => ({ activeSystem: 'fantasy',
+        statusTracker: { presets: { fantasy: { definition } } } }));
+    try {
+        assert.equal(characterImageDescription({ npcTemplateId: 'character', profile: {
+            ancestry: 'Elf', appearance: 'Silver hair', background: 'Secret royal heir',
+        } }), 'Ancestry or Species: Elf\nAppearance: Silver hair');
+    } finally { setProfileSettingsProvider(() => null); }
 });
 
 test('dating starter uses one cast template, outfit and item collections, and memories', () => {

@@ -1,4 +1,30 @@
 .sillynpc-system-profiles { display: grid; gap: 12px; }
+.sillynpc-reorder-row { position: relative; }
+.sillynpc-drag-handle.menu_button {
+    flex: 0 0 auto;
+    cursor: grab;
+    user-select: none;
+    touch-action: none;
+    opacity: .7;
+    padding: 3px 8px;
+}
+.sillynpc-drag-handle:hover, .sillynpc-drag-handle:focus-visible { opacity: 1; }
+.sillynpc-drag-handle:active { cursor: grabbing; }
+.sillynpc-reorder-dragging { opacity: .45; }
+.sillynpc-reordering, .sillynpc-reordering * { cursor: grabbing !important; user-select: none !important; }
+.sillynpc-drop-before::before, .sillynpc-drop-after::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--sillynpc-accent, #589cff);
+    border-radius: 2px;
+    pointer-events: none;
+    z-index: 1;
+}
+.sillynpc-drop-before::before { top: -3px; }
+.sillynpc-drop-after::after { bottom: -3px; }
 .sillynpc-system-profiles > p { margin: 0; }
 .sillynpc-system-stat-row,
 .sillynpc-system-collection-row,

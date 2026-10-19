@@ -41,7 +41,7 @@ test('a fresh install adopts an editable Fantasy Adventure System', () => {
         assert.equal(settings.activeSystem, '');
         assert.deepEqual(Object.keys(settings.statusTracker.presets), ['Fantasy Adventure']);
         assert.deepEqual(settings.statusTracker.playerStats.map(stat => stat.name),
-            ['HP', 'Armor', 'Strength', 'Dexterity', 'Constitution', 'Intelligence', 'Wisdom',
+            ['HP', 'Mana', 'Armor', 'Strength', 'Dexterity', 'Constitution', 'Intelligence', 'Wisdom',
                 'Charisma', 'Condition', 'Currency', 'XP', 'Level']);
         assert.equal(deps.migrateToActiveSystem(), true);
         assert.equal(settings.activeSystem, 'Fantasy Adventure');

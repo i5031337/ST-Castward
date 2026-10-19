@@ -15,7 +15,7 @@ export function responseFor(stage, registry) {
     if (stage === 'plan') return { section: structuredClone(plan), assumptions: [] };
     let section;
     const [kind, scope] = stage.split('.');
-    if (kind === 'profiles') section = registry.profiles.map(f => ({ id: f.id, label: f.name, guidance: f.purpose, targets: f.targets, multiline: f.name === 'Background' }));
+    if (kind === 'profiles') section = registry.profiles.map(f => ({ id: f.id, label: f.name, guidance: f.purpose, targets: f.targets, multiline: f.name === 'Background', includeInImagePrompt: f.name === 'Species' }));
     if (kind === 'stats') section = registry.stats[scope].map(f => ({ id: f.id, name: f.name, purpose: f.purpose,
         format: '{{name}}: {{value}}', type: f.id === 'weather' ? 'text' : 'number', defaultValue: f.id === 'weather' ? '' : f.id === 'xp' ? '0/100' : f.id === 'level' ? '1' : '6/10',
         locked: f.id === 'level', ...(scope === 'character' ? { carryOver: ['xp', 'level'].includes(f.id), targets: f.targets } : {}), min: f.id === 'weather' ? '' : '0', maxStatValue: f.id === 'xp' ? '100' : '' }));

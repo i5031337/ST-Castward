@@ -16,6 +16,7 @@ test('staged generation assembles canonical System with template progression and
     const run = new SystemGenerationRun({ premise: 'Monsters', request: async args => { calls.push(args); return reply(args); }, onProgress: value => events.push(value) });
     const result = await run.generate();
     assert.deepEqual(validateDefinition(result.definition), []);
+    assert.equal(result.definition.profiles.find(field => field.id === 'species').includeInImagePrompt, true);
     assert.deepEqual(result.definition.stats.world.map(stat => stat.name), ['Weather']);
     assert.equal(result.definition.collections[0].levelUpRewards.schedule[0].entry.power, 2);
     assert.deepEqual(result.definition.collections[0].targets, ['player', 'template:creature']);

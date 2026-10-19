@@ -84,10 +84,10 @@ with browser_session() as browser:
             toggles: host.querySelectorAll('.f-primary').length,
             identifiers: host.querySelectorAll('.sillynpc-collection-identifier').length,
             primaryDelete: !!first.querySelector('.delete-field-btn'),
-            primaryMove: !!first.querySelector('.move-field-up, .move-field-down'),
-            secondMoveUpDisabled: host.children[1].querySelector('.move-field-up').disabled,
+            primaryMove: !!first.querySelector('.sillynpc-drag-handle'),
+            secondHasHandle: !!host.children[1].querySelector('.sillynpc-drag-handle'),
           };
-          host.lastElementChild.querySelector('.move-field-up').click();
+          host.lastElementChild.querySelector('.sillynpc-drag-handle').dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowUp', bubbles: true }));
           const reordered = col.fields.map(field => field.name);
           while (col.fields.length > 1) host.lastElementChild.querySelector('.delete-field-btn').click();
           result = { ...initial, reordered, finalKeys: col.fields.map(field => field.name),
@@ -115,7 +115,7 @@ with browser_session() as browser:
     assert result['keys'] == ['move', 'pp', 'description'], result
     assert result['toggles'] == 0 and result['identifiers'] == 1, result
     assert not result['primaryDelete'] and not result['primaryMove'], result
-    assert result['secondMoveUpDisabled'], result
+    assert result['secondHasHandle'], result
     assert result['reordered'] == ['move', 'description', 'pp'], result
     assert result['finalKeys'] == ['move'] and result['finalPrimary'] and result['finalDeleteButtons'] == 0, result
     print('Collection identifier live UI passed:', json.dumps(result))

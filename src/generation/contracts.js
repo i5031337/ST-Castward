@@ -12,9 +12,9 @@ const scalar = { type: ['string', 'number', 'boolean'] };
 export const progressionSchema = object({ enabled: bool, xpFieldId: text, levelFieldId: text,
     pointsPerLevel: { type: 'integer', minimum: 0 }, assignment: enumeration(['random', 'manual']), statIds: array(id) });
 export const profileSchema = object({ id, label: text, guidance: text, targets: array(text, 8),
-    placeholder: text, multiline: { ...bool, description: 'Display as a text section when true, or a compact badge when false. All profile value editors support multiple lines.' }, includeInImagePrompt: bool, retired: bool, legacyId: text },
+    placeholder: text, multiline: { ...bool, description: 'Display as a text section when true, or a compact badge when false. All profile value editors support multiple lines.' }, includeInImagePrompt: { ...bool, description: 'Include visible portrait attributes such as Ancestry or Species; exclude nonvisual history and secrets.' }, retired: bool, legacyId: text },
 ['id', 'label', 'guidance', 'targets']);
-export const statSchema = object({ id, name: text, type: enumeration(['number', 'text']), defaultValue: { ...scalar, description: 'Numeric pools use a current/maximum string such as 10/10. This is a starting default; each NPC may initialize its own capacity. Plain numbers define ratings.' },
+export const statSchema = object({ id, name: text, type: enumeration(['number', 'text']), defaultValue: { ...scalar, description: 'Health, Mana, and other numeric pools use a current/maximum string such as 10/10. This is a starting default; each NPC may initialize its own capacity. Plain numbers define ratings.' },
     purpose: text, guidance: text, format: enumeration(['{{name}}: {{value}}', '{{value}}']),
     min: text, maxStatValue: text, options: array(text), maxLength: text, locked: bool, visible: bool,
     isPrimary: bool, color: text, retired: bool, carryOver: bool },

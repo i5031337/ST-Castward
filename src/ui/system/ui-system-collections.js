@@ -1,8 +1,9 @@
+import { attachReorder } from '../shared/ui-reorder.js';
 import { collectionQuantityField, ensureCollectionIdentifier, ensureCollectionQuantity } from '../../core/collection-fields.js';
 import { buildCollectionTargetsEditor } from './ui-collection-targets.js';
 import { liveSystemContext, saveSystemEditor } from './ui-system-context.js';
 import { Popup } from '../../../../../../popup.js';
-import { escapeHtml, moveInList } from '../../core/utils.js';
+import { escapeHtml } from '../../core/utils.js';
 import { buildBulkBar, buildBulkCheckbox, spliceIndexes } from '../shared/ui-bulk-select.js';
 import { renderCollectionFields } from './ui-collection-fields.js';
 import { buildCollectionRewardsEditor } from './ui-collection-rewards.js';
@@ -111,8 +112,6 @@ function createCollectionRow(col, index, collections, bulk, onRefresh, context) 
                 <input type="checkbox" class="col-image-prompt" ${col.includeInImagePrompt !== false ? 'checked' : ''}>
                 <small>Image prompt</small>
             </label>
-            <button type="button" class="menu_button move-up-btn" title="Move Up" ${index === 0 ? 'disabled' : ''}><i class="fa-solid fa-arrow-up"></i></button>
-            <button type="button" class="menu_button move-down-btn" title="Move Down" ${index === collections.length - 1 ? 'disabled' : ''}><i class="fa-solid fa-arrow-down"></i></button>
             <button type="button" class="menu_button delete-btn" title="Delete Collection" style="color: var(--sillynpc-danger);"><i class="fa-solid fa-trash"></i></button>
         </div>
         <label class="sillynpc-check-group" title="Track amounts gained and spent; entries disappear when their quantity reaches zero.">
@@ -179,16 +178,11 @@ function wireCollectionControls(colWrap, col, index, collections, bulk, onRefres
     if (visibleCheck) {
         visibleCheck.addEventListener('change', (e) => { col.visible = e.target.checked; saveSettings(); onRefresh(); });
     }
-    // Through the same rule the stat rows and the collection fields use. The swap was
-    // written out here twice; three lists with a pair of buttons each would have made
-    // four copies of it to keep right.
-    for (const [selector, delta] of [['.move-up-btn', -1], ['.move-down-btn', 1]]) {
-        colWrap.querySelector(selector)?.addEventListener('click', () => {
-            if (!moveInList(collections, index, delta)) return;
-            saveSettings();
-            onRefresh();
-        });
-    }
+    attachReorder(colWrap, colWrap.firstElementChild, collections, col, () => {
+        saveSettings();
+        if (bulk.isActive()) bulk.reset();
+        else onRefresh();
+    });
     colWrap.querySelector('.delete-btn').addEventListener('click', async () => {
         if (await Popup.show.confirm('Delete collection', `Delete "${col.name}"? Its stored items will be left behind.`)) {
             collections.splice(index, 1);

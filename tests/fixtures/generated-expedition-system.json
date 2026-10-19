@@ -25,7 +25,7 @@
       "guidance": "Stable visible species",
       "placeholder": "",
       "multiline": false,
-      "includeInImagePrompt": false,
+      "includeInImagePrompt": true,
       "retired": false,
       "targets": [
         "template:creature"
