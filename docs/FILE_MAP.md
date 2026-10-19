@@ -402,7 +402,7 @@ SillyTavern loads `index.js` and `style.css` from `manifest.json`. The JavaScrip
 | `tests/eval-gemma-tracker.js`, `tests/gemma-evaluation.mjs` | Explicit local-model evaluation runner and offline checks of its scoring path. |
 | `tests/fixtures/gemma-profile-scenarios.mjs`, `tests/fixtures/gemma-profile-harness.mjs` | NPC profile Fill and opt-in automatic lore cases using production prompt and parser code. |
 | `tests/eval-gemma-profiles.js`, `tests/gemma-profile-evaluation.mjs` | Explicit local-model profile runner and offline harness checks. |
-| `docs/evaluations/` | Frozen prompt bundles, local Gemma response artifacts, and scoped results reports. |
+| `docs/evaluations/` | Final frozen prompt/result pairs and scoped Gemma evaluation reports. Intermediate runs are excluded from the current tree. |
 
 ## Maintenance notes
 

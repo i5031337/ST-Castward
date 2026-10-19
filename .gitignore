@@ -6,3 +6,12 @@ temp_*.txt
 *.pyc
 .DS_Store
 Thumbs.db
+
+# Keep intermediate local model runs out of commits. Publish audited final pairs.
+docs/evaluations/*.json
+!docs/evaluations/gemma-e4b-final-evidence-post-parser-prompts.json
+!docs/evaluations/gemma-e4b-final-evidence-post-parser-results.json
+!docs/evaluations/gemma-e4b-natural-prose-generic-partial-npc-audit-prompts.json
+!docs/evaluations/gemma-e4b-natural-prose-generic-partial-npc-audit-results.json
+!docs/evaluations/gemma-e4b-profiles-final-prompts.json
+!docs/evaluations/gemma-e4b-profiles-final-results.json

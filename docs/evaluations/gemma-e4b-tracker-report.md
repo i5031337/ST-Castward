@@ -18,7 +18,7 @@ The fresh-install reader budget increased from 1280 to 2400 during this work. Ex
 
 ## Evidence and development history
 
-Each numbered candidate retained its frozen prompts, settings, schema, source state, raw responses, and scores. All candidates used the same predefined scenarios. No failed response was replaced with a preferred response.
+The candidate scores below summarize the development runs. Their intermediate JSON artifacts remain available in Git history; this directory keeps the final prompt and result pair. All candidates used the same predefined scenarios. No failed response was replaced with a preferred response.
 
 | Artifact label | Trials | Required checks | Outcome |
 | --- | ---: | ---: | --- |
@@ -29,11 +29,11 @@ Each numbered candidate retained its frozen prompts, settings, schema, source st
 | `final-reminders` | 24 | 138/144, 95.83% | Final location/quantity reminders; remaining failures exposed evidence spelling and input/output reference-key confusion. Original scoring also rejected one semantically correct plural acquisition name. |
 | `final-evidence` | 24 | 142/144, 98.61% | Input reference vocabulary separated from output keys; evidence differing only in ASCII letter case is mapped back to the exact source quote. Passed all criteria. |
 
-Separate `candidate-1280-post-parser` and `final-reminders-post-parser` artifacts replay earlier raw responses under later parser/scorer versions; these are not additional model trials. Acquisition checks permit a new entry's singular/plural noun variant, while removals are checked through actual collection application against the exact stored identifier.
+The `candidate-1280-post-parser` and `final-reminders-post-parser` development scores replayed earlier raw responses under later parser/scorer versions; these were not additional model trials. Acquisition checks permit a new entry's singular/plural noun variant, while removals are checked through actual collection application against the exact stored identifier.
 
 The authoritative final artifact is [gemma-e4b-final-evidence-post-parser-results.json](gemma-e4b-final-evidence-post-parser-results.json), replaying all 24 final responses consistently under the final parser. A parser-only fix lets a valid discovery survive a rejected optional parent candidate without inventing containment; genuine cycles remain rejected. No fifth model run was needed because prompts and request settings were unchanged. The original final run also scored 142/144, and the replay did not change its score.
 
-Original responses remain in [gemma-e4b-final-evidence-results.json](gemma-e4b-final-evidence-results.json). Exact requests are in [gemma-e4b-final-evidence-prompts.json](gemma-e4b-final-evidence-prompts.json). SHA-256 source fingerprints are recorded as `sourceHashes` in the frozen requests/results; `rescoreSourceHashes` and `rescoredAt` identify the final replay's code separately. The Git revision is also recorded, but the fingerprints distinguish this working tree from that revision.
+The retained [final prompt bundle](gemma-e4b-final-evidence-post-parser-prompts.json) contains the exact requests, and the final results contain the original raw responses alongside the replayed scores. SHA-256 source fingerprints are recorded as `sourceHashes` in the frozen requests/results; `rescoreSourceHashes` and `rescoredAt` identify the final replay's code separately. The Git revision is also recorded, but the fingerprints distinguish this working tree from that revision.
 
 ## Reproduction and boundaries
 
