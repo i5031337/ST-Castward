@@ -30,7 +30,7 @@ NPC memories:
 - guidance is optional genre-specific guidance for durable memorable events. Capture only events experienced or knowledge acquired by that NPC; distinguish suspicions from facts, skip routine activity and duplicates. Never plan a Memory profile field to enable capture.
 
 Catalogs:
-- Profile attributes may display as compact badges or text sections; both use editors that support multiple lines.
+- Reserve compact profile badges for brief identity labels such as Species, Role, Element, or Nature. Descriptive fields such as Background, Appearance, Motivation, Personality, Interests, Boundaries, and Ambition belong in text sections, even when a particular value is short. Both use editors that support multiple lines; the profiles stage chooses the display explicitly.
 - Plan visual profile attributes such as Ancestry or Species when useful for portraits; Appearance is optional. Profile generation will mark visible attributes with includeInImagePrompt.
 - profiles is a shared list of character attributes such as Background, Appearance, Species, or Occupation. Trainer and Creature are actor/template names, not profile attributes.
 - For magic-based adventures, plan a Mana resource for actors who can cast spells.

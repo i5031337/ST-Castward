@@ -1,0 +1,313 @@
+{
+  "captured": "2026-10-19",
+  "chatTitle": "Castward live demo — The Floodgate",
+  "system": "Built-in Fantasy Adventure template; no rule edits",
+  "storyModel": "gemma-4-26B-A4B-it-qat-UD-Q4_K_XL.gguf",
+  "readerProfile": "llama-gemma-26b-nothink (same model, separate reader request)",
+  "profileGeneration": {
+    "mode": "Clicked Joram’s placeholder after turn one to create and Fill through the extension UI.",
+    "automaticProfilesEnabled": false,
+    "imageSource": "Configured SillyTavern ComfyUI service",
+    "cards": [
+      {
+        "name": "Joram",
+        "profile": {
+          "background": "",
+          "ancestry": "Human",
+          "calling": "Machinery operator",
+          "appearance": "Frantic man with wild salt-and-pepper hair, grease-smudged face, wearing an oil-stained leather apron and mud-caked boots.",
+          "motivation": "To drop the floodgate and save the village from flooding."
+        },
+        "imageUrl": "/user/images/Narrator/Narrator_2026-10-19@17h53m22s927ms.png",
+        "scope": "chat-owned"
+      }
+    ]
+  },
+  "portraits": "Only the player portrait was already available. Joram was introduced by the narrator; Castward Fill generated his image. No predefined NPC was used.",
+  "turns": [
+    {
+      "message": 0,
+      "speaker": "Skritch",
+      "text": "Let’s play a short, all-ages fantasy adventure. I’m Skritch, a novice goblin mage with an oak staff and two healing potions. At dusk, I reach a ruined floodgate above a village. I look for someone who knows why the river is rising and ask how I can help. Keep replies around 120 words and leave room for my actions."
+    },
+    {
+      "message": 1,
+      "speaker": "Narrator",
+      "text": "You climb the slick stone steps of the ruined floodgate just as the sun dips below the horizon. Beside the rusted winches stands a man named Joram. He is a frantic-looking human with a wild mane of salt-and-pepper hair and a face smudged with black grease. He wears a heavy, oil-stained leather apron over a frayed linen shirt, and his boots are caked in thick river mud. He is currently screaming at a jammed gear, waving a massive iron wrench in the air.\n\nJoram: \"Blast this rusted heap! If the gate doesn't drop, the village is gone by midnight!\"\n\nHe spots you and blinks in surprise.\n\nJoram: \"A goblin? You've got a staff, lad. Can you actually do something useful, or are you just here to watch the flood?\"",
+      "reader": {
+        "swipe": 0,
+        "status": "done",
+        "summary": "21 applied · 0 awaiting review",
+        "output": {
+          "global": {
+            "Time": "Dusk"
+          },
+          "characters": [
+            {
+              "name": "Joram",
+              "stats": {
+                "HP": "14/14",
+                "Mana": "8/8",
+                "Armor": "12",
+                "Strength": "12",
+                "Dexterity": "9",
+                "Constitution": "11",
+                "Intelligence": "11",
+                "Wisdom": "10",
+                "Charisma": "8",
+                "Condition": "Healthy",
+                "Currency": "5",
+                "XP": "0/100",
+                "Level": "1"
+              },
+              "collections": {
+                "equipment": [
+                  {
+                    "name": "Iron wrench",
+                    "quantity": 1,
+                    "description": "A massive iron wrench used for adjusting heavy machinery."
+                  }
+                ]
+              }
+            }
+          ],
+          "locations": {
+            "places": [
+              {
+                "ref": "ruined_floodgate",
+                "name": "Ruined Floodgate",
+                "description": "A ruined floodgate above a village, featuring slick stone steps and rusted winches.",
+                "parentRef": ""
+              }
+            ],
+            "currentRef": "ruined_floodgate"
+          }
+        },
+        "warnings": []
+      }
+    },
+    {
+      "message": 2,
+      "speaker": "Skritch",
+      "text": "“I can help. Brace the winch for me, Joram.” I borrow his wrench and cast a small heat spell to loosen the rusted pin, then try to pull it free. Can we lower the gate before the water rises further? Tell me any concrete spell cost or injury as it happens."
+    },
+    {
+      "message": 3,
+      "speaker": "Narrator",
+      "text": "Joram: \"Borrow it? I suppose you aren't just a tourist. Here!\"\n\nHe thrusts the heavy iron wrench into your hands with a desperate grunt. You grip the tool and focus your will, calling upon a flicker of magic. A concentrated glow of heat emanates from your staff, searing into the rusted pin. You feel a drain on your energy as the spell takes hold (**-2 Mana**).\n\nAs the metal glows orange, you heave backward with all your might. Your muscles strain, and you feel a sharp, stinging pull in your shoulder, but the pin finally gives way with a loud *crack*, sliding out of the socket.\n\nJoram: \"By the gears, it actually worked! Quick, now help me turn the crank!\"",
+      "reader": {
+        "swipe": 0,
+        "status": "done",
+        "summary": "6 applied · 0 awaiting review · 2 warnings",
+        "output": {
+          "player": {
+            "deltas": {
+              "Mana": -2,
+              "XP": 15
+            },
+            "stats": {
+              "Condition": "Strained shoulder"
+            },
+            "collections": {
+              "equipment": {
+                "add": [
+                  {
+                    "name": "Iron wrench",
+                    "quantity": 1,
+                    "description": "A massive iron wrench used for adjusting heavy machinery."
+                  }
+                ]
+              },
+              "abilities": {
+                "add": [
+                  {
+                    "name": "Heat spell",
+                    "kind": "Magic",
+                    "effect": "Produces a concentrated glow of heat to sear metal or warm objects."
+                  }
+                ]
+              }
+            }
+          },
+          "characters": [
+            {
+              "name": "Joram",
+              "stats": {
+                "HP": "14/14",
+                "Mana": "8/8",
+                "Armor": "12",
+                "Strength": "12",
+                "Dexterity": "9",
+                "Constitution": "11",
+                "Intelligence": "11",
+                "Wisdom": "10",
+                "Charisma": "8",
+                "Condition": "Healthy",
+                "Currency": "5",
+                "XP": "0/100",
+                "Level": "1"
+              },
+              "collections": {
+                "equipment": {
+                  "remove": [
+                    {
+                      "name": "Iron wrench",
+                      "quantity": 1
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "warnings": [
+          "Joram · XP: \"0/100\" skipped: earned XP must be reported as a positive delta.",
+          "Joram · Level: \"1\" skipped: Level is managed by XP progression."
+        ]
+      }
+    },
+    {
+      "message": 4,
+      "speaker": "Skritch",
+      "text": "I return the wrench to Joram and drink one healing potion to ease my shoulder. Then I plant my staff against the stone, take the crank beside him, and help him lower the gate. “Together, on three!” Once it’s safe, I check whether the village is out of danger."
+    },
+    {
+      "message": 5,
+      "speaker": "Narrator",
+      "text": "You hand the wrench back to Joram and uncork one of your healing potions. As the shimmering liquid slides down your throat, a soothing warmth spreads through your chest and radiates into your shoulder, melting away the strain.\n\nJoram: \"Good lad! Now, on three!\"\n\nYou plant your oak staff firmly against the stone to brace yourself and grip the heavy iron crank. With a shared heave on the count of three, the mechanism screams with the sound of grinding metal. Slowly, the massive gate descends, slamming shut with a thunderous boom that echoes through the valley.\n\nYou peer over the edge. The rushing water is diverted, and the village below is safe from the immediate surge, though the river remains an angry, churning torrent.",
+      "reader": {
+        "swipe": 0,
+        "status": "done",
+        "summary": "5 applied · 0 awaiting review · 2 warnings",
+        "output": {
+          "player": {
+            "stats": {
+              "Condition": "Healthy"
+            },
+            "deltas": {
+              "XP": 25
+            },
+            "collections": {
+              "equipment": {
+                "remove": [
+                  {
+                    "name": "Iron wrench",
+                    "quantity": 1
+                  }
+                ]
+              }
+            }
+          },
+          "characters": [
+            {
+              "name": "Joram",
+              "stats": {
+                "HP": "14/14",
+                "Mana": "8/8",
+                "Armor": "12",
+                "Strength": "12",
+                "Dexterity": "9",
+                "Constitution": "11",
+                "Intelligence": "11",
+                "Wisdom": "10",
+                "Charisma": "8",
+                "Condition": "Healthy",
+                "Currency": "5",
+                "XP": "0/100",
+                "Level": "1"
+              },
+              "collections": {
+                "equipment": {
+                  "add": [
+                    {
+                      "name": "Iron wrench",
+                      "quantity": 1,
+                      "description": "A massive iron wrench used for adjusting heavy machinery."
+                    }
+                  ]
+                },
+                "abilities": []
+              },
+              "deltas": {
+                "XP": 25
+              }
+            }
+          ]
+        },
+        "warnings": [
+          "Joram · XP: \"0/100\" skipped: earned XP must be reported as a positive delta.",
+          "Joram · Level: \"1\" skipped: Level is managed by XP progression."
+        ]
+      }
+    }
+  ],
+  "finalPlayer": {
+    "stats": {
+      "HP": "12/12",
+      "Mana": "8/10",
+      "Armor": "10",
+      "Strength": "10",
+      "Dexterity": "10",
+      "Constitution": "10",
+      "Intelligence": "10",
+      "Wisdom": "10",
+      "Charisma": "10",
+      "Condition": "Healthy",
+      "Currency": "0",
+      "XP": "40/100",
+      "Level": "1"
+    },
+    "collections": {
+      "equipment": [],
+      "abilities": [
+        {
+          "name": "Heat spell",
+          "kind": "Magic",
+          "rank": "",
+          "uses": "",
+          "effect": "Produces a concentrated glow of heat to sear metal or warm objects."
+        }
+      ]
+    }
+  },
+  "finalNpcs": [
+    {
+      "name": "Joram",
+      "stats": {
+        "HP": "14/14",
+        "Mana": "8/8",
+        "Armor": "12",
+        "Strength": "12",
+        "Dexterity": "9",
+        "Constitution": "11",
+        "Intelligence": "11",
+        "Wisdom": "10",
+        "Charisma": "8",
+        "Condition": "Healthy",
+        "Currency": "5",
+        "XP": "25/100",
+        "Level": "1"
+      },
+      "collections": {
+        "equipment": [
+          {
+            "name": "Iron wrench",
+            "quantity": 1,
+            "description": "A massive iron wrench used for adjusting heavy machinery."
+          }
+        ],
+        "abilities": []
+      }
+    }
+  ],
+  "observations": [
+    "No NPC name, profile, image, or dialogue was supplied in advance. The opening prompt supplies the player and situation only.",
+    "No tracked stats or collections were manually edited. Cropped browser screenshots include the complete user message, reply, and tracker for each story turn.",
+    "The generated character sheet was recaptured after turn three, with the wrench returned to Joram. The demo System’s display settings now match the corrected starter: Background, Appearance, and Motivation are text sections; Ancestry and Role remain badges. Stats are collapsed and Lore is open to show the profile. No generated text, messages, tracked stats, or holdings changed during this display update.",
+    "Profile generation filled ancestry, role, appearance, and motivation; unsupported Background remained blank.",
+    "The reader did not initialize the player’s starting staff or potions as Equipment. The last turn does not demonstrate a tracked potion decrement.",
+    "The reader left Quest blank despite the floodgate objective.",
+    "On turns two and three, runtime guards skipped repeated absolute NPC XP and Level fields and reported warnings; positive XP deltas applied.",
+    "No level-up occurred. Final XP: player 40/100, Joram 25/100."
+  ]
+}

@@ -12,8 +12,8 @@ const scalar = { type: ['string', 'number', 'boolean'] };
 export const progressionSchema = object({ enabled: bool, xpFieldId: text, levelFieldId: text,
     pointsPerLevel: { type: 'integer', minimum: 0 }, assignment: enumeration(['random', 'manual']), statIds: array(id) });
 export const profileSchema = object({ id, label: text, guidance: text, targets: array(text, 8),
-    placeholder: text, multiline: { ...bool, description: 'Display as a text section when true, or a compact badge when false. All profile value editors support multiple lines.' }, includeInImagePrompt: { ...bool, description: 'Include visible portrait attributes such as Ancestry or Species; exclude nonvisual history and secrets.' }, retired: bool, legacyId: text },
-['id', 'label', 'guidance', 'targets']);
+    placeholder: text, multiline: { ...bool, description: 'Choose true for descriptive fields expected to exceed a few words, such as Background, Appearance, or Motivation. Choose false only for brief labels such as Species, Role, Element, or Nature. This controls text-section versus badge display, independently of the current value length. All profile value editors support multiple lines.' }, includeInImagePrompt: { ...bool, description: 'Include visible portrait attributes such as Ancestry or Species; exclude nonvisual history and secrets.' }, retired: bool, legacyId: text },
+['id', 'label', 'guidance', 'targets', 'multiline']);
 export const statSchema = object({ id, name: text, type: enumeration(['number', 'text']), defaultValue: { ...scalar, description: 'Health, Mana, and other numeric pools use a current/maximum string such as 10/10. This is a starting default; each NPC may initialize its own capacity. Plain numbers define ratings.' },
     purpose: text, guidance: text, format: enumeration(['{{name}}: {{value}}', '{{value}}']),
     min: text, maxStatValue: text, options: array(text), maxLength: text, locked: bool, visible: bool,

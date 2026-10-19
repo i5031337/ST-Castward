@@ -37,12 +37,9 @@ SillyTavern loads `index.js` and `style.css` from `manifest.json`. The JavaScrip
 | `docs/level-up-rewards-plan.md` | Implemented progression/reward contract and verification criteria. |
 | `docs/system-generation-plan.md` | Implemented staged System generator design, verification criteria, and schema simplification candidates. |
 | `img/branding/castward-logo.svg`, `img/branding/castward-icon.svg` | README logo and extension-header character emblem; outlined lettering and transparent backgrounds. |
-| `img/SillyNPCLogo.jpg` | Retained upstream SillyNPC logo; not used for Castward branding. |
-| `img/screenshots/` | Current Castward README captures: dialogue expressions, the expression editor, present scene sprites, tracker collections and progression, player HUD, System generation, and speech settings. Captures use staged example data. |
+| `img/screenshots/` | README captures for dialogue expressions, the expression editor, present scene sprites, progression, System generation, and speech settings. These feature examples use staged data. |
+| `img/screenshots/fantasy-demo/` | Live Fantasy Adventure captures with full user messages, reader-applied state, Joram before and after Fill, his generated sheet, and the player HUD. Evidence is in `docs/evaluations/fantasy-adventure-live-demo.json`. |
 | `img/screenshots/example-portraits.webp` | Original generated example artwork used in the captures: Mira neutral/joy and Rowan neutral/fear, arranged in a two-by-two sheet. |
-| `img/charactersexmp.png`, `img/charcterexmp.png`, `img/chatexmp.png` | Retained upstream character and chat screenshots. |
-| `img/floathudbar.png`, `img/floathudcircle.png`, `img/playerexmp.png` | Retained upstream HUD and player screenshots. |
-| `img/stats.png`, `img/styleexmp.png` | Retained upstream stats and appearance screenshots. |
 | `tests/chat-character-ownership.mjs` | Character visibility, chat NPC routing, persona identity, and chat-local player state boundaries. |
 | `tests/fill-new-character.mjs` | Automatic fill stages, new chat cards, shared locks, and retry behavior. |
 | `tests/lore-entry-store.mjs` | Concurrent lore creation, ownership, and entry reuse tests. |

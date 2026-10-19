@@ -12,7 +12,7 @@
       "label": "Background",
       "guidance": "Training history",
       "placeholder": "",
-      "multiline": false,
+      "multiline": true,
       "includeInImagePrompt": false,
       "retired": false,
       "targets": [

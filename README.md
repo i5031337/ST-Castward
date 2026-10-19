@@ -8,6 +8,33 @@ Give your roleplay a cast you can see, hear, and watch grow.
 
 Player and NPC profiles, portraits, voices, and RPG tracking for SillyTavern. Build collections for equipment, abilities, moves, or anything else your game needs.
 
+**Start small: a minimal persona, a narrator character card, and your usual writing preset.** Once your model is connected, the built-in Fantasy Adventure System supplies the tracking rules. Describe who you are and what you want to do, then play.
+
+## Three turns of Fantasy Adventure
+
+Played in a running SillyTavern instance with local **Gemma 4 26B A4B**, the built-in Fantasy Adventure template, and automatic reading. Every turn capture includes the user message and the resulting reply and tracker. No NPC was supplied in advance: the story model introduced Joram, and Castward generated his profile and image from the conversation. Only the player's portrait was already available. No tracked values were manually edited.
+
+**1. Meet someone new, then give them a face.** The reader identifies Joram, tracks his stats and wrench, and remembers the Ruined Floodgate. Click his placeholder portrait to create and Fill his chat-owned card using the configured lore and image services.
+
+| Before: a newly encountered speaker | After: the same exchange following Fill |
+| :--- | :--- |
+| [![The full opening user message and reply: the narrator introduces Joram, who has a placeholder portrait, separate tracked stats, and an iron wrench](img/screenshots/fantasy-demo/01-new-npc-before-fill.png)](img/screenshots/fantasy-demo/01-new-npc-before-fill.png) | [![The same full user message and reply after Fill, now showing Joram's newly generated image beside his dialogue and in the tracker](img/screenshots/fantasy-demo/02-new-npc-after-fill.png)](img/screenshots/fantasy-demo/02-new-npc-after-fill.png) |
+
+**Joram's generated profile.** Fill turns the conversation into a character sheet with an image, short ancestry and role badges, and readable Appearance and Motivation text sections. Stats and equipment stay on the same sheet.
+
+[![Joram's generated character sheet: Human and machinery-operator badges under his image, with Appearance and Motivation in text sections beside it](img/screenshots/fantasy-demo/03-generated-profile.png)](img/screenshots/fantasy-demo/03-generated-profile.png)
+
+The sheet is captured after turn three, with the wrench returned to Joram. Profile generation filled the story-supported details and left Background blank. The demo System's profile display settings were updated to match the corrected starter template; the generated text and tracked values are unchanged.
+
+| 2. Borrow equipment and cast magic | 3. Recover and return the equipment |
+| :--- | :--- |
+| Joram hands over his wrench. The reader moves it to Skritch's Equipment, records **Heat spell**, spends **2 Mana**, adds **Strained shoulder**, and awards **15 XP**. | Skritch drinks a potion, returns the wrench, and helps close the gate. The reader restores **Healthy**, moves the wrench back to Joram, and brings Skritch to **40/100 XP** and Joram to **25/100 XP**. |
+| [![The full user request to borrow the wrench and loosen a pin with magic, followed by the reply and tracked equipment transfer, spell, Mana cost, strain, and XP](img/screenshots/fantasy-demo/04-magic-and-equipment.png)](img/screenshots/fantasy-demo/04-magic-and-equipment.png) | [![The full user message returning the wrench and helping lower the gate, followed by the reply and tracked recovery, returned equipment, and player and NPC XP](img/screenshots/fantasy-demo/05-recovery-and-return.png)](img/screenshots/fantasy-demo/05-recovery-and-return.png) |
+
+Click any screenshot for the full view. [Transcript, generated profile, reader outputs, and observations from this run](docs/evaluations/fantasy-adventure-live-demo.json), including skipped XP/Level fields and starting gear the reader missed.
+
+This demo uses click-to-Fill. To create profiles as the reader discovers NPCs, enable **Tracker → Generate Profiles For New NPCs**. It is off by default and adds a lore request for each new NPC; **Images → Draw Portrait Automatically** controls the additional image request. Portraits need a configured SillyTavern Image Generation service.
+
 **Change the game rules with the genre.** Choose a System for each new chat: Fantasy Adventure, Dating Sim, Creature Trainer, or one you build. A System brings its player and NPC fields, stats, collections, progression, and display rules together, while you keep the writing preset you like.
 
 **Start chatting with your current writing preset.** A fresh install selects Fantasy Adventure, turns on automatic tracking, and asks the model to label dialogue for speaker portraits. The separate reader follows finished replies and proposes changes to stats, collections, and XP; let them apply automatically or review them yourself.
@@ -24,15 +51,9 @@ Castward is maintained by **i5031337**. Built on [SillyNPC by BrutalKoala](https
 - **Leaves room for your writing style.** The default reader makes a separate request after the story reply, so the prose model does not have to write tracker data into its answer. Keep your current writing preset; the optional dialogue-format instruction can be changed or switched off.
 - **Puts your player stats within reach.** A floating HUD keeps your portrait and resource meters on screen. Drag it where you like, choose bars or rings, and click the portrait to open your sheet. Its controls are under **Appearance → Floating HUD**.
 
-[![Mira changes from a neutral expression to a smile between dialogue lines, while Rowan keeps his own portrait and color](img/screenshots/dialogue-expressions.png)](img/screenshots/dialogue-expressions.png)
+[![The live demo's floating HUD after the second turn: 12/12 HP, 8/10 Mana, 15/100 XP, and level 1](img/screenshots/fantasy-demo/player-hud.png)](img/screenshots/fantasy-demo/player-hud.png)
 
-Expressions follow each dialogue line: Mira starts neutral, then smiles as the beacon comes into view. Each speaker keeps their own color, with narration between their lines.
-
-| In-chat tracker | Player HUD |
-| :---: | :---: |
-| [![World details, player XP and level, Equipment and Abilities collections, and separate NPC stats beneath a story reply](img/screenshots/in-chat-tracker.png)](img/screenshots/in-chat-tracker.png) | [![Current player HUD with a portrait and labelled Health, Energy, and XP meters](img/screenshots/player-hud.png)](img/screenshots/player-hud.png) |
-
-Current Castward UI with staged example data and original example portraits. Click any image for a closer look.
+The floating HUD after turn two of the demo above, showing the same HP, Mana, and XP as the in-chat tracker.
 
 ## Built around your cast
 
@@ -107,7 +128,7 @@ git clone https://github.com/i5031337/ST-Castward.git
 
 ## Your first adventure
 
-You can start a new chat without any additional setup. It already has Fantasy Adventure rules, an automatic reader, and a dialogue-format request for lines like `**Mira**: "All aboard!"` so portraits and colors follow each speaker.
+With a model connected, you only need a minimal persona and a narrator character card with your usual writing preset. A name and a short description of who you want to play are enough to begin; you can establish the adventure in your first message. A fresh install already has Fantasy Adventure rules, an automatic reader, and a dialogue-format request for lines like `**Mira**: "All aboard!"` so portraits and colors follow each speaker.
 
 1. **Start chatting.** The reader follows replies and shows story state beneath the latest one. Changes apply automatically unless you choose review.
 2. **Meet the cast.** Click an unknown speaker's portrait to create a profile and **Fill** missing details, lore, and a portrait. Use **Link as alias** for another name for an existing NPC.
@@ -139,6 +160,10 @@ Portraits use SillyTavern's **Image Generation** extension. Toggle automatic por
 **Optional generated expressions:** Install [Image Edit](https://github.com/i5031337/st-image-edit) **for all users**, so it lives in `public/scripts/extensions/third-party/st-image-edit`; Castward imports it from that folder. Configure a ComfyUI URL in SillyTavern's Image Generation settings and save an API-format editing workflow with `%reference_image%` and `%prompt%` inputs. The [Image Edit setup guide](https://github.com/i5031337/st-image-edit#install) explains the required base64 image loader. Select your saved workflow under **Images → Expression Editing Workflow**, and choose Local, Extras, or WebLLM in SillyTavern's Expressions settings. Existing expression packs and scene sprites do not need Image Edit.
 
 Generate emotions in **NPC Edit → Expressions**, or turn on automatic generation under **Images**. Existing sprites are reused. **Show Present NPC Sprites** keeps the cast visible even with speech off. Extra reader passes and image generation may add provider costs.
+
+[![Mira changes from a neutral expression to a smile between dialogue lines, while Rowan keeps his own portrait and color](img/screenshots/dialogue-expressions.png)](img/screenshots/dialogue-expressions.png)
+
+Staged expression example: Mira starts neutral, then smiles as the beacon comes into view. Each speaker keeps their own color, with narration between their lines.
 
 | Preview and generate an emotion | Keep the present cast beside the chat |
 | :---: | :---: |

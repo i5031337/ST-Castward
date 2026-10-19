@@ -9,6 +9,7 @@ Thumbs.db
 
 # Keep intermediate local model runs out of commits. Publish audited final pairs.
 docs/evaluations/*.json
+!docs/evaluations/fantasy-adventure-live-demo.json
 !docs/evaluations/gemma-e4b-final-evidence-post-parser-prompts.json
 !docs/evaluations/gemma-e4b-final-evidence-post-parser-results.json
 !docs/evaluations/gemma-e4b-natural-prose-generic-partial-npc-audit-prompts.json

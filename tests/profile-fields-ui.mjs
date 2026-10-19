@@ -66,6 +66,18 @@ test('profile view includes saved fields outside the active System', () => {
     assert.equal(blocks[1].children[1].children[1].textContent, 'Captain');
 });
 
+test('profile layout follows the field setting rather than the value word count', () => {
+    const blocks = buildProfileBlocks({ profile: {
+        mood: 'Calm and curious about the world', origin: 'North',
+    } });
+    assert.equal(blocks.length, 2);
+    assert.equal(blocks[0].className, 'sillynpc-cv-chips sillynpc-cv-identity');
+    assert.equal(blocks[0].children[0].children[1].textContent, 'Calm and curious about the world');
+    assert.equal(blocks[1].className, 'sillynpc-cv-block');
+    assert.equal(blocks[1].children[0].textContent, 'Origin');
+    assert.equal(blocks[1].children[1].textContent, 'North');
+});
+
 test('profile edits retain immutable IDs and retired definitions', () => {
     const fields = normalizeSystemDefinition({}).profiles;
     const first = addProfileField(fields, 'Secret Ties');

@@ -1,6 +1,6 @@
 import { normalizeSystemDefinition } from './system-schema.js';
 
-const profile = (id, label, targets, guidance = '') => ({ id, label, targets, guidance });
+const profile = (id, label, targets, guidance = '', multiline = true) => ({ id, label, targets, guidance, multiline });
 const number = (id, name, targets, defaultValue, purpose, extra = {}) => ({
     id, name, targets, type: 'number', defaultValue, purpose, min: '0', ...extra,
 });
@@ -36,9 +36,9 @@ const fantasy = {
     metadata: { description: 'Characters of every kind, quests, gear, and magic.', author: 'Castward' },
     profiles: [
         profile('background', 'Background', fantasyActors, 'Origin and formative history.'),
-        { ...profile('ancestry', 'Ancestry or Species', fantasyActors, 'Heritage or species, whether person or beast.'),
+        { ...profile('ancestry', 'Ancestry or Species', fantasyActors, 'Brief heritage or species label, whether person or beast.', false),
             includeInImagePrompt: true },
-        profile('calling', 'Role', fantasyActors, 'Place in the story, profession, or natural role.'),
+        profile('calling', 'Role', fantasyActors, 'Brief profession or natural role label.', false),
         profile('appearance', 'Appearance', fantasyActors, 'Visible appearance.'),
         profile('motivation', 'Motivation', fantasyActors, 'What this character wants or instinctively seeks.'),
     ],
@@ -166,10 +166,10 @@ const creature = {
         profile('appearance', 'Appearance', ['player', 'template:trainer', 'template:creature'],
             'Visible appearance.'),
         profile('ambition', 'Ambition', ['player', 'template:trainer'], 'Training goal or personal ambition.'),
-        profile('species', 'Species', ['template:creature'], 'Creature species or kind.'),
-        profile('element', 'Element', ['template:creature'], 'One or two elemental affinities.'),
+        profile('species', 'Species', ['template:creature'], 'Brief creature species or kind label.', false),
+        profile('element', 'Element', ['template:creature'], 'One or two elemental affinities.', false),
         profile('ability', 'Ability', ['template:creature'], 'Distinct innate ability, if known.'),
-        profile('nature', 'Nature', ['template:creature'], 'Temperament or disposition.'),
+        profile('nature', 'Nature', ['template:creature'], 'Brief temperament or disposition label.', false),
     ],
     npcTemplates: [
         { id: 'trainer', name: 'Trainer', description: 'Rivals, allies, and other human trainers.',

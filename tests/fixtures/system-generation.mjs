@@ -2,7 +2,10 @@ export const plan = {
     locations: { enabled: true },
     memories: { enabled: true, guidance: 'Remember consequential battles and commitments; skip routine travel.', interval: 8, maxEntriesPerCharacter: 50 },
     name: 'Expedition', description: 'Catch monsters and learn techniques.', rationale: 'Small persistent ratings and expandable resource pools.',
-    profiles: [{ name: 'Background', purpose: 'Training history', targets: ['player'] }, { name: 'Species', purpose: 'Stable visible species', targets: ['Creature'] }],
+    profiles: [{ name: 'Background', purpose: 'Training history', targets: ['player'] },
+        { name: 'Species', purpose: 'Stable visible species', targets: ['Creature'] },
+        { name: 'Appearance', purpose: 'Visible appearance', targets: ['player', 'Creature'] },
+        { name: 'Motivation', purpose: 'What the character wants', targets: ['player', 'Creature'] }],
     stats: { world: [{ name: 'Weather', purpose: 'Current weather' }],
         character: [{ name: 'XP', purpose: 'Earned XP', targets: ['player', 'Creature'] }, { name: 'Level', purpose: 'Learned level', targets: ['player', 'Creature'] },
             { name: 'Energy', purpose: 'Spent on expeditions', targets: ['player'] }, { name: 'Vigor', purpose: 'Combat stamina', targets: ['Creature'] }] },
@@ -15,7 +18,7 @@ export function responseFor(stage, registry) {
     if (stage === 'plan') return { section: structuredClone(plan), assumptions: [] };
     let section;
     const [kind, scope] = stage.split('.');
-    if (kind === 'profiles') section = registry.profiles.map(f => ({ id: f.id, label: f.name, guidance: f.purpose, targets: f.targets, multiline: f.name === 'Background', includeInImagePrompt: f.name === 'Species' }));
+    if (kind === 'profiles') section = registry.profiles.map(f => ({ id: f.id, label: f.name, guidance: f.purpose, targets: f.targets, multiline: f.name !== 'Species', includeInImagePrompt: ['Species', 'Appearance'].includes(f.name) }));
     if (kind === 'stats') section = registry.stats[scope].map(f => ({ id: f.id, name: f.name, purpose: f.purpose,
         format: '{{name}}: {{value}}', type: f.id === 'weather' ? 'text' : 'number', defaultValue: f.id === 'weather' ? '' : f.id === 'xp' ? '0/100' : f.id === 'level' ? '1' : '6/10',
         locked: f.id === 'level', ...(scope === 'character' ? { carryOver: ['xp', 'level'].includes(f.id), targets: f.targets } : {}), min: f.id === 'weather' ? '' : '0', maxStatValue: f.id === 'xp' ? '100' : '' }));
