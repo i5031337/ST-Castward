@@ -52,8 +52,8 @@
   "stats": {
     "world": [
       {
-        "id": "location",
-        "name": "Location",
+        "id": "weather",
+        "name": "Weather",
         "type": "text",
         "defaultValue": "",
         "format": "{{name}}: {{value}}",
@@ -64,7 +64,7 @@
         "locked": false,
         "visible": true,
         "guidance": "",
-        "purpose": "Current region",
+        "purpose": "Current weather",
         "isPrimary": false,
         "color": "",
         "retired": false
@@ -262,7 +262,10 @@
       "vigor"
     ],
     "worldStatIds": [
-      "location"
+      "weather"
     ]
+  },
+  "locations": {
+    "enabled": true
   }
 }

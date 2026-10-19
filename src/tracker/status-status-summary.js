@@ -91,7 +91,7 @@ function summarizeCollection(collectionId, items, includeFull = false) {
  * Formats the state into a compact text block for prompt injection.
  * For prompt injection, we now include the FULL collection list to support Full State Sync.
  */
-function formatCompactStatus(state, fullDetail = false) {
+function formatCompactStatus(state, fullDetail = false, places = '') {
     // The world, the player and each character, one line each. The heading and the sections
     // after these lines are the 'sceneBlock' text in prompt-texts.js.
     let output = '';
@@ -186,7 +186,7 @@ function formatCompactStatus(state, fullDetail = false) {
         }
     }
     return promptText('sceneBlock', {
-        status: output.trim(),
+        status: [output.trim(), places].filter(Boolean).join('\n'),
         statMeanings: meanings.join('\n'),
         // And who the story just named without putting on stage.
         offstage,

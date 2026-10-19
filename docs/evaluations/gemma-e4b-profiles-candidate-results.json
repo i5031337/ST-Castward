@@ -1,0 +1,1047 @@
+{
+  "startedAt": "2026-10-18T21:40:21.248Z",
+  "endpoint": "http://127.0.0.1:9931/v1",
+  "criteria": {
+    "allResponsesReadable": true,
+    "overallRequiredCheckRate": 0.85,
+    "perPathRequiredCheckRate": 0.8,
+    "perSystemRequiredCheckRate": 0.8,
+    "critical": [
+      "preserved",
+      "omitted",
+      "avoid"
+    ]
+  },
+  "model": "/mnt/D/backup_models/gemma-4-E4B-it-qat-UD-Q4_K_XL.gguf",
+  "server": {
+    "build": "b11669-620d2225c",
+    "model": "/mnt/D/backup_models/gemma-4-E4B-it-qat-UD-Q4_K_XL.gguf",
+    "defaults": {
+      "params": {
+        "seed": 4294967295,
+        "temperature": 1,
+        "dynatemp_range": 0,
+        "dynatemp_exponent": 1,
+        "top_k": 64,
+        "top_p": 0.949999988079071,
+        "min_p": 0,
+        "top_n_sigma": -1,
+        "xtc_probability": 0,
+        "xtc_threshold": 0.10000000149011612,
+        "typical_p": 1,
+        "repeat_last_n": 64,
+        "repeat_penalty": 1,
+        "presence_penalty": 0,
+        "frequency_penalty": 0,
+        "dry_multiplier": 0,
+        "dry_base": 1.75,
+        "dry_allowed_length": 2,
+        "dry_penalty_last_n": 64,
+        "mirostat": 0,
+        "mirostat_tau": 5,
+        "mirostat_eta": 0.10000000149011612,
+        "adaptive_target": -1,
+        "adaptive_decay": 0.8999999761581421,
+        "max_tokens": -1,
+        "n_predict": -1,
+        "n_keep": 0,
+        "n_discard": 0,
+        "ignore_eos": false,
+        "stream": false,
+        "n_probs": 0,
+        "min_keep": 0,
+        "chat_format": "Content-only",
+        "reasoning_format": "none",
+        "reasoning_in_content": false,
+        "generation_prompt": "",
+        "samplers": [
+          "penalties",
+          "dry",
+          "top_n_sigma",
+          "top_k",
+          "typ_p",
+          "top_p",
+          "min_p",
+          "xtc",
+          "temperature"
+        ],
+        "speculative.types": "none",
+        "timings_per_token": false,
+        "post_sampling_probs": false,
+        "backend_sampling": false,
+        "lora": []
+      },
+      "n_ctx": 65536
+    }
+  },
+  "trials": [
+    {
+      "id": "fantasy-fill-story",
+      "path": "fill",
+      "system": "fantasy-adventure",
+      "repeat": 0,
+      "elapsedMs": 6565,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 712,
+        "prompt_tokens": 327,
+        "total_tokens": 1039,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        }
+      },
+      "content": "```json\n{\n  \"background\": \"Mara's formative history includes the loss of her family forge after a flood.\",\n  \"ancestry\": \"Mara is a dwarf.\",\n  \"calling\": \"She serves as a smith and repairs the bridge each morning.\",\n  \"appearance\": \"Mara possesses a soot-dark braid and a scar over her left eyebrow.\",\n  \"motivation\": \"Mara wants the valley connected again.\"\n}\n```",
+      "applied": {
+        "result": {
+          "ok": true,
+          "filled": [
+            "Background",
+            "Ancestry or Species",
+            "Role",
+            "Appearance",
+            "Motivation"
+          ]
+        },
+        "profile": {
+          "background": "Mara's formative history includes the loss of her family forge after a flood.",
+          "ancestry": "Mara is a dwarf.",
+          "calling": "She serves as a smith and repairs the bridge each morning.",
+          "appearance": "Mara possesses a soot-dark braid and a scar over her left eyebrow.",
+          "motivation": "Mara wants the valley connected again."
+        },
+        "parsed": {
+          "background": "Mara's formative history includes the loss of her family forge after a flood.",
+          "ancestry": "Mara is a dwarf.",
+          "calling": "She serves as a smith and repairs the bridge each morning.",
+          "appearance": "Mara possesses a soot-dark braid and a scar over her left eyebrow.",
+          "motivation": "Mara wants the valley connected again."
+        },
+        "readable": true
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "readable response and expected format",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "ancestry: dwarf",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "calling: smith",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "appearance: braid or scar",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "background: flood or forge",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "motivation: bridge or valley",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "no player detail copied",
+          "critical": true,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "fantasy-fill-lore",
+      "path": "fill",
+      "system": "fantasy-adventure",
+      "repeat": 0,
+      "elapsedMs": 5476,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 594,
+        "prompt_tokens": 312,
+        "total_tokens": 906,
+        "prompt_tokens_details": {
+          "cached_tokens": 66
+        }
+      },
+      "content": "```json\n{\n  \"ancestry\": \"Human\",\n  \"calling\": \"Mapmaker\",\n  \"appearance\": \"Tamsin wears a brass prosthetic, having lost her right hand in a winter avalanche.\",\n  \"motivation\": \"Tamsin seeks to chart a safe pass through the mountains.\"\n}\n```",
+      "applied": {
+        "result": {
+          "ok": true,
+          "filled": [
+            "Ancestry or Species",
+            "Role",
+            "Appearance",
+            "Motivation"
+          ]
+        },
+        "profile": {
+          "background": "Born in Blackpine.",
+          "ancestry": "Human",
+          "calling": "Mapmaker",
+          "appearance": "Tamsin wears a brass prosthetic, having lost her right hand in a winter avalanche.",
+          "motivation": "Tamsin seeks to chart a safe pass through the mountains."
+        },
+        "parsed": {
+          "ancestry": "Human",
+          "calling": "Mapmaker",
+          "appearance": "Tamsin wears a brass prosthetic, having lost her right hand in a winter avalanche.",
+          "motivation": "Tamsin seeks to chart a safe pass through the mountains."
+        },
+        "readable": true
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "readable response and expected format",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "preserved: background",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "ancestry: human",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "calling: mapmaker",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "appearance: brass or prosthetic",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "motivation: pass or mountain",
+          "critical": false,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "dating-fill-story",
+      "path": "fill",
+      "system": "dating-sim",
+      "repeat": 0,
+      "elapsedMs": 6520,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 709,
+        "prompt_tokens": 320,
+        "total_tokens": 1029,
+        "prompt_tokens_details": {
+          "cached_tokens": 66
+        }
+      },
+      "content": "```json\n{\n  \"personality\": \"Nia maintains a calm demeanor, speaks softly, and waits for others to finish speaking.\",\n  \"appearance\": \"Nia wears amber glasses and a green cardigan.\",\n  \"interests\": \"Nia sketches birds in her notebook every afternoon.\",\n  \"boundaries\": \"Nia requested that Alex not photograph her.\",\n  \"aspiration\": \"Nia hopes to open a pottery studio.\"\n}\n```",
+      "applied": {
+        "result": {
+          "ok": true,
+          "filled": [
+            "Personality",
+            "Appearance",
+            "Interests",
+            "Boundaries",
+            "Aspiration"
+          ]
+        },
+        "profile": {
+          "personality": "Nia maintains a calm demeanor, speaks softly, and waits for others to finish speaking.",
+          "appearance": "Nia wears amber glasses and a green cardigan.",
+          "interests": "Nia sketches birds in her notebook every afternoon.",
+          "boundaries": "Nia requested that Alex not photograph her.",
+          "aspiration": "Nia hopes to open a pottery studio."
+        },
+        "parsed": {
+          "personality": "Nia maintains a calm demeanor, speaks softly, and waits for others to finish speaking.",
+          "appearance": "Nia wears amber glasses and a green cardigan.",
+          "interests": "Nia sketches birds in her notebook every afternoon.",
+          "boundaries": "Nia requested that Alex not photograph her.",
+          "aspiration": "Nia hopes to open a pottery studio."
+        },
+        "readable": true
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "readable response and expected format",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "appearance: amber or glasses",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "personality: soft or quiet or listen or patient",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "interests: sketch or birds",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "boundaries: photo or photograph",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "aspiration: pottery or studio",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "no player detail copied",
+          "critical": true,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "dating-fill-lore",
+      "path": "fill",
+      "system": "dating-sim",
+      "repeat": 0,
+      "elapsedMs": 6901,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 751,
+        "prompt_tokens": 290,
+        "total_tokens": 1041,
+        "prompt_tokens_details": {
+          "cached_tokens": 66
+        }
+      },
+      "content": "```json\n{\n  \"interests\": \"Priya studies tide pools on weekends.\",\n  \"boundaries\": \"Priya asks visitors to text her before coming over.\",\n  \"aspiration\": \"Priya hopes to become a veterinarian.\"\n}\n```",
+      "applied": {
+        "result": {
+          "ok": true,
+          "filled": [
+            "Interests",
+            "Boundaries",
+            "Aspiration"
+          ]
+        },
+        "profile": {
+          "personality": "Dry wit, careful with strangers.",
+          "interests": "Priya studies tide pools on weekends.",
+          "boundaries": "Priya asks visitors to text her before coming over.",
+          "aspiration": "Priya hopes to become a veterinarian."
+        },
+        "parsed": {
+          "interests": "Priya studies tide pools on weekends.",
+          "boundaries": "Priya asks visitors to text her before coming over.",
+          "aspiration": "Priya hopes to become a veterinarian."
+        },
+        "readable": true
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "readable response and expected format",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "preserved: personality",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "interests: tide or pool",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "boundaries: text or visit",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "aspiration: veterinarian",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "omitted: appearance",
+          "critical": true,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "fantasy-auto-new-npc",
+      "path": "auto",
+      "system": "fantasy-adventure",
+      "repeat": 0,
+      "elapsedMs": 625,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 54,
+        "prompt_tokens": 418,
+        "total_tokens": 472,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        }
+      },
+      "content": "tags: Orin\ncontent: |\n  Background: Grew up among river barges.\n  Ancestry or Species: Halfling\n  Role: Scout\n  Appearance: Red cloak, one silver earring.\n  Motivation: Seeking his missing sister.",
+      "applied": {
+        "result": {
+          "tags": "Orin",
+          "content": "Background: Grew up among river barges.\nAncestry or Species: Halfling\nRole: Scout\nAppearance: Red cloak, one silver earring.\nMotivation: Seeking his missing sister.",
+          "followedFormat": true,
+          "truncated": false,
+          "excerpt": {
+            "text": "Narrator: Orin the halfling scout enters the camp. He has a red cloak and one silver earring. Orin grew up among river barges and seeks his missing sister. Alex, the player, is a tall human soldier.",
+            "used": 1,
+            "available": 1,
+            "trimmed": false
+          }
+        },
+        "profile": {
+          "background": "Grew up among river barges.",
+          "ancestry": "Halfling",
+          "calling": "Scout",
+          "appearance": "Red cloak, one silver earring.",
+          "motivation": "Seeking his missing sister."
+        },
+        "parsed": {
+          "background": "Grew up among river barges.",
+          "ancestry": "Halfling",
+          "calling": "Scout",
+          "appearance": "Red cloak, one silver earring.",
+          "motivation": "Seeking his missing sister."
+        },
+        "readable": true
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "readable response and expected format",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "ancestry: halfling",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "calling: scout",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "appearance: red cloak or earring",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "background: river or barge",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "motivation: sister",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "no player detail copied",
+          "critical": true,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "dating-auto-new-npc",
+      "path": "auto",
+      "system": "dating-sim",
+      "repeat": 0,
+      "elapsedMs": 4236,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 454,
+        "prompt_tokens": 414,
+        "total_tokens": 868,
+        "prompt_tokens_details": {
+          "cached_tokens": 47
+        }
+      },
+      "content": "tags: Elena\ncontent: |\n  Personality: Outspoken and curious; she listens when corrected.\n  Appearance: Wears a blue denim jacket.\n  Interests: Collecting old train tickets.\n  Boundaries: Dislikes surprise visits and finds them uncomfortable.\n  Aspiration: Hopes to open a secondhand bookshop.",
+      "applied": {
+        "result": {
+          "tags": "Elena",
+          "content": "Personality: Outspoken and curious; she listens when corrected.\nAppearance: Wears a blue denim jacket.\nInterests: Collecting old train tickets.\nBoundaries: Dislikes surprise visits and finds them uncomfortable.\nAspiration: Hopes to open a secondhand bookshop.",
+          "followedFormat": true,
+          "truncated": false,
+          "excerpt": {
+            "text": "Narrator: Elena joins Alex at the bookstore. Elena wears a blue denim jacket. She is outspoken but listens when corrected. She collects old train tickets and dreams of opening a secondhand bookshop. Elena tells Alex that surprise visits make her uncomfortable.",
+            "used": 1,
+            "available": 1,
+            "trimmed": false
+          }
+        },
+        "profile": {
+          "personality": "Outspoken and curious; she listens when corrected.",
+          "appearance": "Wears a blue denim jacket.",
+          "interests": "Collecting old train tickets.",
+          "boundaries": "Dislikes surprise visits and finds them uncomfortable.",
+          "aspiration": "Hopes to open a secondhand bookshop."
+        },
+        "parsed": {
+          "personality": "Outspoken and curious; she listens when corrected.",
+          "appearance": "Wears a blue denim jacket.",
+          "interests": "Collecting old train tickets.",
+          "boundaries": "Dislikes surprise visits and finds them uncomfortable.",
+          "aspiration": "Hopes to open a secondhand bookshop."
+        },
+        "readable": true
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "readable response and expected format",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "appearance: denim or jacket",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "personality: outspoken or listen",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "interests: train or ticket",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "boundaries: surprise or visit",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "aspiration: bookshop",
+          "critical": false,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "fantasy-fill-story",
+      "path": "fill",
+      "system": "fantasy-adventure",
+      "repeat": 1,
+      "elapsedMs": 4929,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 539,
+        "prompt_tokens": 327,
+        "total_tokens": 866,
+        "prompt_tokens_details": {
+          "cached_tokens": 322
+        }
+      },
+      "content": "```json\n{\n  \"background\": \"Her family forge was destroyed by a flood.\",\n  \"ancestry\": \"Dwarf\",\n  \"calling\": \"Smith; she is also responsible for repairing the bridge each morning.\",\n  \"appearance\": \"Mara possesses a soot-dark braid and a scar above her left eyebrow.\",\n  \"motivation\": \"She seeks to maintain the connection of the valley.\"\n}\n```",
+      "applied": {
+        "result": {
+          "ok": true,
+          "filled": [
+            "Background",
+            "Ancestry or Species",
+            "Role",
+            "Appearance",
+            "Motivation"
+          ]
+        },
+        "profile": {
+          "background": "Her family forge was destroyed by a flood.",
+          "ancestry": "Dwarf",
+          "calling": "Smith; she is also responsible for repairing the bridge each morning.",
+          "appearance": "Mara possesses a soot-dark braid and a scar above her left eyebrow.",
+          "motivation": "She seeks to maintain the connection of the valley."
+        },
+        "parsed": {
+          "background": "Her family forge was destroyed by a flood.",
+          "ancestry": "Dwarf",
+          "calling": "Smith; she is also responsible for repairing the bridge each morning.",
+          "appearance": "Mara possesses a soot-dark braid and a scar above her left eyebrow.",
+          "motivation": "She seeks to maintain the connection of the valley."
+        },
+        "readable": true
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "readable response and expected format",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "ancestry: dwarf",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "calling: smith",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "appearance: braid or scar",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "background: flood or forge",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "motivation: bridge or valley",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "no player detail copied",
+          "critical": true,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "fantasy-fill-lore",
+      "path": "fill",
+      "system": "fantasy-adventure",
+      "repeat": 1,
+      "elapsedMs": 4792,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 523,
+        "prompt_tokens": 312,
+        "total_tokens": 835,
+        "prompt_tokens_details": {
+          "cached_tokens": 307
+        }
+      },
+      "content": "```json\n{\n  \"ancestry\": \"Human\",\n  \"calling\": \"Mapmaker\",\n  \"appearance\": \"Tamsin wears a brass prosthetic on her right hand.\",\n  \"motivation\": \"She hopes to chart a safe pass through the mountains.\"\n}\n```",
+      "applied": {
+        "result": {
+          "ok": true,
+          "filled": [
+            "Ancestry or Species",
+            "Role",
+            "Appearance",
+            "Motivation"
+          ]
+        },
+        "profile": {
+          "background": "Born in Blackpine.",
+          "ancestry": "Human",
+          "calling": "Mapmaker",
+          "appearance": "Tamsin wears a brass prosthetic on her right hand.",
+          "motivation": "She hopes to chart a safe pass through the mountains."
+        },
+        "parsed": {
+          "ancestry": "Human",
+          "calling": "Mapmaker",
+          "appearance": "Tamsin wears a brass prosthetic on her right hand.",
+          "motivation": "She hopes to chart a safe pass through the mountains."
+        },
+        "readable": true
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "readable response and expected format",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "preserved: background",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "ancestry: human",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "calling: mapmaker",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "appearance: brass or prosthetic",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "motivation: pass or mountain",
+          "critical": false,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "dating-fill-story",
+      "path": "fill",
+      "system": "dating-sim",
+      "repeat": 1,
+      "elapsedMs": 6278,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 688,
+        "prompt_tokens": 320,
+        "total_tokens": 1008,
+        "prompt_tokens_details": {
+          "cached_tokens": 315
+        }
+      },
+      "content": "```json\n{\n  \"personality\": \"Nia maintains a calm demeanor and speaks softly, often waiting patiently for others to finish speaking.\",\n  \"appearance\": \"Nia wears amber glasses and a green cardigan.\",\n  \"interests\": \"Nia sketches birds in her notebook.\",\n  \"boundaries\": \"Nia requested that Alex not photograph her.\",\n  \"aspiration\": \"Nia hopes to open a pottery studio.\"\n}\n```",
+      "applied": {
+        "result": {
+          "ok": true,
+          "filled": [
+            "Personality",
+            "Appearance",
+            "Interests",
+            "Boundaries",
+            "Aspiration"
+          ]
+        },
+        "profile": {
+          "personality": "Nia maintains a calm demeanor and speaks softly, often waiting patiently for others to finish speaking.",
+          "appearance": "Nia wears amber glasses and a green cardigan.",
+          "interests": "Nia sketches birds in her notebook.",
+          "boundaries": "Nia requested that Alex not photograph her.",
+          "aspiration": "Nia hopes to open a pottery studio."
+        },
+        "parsed": {
+          "personality": "Nia maintains a calm demeanor and speaks softly, often waiting patiently for others to finish speaking.",
+          "appearance": "Nia wears amber glasses and a green cardigan.",
+          "interests": "Nia sketches birds in her notebook.",
+          "boundaries": "Nia requested that Alex not photograph her.",
+          "aspiration": "Nia hopes to open a pottery studio."
+        },
+        "readable": true
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "readable response and expected format",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "appearance: amber or glasses",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "personality: soft or quiet or listen or patient",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "interests: sketch or birds",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "boundaries: photo or photograph",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "aspiration: pottery or studio",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "no player detail copied",
+          "critical": true,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "dating-fill-lore",
+      "path": "fill",
+      "system": "dating-sim",
+      "repeat": 1,
+      "elapsedMs": 6633,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 726,
+        "prompt_tokens": 290,
+        "total_tokens": 1016,
+        "prompt_tokens_details": {
+          "cached_tokens": 285
+        }
+      },
+      "content": "```json\n{\n  \"appearance\": \"Her appearance has never been described.\",\n  \"interests\": \"Priya spends weekends studying tide pools.\",\n  \"boundaries\": \"Priya asks visitors to text her before coming over.\",\n  \"aspiration\": \"She hopes to become a veterinarian.\"\n}\n```",
+      "applied": {
+        "result": {
+          "ok": true,
+          "filled": [
+            "Appearance",
+            "Interests",
+            "Boundaries",
+            "Aspiration"
+          ]
+        },
+        "profile": {
+          "personality": "Dry wit, careful with strangers.",
+          "appearance": "Her appearance has never been described.",
+          "interests": "Priya spends weekends studying tide pools.",
+          "boundaries": "Priya asks visitors to text her before coming over.",
+          "aspiration": "She hopes to become a veterinarian."
+        },
+        "parsed": {
+          "appearance": "Her appearance has never been described.",
+          "interests": "Priya spends weekends studying tide pools.",
+          "boundaries": "Priya asks visitors to text her before coming over.",
+          "aspiration": "She hopes to become a veterinarian."
+        },
+        "readable": true
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "readable response and expected format",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "preserved: personality",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "interests: tide or pool",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "boundaries: text or visit",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "aspiration: veterinarian",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "omitted: appearance",
+          "critical": true,
+          "passed": false
+        }
+      ]
+    },
+    {
+      "id": "fantasy-auto-new-npc",
+      "path": "auto",
+      "system": "fantasy-adventure",
+      "repeat": 1,
+      "elapsedMs": 586,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 59,
+        "prompt_tokens": 418,
+        "total_tokens": 477,
+        "prompt_tokens_details": {
+          "cached_tokens": 413
+        }
+      },
+      "content": "tags: Orin\ncontent: |\n  Background: Grew up among river barges and seeks his missing sister.\n  Ancestry or Species: Halfling\n  Role: Scout\n  Appearance: Red cloak and one silver earring.\n  Motivation: Finding his missing sister.",
+      "applied": {
+        "result": {
+          "tags": "Orin",
+          "content": "Background: Grew up among river barges and seeks his missing sister.\nAncestry or Species: Halfling\nRole: Scout\nAppearance: Red cloak and one silver earring.\nMotivation: Finding his missing sister.",
+          "followedFormat": true,
+          "truncated": false,
+          "excerpt": {
+            "text": "Narrator: Orin the halfling scout enters the camp. He has a red cloak and one silver earring. Orin grew up among river barges and seeks his missing sister. Alex, the player, is a tall human soldier.",
+            "used": 1,
+            "available": 1,
+            "trimmed": false
+          }
+        },
+        "profile": {
+          "background": "Grew up among river barges and seeks his missing sister.",
+          "ancestry": "Halfling",
+          "calling": "Scout",
+          "appearance": "Red cloak and one silver earring.",
+          "motivation": "Finding his missing sister."
+        },
+        "parsed": {
+          "background": "Grew up among river barges and seeks his missing sister.",
+          "ancestry": "Halfling",
+          "calling": "Scout",
+          "appearance": "Red cloak and one silver earring.",
+          "motivation": "Finding his missing sister."
+        },
+        "readable": true
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "readable response and expected format",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "ancestry: halfling",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "calling: scout",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "appearance: red cloak or earring",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "background: river or barge",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "motivation: sister",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "no player detail copied",
+          "critical": true,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "dating-auto-new-npc",
+      "path": "auto",
+      "system": "dating-sim",
+      "repeat": 1,
+      "elapsedMs": 541,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 53,
+        "prompt_tokens": 414,
+        "total_tokens": 467,
+        "prompt_tokens_details": {
+          "cached_tokens": 409
+        }
+      },
+      "content": "tags: Elena\ncontent: |\n  Personality: Outspoken yet receptive to corrections\n  Appearance: Blue denim jacket\n  Interests: Old train tickets\n  Boundaries: Discomfort with surprise visits\n  Aspiration: Opening a secondhand bookshop",
+      "applied": {
+        "result": {
+          "tags": "Elena",
+          "content": "Personality: Outspoken yet receptive to corrections\nAppearance: Blue denim jacket\nInterests: Old train tickets\nBoundaries: Discomfort with surprise visits\nAspiration: Opening a secondhand bookshop",
+          "followedFormat": true,
+          "truncated": false,
+          "excerpt": {
+            "text": "Narrator: Elena joins Alex at the bookstore. Elena wears a blue denim jacket. She is outspoken but listens when corrected. She collects old train tickets and dreams of opening a secondhand bookshop. Elena tells Alex that surprise visits make her uncomfortable.",
+            "used": 1,
+            "available": 1,
+            "trimmed": false
+          }
+        },
+        "profile": {
+          "personality": "Outspoken yet receptive to corrections",
+          "appearance": "Blue denim jacket",
+          "interests": "Old train tickets",
+          "boundaries": "Discomfort with surprise visits",
+          "aspiration": "Opening a secondhand bookshop"
+        },
+        "parsed": {
+          "personality": "Outspoken yet receptive to corrections",
+          "appearance": "Blue denim jacket",
+          "interests": "Old train tickets",
+          "boundaries": "Discomfort with surprise visits",
+          "aspiration": "Opening a secondhand bookshop"
+        },
+        "readable": true
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "readable response and expected format",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "appearance: denim or jacket",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "personality: outspoken or listen",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "interests: train or ticket",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "boundaries: surprise or visit",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "aspiration: bookshop",
+          "critical": false,
+          "passed": true
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "checks": 78,
+    "passed": 77,
+    "rate": 0.9871794871794872,
+    "systems": {
+      "fantasy-adventure": 1,
+      "dating-sim": 0.9736842105263158
+    },
+    "paths": {
+      "fill": 0.9807692307692307,
+      "auto": 1
+    },
+    "criticalFailures": [
+      "dating-fill-lore #2: omitted: appearance"
+    ],
+    "acceptable": false
+  }
+}

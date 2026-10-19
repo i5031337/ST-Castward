@@ -1,8 +1,9 @@
 export const plan = {
+    locations: { enabled: true },
     memories: { enabled: true, guidance: 'Remember consequential battles and commitments; skip routine travel.', interval: 8, maxEntriesPerCharacter: 50 },
     name: 'Expedition', description: 'Catch monsters and learn techniques.', rationale: 'Small persistent ratings and expandable resource pools.',
     profiles: [{ name: 'Background', purpose: 'Training history', targets: ['player'] }, { name: 'Species', purpose: 'Stable visible species', targets: ['Creature'] }],
-    stats: { world: [{ name: 'Location', purpose: 'Current region' }],
+    stats: { world: [{ name: 'Weather', purpose: 'Current weather' }],
         character: [{ name: 'XP', purpose: 'Earned XP', targets: ['player', 'Creature'] }, { name: 'Level', purpose: 'Learned level', targets: ['player', 'Creature'] },
             { name: 'Energy', purpose: 'Spent on expeditions', targets: ['player'] }, { name: 'Vigor', purpose: 'Combat stamina', targets: ['Creature'] }] },
     playerProgression: { enabled: true, xp: 'XP', level: 'Level', growth: 'All selected stats gain small increases; resources reset.' },
@@ -16,8 +17,8 @@ export function responseFor(stage, registry) {
     const [kind, scope] = stage.split('.');
     if (kind === 'profiles') section = registry.profiles.map(f => ({ id: f.id, label: f.name, guidance: f.purpose, targets: f.targets, multiline: f.name === 'Background' }));
     if (kind === 'stats') section = registry.stats[scope].map(f => ({ id: f.id, name: f.name, purpose: f.purpose,
-        format: '{{name}}: {{value}}', type: f.id === 'location' ? 'text' : 'number', defaultValue: f.id === 'location' ? '' : f.id === 'xp' ? '0/100' : f.id === 'level' ? '1' : '6/10',
-        locked: f.id === 'level', ...(scope === 'character' ? { carryOver: ['xp', 'level'].includes(f.id), targets: f.targets } : {}), min: f.id === 'location' ? '' : '0', maxStatValue: f.id === 'xp' ? '100' : '' }));
+        format: '{{name}}: {{value}}', type: f.id === 'weather' ? 'text' : 'number', defaultValue: f.id === 'weather' ? '' : f.id === 'xp' ? '0/100' : f.id === 'level' ? '1' : '6/10',
+        locked: f.id === 'level', ...(scope === 'character' ? { carryOver: ['xp', 'level'].includes(f.id), targets: f.targets } : {}), min: f.id === 'weather' ? '' : '0', maxStatValue: f.id === 'xp' ? '100' : '' }));
     if (kind === 'stats') {
         const owners = scope === 'character' ? [{ id: 'player', progression: registry.playerProgression }, ...registry.npcTemplates] : [];
         const assigned = owner => registry.stats.character.filter(field => field.targets.includes(owner.id === 'player' ? 'player' : 'npc') || field.targets.includes(`template:${owner.id}`)).map(field => field.id);

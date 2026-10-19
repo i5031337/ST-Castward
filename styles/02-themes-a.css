@@ -136,7 +136,7 @@
     border-color: var(--sillynpc-accent);
 }
 
-.sillynpc-theme-terminal .sillynpc-tab.active {
+.sillynpc-theme-terminal :is(.sillynpc-tab, .sillynpc-charview-tab).active {
     background: var(--sillynpc-accent);
     color: var(--sillynpc-custom-bg-primary, #000000);
 }
@@ -195,7 +195,7 @@
     box-shadow: 0 0 10px var(--sillynpc-accent);
 }
 
-.sillynpc-theme-cyberpunk .sillynpc-tab.active {
+.sillynpc-theme-cyberpunk :is(.sillynpc-tab, .sillynpc-charview-tab).active {
     background: var(--sillynpc-border);
     color: var(--sillynpc-fg-primary);
     clip-path: polygon(0 0, 90% 0, 100% 10%, 100% 100%, 0 100%);
@@ -253,7 +253,7 @@
     color: var(--sillynpc-bg-primary);
 }
 
-.sillynpc-theme-monochrome .sillynpc-tab.active {
+.sillynpc-theme-monochrome :is(.sillynpc-tab, .sillynpc-charview-tab).active {
     background: var(--sillynpc-accent);
     color: var(--sillynpc-bg-primary);
     border-left: none;
@@ -313,7 +313,7 @@
     border-color: var(--sillynpc-accent);
 }
 
-.sillynpc-theme-modern-dark .sillynpc-tab.active {
+.sillynpc-theme-modern-dark :is(.sillynpc-tab, .sillynpc-charview-tab).active {
     background: linear-gradient(90deg, var(--sillynpc-custom-accent-a15, rgba(59, 130, 246, 0.15)), transparent);
     border-left: 4px solid var(--sillynpc-accent);
     color: var(--sillynpc-custom-accent-text, #60a5fa);
@@ -379,7 +379,7 @@
 }
 
 .sillynpc-theme-fantasy-hud .menu_button,
-.sillynpc-theme-fantasy-hud .sillynpc-tab.active {
+.sillynpc-theme-fantasy-hud :is(.sillynpc-tab, .sillynpc-charview-tab).active {
     background: var(--sillynpc-custom-bg-primary-a15, rgba(212, 175, 55, 0.15));
     border: 1px solid var(--sillynpc-accent);
     box-shadow: 0 0 10px var(--sillynpc-custom-accent-a30, rgba(212, 175, 55, 0.3));

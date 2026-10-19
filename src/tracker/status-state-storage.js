@@ -46,6 +46,9 @@ function loadStateFromMetadata() {
 
     // Fill declared stats and repair casing; retain undeclared values for archived history.
     const settings = getSettings().statusTracker;
+    // Place records belong to the chat; discovery is a rule of its selected System.
+    stateToReturn.locations ||= { currentId: '', records: {} };
+    stateToReturn.locations.enabled = settings.locations?.enabled !== false;
 
     // Ensure missing global stats from settings are added
     (settings.globalStats || []).forEach(stat => {

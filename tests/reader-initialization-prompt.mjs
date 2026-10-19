@@ -144,20 +144,75 @@ test('NPC example awards positive XP and excludes the automatic Level field', ()
     ] };
     const state = { characters: [{ name: 'Mira', npcTemplateId: 'fighter', stats: { Rank: '2', Experience: '20/100' } }] };
     const prompt = builder([template]).buildUserPrompt(state, 'Mira wins.', settings);
-    const example = JSON.parse(prompt.split('Changed-reply shape (include only changes supported by the latest message):\n')[1]);
+    const example = JSON.parse(prompt.split('Changed-reply shape (include only changes supported by the latest message):\n')[1].split('\n')[0]);
     assert.deepEqual(example.characters[0].deltas, { Experience: 1 });
     assert.match(prompt, /Absolute readings under "stats" and "global" are JSON strings/);
     assert.match(prompt, /Numeric changes under "deltas" and "globalDeltas" are JSON numbers/);
     assert.match(prompt, /### NEW NPC REPLY EXAMPLE/);
+    assert.match(prompt, /hearing an unverified rumor, and ordinary conversation alone earn no XP/);
+    assert.match(prompt, /A change in a health or energy stat, or in a condition, alone does not justify XP/);
+    assert.match(promptText('storyBlock', { status: '{}', rules: '', xpProgression: 'on' }), /hearing an unverified rumor, and ordinary conversation alone do not earn XP/);
     assert.doesNotMatch(prompt, /NPC INITIALIZATION TEMPLATE|a plain number stays a plain number/);
 });
 
-test('new NPC collection examples preserve numeric and boolean field types', () => {
+test('new NPC example does not seed unsupported collection entries', () => {
     const example = JSON.parse(builder([]).buildNewNpcExample({ collections: [{ id: 'gear', target: 'npc', fields: [
         { name: 'code', isPrimary: true, type: 'number' },
         { name: 'ready', type: 'boolean' },
     ] }] }));
-    assert.deepEqual(example.characters[0].collections.gear.add, [{ code: 1, ready: true }]);
+    assert.equal(example.characters[0].collections, undefined);
+    const prompt = builder([]).buildUserPrompt({ characters: [] }, 'Mira enters without any gear.', {
+        collections: [{ id: 'gear', target: 'npc', fields: [{ name: 'code', isPrimary: true }] }],
+    });
+    assert.match(prompt, /never copy guidance text or invent a generic starter item/);
+});
+
+test('recovery guidance covers every live player and NPC pool except progression counters', () => {
+    const settings = { globalStats: [{ name: 'Ward Charge', type: 'number' }], playerStats: [
+        { name: 'Social Energy', type: 'bar' }, { name: 'HP', type: 'number' },
+        { name: 'Mana', type: 'bar' }, { name: 'XP', type: 'number' },
+        { name: 'Armor', type: 'number' }, { name: 'Locked Pool', type: 'bar', locked: true },
+    ], npcStats: [{ name: 'HP', type: 'number' }, { name: 'Mana', type: 'bar' },
+        { name: 'Experience', type: 'number' }] };
+    const state = { global: { 'Ward Charge': '2/8' }, player: { stats: { 'Social Energy': '2/10', HP: '5/12',
+        Mana: '1/6', XP: '90/100', Armor: '10', 'Locked Pool': '1/5' } },
+    characters: [{ name: 'Mira', stats: { HP: '4/12', Mana: '3/6', Experience: '20/100' } }] };
+    const prompt = builder([]).buildUserPrompt(state, 'Alex and Mira sleep soundly and wake refreshed.', settings);
+    for (const reading of ['World.Ward Charge 2/8 needs +6', 'Player.Social Energy 2/10 needs +8', 'Player.HP 5/12 needs +7',
+        'Player.Mana 1/6 needs +5', 'Mira.HP 4/12 needs +8', 'Mira.Mana 3/6 needs +3']) {
+        assert.ok(prompt.includes(reading), reading);
+    }
+    for (const excluded of ['Player.XP 90/100', 'Mira.Experience 20/100', 'Player.Armor', 'Player.Locked Pool']) {
+        assert.ok(!prompt.includes(excluded), excluded);
+    }
+    assert.match(prompt, /do not automatically refill every pool or other characters/);
+    assert.match(prompt, /full night of sound sleep followed by waking refreshed/);
+    assert.match(prompt, /XP and Level are never recovery pools/);
+    const unrelated = builder([]).buildUserPrompt({ player: { stats: { Focus: '2' } }, characters: [] },
+        'Alex rests.', { playerStats: [{ name: 'Focus', type: 'number' }] });
+    assert.doesNotMatch(unrelated, /full night of sound sleep/);
+});
+
+test('renamed XP thresholds are not mistaken for restorative pools', () => {
+    const settings = { playerStats: [
+        { id: 'xp_custom', name: 'Insight', type: 'number', defaultValue: '0/9' },
+        { id: 'level_custom', name: 'Rank', type: 'number', defaultValue: '1' },
+        { id: 'mana', name: 'Spell Reserve', type: 'number', defaultValue: '6/6' },
+    ], progression: { player: { enabled: true, xpFieldId: 'xp_custom', levelFieldId: 'level_custom' } } };
+    const prompt = builder([]).buildUserPrompt({ player: { stats: {
+        Insight: '3/9', Rank: '1', 'Spell Reserve': '1/6',
+    } }, characters: [] }, 'Alex is renewed after sleep.', settings);
+    assert.match(prompt, /Player\.Spell Reserve 1\/6 needs \+5/);
+    assert.doesNotMatch(prompt, /Player\.Insight 3\/9 needs/);
+});
+
+test('configured health pools keep narrated injury from becoming only a text condition', () => {
+    const settings = { playerStats: [{ name: 'Health', type: 'bar', purpose: 'Remaining bodily health' }] };
+    const prompt = builder([]).buildUserPrompt({ player: { stats: { Health: '10/10' } }, characters: [] },
+        'Alex falls and bruises a shoulder.', settings);
+    assert.match(prompt, /decrease Player\.Health by an estimated amount appropriate to the injury/);
+    assert.match(prompt, /If wound care or healing measurably improves the player, increase Player\.Health/);
+    assert.match(prompt, /A text condition change alone does not account for either health effect/);
 });
 
 test('current state includes filled locked readings as strings while omitting retired fields', () => {

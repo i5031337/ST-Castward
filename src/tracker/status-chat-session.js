@@ -345,7 +345,10 @@ function resetUnplayedChatState() {
     if (chatHasStarted()) return false;
     const metadata = getMetadata();
     if (!metadata) return false;
+    const locations = metadata[STATE_KEY]?.locations;
     delete metadata[STATE_KEY];
+    // Choosing rules for an unplayed chat resets stat defaults, not its places.
+    if (locations) metadata[STATE_KEY] = { global: {}, characters: [], locations: structuredClone(locations) };
     delete metadata[HISTORY_KEY];
     delete metadata[SWIPE_BASE_KEY];
     committedState = null;

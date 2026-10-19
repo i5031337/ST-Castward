@@ -16,6 +16,7 @@ test('staged generation assembles canonical System with template progression and
     const run = new SystemGenerationRun({ premise: 'Monsters', request: async args => { calls.push(args); return reply(args); }, onProgress: value => events.push(value) });
     const result = await run.generate();
     assert.deepEqual(validateDefinition(result.definition), []);
+    assert.deepEqual(result.definition.stats.world.map(stat => stat.name), ['Weather']);
     assert.equal(result.definition.collections[0].levelUpRewards.schedule[0].entry.power, 2);
     assert.deepEqual(result.definition.collections[0].targets, ['player', 'template:creature']);
     assert.equal(result.definition.stats.character.find(f => f.id === 'energy').isPrimary, true);
@@ -95,7 +96,7 @@ test('NPC catalog requests pin shared IDs and repair invented archetype suffixes
     const rewardBody = JSON.parse(calls.find(c => c.stage === 'rewards.techniques').userPrompt);
     assert.equal(Object.hasOwn(rewardBody.dependencies, 'stats.world'), false);
     assert.deepEqual(definition.hud.playerStatIds, ['xp', 'level', 'energy']);
-    assert.deepEqual(definition.hud.worldStatIds, ['location']);
+    assert.deepEqual(definition.hud.worldStatIds, ['weather']);
 });
 
 test('invalid XP is repaired with its stats, before progression or dependents are accepted', async () => {
@@ -361,6 +362,27 @@ test('generation plans genre memory rules without extra calls or memory profile 
         const bad = structuredClone(definition);
         mutation(bad.memories);
         assert.ok(validateDefinition(bad).some(error => error.includes('memories')));
+        assert.equal(finalizeDefinition(bad).definition, null);
+    }
+});
+
+
+test('generated Systems carry planned place discovery without a duplicate world Location stat', async () => {
+    const calls = [];
+    const { definition } = await runWith(args => {
+        calls.push(args);
+        const value = reply(args);
+        if (args.stage === 'plan') value.section.locations.enabled = false;
+        return value;
+    }).generate();
+    assert.deepEqual(definition.locations, { enabled: false });
+    assert.equal(calls.length, 6);
+    assert.match(calls[0].systemPrompt, /locations.enabled at System level/);
+    assert.match(calls[0].systemPrompt, /omit a world Location stat/);
+    assert.deepEqual(JSON.parse(calls[1].userPrompt).system.locations, { enabled: false });
+    for (const locations of [undefined, { enabled: 'yes' }, { enabled: true, records: {} }]) {
+        const bad = { ...definition, locations };
+        assert.ok(validateDefinition(bad).some(error => error.includes('locations')));
         assert.equal(finalizeDefinition(bad).definition, null);
     }
 });

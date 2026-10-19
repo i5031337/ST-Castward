@@ -19,12 +19,14 @@ document.addEventListener('input', refreshMountedSettings);
 
 export function renderTtsSettings(view, { onChange = () => {}, preview = () => {} } = {}) {
     view.replaceChildren();
-    const root = document.createElement('fieldset');
+    const root = document.createElement('div');
     root.id = 'sillynpc-tts-settings'; root.className = 'sillynpc-voice-editor';
-    const legend = document.createElement('legend'); legend.textContent = 'Castward speech';
+    const title = document.createElement('h3');
+    title.className = 'sillynpc-section-title';
+    title.textContent = 'Castward speech';
     const intro = document.createElement('p');
     intro.textContent = 'One voice for narration, individual voices for NPC dialogue. Uses the built-in OpenAI Compatible endpoint and API key. Set each NPC voice in Cast → Characters.';
-    root.append(legend, intro); view.append(root);
+    root.append(title, intro); view.append(root);
     const config = getSettings().tts;
     const field = (key, label, input) => {
         const wrapper = document.createElement('label'); wrapper.dataset.setting = `tts.${key}`;

@@ -12,6 +12,7 @@ import { activeNpcSystem } from '../core/npc-templates.js';
 import { syncProfileToLore } from '../lore/lore-sync.js';
 import { selectMemoryReviewRows, applyReviewedMemories, mergePendingMemoryRows } from '../memory/memory-review.js';
 import { failedReviewedStats } from './review-stat-outcomes.js';
+import { resolveLocationRows } from '../locations/location-runtime.js';
 
 /**
  * Changes waiting for a decision.
@@ -245,8 +246,8 @@ export function resolvePendingChanges(messageId, accepted, dismissed = [], { dis
     if (!pending.length) return { applied: 0, discarded: 0 };
 
     const appliedRows = appliedChangesForCurrentSwipe(messageId) || [];
-    const selection = selectReviewRows(pending.filter(row => row.kind !== 'memory-add'),
-        (accepted || []).filter(row => row.kind !== 'memory-add'), appliedRows);
+    const selection = selectReviewRows(pending.filter(row => row.kind !== 'memory-add' && row.scope !== 'location'),
+        (accepted || []).filter(row => row.kind !== 'memory-add' && row.scope !== 'location'), appliedRows);
     const trackerSettings = getSettings().statusTracker;
     const cards = getAllCharacters();
     const validated = validateReviewedTransitions(selection.rows, loadStateFromMetadata(), trackerSettings, cards, getCurrentPersonaKey());
@@ -309,7 +310,12 @@ export function resolvePendingChanges(messageId, accepted, dismissed = [], { dis
         if (noted) saveStateToMetadata(state, { label: 'Standing item decisions' });
     }
 
+    const places = pending.some(row => row.scope === 'location')
+        ? resolveLocationRows(messageId, pending, accepted, { discardAll })
+        : { applied: 0, remaining: [], warnings: [] };
+    reviewWarnings.push(...places.warnings);
     const remaining = remainingGrantRows(pending, rows, grants, recorded, selection.rejectedTransitions, discardAll);
+    remaining.push(...places.remaining);
     if (!discardAll) remaining.push(...failedStats);
     const report = messageAt(messageId)?.extra?.sillynpc_reader_report;
     if (report) {
@@ -325,6 +331,6 @@ export function resolvePendingChanges(messageId, accepted, dismissed = [], { dis
             ...selection.rejectedTransitions])];
     }
     setPendingChanges(messageId, remaining, getLooseNotes(messageId), getRefusedValues(messageId), { replaceMemory: true });
-    return { applied: recorded.length + memories.applied,
-        discarded: Math.max(0, pending.length - recorded.length - memories.applied - remaining.length), remaining: remaining.length };
+    return { applied: recorded.length + memories.applied + places.applied,
+        discarded: Math.max(0, pending.length - recorded.length - memories.applied - places.applied - remaining.length), remaining: remaining.length };
 }

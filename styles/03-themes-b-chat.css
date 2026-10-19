@@ -178,7 +178,7 @@
     box-shadow: 0 0 10px var(--sillynpc-custom-accent-a30, rgba(255, 0, 0, 0.3));
 }
 
-.sillynpc-theme-analog-horror .sillynpc-tab.active {
+.sillynpc-theme-analog-horror :is(.sillynpc-tab, .sillynpc-charview-tab).active {
     background: var(--sillynpc-accent);
     color: var(--sillynpc-custom-bg-primary, #000);
 }
@@ -257,7 +257,7 @@
     border-bottom: 2px solid var(--sillynpc-accent);
 }
 
-.sillynpc-theme-rosewater .sillynpc-tab.active {
+.sillynpc-theme-rosewater :is(.sillynpc-tab, .sillynpc-charview-tab).active {
     background: var(--sillynpc-accent);
     color: var(--sillynpc-fg-primary);
     box-shadow: 0 4px 10px var(--sillynpc-custom-accent-a50, rgba(244, 209, 209, 0.5));

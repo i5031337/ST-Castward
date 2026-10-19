@@ -10,6 +10,7 @@ export const readerPromptTexts = [
             limits: 'Editable stats, their meanings and text formats.',
             npcFields: 'All configured NPC fields, including their purpose and initialization rules.',
             xpProgression: 'Switch: on when a player or NPC has enabled progression.',
+            xpReminder: 'Conditional reminder that experience requires an accomplishment by its recipient.',
             notes: 'Notes other extensions add, each with its own heading.',
             strangers: 'Speakers without a card, when you have tagged fallback portraits.',
             strangerKinds: 'Your portrait tags.',
@@ -18,7 +19,11 @@ export const readerPromptTexts = [
             collectionExample: 'A worked change in your own collection and field names.',
             minimalReply: 'A no-change reply listing the cast present.',
             changedReply: 'A configured example with player and NPC stats and collections.',
-            newNpcReply: 'A new NPC reply example with configured stat and item field guidance, even with an empty scene.',
+            newNpcReply: 'A new NPC reply example with configured stat guidance, even with an empty scene.',
+            locationReminder: 'Final reminder to include evidenced top-level places for a named opening scene or movement.',
+            quantityReminder: 'Final reminder that counted item consumption is a remove delta.',
+            poolRecovery: 'Conditional recovery rule and current missing amounts for configured pools.',
+            injuryConsequence: 'Conditional harm and healing reminder for a configured player health pool.',
             numericDeltas: 'Existing numeric stats eligible for delta updates, by owner.',
             earlier: 'The messages before this one, when you send any.',
             message: 'The message being read.',
@@ -52,13 +57,13 @@ Initialize blank fields only, including locked fields. Preserve filled locked fi
 
 ### NEW NPC REPLY EXAMPLE
 When an NPC enters the scene, include an object in the "characters" array with their exact "name", even when CURRENT STATE has no NPCs. Initialize blank configured fields under "stats", not "deltas"; preserve values already on file. Infer plausible individual values when the story gives no details.
-The example's stat values describe how to fill them, using the configured field guidance and constraints. Replace them with actual string readings. Collection item values illustrate their declared types; replace them with actual item values. Include starting entries consistent with each collection's purpose under its "add" array; omit collections with no starting entries. Use exact field spelling and capitalization. The configured primary field identifies an item; no separate item "name" field is required.
+The example's stat values describe how to fill them, using the configured field guidance and constraints. Replace them with actual string readings. The example contains no collection entries. Add an NPC item or ability only when the latest message or established background identifies it; never copy guidance text or invent a generic starter item. Use exact field spelling and capitalization. The configured primary field identifies an item; no separate item "name" field is required.
 {{newNpcReply}}
 {{/newNpcReply}}
 {{#xpProgression}}
 
 ### EXPERIENCE
-Award experience once per concrete accomplishment in the latest message, including small progress, for the player and NPCs with enabled progression. Use each owner’s configured XP field in "player.deltas" or that character’s "deltas" with a positive number. The extension handles Level, excess XP, and reward proposals; never write Level or level-up growth directly. NPCs without progression use ordinary stat rules.
+Award experience once per concrete accomplishment in the latest message for the player and NPCs with enabled progression. Small progress counts only when the recipient actively takes a meaningful step toward a goal. Passive healing, routine rest, receiving care, an accidental fall, hearing an unverified rumor, and ordinary conversation alone do not earn XP. A change in a health or energy stat, or in a condition, alone does not justify XP. Use each owner’s configured XP field in "player.deltas" or that character’s "deltas" with a positive number. The extension handles Level, excess XP, and reward proposals; never write Level or level-up growth directly. NPCs without progression use ordinary stat rules.
 {{/xpProgression}}
 {{#offstage}}
 
@@ -89,12 +94,13 @@ Speakers without cards: {{strangers}}. In "strangers", assign each the best matc
 {{#collections}}
 
 ### WHEN A COLLECTION CHANGES
-For a new NPC, add starting entries shown in the story or background; infer plausible essentials only where consistent with the configured collection's purpose and rules.
+For a new NPC, add starting entries only when the story or established background identifies them. A blank collection needs no output.
 Report each collection change shown in the latest message:
 - "remove" for consumption or loss; with quantity enabled, report the amount spent (default 1), or "all": true for the whole entry
 - "add" for acquisitions, with the amount gained (default 1) when quantity is enabled; add newly demonstrated knowledge and abilities when missing
 - "update" for changes to other item fields, with the identifier and changed values
 The extension calculates remaining quantities and removes entries at zero. Reusable entries stay held after use.
+For counted items, consumption uses "remove" with the identifier and amount spent. An "update" never changes quantity; do not put a quantity field there.
 Follow collection purposes, targets, and field guidance. For abilities and knowledge, actual use establishes knowledge even when the outcome fails; add a missing entry when demonstrated. Include supported item details. Maintain one entry per identifier; quantity gains accumulate.
 {{/collections}}
 {{#earlier}}
@@ -128,7 +134,23 @@ No-change example:
 
 Changed-reply shape (include only changes supported by the latest message):
 {{changedReply}}
-{{/changedReply}}`,
+{{/changedReply}}
+{{#locationReminder}}
+
+{{locationReminder}}
+{{/locationReminder}}
+{{#quantityReminder}}
+{{quantityReminder}}
+{{/quantityReminder}}
+{{#poolRecovery}}
+{{poolRecovery}}
+{{/poolRecovery}}
+{{#injuryConsequence}}
+{{injuryConsequence}}
+{{/injuryConsequence}}
+{{#xpReminder}}
+{{xpReminder}}
+{{/xpReminder}}`,
     },
 
     {
@@ -159,7 +181,7 @@ NPC fields:
 For each present NPC, fill blank configured stats with plausible individual values. Follow each stat's purpose and rules. Update filled stats only when the story changes them. Initialize blank locked NPC stats once.
 {{/npcFields}}
 {{#xpProgression}}
-Experience: award once per concrete accomplishment for the player and enabled NPC templates. Report earned XP as a positive delta under "player.deltas" or that character’s "deltas", using the configured XP field. The extension handles Level, excess XP, stat growth, and collection reward review. Initialize a blank NPC Level once from the story; otherwise never write Level or level-up growth directly. Disabled templates use ordinary stat rules.
+Experience: award once per concrete accomplishment for the player and enabled NPC templates. Small progress counts only when the recipient actively takes a meaningful step toward a goal. Passive healing, routine rest, receiving care, an accidental fall, hearing an unverified rumor, and ordinary conversation alone do not earn XP. A change in a health or energy stat, or in a condition, alone does not justify XP. Report earned XP as a positive delta under "player.deltas" or that character’s "deltas", using the configured XP field. The extension handles Level, excess XP, stat growth, and collection reward review. Initialize a blank NPC Level once from the story; otherwise never write Level or level-up growth directly. Disabled templates use ordinary stat rules.
 {{/xpProgression}}
 
 ### STAT CHANGES

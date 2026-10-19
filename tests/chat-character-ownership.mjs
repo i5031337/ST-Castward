@@ -125,6 +125,14 @@ test('storage loads legacy tracker player from master, but fresh chats use defau
         ['getSettings', 'getContext', 'eventSource', 'debugLog', 'LOG_PREFIX'],
         [() => settings, () => ({ saveMetadataDebounced() {} }), { emit() {} }, () => {}, '[test]'])(storage);
     assert.equal(storage.loadStateFromMetadata().player.stats.HP, '3');
+    const loaded = storage.loadStateFromMetadata();
+    loaded.locations = { enabled: false, currentId: 'inn', records: { inn: { name: 'Inn' } } };
+    settings.statusTracker.locations = { enabled: true };
+    assert.equal(storage.loadStateFromMetadata().locations.enabled, true);
+    settings.statusTracker.locations.enabled = false;
+    assert.deepEqual(storage.loadStateFromMetadata().locations,
+        { enabled: false, currentId: 'inn', records: { inn: { name: 'Inn' } } });
+    delete settings.statusTracker.locations;
 
     delete metadata.sillynpc_status_state;
     storage.committedState = null;

@@ -34,7 +34,8 @@ export const collectionSchema = object({ id, name: text, targets: array(text, 8)
 export const memorySchema = object({ enabled: bool, guidance: text,
     interval: { type: 'integer', minimum: 1, maximum: 100 },
     maxEntriesPerCharacter: { type: 'integer', minimum: 1, maximum: 500 } });
-export const presentationSchema = object({ memories: memorySchema,
+export const locationSchema = object({ enabled: { ...bool, description: 'When enabled, Places track the current place; avoid a duplicate world Location stat.' } });
+export const presentationSchema = object({ memories: memorySchema, locations: locationSchema,
     hud: object({ layout: enumeration(['plate', 'underline', 'pips', 'splitring']), showWorld: bool,
         showNpcPortraits: bool, playerStatIds: array(id), npcStatIds: array(id), worldStatIds: array(id) }) });
 export const definitionSchema = object({ schemaVersion: { type: 'integer', enum: [2] }, id, name: text,
@@ -50,7 +51,7 @@ const plannedProgression = object({ enabled: bool,
     xp: { ...text, description: 'Exact XP stat NAME in the character catalog assigned to this owner, never a numeric default. Empty only when disabled.' },
     level: { ...text, description: 'Exact Level stat NAME in the character catalog assigned to this owner, never a starting value. Empty only when disabled.' },
     growth: text });
-export const planSchema = object({ name: text, description: text, rationale: text, memories: memorySchema,
+export const planSchema = object({ name: text, description: text, rationale: text, memories: memorySchema, locations: locationSchema,
     profiles: array(plannedCharacterField),
     stats: object({ world: array(plannedField), character: array(plannedCharacterField) }),
     playerProgression: plannedProgression,

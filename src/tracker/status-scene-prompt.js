@@ -1,3 +1,5 @@
+import { getContext } from '../../../../../st-context.js';
+import { buildLocationSceneContext, recentLocationMessages } from '../locations/location-context.js';
 import { collectionQuantityField } from '../core/collection-fields.js';
 import { progressionFields } from './progression-fields.js';
 import { collectionAppliesTo, collectionTargetLabel } from '../core/collection-targets.js';
@@ -43,8 +45,10 @@ function getStatusInstructions() {
     }
 
     // One text, 'storyBlock' in prompt-texts.js, from the heading to the format line.
+    const places = currentState?.locations?.enabled
+        ? buildLocationSceneContext(currentState, recentLocationMessages(getContext()?.chat)) : '';
     return '\n' + promptText('storyBlock', {
-        status: deps.formatCompactStatus(currentState, true),
+        status: deps.formatCompactStatus(currentState, true, places),
         rules: applyMacros(DEFAULT_INLINE_RULES),
         statDefinitions,
         npcFields: deps.describeNpcStatFields(settings),
@@ -208,8 +212,9 @@ function buildSceneContext(given = null) {
            behind a different function, and the two have never shared a renderer. The reader
            is sent less because it cannot change an item's description; the narrator needs it
            precisely because it is writing the scene. */
-        const body = deps.formatCompactStatus(state, true);
-        return body ? body.trim() : '';
+        const places = state.locations?.enabled
+            ? buildLocationSceneContext(state, recentLocationMessages(getContext()?.chat)) : '';
+        return deps.formatCompactStatus(state, true, places).trim();
     } catch (err) {
         debugLog('Could not build the scene context', err);
         return '';

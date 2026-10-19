@@ -212,7 +212,7 @@ test('capture preserves canonical edits and omits runtime projection catalogs', 
     deps.saveSystemPreset('Shared Edit');
     const saved = settings.statusTracker.presets['Shared Edit'];
     assert.equal(saved.definition.stats.character[0].name, 'Vitality');
-    for (const key of ['globalStats', 'playerStats', 'npcStats', 'collections', 'progression', 'npcTemplates']) {
+    for (const key of ['globalStats', 'playerStats', 'npcStats', 'collections', 'progression', 'npcTemplates', 'locations']) {
         assert.equal(Object.hasOwn(saved.config.statusTracker, key), false);
     }
 });
@@ -271,6 +271,29 @@ test('starter import resets System-owned settings and activates without changing
             .progression.enabled, true);
         assert.deepEqual(settings.characters, before.characters);
         assert.deepEqual(settings.personaData, before.personaData);
+    } finally {
+        for (const key of Object.keys(settings)) delete settings[key];
+        Object.assign(settings, before);
+    }
+});
+
+
+test('existing schema-2 presets acquire System-owned places and retain canonical toggles through capture', () => {
+    const before = structuredClone(settings);
+    try {
+        const definition = createBuiltinSystem('fantasy');
+        delete definition.locations;
+        settings.activeSystem = definition.name;
+        settings.statusTracker.presets = { [definition.name]: { definition, config: {} } };
+        deps.migrateToActiveSystem();
+        assert.deepEqual(settings.statusTracker.presets[definition.name].definition.locations, { enabled: true });
+        assert.deepEqual(settings.statusTracker.locations, { enabled: true });
+        settings.statusTracker.presets[definition.name].definition.locations.enabled = false;
+        deps.saveSystemPreset(definition.name);
+        assert.deepEqual(settings.statusTracker.presets[definition.name].definition.locations, { enabled: false });
+        assert.equal(Object.hasOwn(settings.statusTracker.presets[definition.name].config.statusTracker, 'locations'), false);
+        deps.applySystemPreset(settings.statusTracker.presets[definition.name]);
+        assert.deepEqual(settings.statusTracker.locations, { enabled: false });
     } finally {
         for (const key of Object.keys(settings)) delete settings[key];
         Object.assign(settings, before);

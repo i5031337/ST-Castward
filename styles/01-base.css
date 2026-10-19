@@ -182,7 +182,8 @@
 }
 
 .sillynpc-tabs .sillynpc-section:focus-visible,
-.sillynpc-subtabs .sillynpc-tab:focus-visible {
+.sillynpc-subtabs .sillynpc-tab:focus-visible,
+.sillynpc-charview-tab:focus-visible {
     outline: 2px solid var(--sillynpc-accent);
     outline-offset: -2px;
 }

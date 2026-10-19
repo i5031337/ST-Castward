@@ -10,6 +10,8 @@ Player and NPC profiles, portraits, voices, and RPG tracking for SillyTavern. A 
 
 Castward (formerly **SillyNPC XP**) is maintained by **i5031337**. Built on [SillyNPC by BrutalKoala](https://github.com/BrutalKoala/SillyNPC), it puts player and NPC profiles at the center of your adventure.
 
+**Works out of the box with Gemma 4 E4B.** With a local Gemma 4 E4B GGUF served by llama.cpp and no custom prompt or sampling overrides. See the [tracker evaluation](docs/evaluations/gemma-e4b-tracker-report.md) and [profile evaluation](docs/evaluations/gemma-e4b-profile-report.md) for the tested setup and limits.
+
 ## What it does
 
 - **Makes dialogue easy to follow.** Each speaker gets a portrait and their own colour. Narration stays between speech blocks, so you can tell who's talking at a glance. Click a portrait to open that character's sheet.
@@ -33,6 +35,7 @@ The original dialogue styling, portraits, tracker, and floating HUD are still he
 - **Your own rules.** Build stats, profile fields, and collections for the player and NPC templates such as sailors, robots, and spirits.
 - **Complete starter Systems.** Begin with Fantasy Adventure, Dating Sim, or Creature Trainer. Each gives the reader a cast, stats, collections, and a matching HUD; edit any rule to suit your story. You can also generate a System from your own premise.
 - **Character memories.** Keep memories on sheets. Reader suggestions always wait for your approval.
+- **Persistent places.** Remember locations, aliases, descriptions, and containment in each chat. Place changes follow the Tracker's Ask Before Applying setting.
 - **Individual TTS voices.** Give NPCs their own voices, with a separate narrator. Optional automatic playback starts as dialogue lines finish streaming.
 - **Expressions and scene sprites.** Use expression packs or generate missing emotions from NPC portraits. Keep the whole present cast visible beside the chat.
 - **A refreshed menu and editable themes.** Shared Player/NPC sheets, searchable settings, and nine presets you can customise.
@@ -91,6 +94,18 @@ At level 1 with `90/100` XP, earning `+20` takes you to level 2 with `10/100` le
 Configure points and manual or random allocation under **System → Builder → Player progression**, or per NPC template. Each point adds 1 to an eligible stat. Pools grow their current value and capacity together; ratings respect their caps. The extension handles the maths.
 
 Collections can unlock scheduled or reader-chosen rewards. XP awards are model judgments you can correct on the sheet. One-step undo and rereading/swipe handling help keep changes tied to the latest reply.
+
+## Remembering places
+
+**Remember places with this System** is enabled in the built-in Systems. Change it under **Places**; the choice follows the System into every new chat. Add cards yourself, or use the automatic/manual **Tracker** reader to propose discoveries, lasting changes, and movement. **Ask Before Applying** governs place changes too: **Nothing** applies them automatically, **Every change** holds them for review, and **Risky changes only** holds new or edited cards while moves to known places apply. A move to a new place waits with its card. In review, you can correct a proposed description before applying it; select any new parent or destination card along with its dependent change.
+
+Cards keep a name, literal aliases, a description, and an optional parent place. The current marker records the **last confirmed place**; newer story prose takes precedence while movement awaits review. Custom System Location fields continue tracking world state independently. Enabled place recall uses the tracker's story-context injection, so keep the Tracker enabled. Inline mode recalls saved places; use automatic or manual reading to discover them.
+
+The Places menu groups child cards under collapsible parents and opens the current place's ancestors by default. The in-chat Tracker shows a compact parent-to-current-place trail beside world stats when Places and world stats are visible.
+
+Places share the standard tracker reader request. Automatic mode reads the opening greeting; manual mode uses **Read latest reply**. A named opening scene can establish a place without anyone travelling. The Location stat alone does not create a card. To revisit an already completed reading, use **Read again** beneath the latest reply.
+
+Link an existing lorebook entry and use **Copy lore description** to seed a card, then **Save place**. This only updates the chat's copy. Places travel with native chat saves and branches, independently of persona; they are not included in character or System exports. Maps and inferred travel routes are outside this first stage.
 
 ## Voices and expressions
 

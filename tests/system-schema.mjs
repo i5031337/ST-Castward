@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { normalizeSystemDefinition, getSystemField, SYSTEM_SCHEMA_VERSION } from '../src/core/system-schema.js';
+import { normalizeSystemDefinition, getSystemField, projectSystemTracker, SYSTEM_SCHEMA_VERSION } from '../src/core/system-schema.js';
 import { systemStatFields, systemProfileFields, templateStatIds } from '../src/core/system-fields.js';
 import { HUD_LAYOUTS, hudLayoutFor, normalizeHudLayoutId } from '../src/core/constants-base.js';
 
@@ -176,4 +176,21 @@ test('shared assignments apply to player, every NPC, or a specific template', ()
     assert.deepEqual(systemStatFields(system,'npc',{npcTemplateId:'mage'}).map(field=>field.id),['hp','mana']);
     assert.deepEqual(systemStatFields(system,'npc').map(field=>field.id),['hp','mana']);
     assert.deepEqual(systemProfileFields(system,'npc',{}).map(field=>field.id),['species']);
+});
+
+
+test('places default on for existing Systems and preserve explicit opt-out without world data', () => {
+    for (const input of [{}, { schemaVersion: 2 }, { config: { statusTracker: {} } }]) {
+        assert.deepEqual(normalizeSystemDefinition(input).locations, { enabled: true });
+    }
+    for (const input of [{ schemaVersion: 2, locations: { enabled: false, records: { inn: { name: 'Inn' } } } },
+        { config: { statusTracker: { locations: { enabled: false } } } }]) {
+        const system = normalizeSystemDefinition(input);
+        assert.deepEqual(system.locations, { enabled: false });
+        const projected = projectSystemTracker(system);
+        assert.deepEqual(projected.locations, system.locations);
+        projected.locations.enabled = true;
+        assert.equal(system.locations.enabled, false);
+        assert.deepEqual(normalizeSystemDefinition(system), system);
+    }
 });

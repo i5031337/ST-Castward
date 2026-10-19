@@ -19,7 +19,7 @@ const SYSTEM_EXCLUDED_ROOT = new Set([
     'popupWidth', 'popupHeight', 'menuFontScale',
 ]);
 
-const PROJECTED_TRACKER_KEYS = new Set(['globalStats', 'characterStats', 'playerStats', 'npcStats', 'collections', 'progression', 'npcTemplates',
+const PROJECTED_TRACKER_KEYS = new Set(['globalStats', 'characterStats', 'playerStats', 'npcStats', 'collections', 'progression', 'npcTemplates', 'locations',
     'hudLayout', 'showGlobalStats', 'showNpcPortraits']);
 
 const SYSTEM_EXCLUDED_TRACKER = new Set([
@@ -77,7 +77,7 @@ function migrateSavedPresets(settings) {
     let changed = false;
     let activeMigrated = false;
     for (const [name, preset] of Object.entries(presets)) {
-        if (!preset || (preset.definition?.schemaVersion === SYSTEM_SCHEMA_VERSION && Array.isArray(preset.definition?.npcTemplates) && preset.definition?.progression?.player?.assignment && !preset.world
+        if (!preset || (preset.definition?.schemaVersion === SYSTEM_SCHEMA_VERSION && Array.isArray(preset.definition?.npcTemplates) && preset.definition?.progression?.player?.assignment && typeof preset.definition?.locations?.enabled === 'boolean' && !preset.world
             && ![...PROJECTED_TRACKER_KEYS].some(key => Object.hasOwn(preset.config?.statusTracker || preset.config || {}, key))
             && !['characters', 'personaData', 'master_items', 'systemWorldArchive']
                 .some(key => Object.hasOwn(preset.config || {}, key)))) continue;
@@ -90,6 +90,7 @@ function migrateSavedPresets(settings) {
         if (activeMigrated) Object.assign(settings.statusTracker, projectSystemTracker(active));
         settings.statusTracker.progression ||= structuredClone(active.progression);
         settings.statusTracker.npcTemplates = active.npcTemplates;
+        settings.statusTracker.locations = structuredClone(active.locations);
         for (const stat of settings.statusTracker.npcStats || []) {
             if (!stat.id) stat.id = systemStatFields(active, 'npc').find(field => field.name === stat.name)?.id;
         }

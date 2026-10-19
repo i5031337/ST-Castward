@@ -15,6 +15,8 @@ import { showAddCharacterDropdown } from './status-ui-menu.js';
 import { attachInlineEditListeners } from './status-ui-edit.js';
 import { renderExtractionReport } from './status-ui-report.js';
 import { trackerMessageIndex } from './status-ui-placement.js';
+import { currentLocationPath } from '../../locations/location-store.js';
+import { appendPlaceTrail } from './status-ui-place.js';
 
 /**
  * Draws the tracker box again on every message, and nothing else.
@@ -174,8 +176,9 @@ export function buildTrackerBox(state, {
     const settings = getSettings().statusTracker;
     const htmlToRender = buildStatusHtml(state,
         view === 'globals' ? { ...settings, showPlayerStats: false, showNpcStats: false } : settings);
+    const placePath = settings.showGlobalStats ? currentLocationPath(state) : [];
 
-    if (!hasVisibleContent(htmlToRender)) return null;
+    if (!hasVisibleContent(htmlToRender) && !placePath.length) return null;
 
     const theme = getSettings().menuStyle || 'default';
     const container = document.createElement('div');
@@ -252,6 +255,7 @@ export function buildTrackerBox(state, {
     while(tempDiv.firstChild) {
         box.appendChild(tempDiv.firstChild);
     }
+    appendPlaceTrail(box, placePath, headerBtns);
     
     container.appendChild(box);
     

@@ -94,7 +94,8 @@ export function renderTrackerScanAndReview({ container, settings, onApply, onCha
         help: 'An update replaces an inventory wholesale, so an item the AI forgets to '
             + 'mention would vanish. Gained and lost items, and implausible jumps, wait '
             + 'for you in a panel under the message instead. Ordinary movement still '
-            + 'applies on its own, and Undo covers the rest.',
+            + 'applies on its own, and Undo covers the rest. New and edited places count as risky; '
+            + 'moves to known places apply on their own.',
         onChange
     }));
 

@@ -210,6 +210,7 @@ export function normalizeSystemDefinition(source, { id, name } = {}) {
         stats: { world: worldStats, character },
         collections: collections(modern ? input.collections : tracker.collections ?? defaultTrackerSettings.collections),
         progression: { player: playerProgression },
+        locations: { enabled: tracker.locations?.enabled !== false },
         memories: {
             enabled: input.memories?.enabled === true,
             guidance: string(input.memories?.guidance).slice(0, 4000),
@@ -243,6 +244,7 @@ export function projectSystemTracker(system) {
     return { globalStats: stat(systemStatFields(system, 'world')), playerStats: stat(systemStatFields(system, 'player')),
         npcStats: stat(systemStatFields(system, 'npc')), collections: system.collections.map(collection => ({ ...collection,
             hint: collection.guidance, fields: collection.fields.map(field => ({ ...field, hint: field.guidance })) })),
+        locations: structuredClone(system.locations || { enabled: true }),
         progression: structuredClone(system.progression), npcTemplates: structuredClone(system.npcTemplates),
         hudLayout: system.hud.layout, showGlobalStats: system.hud.showWorld, showNpcPortraits: system.hud.showNpcPortraits };
 }

@@ -20,6 +20,7 @@ import { normalizeCollectionUpdates } from './status-collection-normalize.js';
 import { replacementReadingState, revertToBase } from '../snapshots/status-snapshot-swipe.js';
 import { trackerMessageIndex } from '../ui/status-ui-placement.js';
 import { generateNewNpcProfiles } from './status-npc-profiles.js';
+import { locationProposalsForReading, partitionLocationRows, resolveLocationRows } from '../../locations/location-runtime.js';
 
 /** Guards against an extraction triggering the events that would start another. */
 let activeExtraction = null;
@@ -62,14 +63,6 @@ export function forgetExtractionsFrom(index) {
     if (forgotten) debugLog(`Forgot ${forgotten} extraction(s) from message ${from} on`);
     return forgotten;
 }
-/**
- * Extracts state from one message and applies it.
- *
- * @param {string} messageText
- * @param {string|number} messageId
- * @param {{ force?: boolean, regenerate?: boolean, manual?: boolean }} [options]
- * @returns {Promise<{ applied: boolean, reason?: string }>}
- */
 /**
  * Tells the user an extraction failed, without becoming a nuisance.
  *
@@ -137,6 +130,7 @@ export async function extractStateFromMessage(messageText, messageId, options = 
     refreshReport();
     try {
         const state = options.regenerate ? replacementReadingState(messageId) : loadStateFromMetadata();
+        const locationBase = state.locations?.enabled ? { locations: structuredClone(state.locations) } : null;
         // Before anything is applied. A later swipe of this message rebuilds from here
         // rather than from what this one leaves behind.
         rememberSwipeBase(messageId, state);
@@ -256,6 +250,14 @@ export async function extractStateFromMessage(messageText, messageId, options = 
         const { auto, pending } = partitionChanges(changes, trackerSettings);
         prepareGrantReview(auto, pending, grants.transitions);
         pending.push(...grants.rows.filter(change => !isItemDecided(change)));
+        let automaticPlaces = [];
+        if (locationBase && currentState.locations?.enabled) {
+            const places = locationProposalsForReading(locationBase, parsed.locations, messageId, String(messageText));
+            const placeReview = partitionLocationRows(places.rows, trackerSettings);
+            automaticPlaces = placeReview.auto;
+            pending.push(...placeReview.pending);
+            warnings.push(...places.warnings);
+        }
 
         // The parsed update is only safe to apply whole when nothing was held back. If a
         // row was blocked by a standing decision, applying `parsed` would carry out the
@@ -274,6 +276,10 @@ export async function extractStateFromMessage(messageText, messageId, options = 
         // back into the context.
         const applied = pending.length === 0 ? changes : auto;
         recordAppliedChanges(messageId, applied);
+        const placeResult = automaticPlaces.length
+            ? resolveLocationRows(messageId, automaticPlaces, automaticPlaces, { automatic: true, discardAll: true })
+            : { applied: 0, warnings: [] };
+        warnings.push(...placeResult.warnings);
 
         saveLevelReading(reportMessage, grants.reading);
         setPendingChanges(messageId, pending, unmatched, refused);
@@ -282,7 +288,7 @@ export async function extractStateFromMessage(messageText, messageId, options = 
         }
 
         extractedMessages.add(key);
-        const appliedCount = auto.length;
+        const appliedCount = auto.length + placeResult.applied;
         const parts = [
             `${appliedCount} applied`,
             `${pending.length} awaiting review`,

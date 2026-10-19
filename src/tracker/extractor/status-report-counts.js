@@ -10,6 +10,9 @@ const categories = {
     'item-change': ['item field', 'item fields'],
     'npc-template': ['NPC template', 'NPC templates'],
     'memory-add': ['memory', 'memories'],
+    'location-create': ['place discovered', 'places discovered'],
+    'location-update': ['place updated', 'places updated'],
+    'location-current': ['place transition', 'place transitions'],
     reward: ['level reward change', 'level reward changes'],
     other: ['other change', 'other changes'],
 };

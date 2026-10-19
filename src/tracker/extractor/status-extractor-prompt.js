@@ -1,3 +1,4 @@
+import { buildLocationReaderNotes } from '../../locations/location-context.js';
 import { collectionAppliesTo } from '../../core/collection-targets.js';
 import { describeNpcTemplates, npcTemplates, npcStatsFor } from '../../core/npc-templates.js';
 import { promptText } from '../../prompts/prompt-texts.js';
@@ -55,6 +56,41 @@ function describeExtractionNotes(state, messageText) {
     return sections.join('\n');
 }
 
+/** Show recovery amounts for live pools while keeping progression out of restorative effects. */
+function describePoolRecovery(state, settings) {
+    const owners = [
+        { label: 'World', stats: state?.global, definitions: settings.globalStats || [] },
+        { label: 'Player', stats: state?.player?.stats, definitions: settings.playerStats || [],
+            progression: progressionFields(settings, { isPlayer: true }) },
+        ...(state?.characters || []).filter(actor => actor?.name && !actor.offstage).map(actor => ({
+            label: actor.name, stats: actor.stats, definitions: npcStatsFor(actor, settings),
+            progression: progressionFields(settings, { actor }),
+        })),
+    ];
+    const entries = owners.flatMap(owner => (owner.definitions || []).flatMap(stat => {
+        if (!stat?.name || !isReaderStat(stat) || !['number', 'bar'].includes(stat.type)) return [];
+        if ([owner.progression?.xpName, owner.progression?.levelName].includes(stat.name)
+            || /^(?:xp|exp|experience(?: points?)?|level(?: bonus)?)$/i.test(stat.name)) return [];
+        const reading = String(owner.stats?.[stat.name] ?? '').match(/^\s*(\d+(?:\.\d+)?)\s*\/\s*(\d+(?:\.\d+)?)\s*$/);
+        if (!reading) return [];
+        const current = Number(reading[1]), maximum = Number(reading[2]);
+        if (!(maximum > current && current >= 0)) return [];
+        return [`${owner.label}.${stat.name} ${current}/${maximum} needs +${Number((maximum - current).toPrecision(12))} to reach capacity.`];
+    }));
+    if (!entries.length) return '';
+    return 'When the latest message establishes complete recovery of an applicable pool for an owner, refill that pool to its existing maximum even if the narrator gives no number. '
+        + 'A full night of sound sleep followed by waking refreshed can fully restore applicable health, magic, or energy pools when the System permits; effective healing or recharging can do the same. '
+        + 'Match the recovery to the owner and pools affected, following configured rules and any stated limits; do not automatically refill every pool or other characters. '
+        + 'Missing amounts: ' + entries.join(' ') + ' A brief rest or partial recovery warrants a smaller gain. XP and Level are never recovery pools.';
+}
+
+/** Keep narrated harm and healing aligned with a configured health pool. */
+function describeInjuryConsequence(settings) {
+    const health = (settings.playerStats || []).find(stat => stat.type === 'bar'
+        && /\b(?:hp|health|hit points|vitality)\b/i.test(`${stat.name || ''} ${stat.purpose || ''} ${stat.guidance || ''}`));
+    return health ? `If the latest message establishes a bodily injury to the player, decrease Player.${health.name} by an estimated amount appropriate to the injury. If wound care or healing measurably improves the player, increase Player.${health.name} by a conservative amount, short of full recovery unless the story establishes it. A text condition change alone does not account for either health effect.` : '';
+}
+
 /**
  * Builds the extraction prompt.
  *
@@ -100,7 +136,16 @@ function readerValues(state, messageText, trackerSettings, leadUp = [], { strang
         xpProgression: progressionXpName(trackerSettings, state)
             || (trackerSettings.npcTemplates || []).some(template => template.progression?.enabled) ? 'on' : '',
         // Whatever else has asked to be told to the reader - see registerExtractionNotes.
-        notes: [describeNpcTemplates(), describeExtractionNotes(state, messageText)].filter(Boolean).join('\n'),
+        notes: [describeNpcTemplates(), describeExtractionNotes(state, messageText),
+            state?.locations?.enabled ? buildLocationReaderNotes(state, messageText, leadUp) : ''].filter(Boolean).join('\n'),
+        locationReminder: state?.locations?.enabled ? 'Before returning JSON, check the latest message for a named setting containing the player or an established move. If one is established, include the top-level "locations" object with evidenced places and currentRef. Use one continuous exact quote for currentEvidence. An opened door or invitation alone does not establish arrival. Omit "locations" when no place fact changed.' : '',
+        quantityReminder: (trackerSettings.collections || []).some(collection => collection.trackQuantity === true)
+            ? 'For any counted item consumed or lost, use collections.<ID>.remove with the exact identifier and quantity spent. Never use update to change an item quantity.' : '',
+        poolRecovery: describePoolRecovery(state, trackerSettings),
+        injuryConsequence: describeInjuryConsequence(trackerSettings),
+        xpReminder: progressionXpName(trackerSettings, state)
+            || (trackerSettings.npcTemplates || []).some(template => template.progression?.enabled)
+            ? 'Before returning JSON, award XP only for a concrete accomplishment by its recipient. Small progress counts only when the recipient actively takes a meaningful step toward a goal. A change in a health or energy stat, or in a condition, alone does not justify XP. Passive healing, routine rest, receiving care, an accidental fall, hearing an unverified rumor, and ordinary conversation alone earn no XP.' : '',
         ...strangerValues(strangers),
         collections: describeCollections(trackerSettings),
         collectionExample: buildDeltaExample(trackerSettings),
@@ -168,18 +213,6 @@ export function buildNewNpcExample(trackerSettings = {}) {
         .filter(stat => stat?.name)
         .map(stat => [stat.name, describeReaderStats({ npcStats: [stat] }, { initializeNpc: true })
             .replace(`- NPC.${stat.name}: `, '')]));
-    const collections = Object.fromEntries((trackerSettings.collections || [])
-        .filter(col => col?.id && collectionAppliesTo(col, 'npc', { npcTemplateId: template?.id || '' }))
-        .map(col => {
-            const primary = (col.fields || []).find(field => field.isPrimary)?.name || 'name';
-            const item = Object.fromEntries((col.fields || [{ name: primary }]).map(field => [
-                field.name, field.type === 'number' ? 1 : field.type === 'boolean' ? true : [String(field.hint || '').trim(),
-                    field.name === primary ? 'identifies the item' : '',
-                    field.type !== 'number' && field.options?.length ? `choose: ${field.options.join(', ')}` : '',
-                ].filter(Boolean).join('; '),
-            ]));
-            return [col.id, { add: [item] }];
-        }));
     return JSON.stringify({
         global: {},
         player: {},
@@ -187,7 +220,6 @@ export function buildNewNpcExample(trackerSettings = {}) {
             name: '<exact NPC name from the story>',
             ...(npcTemplates().length > 1 ? { npcTemplateId: template.id } : {}),
             ...(Object.keys(stats).length ? { stats } : {}),
-            ...(Object.keys(collections).length ? { collections } : {}),
         }],
     }, null, 2);
 }

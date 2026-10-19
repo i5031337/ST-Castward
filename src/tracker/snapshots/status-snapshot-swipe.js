@@ -11,8 +11,31 @@ export function replacementReadingState(messageId) {
     const record = swipeBaseRecord();
     if (!record || record.messageId !== String(messageId)) return null;
     if (!record.applied) return getSwipeBase(messageId);
-    return applyTurnValues(structuredClone(record.state),
-        diffTurnValues(record.applied.state, loadStateFromMetadata()));
+    const current = loadStateFromMetadata();
+    const state = applyTurnValues(structuredClone(record.state),
+        diffTurnValues(record.applied.state, current));
+    preserveEditedPlaces(state, record.applied.state, current);
+    return state;
+}
+
+/** A manual edit adopts a discovered place even if another reply omits it. */
+function preserveEditedPlaces(state, applied, current) {
+    const previous = applied?.locations?.records || {};
+    const records = current?.locations?.records || {};
+    const kept = [];
+    for (const [id, place] of Object.entries(records)) {
+        if (state.locations?.records?.[id] || !previous[id]
+            || JSON.stringify(place) === JSON.stringify(previous[id])) continue;
+        state.locations ||= { enabled: current.locations.enabled, currentId: '', records: {} };
+        state.locations.records ||= {};
+        state.locations.records[id] = structuredClone(place);
+        kept.push(id);
+    }
+    // A corrected child does not adopt its otherwise untouched discovered parent.
+    for (const id of kept) {
+        const place = state.locations.records[id];
+        if (place.parentId && !state.locations.records[place.parentId]) place.parentId = '';
+    }
 }
 
 /** Rebuilds the chosen reply and carries corrections made after the outgoing one. */
@@ -39,6 +62,7 @@ function rebaseRecordedTurn(messageId, { removed = false } = {}) {
         applyRows(replyState, appliedChangesForCurrentSwipe(messageId) || []);
     }
     const state = applyTurnValues(replyState, manualState);
+    preserveEditedPlaces(state, record.applied.state, current);
     const profiles = applyTurnValues(replyProfiles, manualProfiles);
     const changedProfiles = restoreProfiles(profiles);
     saveStateToMetadata(state, { recordHistory: false });
@@ -122,6 +146,14 @@ export function alignSwipeBaseToNow() {
     }
 
     let moved = 0;
+
+    // Effectless legacy replies could not own place changes. Carry later manual
+    // place edits into their base, just like the existing actor corrections.
+    if (JSON.stringify(base.locations) !== JSON.stringify(now.locations)) {
+        if (now.locations === undefined) delete base.locations;
+        else base.locations = structuredClone(now.locations);
+        moved += 1;
+    }
 
     const alignStats = (who, from, to) => {
         const source = from || {};

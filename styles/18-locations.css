@@ -1,0 +1,37 @@
+.sillynpc-locations { width: 100%; min-width: 0; }
+.sillynpc-location-enabled { display: flex; align-items: center; gap: 0.4rem; }
+.sillynpc-locations > .sillynpc-hint { margin: 0.3rem 0; }
+.sillynpc-location-current, .sillynpc-location-toolbar, .sillynpc-location-actions {
+    display: flex; align-items: center; flex-wrap: wrap; gap: 0.6rem; margin: 0.6rem 0;
+}
+.sillynpc-location-toolbar .text_pole { flex: 1; min-width: 10rem; }
+.sillynpc-location-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 1rem; min-width: 0; }
+.sillynpc-location-list, .sillynpc-location-editor, .sillynpc-location-group { min-width: 0; }
+.sillynpc-location-row { display: flex; align-items: stretch; gap: 0.25rem; min-width: 0; margin-bottom: 0.35rem; }
+.sillynpc-location-children { margin-left: 0.75rem; padding-left: 0.5rem; border-left: 1px solid var(--sillynpc-border); }
+.sillynpc-location-card.menu_button {
+    display: flex; flex: 1 1 0; flex-wrap: wrap; gap: 0.25rem 0.5rem; width: 0; min-width: 0;
+    margin: 0; padding: 0.4rem 0.5rem; text-align: start; white-space: normal; overflow-wrap: anywhere;
+    font-size: var(--sillynpc-text-base);
+}
+.sillynpc-location-parent.menu_button { font-weight: 600; color: var(--sillynpc-accent-text, var(--sillynpc-accent)); }
+.sillynpc-location-parent::before { content: '▸'; flex: none; }
+.sillynpc-location-parent[aria-expanded="true"]::before { content: '▾'; }
+.sillynpc-location-edit.menu_button { flex: none; margin: 0; font-size: var(--sillynpc-text-base); }
+.sillynpc-location-card.active { outline: 2px solid currentColor; outline-offset: -2px; }
+.sillynpc-location-form > .sillynpc-section-title { overflow-wrap: anywhere; }
+.sillynpc-location-badge { font-size: 0.8em; opacity: 0.8; white-space: nowrap; }
+.sillynpc-location-form > label, .sillynpc-location-lore > label {
+    display: flex; flex-direction: column; gap: 0.3rem; margin-block: 0.8rem;
+}
+.sillynpc-location-form textarea { resize: vertical; min-height: 3rem; }
+.sillynpc-location-form .text_pole { width: 100%; min-width: 0; box-sizing: border-box; }
+.sillynpc-location-lore { margin: 1rem 0; padding: 0.7rem; border: 1px solid currentColor; border-radius: 6px; min-width: 0; }
+.sillynpc-location-error { color: var(--warning, #e8ad75); overflow-wrap: anywhere; }
+.sillynpc-location-review.sillynpc-review-row { display: flex; align-items: flex-start; gap: 0.6rem; }
+.sillynpc-location-review-body { display: flex; flex: 1; min-width: 0; flex-direction: column; gap: 0.4rem; overflow-wrap: anywhere; }
+.sillynpc-location-review-body textarea { width: 100%; min-width: 0; box-sizing: border-box; resize: vertical; }
+@media (max-width: 700px) {
+    .sillynpc-location-layout { grid-template-columns: 1fr; }
+    .sillynpc-location-list { max-height: 14rem; overflow-y: auto; padding: 2px; }
+}

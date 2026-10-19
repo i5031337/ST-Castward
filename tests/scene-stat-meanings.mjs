@@ -9,7 +9,7 @@ const source = path => readFileSync(new URL(path, import.meta.url), 'utf8')
     .replace(/^import\s+[\s\S]*?\s+from\s+['"][^'"]+['"];\s*/gm, '')
     .replaceAll('export function ', 'function ') + `\n${collectionQuantityField.toString()}\n`;
 
-function renderer(tracker, referenced = []) {
+function renderer(tracker, referenced = [], renderPrompt = promptText) {
     const deps = {};
     const getSettings = () => ({ statusTracker: tracker });
     new Function('getSettings', 'npcStatsFor',
@@ -19,8 +19,8 @@ function renderer(tracker, referenced = []) {
         }))(deps);
     new Function('getSettings', 'promptText', 'charactersFromActivatedLore',
         source('../src/tracker/status-status-summary.js') + '\nreturn bind;')(
-        getSettings, promptText, () => referenced)(deps);
-    return state => deps.formatCompactStatus(state, true);
+        getSettings, renderPrompt, () => referenced)(deps);
+    return (state, places = '') => deps.formatCompactStatus(state, true, places);
 }
 
 test('scene meanings follow injected stats, deduplicate NPCs, and preserve scope-specific purposes', () => {
@@ -59,4 +59,21 @@ test('scene omits the meanings heading when no represented stat has a purpose', 
     assert.match(scene, /HP=10/);
     assert.ok(!scene.includes('Stat meanings:'));
     assert.ok(!scene.includes('Unused meaning.'));
+});
+
+test('known places sit inside Current Scene Status before stat meanings', () => {
+    const render = renderer({ collections: [], globalStats: [], npcStats: [],
+        playerStats: [{ name: 'HP', purpose: 'Current health.' }] });
+    const scene = render({ global: {}, player: { stats: { HP: '7/10' } }, characters: [] },
+        'Known places:\n- Lantern Inn (last confirmed setting) — A warm hearth.');
+    assert.match(scene, /\[Current Scene Status\][\s\S]*Player \(You\): HP=7\/10\nKnown places:\n- Lantern Inn/);
+    assert.ok(scene.indexOf('Known places:') < scene.indexOf('Stat meanings:'));
+});
+
+test('custom scene templates receive known places through the existing status value', () => {
+    const render = renderer({ collections: [], globalStats: [], npcStats: [], playerStats: [] }, [],
+        (_id, values) => `Custom scene:\n${values.status}`);
+    const scene = render({ global: {}, player: { stats: {} }, characters: [] },
+        'Known places:\n- Lantern Inn (last confirmed setting)');
+    assert.match(scene, /Custom scene:\nPlayer \(You\):\nKnown places:\n- Lantern Inn/);
 });

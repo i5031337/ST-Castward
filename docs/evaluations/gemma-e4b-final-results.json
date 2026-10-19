@@ -1,0 +1,3611 @@
+{
+  "startedAt": "2026-10-18T21:22:15.061Z",
+  "label": "final",
+  "criteria": {
+    "validJsonAndNotTruncated": 1,
+    "overallRequiredCheckRate": 0.9,
+    "perSystemRequiredCheckRate": 0.85,
+    "criticalFailuresAllowed": 0
+  },
+  "endpoint": "http://127.0.0.1:9931/v1",
+  "model": "/mnt/D/backup_models/gemma-4-E4B-it-qat-UD-Q4_K_XL.gguf",
+  "server": {
+    "build": "b11669-620d2225c",
+    "defaults": {
+      "params": {
+        "seed": 4294967295,
+        "temperature": 1,
+        "dynatemp_range": 0,
+        "dynatemp_exponent": 1,
+        "top_k": 64,
+        "top_p": 0.949999988079071,
+        "min_p": 0,
+        "top_n_sigma": -1,
+        "xtc_probability": 0,
+        "xtc_threshold": 0.10000000149011612,
+        "typical_p": 1,
+        "repeat_last_n": 64,
+        "repeat_penalty": 1,
+        "presence_penalty": 0,
+        "frequency_penalty": 0,
+        "dry_multiplier": 0,
+        "dry_base": 1.75,
+        "dry_allowed_length": 2,
+        "dry_penalty_last_n": 64,
+        "mirostat": 0,
+        "mirostat_tau": 5,
+        "mirostat_eta": 0.10000000149011612,
+        "adaptive_target": -1,
+        "adaptive_decay": 0.8999999761581421,
+        "max_tokens": -1,
+        "n_predict": -1,
+        "n_keep": 0,
+        "n_discard": 0,
+        "ignore_eos": false,
+        "stream": false,
+        "n_probs": 0,
+        "min_keep": 0,
+        "chat_format": "Content-only",
+        "reasoning_format": "none",
+        "reasoning_in_content": false,
+        "generation_prompt": "",
+        "samplers": [
+          "penalties",
+          "dry",
+          "top_n_sigma",
+          "top_k",
+          "typ_p",
+          "top_p",
+          "min_p",
+          "xtc",
+          "temperature"
+        ],
+        "speculative.types": "none",
+        "timings_per_token": false,
+        "post_sampling_probs": false,
+        "backend_sampling": false,
+        "lora": []
+      },
+      "n_ctx": 65536
+    },
+    "model": "/mnt/D/backup_models/gemma-4-E4B-it-qat-UD-Q4_K_XL.gguf",
+    "slots": 1
+  },
+  "repeats": 2,
+  "trials": [
+    {
+      "id": "fantasy-opening",
+      "system": "fantasy",
+      "holdout": false,
+      "repeat": 0,
+      "elapsedMs": 11766,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 1026,
+        "prompt_tokens": 4816,
+        "total_tokens": 5842,
+        "prompt_tokens_details": {
+          "cached_tokens": 557
+        }
+      },
+      "content": "```json\n{\n  \"global\": {\n    \"Location\": \"Rusty Lantern tavern\",\n    \"Time\": \"Morning\"\n  },\n  \"player\": {},\n  \"characters\": [\n    {\n      \"name\": \"Mira\",\n      \"stats\": {\n        \"HP\": \"12/12\",\n        \"Armor\": \"10\",\n        \"Strength\": \"10\",\n        \"Dexterity\": \"10\",\n        \"Constitution\": \"10\",\n        \"Intelligence\": \"10\",\n        \"Wisdom\": \"10\",\n        \"Charisma\": \"10\",\n        \"Condition\": \"Healthy\",\n        \"Currency\": 0,\n        \"XP\": \"0/100\",\n        \"Level\": 1\n      },\n      \"collections\": {\n        \"equipment\": {\n          \"add\": [\n            {\n              \"name\": \"identifies the item\",\n              \"quantity\": 1,\n              \"description\": \"\"\n            }\n          ]\n        },\n        \"abilities\": {\n          \"add\": [\n            {\n              \"name\": \"identifies the item\",\n              \"kind\": \"\",\n              \"rank\": \"\",\n              \"uses\": \"Optional. Leave blank when the ability has no stated use limit.\",\n              \"effect\": \"\"\n            }\n          ]\n        }\n      }\n    }\n  ],\n  \"locations\": {\n    \"places\": [\n      {\n        \"ref\": \"Rusty Lantern tavern\",\n        \"name\": \"Rusty Lantern tavern\",\n        \"aliases\": [],\n        \"description\": \"A tavern in Briar Glen with copper lamps hanging above oak tables.\",\n        \"parentRef\": null,\n        \"evidence\": \"You are seated inside the Rusty Lantern tavern in the town of Briar Glen.\"\n      }\n    ],\n    \"currentRef\": \"Rusty Lantern tavern\",\n    \"currentEvidence\": \"You are seated inside the Rusty Lantern tavern in the town of Briar Glen.\"\n  }\n}\n```",
+      "parsed": {
+        "global": {
+          "Location": "Rusty Lantern tavern",
+          "Time": "Morning"
+        },
+        "player": {},
+        "characters": [
+          {
+            "name": "Mira",
+            "stats": {
+              "HP": "12/12",
+              "Armor": "10",
+              "Strength": "10",
+              "Dexterity": "10",
+              "Constitution": "10",
+              "Intelligence": "10",
+              "Wisdom": "10",
+              "Charisma": "10",
+              "Condition": "Healthy",
+              "Currency": 0,
+              "XP": "0/100",
+              "Level": 1
+            },
+            "collections": {
+              "equipment": {
+                "add": [
+                  {
+                    "name": "identifies the item",
+                    "quantity": 1,
+                    "description": ""
+                  }
+                ]
+              },
+              "abilities": {
+                "add": [
+                  {
+                    "name": "identifies the item",
+                    "kind": "",
+                    "rank": "",
+                    "uses": "Optional. Leave blank when the ability has no stated use limit.",
+                    "effect": ""
+                  }
+                ]
+              }
+            }
+          }
+        ],
+        "locations": {
+          "places": [
+            {
+              "ref": "Rusty Lantern tavern",
+              "name": "Rusty Lantern tavern",
+              "aliases": [],
+              "description": "A tavern in Briar Glen with copper lamps hanging above oak tables.",
+              "parentRef": null,
+              "evidence": "You are seated inside the Rusty Lantern tavern in the town of Briar Glen."
+            }
+          ],
+          "currentRef": "Rusty Lantern tavern",
+          "currentEvidence": "You are seated inside the Rusty Lantern tavern in the town of Briar Glen."
+        }
+      },
+      "normalized": {
+        "update": {
+          "global": {
+            "Location": "Rusty Lantern tavern",
+            "Time": "Morning"
+          },
+          "player": {},
+          "characters": [
+            {
+              "name": "Mira",
+              "stats": {
+                "HP": "12/12",
+                "Armor": "10",
+                "Strength": "10",
+                "Dexterity": "10",
+                "Constitution": "10",
+                "Intelligence": "10",
+                "Wisdom": "10",
+                "Charisma": "10",
+                "Condition": "Healthy",
+                "Currency": "0",
+                "XP": "0/100",
+                "Level": "1"
+              },
+              "collections": {
+                "equipment": {
+                  "add": [
+                    {
+                      "name": "identifies the item",
+                      "quantity": 1,
+                      "description": ""
+                    }
+                  ]
+                },
+                "abilities": {
+                  "add": [
+                    {
+                      "name": "identifies the item",
+                      "kind": "",
+                      "rank": "",
+                      "uses": "Optional. Leave blank when the ability has no stated use limit.",
+                      "effect": ""
+                    }
+                  ]
+                }
+              }
+            }
+          ],
+          "locations": {
+            "places": [
+              {
+                "ref": "Rusty Lantern tavern",
+                "name": "Rusty Lantern tavern",
+                "aliases": [],
+                "description": "A tavern in Briar Glen with copper lamps hanging above oak tables.",
+                "parentRef": null,
+                "evidence": "You are seated inside the Rusty Lantern tavern in the town of Briar Glen."
+              }
+            ],
+            "currentRef": "Rusty Lantern tavern",
+            "currentEvidence": "You are seated inside the Rusty Lantern tavern in the town of Briar Glen."
+          }
+        },
+        "progression": null,
+        "holdings": {
+          "player": {
+            "stats": {
+              "HP": "12/12",
+              "Armor": "10",
+              "Strength": "10",
+              "Dexterity": "10",
+              "Constitution": "10",
+              "Intelligence": "10",
+              "Wisdom": "10",
+              "Charisma": "10",
+              "Condition": "Healthy",
+              "Currency": "0",
+              "XP": "0/100",
+              "Level": "1"
+            },
+            "collections": {
+              "equipment": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "Mira",
+              "npcTemplateId": "character",
+              "collections": {
+                "equipment": [
+                  {
+                    "name": "identifies the item",
+                    "quantity": 1,
+                    "description": ""
+                  }
+                ],
+                "abilities": [
+                  {
+                    "name": "identifies the item",
+                    "kind": "",
+                    "rank": "",
+                    "uses": "Optional. Leave blank when the ability has no stated use limit.",
+                    "effect": ""
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "warnings": [
+          "Ignored Rusty Lantern tavern: The parent reference must be text.",
+          "Ignored the current place: its reference does not exist."
+        ],
+        "places": []
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "validJsonAndNotTruncated",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "placeCreated Rusty Lantern",
+          "critical": true,
+          "passed": false
+        },
+        {
+          "name": "currentPlace Rusty Lantern",
+          "critical": true,
+          "passed": false
+        },
+        {
+          "name": "worldContains Location Rusty Lantern",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "npcPresent Mira",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "noXp ",
+          "critical": true,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "fantasy-battle",
+      "system": "fantasy",
+      "holdout": false,
+      "repeat": 0,
+      "elapsedMs": 9288,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 763,
+        "prompt_tokens": 4991,
+        "total_tokens": 5754,
+        "prompt_tokens_details": {
+          "cached_tokens": 557
+        }
+      },
+      "content": "```json\n{\n  \"global\": {},\n  \"player\": {\n    \"deltas\": {\n      \"HP\": -3,\n      \"XP\": 20\n    },\n    \"collections\": {\n      \"equipment\": {\n        \"add\": [\n          {\n            \"name\": \"red healing potion\",\n            \"quantity\": 2,\n            \"description\": \"a small glass bottle that restores health.\"\n          }\n        ]\n      }\n    }\n  },\n  \"characters\": [\n    {\n      \"name\": \"Mira\"\n    }\n  ]\n}\n```",
+      "parsed": {
+        "global": {},
+        "player": {
+          "deltas": {
+            "HP": -3,
+            "XP": 20
+          },
+          "collections": {
+            "equipment": {
+              "add": [
+                {
+                  "name": "red healing potion",
+                  "quantity": 2,
+                  "description": "a small glass bottle that restores health."
+                }
+              ]
+            }
+          }
+        },
+        "characters": [
+          {
+            "name": "Mira"
+          }
+        ]
+      },
+      "normalized": {
+        "update": {
+          "global": {},
+          "player": {
+            "collections": {
+              "equipment": {
+                "add": [
+                  {
+                    "name": "red healing potion",
+                    "quantity": 2,
+                    "description": "a small glass bottle that restores health."
+                  }
+                ]
+              }
+            },
+            "HP": "9/12",
+            "XP": "110/100"
+          },
+          "characters": [
+            {
+              "name": "Mira"
+            }
+          ]
+        },
+        "progression": {
+          "xp": "10/100",
+          "level": "2",
+          "levelsGained": 1
+        },
+        "holdings": {
+          "player": {
+            "stats": {
+              "HP": "12/12",
+              "Armor": "10",
+              "Strength": "10",
+              "Dexterity": "10",
+              "Constitution": "10",
+              "Intelligence": "10",
+              "Wisdom": "10",
+              "Charisma": "10",
+              "Condition": "Healthy",
+              "Currency": "0",
+              "XP": "90/100",
+              "Level": "1"
+            },
+            "collections": {
+              "equipment": [
+                {
+                  "name": "red healing potion",
+                  "quantity": 2,
+                  "description": "a small glass bottle that restores health."
+                }
+              ],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "Mira",
+              "npcTemplateId": "character",
+              "stats": {
+                "HP": "12/12",
+                "Armor": "10",
+                "Strength": "10",
+                "Dexterity": "10",
+                "Constitution": "10",
+                "Intelligence": "10",
+                "Wisdom": "10",
+                "Charisma": "10",
+                "Condition": "Healthy",
+                "Currency": "0",
+                "XP": "0/100",
+                "Level": "1"
+              },
+              "collections": {}
+            }
+          ]
+        },
+        "warnings": [],
+        "places": []
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "validJsonAndNotTruncated",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "playerValue HP 9/12",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "playerValue XP 110/100",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "itemAdd equipment red healing potion 2",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "npcPresent Mira",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "noMovement ",
+          "critical": true,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "fantasy-travel",
+      "system": "fantasy",
+      "holdout": false,
+      "repeat": 0,
+      "elapsedMs": 14238,
+      "finishReason": "length",
+      "usage": {
+        "completion_tokens": 1280,
+        "prompt_tokens": 4991,
+        "total_tokens": 6271,
+        "prompt_tokens_details": {
+          "cached_tokens": 557
+        }
+      },
+      "content": "```json\n{\n  \"global\": {\n    \"Location\": \"Old Mill\"\n  },",
+      "parsed": null,
+      "normalized": null,
+      "error": null,
+      "checks": [
+        {
+          "name": "validJsonAndNotTruncated",
+          "critical": true,
+          "passed": false
+        },
+        {
+          "name": "placeCreated Old Mill",
+          "critical": true,
+          "passed": false
+        },
+        {
+          "name": "currentPlace Old Mill",
+          "critical": true,
+          "passed": false
+        },
+        {
+          "name": "playerValue HP 9/12",
+          "critical": false,
+          "passed": false
+        },
+        {
+          "name": "itemRemove equipment red healing potion 1",
+          "critical": false,
+          "passed": false
+        },
+        {
+          "name": "npcPresent Mira",
+          "critical": false,
+          "passed": false
+        }
+      ]
+    },
+    {
+      "id": "fantasy-rumour",
+      "system": "fantasy",
+      "holdout": false,
+      "repeat": 0,
+      "elapsedMs": 8301,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 745,
+        "prompt_tokens": 5001,
+        "total_tokens": 5746,
+        "prompt_tokens_details": {
+          "cached_tokens": 557
+        }
+      },
+      "content": "```json\n{\n  \"global\": {},\n  \"player\": {},\n  \"characters\": [\n    {\n      \"name\": \"Mira\"\n    }\n  ]\n}\n```",
+      "parsed": {
+        "global": {},
+        "player": {},
+        "characters": [
+          {
+            "name": "Mira"
+          }
+        ]
+      },
+      "normalized": {
+        "update": {
+          "global": {},
+          "player": {},
+          "characters": [
+            {
+              "name": "Mira"
+            }
+          ]
+        },
+        "progression": null,
+        "holdings": {
+          "player": {
+            "stats": {
+              "HP": "12/12",
+              "Armor": "10",
+              "Strength": "10",
+              "Dexterity": "10",
+              "Constitution": "10",
+              "Intelligence": "10",
+              "Wisdom": "10",
+              "Charisma": "10",
+              "Condition": "Healthy",
+              "Currency": "0",
+              "XP": "0/100",
+              "Level": "1"
+            },
+            "collections": {
+              "equipment": [
+                {
+                  "name": "red healing potion",
+                  "quantity": 3
+                }
+              ],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "Mira",
+              "npcTemplateId": "character",
+              "stats": {
+                "HP": "12/12",
+                "Armor": "10",
+                "Strength": "10",
+                "Dexterity": "10",
+                "Constitution": "10",
+                "Intelligence": "10",
+                "Wisdom": "10",
+                "Charisma": "10",
+                "Condition": "Healthy",
+                "Currency": "0",
+                "XP": "0/100",
+                "Level": "1"
+              },
+              "collections": {}
+            }
+          ]
+        },
+        "warnings": [],
+        "places": []
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "validJsonAndNotTruncated",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "noMovement ",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "noPlaceCreated Old Mill",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "noInventoryChanges ",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "noXp ",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "npcPresent Mira",
+          "critical": false,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "dating-opening",
+      "system": "dating",
+      "holdout": false,
+      "repeat": 0,
+      "elapsedMs": 12875,
+      "finishReason": "length",
+      "usage": {
+        "completion_tokens": 1280,
+        "prompt_tokens": 3134,
+        "total_tokens": 4414,
+        "prompt_tokens_details": {
+          "cached_tokens": 557
+        }
+      },
+      "content": "```json\n{\n  \"global\": {\n    \"Location\": \"Moonbeam Café\",\n    \"Day and Time\": \"Saturday afternoon\"\n  },\n  \"player\": {},\n  \"characters\": [\n    {\n      \"name\": \"June\",\n      \"stats\": {\n        \"Mood\": \"Polite\",\n        \"Affection\": 0,\n        \"Trust\": 0,\n        \"Comfort\": 50,\n        \"Relationship\": \"New Acquaintance\"\n      }\n    }\n  ],\n  \"locations\": {\n    \"currentRef\": \"moonbeam_cafe_ref\",\n    \"currentEvidence\": \"You sit inside Moonbeam Café in the Riverside district.\",\n    \"places\": [\n      {\n        \"ref\": \"moonbeam_cafe_ref\",\n        \"name\": \"Moonbeam Café\",\n        \"aliases\": [],\n        \"description\": \"A café featuring blue tile lines on the counter and tall windows overlooking a rain-slicked street in the Riverside district.\",\n        \"parentRef\": null,\n        \"evidence\": \"Moonbeam Café\"\n      },\n      {\n        \"ref\": \"riverside_district_ref\",\n        \"name\": \"Riverside district\",\n        \"aliases\": [],\n        \"description\": \"A district containing Moonbeam Café.\",\n        \"parent",
+      "parsed": null,
+      "normalized": null,
+      "error": null,
+      "checks": [
+        {
+          "name": "validJsonAndNotTruncated",
+          "critical": true,
+          "passed": false
+        },
+        {
+          "name": "placeCreated Moonbeam Café",
+          "critical": true,
+          "passed": false
+        },
+        {
+          "name": "currentPlace Moonbeam Café",
+          "critical": true,
+          "passed": false
+        },
+        {
+          "name": "worldContains Location Moonbeam",
+          "critical": false,
+          "passed": false
+        },
+        {
+          "name": "npcPresent June",
+          "critical": false,
+          "passed": false
+        },
+        {
+          "name": "noInventoryChanges ",
+          "critical": true,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "dating-gift",
+      "system": "dating",
+      "holdout": false,
+      "repeat": 0,
+      "elapsedMs": 12923,
+      "finishReason": "length",
+      "usage": {
+        "completion_tokens": 1280,
+        "prompt_tokens": 3250,
+        "total_tokens": 4530,
+        "prompt_tokens_details": {
+          "cached_tokens": 557
+        }
+      },
+      "content": "```json\n{\n  \"player\": {\n    \"deltas\": {\n      \"Social Energy\": -2\n    },\n    \"collections\": {\n      \"items\": {\n        \"update\": [\n          {\n            \"name\": \"sunflower\",\n            \"quantity\": 2\n          }\n        ]\n      }\n    }\n  },\n  \"characters\": [\n    {\n      \"name\": \"June\",\n      \"stats\": {\n        \"Mood\": \"Happy\",\n        \"deltas\": {\n          \"Affection\": 5\n        }\n      },\n      \"collections\": {\n        \"items\": {\n          \"add\": [\n            {\n              \"name\": \"sunflower\",\n              \"quantity\": 1,\n              \"description\": \"gift\"\n            }\n          ]\n        }",
+      "parsed": null,
+      "normalized": null,
+      "error": null,
+      "checks": [
+        {
+          "name": "validJsonAndNotTruncated",
+          "critical": true,
+          "passed": false
+        },
+        {
+          "name": "itemRemove items sunflower 1",
+          "critical": false,
+          "passed": false
+        },
+        {
+          "name": "npcItemAdd June items sunflower 1",
+          "critical": false,
+          "passed": false
+        },
+        {
+          "name": "playerValue Social Energy 8/10",
+          "critical": false,
+          "passed": false
+        },
+        {
+          "name": "npcIncreased June Affection",
+          "critical": false,
+          "passed": false
+        },
+        {
+          "name": "noMovement ",
+          "critical": true,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "dating-travel",
+      "system": "dating",
+      "holdout": false,
+      "repeat": 0,
+      "elapsedMs": 8973,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 866,
+        "prompt_tokens": 3265,
+        "total_tokens": 4131,
+        "prompt_tokens_details": {
+          "cached_tokens": 557
+        }
+      },
+      "content": "```json\n{\n  \"global\": {\n    \"Location\": \"Glasshouse conservatory\"\n  },\n  \"player\": {\n    \"collections\": {\n      \"clothing\": {\n        \"remove\": [\n          \"blue wool scarf\"\n        ]\n      }\n    }\n  },\n  \"characters\": [\n    {\n      \"name\": \"June\"\n    }\n  ],\n  \"locations\": {\n    \"places\": [\n      {\n        \"ref\": \"Moonbeam Café\",\n        \"name\": \"Moonbeam Café\",\n        \"aliases\": [],\n        \"description\": \"A cafe.\",\n        \"parentRef\": null,\n        \"evidence\": \"Alex and June leave Moonbeam Café\"\n      },\n      {\n        \"ref\": \"Glasshouse conservatory\",\n        \"name\": \"Glasshouse conservatory\",\n        \"aliases\": [],\n        \"description\": \"A conservatory with ferns surrounding a stone fountain beneath a glass roof.\",\n        \"parentRef\": null,\n        \"evidence\": \"Alex and June leave Moonbeam Café and arrive inside the Glasshouse conservatory.\"\n      }\n    ],\n    \"currentRef\": \"Glasshouse conservatory\",\n    \"currentEvidence\": \"Alex and June leave Moonbeam Café and arrive inside the Glasshouse conservatory.\"\n  }\n}\n```",
+      "parsed": {
+        "global": {
+          "Location": "Glasshouse conservatory"
+        },
+        "player": {
+          "collections": {
+            "clothing": {
+              "remove": [
+                "blue wool scarf"
+              ]
+            }
+          }
+        },
+        "characters": [
+          {
+            "name": "June"
+          }
+        ],
+        "locations": {
+          "places": [
+            {
+              "ref": "Moonbeam Café",
+              "name": "Moonbeam Café",
+              "aliases": [],
+              "description": "A cafe.",
+              "parentRef": null,
+              "evidence": "Alex and June leave Moonbeam Café"
+            },
+            {
+              "ref": "Glasshouse conservatory",
+              "name": "Glasshouse conservatory",
+              "aliases": [],
+              "description": "A conservatory with ferns surrounding a stone fountain beneath a glass roof.",
+              "parentRef": null,
+              "evidence": "Alex and June leave Moonbeam Café and arrive inside the Glasshouse conservatory."
+            }
+          ],
+          "currentRef": "Glasshouse conservatory",
+          "currentEvidence": "Alex and June leave Moonbeam Café and arrive inside the Glasshouse conservatory."
+        }
+      },
+      "normalized": {
+        "update": {
+          "global": {
+            "Location": "Glasshouse conservatory"
+          },
+          "player": {
+            "collections": {
+              "clothing": {
+                "remove": [
+                  "blue wool scarf"
+                ]
+              }
+            }
+          },
+          "characters": [
+            {
+              "name": "June"
+            }
+          ],
+          "locations": {
+            "places": [
+              {
+                "ref": "Moonbeam Café",
+                "name": "Moonbeam Café",
+                "aliases": [],
+                "description": "A cafe.",
+                "parentRef": null,
+                "evidence": "Alex and June leave Moonbeam Café"
+              },
+              {
+                "ref": "Glasshouse conservatory",
+                "name": "Glasshouse conservatory",
+                "aliases": [],
+                "description": "A conservatory with ferns surrounding a stone fountain beneath a glass roof.",
+                "parentRef": null,
+                "evidence": "Alex and June leave Moonbeam Café and arrive inside the Glasshouse conservatory."
+              }
+            ],
+            "currentRef": "Glasshouse conservatory",
+            "currentEvidence": "Alex and June leave Moonbeam Café and arrive inside the Glasshouse conservatory."
+          }
+        },
+        "progression": null,
+        "holdings": {
+          "player": {
+            "stats": {
+              "Social Energy": "10/10",
+              "Mood": "Neutral"
+            },
+            "collections": {
+              "items": [],
+              "clothing": [
+                {
+                  "name": "white shirt",
+                  "color": "white",
+                  "slot": "shirt"
+                }
+              ]
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "June",
+              "npcTemplateId": "character",
+              "stats": {
+                "Mood": "Neutral",
+                "Affection": "15",
+                "Trust": "10",
+                "Comfort": "20",
+                "Relationship": "Friends"
+              },
+              "collections": {}
+            }
+          ]
+        },
+        "warnings": [
+          "Ignored Moonbeam Café: The parent reference must be text.",
+          "Ignored Glasshouse conservatory: The parent reference must be text.",
+          "Ignored the current place: its reference does not exist."
+        ],
+        "places": []
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "validJsonAndNotTruncated",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "placeCreated Glasshouse",
+          "critical": true,
+          "passed": false
+        },
+        {
+          "name": "currentPlace Glasshouse",
+          "critical": true,
+          "passed": false
+        },
+        {
+          "name": "itemRemove clothing blue wool scarf",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "notRemoved clothing white shirt",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "relationshipUnchanged June",
+          "critical": true,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "dating-plan",
+      "system": "dating",
+      "holdout": false,
+      "repeat": 0,
+      "elapsedMs": 6304,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 588,
+        "prompt_tokens": 3257,
+        "total_tokens": 3845,
+        "prompt_tokens_details": {
+          "cached_tokens": 557
+        }
+      },
+      "content": "{\"global\":{},\"player\":{},\"characters\":[{\"name\":\"June\"}]}",
+      "parsed": {
+        "global": {},
+        "player": {},
+        "characters": [
+          {
+            "name": "June"
+          }
+        ]
+      },
+      "normalized": {
+        "update": {
+          "global": {},
+          "player": {},
+          "characters": [
+            {
+              "name": "June"
+            }
+          ]
+        },
+        "progression": null,
+        "holdings": {
+          "player": {
+            "stats": {
+              "Social Energy": "10/10",
+              "Mood": "Neutral"
+            },
+            "collections": {
+              "items": [
+                {
+                  "name": "concert ticket",
+                  "quantity": 2
+                }
+              ],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "June",
+              "npcTemplateId": "character",
+              "stats": {
+                "Mood": "Neutral",
+                "Affection": "15",
+                "Trust": "10",
+                "Comfort": "20",
+                "Relationship": "Friends"
+              },
+              "collections": {}
+            }
+          ]
+        },
+        "warnings": [],
+        "places": []
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "validJsonAndNotTruncated",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "noMovement ",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "noPlaceCreated Glasshouse",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "noInventoryChanges ",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "relationshipUnchanged June",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "npcPresent June",
+          "critical": false,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "fantasy-holdout-opening",
+      "system": "fantasy",
+      "holdout": true,
+      "repeat": 0,
+      "elapsedMs": 9711,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 900,
+        "prompt_tokens": 4819,
+        "total_tokens": 5719,
+        "prompt_tokens_details": {
+          "cached_tokens": 557
+        }
+      },
+      "content": "```json\n{\n  \"global\": {\n    \"Location\": \"Emberwatch Keep, a fortress in Ashvale\",\n    \"Time\": \"Dusk\"\n  },\n  \"player\": {},\n  \"characters\": [\n    {\n      \"name\": \"Rowan\",\n      \"stats\": {\n        \"HP\": \"12/12\",\n        \"Armor\": \"10\",\n        \"Strength\": \"10\",\n        \"Dexterity\": \"10\",\n        \"Constitution\": \"10\",\n        \"Intelligence\": \"10\",\n        \"Wisdom\": \"10\",\n        \"Charisma\": \"10\",\n        \"Condition\": \"Healthy\",\n        \"Currency\": 0,\n        \"XP\": \"0/100\",\n        \"Level\": 1\n      },\n      \"collections\": {\n        \"equipment\": {\n          \"add\": []\n        },\n        \"abilities\": {\n          \"add\": []\n        }\n      }\n    }\n  ],\n  \"locations\": {\n    \"places\": [\n      {\n        \"ref\": \"EMBERWATCH_KEEP\",\n        \"name\": \"Emberwatch Keep\",\n        \"aliases\": [],\n        \"description\": \"A fortress in Ashvale featuring a cracked stone hearth in the guardroom.\",\n        \"parentRef\": null,\n        \"evidence\": \"Alex stands inside Emberwatch Keep, a fortress in Ashvale.\"\n      }\n    ],\n    \"currentRef\": \"EMBERWATCH_KEEP\",\n    \"currentEvidence\": \"Alex stands inside Emberwatch Keep, a fortress in Ashvale.\"\n  }\n}\n```",
+      "parsed": {
+        "global": {
+          "Location": "Emberwatch Keep, a fortress in Ashvale",
+          "Time": "Dusk"
+        },
+        "player": {},
+        "characters": [
+          {
+            "name": "Rowan",
+            "stats": {
+              "HP": "12/12",
+              "Armor": "10",
+              "Strength": "10",
+              "Dexterity": "10",
+              "Constitution": "10",
+              "Intelligence": "10",
+              "Wisdom": "10",
+              "Charisma": "10",
+              "Condition": "Healthy",
+              "Currency": 0,
+              "XP": "0/100",
+              "Level": 1
+            },
+            "collections": {
+              "equipment": {
+                "add": []
+              },
+              "abilities": {
+                "add": []
+              }
+            }
+          }
+        ],
+        "locations": {
+          "places": [
+            {
+              "ref": "EMBERWATCH_KEEP",
+              "name": "Emberwatch Keep",
+              "aliases": [],
+              "description": "A fortress in Ashvale featuring a cracked stone hearth in the guardroom.",
+              "parentRef": null,
+              "evidence": "Alex stands inside Emberwatch Keep, a fortress in Ashvale."
+            }
+          ],
+          "currentRef": "EMBERWATCH_KEEP",
+          "currentEvidence": "Alex stands inside Emberwatch Keep, a fortress in Ashvale."
+        }
+      },
+      "normalized": {
+        "update": {
+          "global": {
+            "Location": "Emberwatch Keep, a fortress in Ashvale",
+            "Time": "Dusk"
+          },
+          "player": {},
+          "characters": [
+            {
+              "name": "Rowan",
+              "stats": {
+                "HP": "12/12",
+                "Armor": "10",
+                "Strength": "10",
+                "Dexterity": "10",
+                "Constitution": "10",
+                "Intelligence": "10",
+                "Wisdom": "10",
+                "Charisma": "10",
+                "Condition": "Healthy",
+                "Currency": "0",
+                "XP": "0/100",
+                "Level": "1"
+              },
+              "collections": {
+                "equipment": {
+                  "add": []
+                },
+                "abilities": {
+                  "add": []
+                }
+              }
+            }
+          ],
+          "locations": {
+            "places": [
+              {
+                "ref": "EMBERWATCH_KEEP",
+                "name": "Emberwatch Keep",
+                "aliases": [],
+                "description": "A fortress in Ashvale featuring a cracked stone hearth in the guardroom.",
+                "parentRef": null,
+                "evidence": "Alex stands inside Emberwatch Keep, a fortress in Ashvale."
+              }
+            ],
+            "currentRef": "EMBERWATCH_KEEP",
+            "currentEvidence": "Alex stands inside Emberwatch Keep, a fortress in Ashvale."
+          }
+        },
+        "progression": null,
+        "holdings": {
+          "player": {
+            "stats": {
+              "HP": "12/12",
+              "Armor": "10",
+              "Strength": "10",
+              "Dexterity": "10",
+              "Constitution": "10",
+              "Intelligence": "10",
+              "Wisdom": "10",
+              "Charisma": "10",
+              "Condition": "Healthy",
+              "Currency": "0",
+              "XP": "0/100",
+              "Level": "1"
+            },
+            "collections": {
+              "equipment": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "Rowan",
+              "npcTemplateId": "character",
+              "collections": {
+                "equipment": [],
+                "abilities": []
+              }
+            }
+          ]
+        },
+        "warnings": [
+          "Ignored Emberwatch Keep: The parent reference must be text.",
+          "Ignored the current place: its reference does not exist."
+        ],
+        "places": []
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "validJsonAndNotTruncated",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "placeCreated Emberwatch Keep",
+          "critical": true,
+          "passed": false
+        },
+        {
+          "name": "currentPlace Emberwatch Keep",
+          "critical": true,
+          "passed": false
+        },
+        {
+          "name": "worldContains Location Emberwatch",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "npcPresent Rowan",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "noXp ",
+          "critical": true,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "fantasy-holdout-cost",
+      "system": "fantasy",
+      "holdout": true,
+      "repeat": 0,
+      "elapsedMs": 5403,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 448,
+        "prompt_tokens": 5004,
+        "total_tokens": 5452,
+        "prompt_tokens_details": {
+          "cached_tokens": 557
+        }
+      },
+      "content": "{\"global\":{},\"player\":{},\"characters\": [{\"name\": \"Mira\"}]}",
+      "parsed": {
+        "global": {},
+        "player": {},
+        "characters": [
+          {
+            "name": "Mira"
+          }
+        ]
+      },
+      "normalized": {
+        "update": {
+          "global": {},
+          "player": {},
+          "characters": [
+            {
+              "name": "Mira"
+            }
+          ]
+        },
+        "progression": null,
+        "holdings": {
+          "player": {
+            "stats": {
+              "HP": "12/12",
+              "Armor": "10",
+              "Strength": "10",
+              "Dexterity": "10",
+              "Constitution": "10",
+              "Intelligence": "10",
+              "Wisdom": "10",
+              "Charisma": "10",
+              "Condition": "Healthy",
+              "Currency": "0",
+              "XP": "0/100",
+              "Level": "1"
+            },
+            "collections": {
+              "equipment": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "Mira",
+              "npcTemplateId": "character",
+              "stats": {
+                "HP": "12/12",
+                "Armor": "10",
+                "Strength": "10",
+                "Dexterity": "10",
+                "Constitution": "10",
+                "Intelligence": "10",
+                "Wisdom": "10",
+                "Charisma": "10",
+                "Condition": "Healthy",
+                "Currency": "0",
+                "XP": "0/100",
+                "Level": "1"
+              },
+              "collections": {}
+            }
+          ]
+        },
+        "warnings": [],
+        "places": []
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "validJsonAndNotTruncated",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "playerValue HP 12/12",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "noInventoryChanges ",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "noXp ",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "noMovement ",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "npcPresent Mira",
+          "critical": false,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "dating-holdout-opening",
+      "system": "dating",
+      "holdout": true,
+      "repeat": 0,
+      "elapsedMs": 10981,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 1043,
+        "prompt_tokens": 3126,
+        "total_tokens": 4169,
+        "prompt_tokens_details": {
+          "cached_tokens": 2617
+        }
+      },
+      "content": "```json\n{\n  \"global\": {\n    \"Location\": \"Paper Crane bookstore on Linden Street\",\n    \"Day and Time\": \"Monday morning\"\n  },\n  \"player\": {},\n  \"characters\": [\n    {\n      \"name\": \"Sam\",\n      \"stats\": {\n        \"Mood\": \"Neutral\",\n        \"Affection\": 0,\n        \"Trust\": 0,\n        \"Comfort\": 0,\n        \"Relationship\": \"Neutral librarian\"\n      },\n      \"collections\": {}\n    }\n  ],\n  \"locations\": {\n    \"currentRef\": \"paper_crane_bookstore\",\n    \"places\": [\n      {\n        \"ref\": \"paper_crane_bookstore\",\n        \"name\": \"Paper Crane bookstore\",\n        \"aliases\": [],\n        \"description\": \"A bookstore filled with shelves of used novels, illuminated by green reading lamps.\",\n        \"parentRef\": null,\n        \"evidence\": \"Alex is inside the Paper Crane bookstore on Linden Street.\"\n      }\n    ]\n  }\n}\n```",
+      "parsed": {
+        "global": {
+          "Location": "Paper Crane bookstore on Linden Street",
+          "Day and Time": "Monday morning"
+        },
+        "player": {},
+        "characters": [
+          {
+            "name": "Sam",
+            "stats": {
+              "Mood": "Neutral",
+              "Affection": 0,
+              "Trust": 0,
+              "Comfort": 0,
+              "Relationship": "Neutral librarian"
+            },
+            "collections": {}
+          }
+        ],
+        "locations": {
+          "currentRef": "paper_crane_bookstore",
+          "places": [
+            {
+              "ref": "paper_crane_bookstore",
+              "name": "Paper Crane bookstore",
+              "aliases": [],
+              "description": "A bookstore filled with shelves of used novels, illuminated by green reading lamps.",
+              "parentRef": null,
+              "evidence": "Alex is inside the Paper Crane bookstore on Linden Street."
+            }
+          ]
+        }
+      },
+      "normalized": {
+        "update": {
+          "global": {
+            "Location": "Paper Crane bookstore on Linden Street",
+            "Day and Time": "Monday morning"
+          },
+          "player": {},
+          "characters": [
+            {
+              "name": "Sam",
+              "stats": {
+                "Mood": "Neutral",
+                "Affection": "0/100",
+                "Trust": "0/100",
+                "Comfort": "0/100",
+                "Relationship": "Neutral librarian"
+              },
+              "collections": {}
+            }
+          ],
+          "locations": {
+            "currentRef": "paper_crane_bookstore",
+            "places": [
+              {
+                "ref": "paper_crane_bookstore",
+                "name": "Paper Crane bookstore",
+                "aliases": [],
+                "description": "A bookstore filled with shelves of used novels, illuminated by green reading lamps.",
+                "parentRef": null,
+                "evidence": "Alex is inside the Paper Crane bookstore on Linden Street."
+              }
+            ]
+          }
+        },
+        "progression": null,
+        "holdings": {
+          "player": {
+            "stats": {
+              "Social Energy": "10/10",
+              "Mood": "Neutral"
+            },
+            "collections": {
+              "items": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "Sam",
+              "npcTemplateId": "character",
+              "collections": {}
+            }
+          ]
+        },
+        "warnings": [
+          "Ignored Paper Crane bookstore: The parent reference must be text.",
+          "Ignored the current place: its reference does not exist."
+        ],
+        "places": []
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "validJsonAndNotTruncated",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "placeCreated Paper Crane",
+          "critical": true,
+          "passed": false
+        },
+        {
+          "name": "currentPlace Paper Crane",
+          "critical": true,
+          "passed": false
+        },
+        {
+          "name": "worldContains Location Paper Crane",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "npcPresent Sam",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "noInventoryChanges ",
+          "critical": true,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "dating-holdout-drink",
+      "system": "dating",
+      "holdout": true,
+      "repeat": 0,
+      "elapsedMs": 6253,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 526,
+        "prompt_tokens": 3233,
+        "total_tokens": 3759,
+        "prompt_tokens_details": {
+          "cached_tokens": 557
+        }
+      },
+      "content": "```json\n{\n  \"player\": {\n    \"deltas\": {\n      \"Social Energy\": 1\n    },\n    \"collections\": {\n      \"items\": {\n        \"remove\": [\n          {\n            \"name\": \"mint candy\",\n            \"quantity\": 2\n          }\n        ]\n      }\n    }\n  },\n  \"characters\": [\n    {\n      \"name\": \"June\"\n    }\n  ]\n}\n```",
+      "parsed": {
+        "player": {
+          "deltas": {
+            "Social Energy": 1
+          },
+          "collections": {
+            "items": {
+              "remove": [
+                {
+                  "name": "mint candy",
+                  "quantity": 2
+                }
+              ]
+            }
+          }
+        },
+        "characters": [
+          {
+            "name": "June"
+          }
+        ]
+      },
+      "normalized": {
+        "update": {
+          "player": {
+            "collections": {
+              "items": {
+                "remove": [
+                  {
+                    "name": "mint candy",
+                    "quantity": 2
+                  }
+                ]
+              }
+            },
+            "Social Energy": "7/10"
+          },
+          "characters": [
+            {
+              "name": "June"
+            }
+          ],
+          "global": {}
+        },
+        "progression": null,
+        "holdings": {
+          "player": {
+            "stats": {
+              "Social Energy": "6/10",
+              "Mood": "Neutral"
+            },
+            "collections": {
+              "items": [
+                {
+                  "name": "mint candy",
+                  "quantity": 2
+                }
+              ],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "June",
+              "npcTemplateId": "character",
+              "stats": {
+                "Mood": "Neutral",
+                "Affection": "15",
+                "Trust": "10",
+                "Comfort": "20",
+                "Relationship": "Friends"
+              },
+              "collections": {}
+            }
+          ]
+        },
+        "warnings": [],
+        "places": []
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "validJsonAndNotTruncated",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "itemRemove items mint candy 2",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "playerValue Social Energy 7/10",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "relationshipUnchanged June",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "noMovement ",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "npcPresent June",
+          "critical": false,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "fantasy-opening",
+      "system": "fantasy",
+      "holdout": false,
+      "repeat": 1,
+      "elapsedMs": 9750,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 837,
+        "prompt_tokens": 4816,
+        "total_tokens": 5653,
+        "prompt_tokens_details": {
+          "cached_tokens": 557
+        }
+      },
+      "content": "{\n  \"global\": {\n    \"Location\": \"Rusty Lantern tavern\",\n    \"Time\": \"Morning\"\n  },\n  \"player\": {},\n  \"characters\": [\n    {\n      \"name\": \"Mira\",\n      \"stats\": {\n        \"HP\": \"12/12\",\n        \"Armor\": 10,\n        \"Strength\": 10,\n        \"Dexterity\": 10,\n        \"Constitution\": 10,\n        \"Intelligence\": 10,\n        \"Wisdom\": 10,\n        \"Charisma\": 10,\n        \"Condition\": \"Healthy\",\n        \"Currency\": 0,\n        \"XP\": \"0/100\",\n        \"Level\": 1\n      },\n      \"collections\": {\n        \"equipment\": {\n          \"add\": [\n            {\n              \"name\": \"None\",\n              \"quantity\": 1,\n              \"description\": \"\"\n            }\n          ]\n        },\n        \"abilities\": {\n          \"add\": []\n        }\n      }\n    }\n  ],\n  \"locations\": {\n    \"places\": [\n      {\n        \"ref\": \"rusty_lantern_tavern\",\n        \"name\": \"Rusty Lantern tavern\",\n        \"aliases\": [],\n        \"description\": \"A tavern in the town of Briar Glen, featuring copper lamps hanging above oak tables.\",\n        \"parentRef\": null,\n        \"evidence\": \"You are seated inside the Rusty Lantern tavern in the town of Briar Glen.\"\n      },\n      {\n        \"ref\": \"briar_glen\",\n        \"name\": \"Briar Glen\",\n        \"aliases\": [],\n        \"description\": \"A town.\",\n        \"parentRef\": null,\n        \"evidence\": \"You are seated inside the Rusty Lantern tavern in the town of Briar Glen.\"\n      }\n    ],\n    \"currentRef\": \"rusty_lantern_tavern\",\n    \"currentEvidence\": \"You are seated inside the Rusty Lantern tavern in the town of Briar Glen.\"\n  }\n}",
+      "parsed": {
+        "global": {
+          "Location": "Rusty Lantern tavern",
+          "Time": "Morning"
+        },
+        "player": {},
+        "characters": [
+          {
+            "name": "Mira",
+            "stats": {
+              "HP": "12/12",
+              "Armor": 10,
+              "Strength": 10,
+              "Dexterity": 10,
+              "Constitution": 10,
+              "Intelligence": 10,
+              "Wisdom": 10,
+              "Charisma": 10,
+              "Condition": "Healthy",
+              "Currency": 0,
+              "XP": "0/100",
+              "Level": 1
+            },
+            "collections": {
+              "equipment": {
+                "add": [
+                  {
+                    "name": "None",
+                    "quantity": 1,
+                    "description": ""
+                  }
+                ]
+              },
+              "abilities": {
+                "add": []
+              }
+            }
+          }
+        ],
+        "locations": {
+          "places": [
+            {
+              "ref": "rusty_lantern_tavern",
+              "name": "Rusty Lantern tavern",
+              "aliases": [],
+              "description": "A tavern in the town of Briar Glen, featuring copper lamps hanging above oak tables.",
+              "parentRef": null,
+              "evidence": "You are seated inside the Rusty Lantern tavern in the town of Briar Glen."
+            },
+            {
+              "ref": "briar_glen",
+              "name": "Briar Glen",
+              "aliases": [],
+              "description": "A town.",
+              "parentRef": null,
+              "evidence": "You are seated inside the Rusty Lantern tavern in the town of Briar Glen."
+            }
+          ],
+          "currentRef": "rusty_lantern_tavern",
+          "currentEvidence": "You are seated inside the Rusty Lantern tavern in the town of Briar Glen."
+        }
+      },
+      "normalized": {
+        "update": {
+          "global": {
+            "Location": "Rusty Lantern tavern",
+            "Time": "Morning"
+          },
+          "player": {},
+          "characters": [
+            {
+              "name": "Mira",
+              "stats": {
+                "HP": "12/12",
+                "Armor": "10",
+                "Strength": "10",
+                "Dexterity": "10",
+                "Constitution": "10",
+                "Intelligence": "10",
+                "Wisdom": "10",
+                "Charisma": "10",
+                "Condition": "Healthy",
+                "Currency": "0",
+                "XP": "0/100",
+                "Level": "1"
+              },
+              "collections": {
+                "equipment": {
+                  "add": [
+                    {
+                      "name": "None",
+                      "quantity": 1,
+                      "description": ""
+                    }
+                  ]
+                },
+                "abilities": {
+                  "add": []
+                }
+              }
+            }
+          ],
+          "locations": {
+            "places": [
+              {
+                "ref": "rusty_lantern_tavern",
+                "name": "Rusty Lantern tavern",
+                "aliases": [],
+                "description": "A tavern in the town of Briar Glen, featuring copper lamps hanging above oak tables.",
+                "parentRef": null,
+                "evidence": "You are seated inside the Rusty Lantern tavern in the town of Briar Glen."
+              },
+              {
+                "ref": "briar_glen",
+                "name": "Briar Glen",
+                "aliases": [],
+                "description": "A town.",
+                "parentRef": null,
+                "evidence": "You are seated inside the Rusty Lantern tavern in the town of Briar Glen."
+              }
+            ],
+            "currentRef": "rusty_lantern_tavern",
+            "currentEvidence": "You are seated inside the Rusty Lantern tavern in the town of Briar Glen."
+          }
+        },
+        "progression": null,
+        "holdings": {
+          "player": {
+            "stats": {
+              "HP": "12/12",
+              "Armor": "10",
+              "Strength": "10",
+              "Dexterity": "10",
+              "Constitution": "10",
+              "Intelligence": "10",
+              "Wisdom": "10",
+              "Charisma": "10",
+              "Condition": "Healthy",
+              "Currency": "0",
+              "XP": "0/100",
+              "Level": "1"
+            },
+            "collections": {
+              "equipment": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "Mira",
+              "npcTemplateId": "character",
+              "collections": {
+                "equipment": [
+                  {
+                    "name": "None",
+                    "quantity": 1,
+                    "description": ""
+                  }
+                ],
+                "abilities": []
+              }
+            }
+          ]
+        },
+        "warnings": [
+          "Ignored Rusty Lantern tavern: The parent reference must be text.",
+          "Ignored Briar Glen: The parent reference must be text.",
+          "Ignored the current place: its reference does not exist."
+        ],
+        "places": []
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "validJsonAndNotTruncated",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "placeCreated Rusty Lantern",
+          "critical": true,
+          "passed": false
+        },
+        {
+          "name": "currentPlace Rusty Lantern",
+          "critical": true,
+          "passed": false
+        },
+        {
+          "name": "worldContains Location Rusty Lantern",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "npcPresent Mira",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "noXp ",
+          "critical": true,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "fantasy-battle",
+      "system": "fantasy",
+      "holdout": false,
+      "repeat": 1,
+      "elapsedMs": 7051,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 660,
+        "prompt_tokens": 4991,
+        "total_tokens": 5651,
+        "prompt_tokens_details": {
+          "cached_tokens": 4986
+        }
+      },
+      "content": "```json\n{\n  \"player\": {\n    \"deltas\": {\n      \"HP\": -3,\n      \"XP\": 20\n    },\n    \"collections\": {\n      \"equipment\": {\n        \"add\": [\n          {\n            \"name\": \"red healing potions\",\n            \"quantity\": 2,\n            \"description\": \"a small glass bottle that restores health\"\n          }\n        ]\n      }\n    }\n  },\n  \"characters\": [\n    {\n      \"name\": \"Mira\"\n    }\n  ]\n}\n```",
+      "parsed": {
+        "player": {
+          "deltas": {
+            "HP": -3,
+            "XP": 20
+          },
+          "collections": {
+            "equipment": {
+              "add": [
+                {
+                  "name": "red healing potions",
+                  "quantity": 2,
+                  "description": "a small glass bottle that restores health"
+                }
+              ]
+            }
+          }
+        },
+        "characters": [
+          {
+            "name": "Mira"
+          }
+        ]
+      },
+      "normalized": {
+        "update": {
+          "player": {
+            "collections": {
+              "equipment": {
+                "add": [
+                  {
+                    "name": "red healing potions",
+                    "quantity": 2,
+                    "description": "a small glass bottle that restores health"
+                  }
+                ]
+              }
+            },
+            "HP": "9/12",
+            "XP": "110/100"
+          },
+          "characters": [
+            {
+              "name": "Mira"
+            }
+          ],
+          "global": {}
+        },
+        "progression": {
+          "xp": "10/100",
+          "level": "2",
+          "levelsGained": 1
+        },
+        "holdings": {
+          "player": {
+            "stats": {
+              "HP": "12/12",
+              "Armor": "10",
+              "Strength": "10",
+              "Dexterity": "10",
+              "Constitution": "10",
+              "Intelligence": "10",
+              "Wisdom": "10",
+              "Charisma": "10",
+              "Condition": "Healthy",
+              "Currency": "0",
+              "XP": "90/100",
+              "Level": "1"
+            },
+            "collections": {
+              "equipment": [
+                {
+                  "name": "red healing potions",
+                  "quantity": 2,
+                  "description": "a small glass bottle that restores health"
+                }
+              ],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "Mira",
+              "npcTemplateId": "character",
+              "stats": {
+                "HP": "12/12",
+                "Armor": "10",
+                "Strength": "10",
+                "Dexterity": "10",
+                "Constitution": "10",
+                "Intelligence": "10",
+                "Wisdom": "10",
+                "Charisma": "10",
+                "Condition": "Healthy",
+                "Currency": "0",
+                "XP": "0/100",
+                "Level": "1"
+              },
+              "collections": {}
+            }
+          ]
+        },
+        "warnings": [],
+        "places": []
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "validJsonAndNotTruncated",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "playerValue HP 9/12",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "playerValue XP 110/100",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "itemAdd equipment red healing potion 2",
+          "critical": false,
+          "passed": false
+        },
+        {
+          "name": "npcPresent Mira",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "noMovement ",
+          "critical": true,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "fantasy-travel",
+      "system": "fantasy",
+      "holdout": false,
+      "repeat": 1,
+      "elapsedMs": 11683,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 1170,
+        "prompt_tokens": 4991,
+        "total_tokens": 6161,
+        "prompt_tokens_details": {
+          "cached_tokens": 4986
+        }
+      },
+      "content": "```json\n{\n  \"global\": {\n    \"Location\": \"Old Mill\"\n  },\n  \"player\": {\n    \"deltas\": {\n      \"HP\": 2\n    },\n    \"collections\": {\n      \"equipment\": {\n        \"update\": [\n          {\n            \"name\": \"red healing potion\",\n            \"quantity\": 2\n          }\n        ]\n      }\n    }\n  },\n  \"characters\": [\n    {\n      \"name\": \"Mira\",\n      \"stats\": {\n        \"HP\": \"12/12\",\n        \"Armor\": \"10\",\n        \"Strength\": \"10\",\n        \"Dexterity\": \"10\",\n        \"Constitution\": \"10\",\n        \"Intelligence\": \"10\",\n        \"Wisdom\": \"10\",\n        \"Charisma\": \"10\",\n        \"Condition\": \"Healthy\",\n        \"Currency\": \"0\",\n        \"XP\": \"0/100\",\n        \"Level\": \"1\"\n      },\n      \"collections\": {\n        \"equipment\": {},\n        \"abilities\": {}\n      }\n    }\n  ],\n  \"locations\": {\n    \"places\": [\n      {\n        \"ref\": \"old_mill_1\",\n        \"name\": \"Old Mill\",\n        \"aliases\": [],\n        \"description\": \"Broken wooden gears cover the dusty floor.\",\n        \"parentRef\": null,\n        \"evidence\": \"arrives inside the Old Mill\"\n      },\n      {\n        \"ref\": \"rusty_lantern_1\",\n        \"name\": \"Rusty Lantern\",\n        \"aliases\": [],\n        \"description\": \"The current location where the party was before moving to the Old Mill.\",\n        \"parentRef\": null,\n        \"evidence\": \"Alex leaves the Rusty Lantern\"\n      }\n    ],\n    \"currentRef\": \"old_mill_1\",\n    \"currentEvidence\": \"arrives inside the Old Mill\"\n  }\n}\n```",
+      "parsed": {
+        "global": {
+          "Location": "Old Mill"
+        },
+        "player": {
+          "deltas": {
+            "HP": 2
+          },
+          "collections": {
+            "equipment": {
+              "update": [
+                {
+                  "name": "red healing potion",
+                  "quantity": 2
+                }
+              ]
+            }
+          }
+        },
+        "characters": [
+          {
+            "name": "Mira",
+            "stats": {
+              "HP": "12/12",
+              "Armor": "10",
+              "Strength": "10",
+              "Dexterity": "10",
+              "Constitution": "10",
+              "Intelligence": "10",
+              "Wisdom": "10",
+              "Charisma": "10",
+              "Condition": "Healthy",
+              "Currency": "0",
+              "XP": "0/100",
+              "Level": "1"
+            },
+            "collections": {
+              "equipment": {},
+              "abilities": {}
+            }
+          }
+        ],
+        "locations": {
+          "places": [
+            {
+              "ref": "old_mill_1",
+              "name": "Old Mill",
+              "aliases": [],
+              "description": "Broken wooden gears cover the dusty floor.",
+              "parentRef": null,
+              "evidence": "arrives inside the Old Mill"
+            },
+            {
+              "ref": "rusty_lantern_1",
+              "name": "Rusty Lantern",
+              "aliases": [],
+              "description": "The current location where the party was before moving to the Old Mill.",
+              "parentRef": null,
+              "evidence": "Alex leaves the Rusty Lantern"
+            }
+          ],
+          "currentRef": "old_mill_1",
+          "currentEvidence": "arrives inside the Old Mill"
+        }
+      },
+      "normalized": {
+        "update": {
+          "global": {
+            "Location": "Old Mill"
+          },
+          "player": {
+            "collections": {
+              "equipment": {
+                "update": [
+                  {
+                    "name": "red healing potion",
+                    "quantity": 2
+                  }
+                ]
+              }
+            },
+            "HP": "9/12"
+          },
+          "characters": [
+            {
+              "name": "Mira",
+              "stats": {
+                "HP": "12/12",
+                "Armor": "10",
+                "Strength": "10",
+                "Dexterity": "10",
+                "Constitution": "10",
+                "Intelligence": "10",
+                "Wisdom": "10",
+                "Charisma": "10",
+                "Condition": "Healthy",
+                "Currency": "0"
+              },
+              "collections": {
+                "equipment": {},
+                "abilities": {}
+              }
+            }
+          ],
+          "locations": {
+            "places": [
+              {
+                "ref": "old_mill_1",
+                "name": "Old Mill",
+                "aliases": [],
+                "description": "Broken wooden gears cover the dusty floor.",
+                "parentRef": null,
+                "evidence": "arrives inside the Old Mill"
+              },
+              {
+                "ref": "rusty_lantern_1",
+                "name": "Rusty Lantern",
+                "aliases": [],
+                "description": "The current location where the party was before moving to the Old Mill.",
+                "parentRef": null,
+                "evidence": "Alex leaves the Rusty Lantern"
+              }
+            ],
+            "currentRef": "old_mill_1",
+            "currentEvidence": "arrives inside the Old Mill"
+          }
+        },
+        "progression": null,
+        "holdings": {
+          "player": {
+            "stats": {
+              "HP": "7/12",
+              "Armor": "10",
+              "Strength": "10",
+              "Dexterity": "10",
+              "Constitution": "10",
+              "Intelligence": "10",
+              "Wisdom": "10",
+              "Charisma": "10",
+              "Condition": "Healthy",
+              "Currency": "0",
+              "XP": "0/100",
+              "Level": "1"
+            },
+            "collections": {
+              "equipment": [
+                {
+                  "name": "red healing potion",
+                  "quantity": 3,
+                  "description": ""
+                }
+              ],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "Mira",
+              "npcTemplateId": "character",
+              "stats": {
+                "HP": "12/12",
+                "Armor": "10",
+                "Strength": "10",
+                "Dexterity": "10",
+                "Constitution": "10",
+                "Intelligence": "10",
+                "Wisdom": "10",
+                "Charisma": "10",
+                "Condition": "Healthy",
+                "Currency": "0",
+                "XP": "0/100",
+                "Level": "1"
+              },
+              "collections": {
+                "equipment": [],
+                "abilities": []
+              }
+            }
+          ]
+        },
+        "warnings": [
+          "Mira · XP: \"0/100\" skipped: earned XP must be reported as a positive delta.",
+          "Mira · Level: \"1\" skipped: Level is managed by XP progression.",
+          "Ignored Old Mill: The parent reference must be text.",
+          "Ignored Rusty Lantern: The parent reference must be text.",
+          "Ignored the current place: its reference does not exist."
+        ],
+        "places": []
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "validJsonAndNotTruncated",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "placeCreated Old Mill",
+          "critical": true,
+          "passed": false
+        },
+        {
+          "name": "currentPlace Old Mill",
+          "critical": true,
+          "passed": false
+        },
+        {
+          "name": "playerValue HP 9/12",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "itemRemove equipment red healing potion 1",
+          "critical": false,
+          "passed": false
+        },
+        {
+          "name": "npcPresent Mira",
+          "critical": false,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "fantasy-rumour",
+      "system": "fantasy",
+      "holdout": false,
+      "repeat": 1,
+      "elapsedMs": 311,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 17,
+        "prompt_tokens": 5001,
+        "total_tokens": 5018,
+        "prompt_tokens_details": {
+          "cached_tokens": 4996
+        }
+      },
+      "content": "{\"global\":{},\"player\":{},\"characters\":[{\"name\":\"Mira\"}]}",
+      "parsed": {
+        "global": {},
+        "player": {},
+        "characters": [
+          {
+            "name": "Mira"
+          }
+        ]
+      },
+      "normalized": {
+        "update": {
+          "global": {},
+          "player": {},
+          "characters": [
+            {
+              "name": "Mira"
+            }
+          ]
+        },
+        "progression": null,
+        "holdings": {
+          "player": {
+            "stats": {
+              "HP": "12/12",
+              "Armor": "10",
+              "Strength": "10",
+              "Dexterity": "10",
+              "Constitution": "10",
+              "Intelligence": "10",
+              "Wisdom": "10",
+              "Charisma": "10",
+              "Condition": "Healthy",
+              "Currency": "0",
+              "XP": "0/100",
+              "Level": "1"
+            },
+            "collections": {
+              "equipment": [
+                {
+                  "name": "red healing potion",
+                  "quantity": 3
+                }
+              ],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "Mira",
+              "npcTemplateId": "character",
+              "stats": {
+                "HP": "12/12",
+                "Armor": "10",
+                "Strength": "10",
+                "Dexterity": "10",
+                "Constitution": "10",
+                "Intelligence": "10",
+                "Wisdom": "10",
+                "Charisma": "10",
+                "Condition": "Healthy",
+                "Currency": "0",
+                "XP": "0/100",
+                "Level": "1"
+              },
+              "collections": {}
+            }
+          ]
+        },
+        "warnings": [],
+        "places": []
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "validJsonAndNotTruncated",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "noMovement ",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "noPlaceCreated Old Mill",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "noInventoryChanges ",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "noXp ",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "npcPresent Mira",
+          "critical": false,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "dating-opening",
+      "system": "dating",
+      "holdout": false,
+      "repeat": 1,
+      "elapsedMs": 10903,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 1119,
+        "prompt_tokens": 3134,
+        "total_tokens": 4253,
+        "prompt_tokens_details": {
+          "cached_tokens": 2616
+        }
+      },
+      "content": "```json\n{\n  \"global\": {\n    \"Location\": \"Moonbeam Café in the Riverside district\",\n    \"Day and Time\": \"Saturday afternoon\"\n  },\n  \"player\": {},\n  \"characters\": [\n    {\n      \"name\": \"June\",\n      \"stats\": {\n        \"Mood\": \"Neutral\",\n        \"Affection\": 0,\n        \"Trust\": 0,\n        \"Comfort\": 0,\n        \"Relationship\": \"Stranger\"\n      },\n      \"collections\": {}\n    }\n  ],\n  \"locations\": {\n    \"places\": [\n      {\n        \"ref\": \"MoonbeamCaféRiverside\",\n        \"name\": \"Moonbeam Café\",\n        \"aliases\": [],\n        \"description\": \"A café with blue tile lines on the counter, situated in the Riverside district, with rain tapping on the tall windows.\",\n        \"parentRef\": null,\n        \"evidence\": \"You sit inside Moonbeam Café in the Riverside district.\"\n      }\n    ],\n    \"currentRef\": \"MoonbeamCaféRiverside\",\n    \"currentEvidence\": \"You sit inside Moonbeam Café in the Riverside district.\"\n  }\n}\n```",
+      "parsed": {
+        "global": {
+          "Location": "Moonbeam Café in the Riverside district",
+          "Day and Time": "Saturday afternoon"
+        },
+        "player": {},
+        "characters": [
+          {
+            "name": "June",
+            "stats": {
+              "Mood": "Neutral",
+              "Affection": 0,
+              "Trust": 0,
+              "Comfort": 0,
+              "Relationship": "Stranger"
+            },
+            "collections": {}
+          }
+        ],
+        "locations": {
+          "places": [
+            {
+              "ref": "MoonbeamCaféRiverside",
+              "name": "Moonbeam Café",
+              "aliases": [],
+              "description": "A café with blue tile lines on the counter, situated in the Riverside district, with rain tapping on the tall windows.",
+              "parentRef": null,
+              "evidence": "You sit inside Moonbeam Café in the Riverside district."
+            }
+          ],
+          "currentRef": "MoonbeamCaféRiverside",
+          "currentEvidence": "You sit inside Moonbeam Café in the Riverside district."
+        }
+      },
+      "normalized": {
+        "update": {
+          "global": {
+            "Location": "Moonbeam Café in the Riverside district",
+            "Day and Time": "Saturday afternoon"
+          },
+          "player": {},
+          "characters": [
+            {
+              "name": "June",
+              "stats": {
+                "Mood": "Neutral",
+                "Affection": "0/100",
+                "Trust": "0/100",
+                "Comfort": "0/100",
+                "Relationship": "Stranger"
+              },
+              "collections": {}
+            }
+          ],
+          "locations": {
+            "places": [
+              {
+                "ref": "MoonbeamCaféRiverside",
+                "name": "Moonbeam Café",
+                "aliases": [],
+                "description": "A café with blue tile lines on the counter, situated in the Riverside district, with rain tapping on the tall windows.",
+                "parentRef": null,
+                "evidence": "You sit inside Moonbeam Café in the Riverside district."
+              }
+            ],
+            "currentRef": "MoonbeamCaféRiverside",
+            "currentEvidence": "You sit inside Moonbeam Café in the Riverside district."
+          }
+        },
+        "progression": null,
+        "holdings": {
+          "player": {
+            "stats": {
+              "Social Energy": "10/10",
+              "Mood": "Neutral"
+            },
+            "collections": {
+              "items": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "June",
+              "npcTemplateId": "character",
+              "collections": {}
+            }
+          ]
+        },
+        "warnings": [
+          "Ignored Moonbeam Café: The parent reference must be text.",
+          "Ignored the current place: its reference does not exist."
+        ],
+        "places": []
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "validJsonAndNotTruncated",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "placeCreated Moonbeam Café",
+          "critical": true,
+          "passed": false
+        },
+        {
+          "name": "currentPlace Moonbeam Café",
+          "critical": true,
+          "passed": false
+        },
+        {
+          "name": "worldContains Location Moonbeam",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "npcPresent June",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "noInventoryChanges ",
+          "critical": true,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "dating-gift",
+      "system": "dating",
+      "holdout": false,
+      "repeat": 1,
+      "elapsedMs": 12164,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 1249,
+        "prompt_tokens": 3250,
+        "total_tokens": 4499,
+        "prompt_tokens_details": {
+          "cached_tokens": 3245
+        }
+      },
+      "content": "```json\n{\n  \"player\": {\n    \"deltas\": {\n      \"Social Energy\": -2\n    },\n    \"Mood\": \"Happy\",\n    \"collections\": {\n      \"items\": {\n        \"update\": [\n          {\n            \"name\": \"sunflower\",\n            \"quantity\": 2\n          }\n        ]\n      }\n    }\n  },\n  \"characters\": [\n    {\n      \"name\": \"June\",\n      \"deltas\": {\n        \"Affection\": 5\n      },\n      \"collections\": {\n        \"items\": {\n          \"add\": [\n            {\n              \"name\": \"sunflower\",\n              \"quantity\": 1\n            }\n          ]\n        }\n      }\n    }\n  ]\n}\n```",
+      "parsed": {
+        "player": {
+          "deltas": {
+            "Social Energy": -2
+          },
+          "Mood": "Happy",
+          "collections": {
+            "items": {
+              "update": [
+                {
+                  "name": "sunflower",
+                  "quantity": 2
+                }
+              ]
+            }
+          }
+        },
+        "characters": [
+          {
+            "name": "June",
+            "deltas": {
+              "Affection": 5
+            },
+            "collections": {
+              "items": {
+                "add": [
+                  {
+                    "name": "sunflower",
+                    "quantity": 1
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "normalized": {
+        "update": {
+          "player": {
+            "Mood": "Happy",
+            "collections": {
+              "items": {
+                "update": [
+                  {
+                    "name": "sunflower",
+                    "quantity": 2
+                  }
+                ]
+              }
+            },
+            "Social Energy": "8/10"
+          },
+          "characters": [
+            {
+              "name": "June",
+              "collections": {
+                "items": {
+                  "add": [
+                    {
+                      "name": "sunflower",
+                      "quantity": 1
+                    }
+                  ]
+                }
+              },
+              "Affection": "20"
+            }
+          ],
+          "global": {}
+        },
+        "progression": null,
+        "holdings": {
+          "player": {
+            "stats": {
+              "Social Energy": "10/10",
+              "Mood": "Neutral"
+            },
+            "collections": {
+              "items": [
+                {
+                  "name": "sunflower",
+                  "quantity": 3,
+                  "description": ""
+                }
+              ],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "June",
+              "npcTemplateId": "character",
+              "stats": {
+                "Mood": "Neutral",
+                "Affection": "15",
+                "Trust": "10",
+                "Comfort": "20",
+                "Relationship": "Friends"
+              },
+              "collections": {
+                "items": [
+                  {
+                    "name": "sunflower",
+                    "quantity": 1,
+                    "description": ""
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "warnings": [],
+        "places": []
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "validJsonAndNotTruncated",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "itemRemove items sunflower 1",
+          "critical": false,
+          "passed": false
+        },
+        {
+          "name": "npcItemAdd June items sunflower 1",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "playerValue Social Energy 8/10",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "npcIncreased June Affection",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "noMovement ",
+          "critical": true,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "dating-travel",
+      "system": "dating",
+      "holdout": false,
+      "repeat": 1,
+      "elapsedMs": 11188,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 1138,
+        "prompt_tokens": 3265,
+        "total_tokens": 4403,
+        "prompt_tokens_details": {
+          "cached_tokens": 3260
+        }
+      },
+      "content": "```json\n{\n  \"global\": {\n    \"Location\": \"Glasshouse conservatory\"\n  },\n  \"player\": {\n    \"collections\": {\n      \"clothing\": {\n        \"remove\": [\n          \"blue wool scarf\"\n        ]\n      }\n    }\n  },\n  \"characters\": [\n    {\n      \"name\": \"June\"\n    }\n  ],\n  \"locations\": {\n    \"places\": [\n      {\n        \"ref\": \"Moonbeam Café\",\n        \"name\": \"Moonbeam Café\",\n        \"aliases\": [\n          \"Moonbeam Café\"\n        ],\n        \"description\": \"A café, location of the initial scene.\",\n        \"parentRef\": null,\n        \"evidence\": \"Alex and June leave Moonbeam Café\"\n      },\n      {\n        \"ref\": \"Glasshouse_conservatory_1\",\n        \"name\": \"Glasshouse conservatory\",\n        \"aliases\": [\n          \"Glasshouse conservatory\"\n        ],\n        \"description\": \"A conservatory featuring ferns surrounding a stone fountain beneath a glass roof.\",\n        \"parentRef\": null,\n        \"evidence\": \"arrive inside the Glasshouse conservatory\"\n      }\n    ],\n    \"currentRef\": \"Glasshouse_conservatory_1\",\n    \"currentEvidence\": \"arrive inside the Glasshouse conservatory\"\n  }\n}\n```",
+      "parsed": {
+        "global": {
+          "Location": "Glasshouse conservatory"
+        },
+        "player": {
+          "collections": {
+            "clothing": {
+              "remove": [
+                "blue wool scarf"
+              ]
+            }
+          }
+        },
+        "characters": [
+          {
+            "name": "June"
+          }
+        ],
+        "locations": {
+          "places": [
+            {
+              "ref": "Moonbeam Café",
+              "name": "Moonbeam Café",
+              "aliases": [
+                "Moonbeam Café"
+              ],
+              "description": "A café, location of the initial scene.",
+              "parentRef": null,
+              "evidence": "Alex and June leave Moonbeam Café"
+            },
+            {
+              "ref": "Glasshouse_conservatory_1",
+              "name": "Glasshouse conservatory",
+              "aliases": [
+                "Glasshouse conservatory"
+              ],
+              "description": "A conservatory featuring ferns surrounding a stone fountain beneath a glass roof.",
+              "parentRef": null,
+              "evidence": "arrive inside the Glasshouse conservatory"
+            }
+          ],
+          "currentRef": "Glasshouse_conservatory_1",
+          "currentEvidence": "arrive inside the Glasshouse conservatory"
+        }
+      },
+      "normalized": {
+        "update": {
+          "global": {
+            "Location": "Glasshouse conservatory"
+          },
+          "player": {
+            "collections": {
+              "clothing": {
+                "remove": [
+                  "blue wool scarf"
+                ]
+              }
+            }
+          },
+          "characters": [
+            {
+              "name": "June"
+            }
+          ],
+          "locations": {
+            "places": [
+              {
+                "ref": "Moonbeam Café",
+                "name": "Moonbeam Café",
+                "aliases": [
+                  "Moonbeam Café"
+                ],
+                "description": "A café, location of the initial scene.",
+                "parentRef": null,
+                "evidence": "Alex and June leave Moonbeam Café"
+              },
+              {
+                "ref": "Glasshouse_conservatory_1",
+                "name": "Glasshouse conservatory",
+                "aliases": [
+                  "Glasshouse conservatory"
+                ],
+                "description": "A conservatory featuring ferns surrounding a stone fountain beneath a glass roof.",
+                "parentRef": null,
+                "evidence": "arrive inside the Glasshouse conservatory"
+              }
+            ],
+            "currentRef": "Glasshouse_conservatory_1",
+            "currentEvidence": "arrive inside the Glasshouse conservatory"
+          }
+        },
+        "progression": null,
+        "holdings": {
+          "player": {
+            "stats": {
+              "Social Energy": "10/10",
+              "Mood": "Neutral"
+            },
+            "collections": {
+              "items": [],
+              "clothing": [
+                {
+                  "name": "white shirt",
+                  "color": "white",
+                  "slot": "shirt"
+                }
+              ]
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "June",
+              "npcTemplateId": "character",
+              "stats": {
+                "Mood": "Neutral",
+                "Affection": "15",
+                "Trust": "10",
+                "Comfort": "20",
+                "Relationship": "Friends"
+              },
+              "collections": {}
+            }
+          ]
+        },
+        "warnings": [
+          "Ignored Moonbeam Café: The parent reference must be text.",
+          "Ignored Glasshouse conservatory: The parent reference must be text.",
+          "Ignored the current place: its reference does not exist."
+        ],
+        "places": []
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "validJsonAndNotTruncated",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "placeCreated Glasshouse",
+          "critical": true,
+          "passed": false
+        },
+        {
+          "name": "currentPlace Glasshouse",
+          "critical": true,
+          "passed": false
+        },
+        {
+          "name": "itemRemove clothing blue wool scarf",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "notRemoved clothing white shirt",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "relationshipUnchanged June",
+          "critical": true,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "dating-plan",
+      "system": "dating",
+      "holdout": false,
+      "repeat": 1,
+      "elapsedMs": 6746,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 669,
+        "prompt_tokens": 3257,
+        "total_tokens": 3926,
+        "prompt_tokens_details": {
+          "cached_tokens": 3252
+        }
+      },
+      "content": "```json\n{\n  \"global\": {},\n  \"player\": {},\n  \"characters\": [\n    {\n      \"name\": \"June\"\n    }\n  ]\n}\n```",
+      "parsed": {
+        "global": {},
+        "player": {},
+        "characters": [
+          {
+            "name": "June"
+          }
+        ]
+      },
+      "normalized": {
+        "update": {
+          "global": {},
+          "player": {},
+          "characters": [
+            {
+              "name": "June"
+            }
+          ]
+        },
+        "progression": null,
+        "holdings": {
+          "player": {
+            "stats": {
+              "Social Energy": "10/10",
+              "Mood": "Neutral"
+            },
+            "collections": {
+              "items": [
+                {
+                  "name": "concert ticket",
+                  "quantity": 2
+                }
+              ],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "June",
+              "npcTemplateId": "character",
+              "stats": {
+                "Mood": "Neutral",
+                "Affection": "15",
+                "Trust": "10",
+                "Comfort": "20",
+                "Relationship": "Friends"
+              },
+              "collections": {}
+            }
+          ]
+        },
+        "warnings": [],
+        "places": []
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "validJsonAndNotTruncated",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "noMovement ",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "noPlaceCreated Glasshouse",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "noInventoryChanges ",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "relationshipUnchanged June",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "npcPresent June",
+          "critical": false,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "fantasy-holdout-opening",
+      "system": "fantasy",
+      "holdout": true,
+      "repeat": 1,
+      "elapsedMs": 12551,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 1076,
+        "prompt_tokens": 4819,
+        "total_tokens": 5895,
+        "prompt_tokens_details": {
+          "cached_tokens": 557
+        }
+      },
+      "content": "```json\n{\n  \"global\": {\n    \"Location\": \"Emberwatch Keep, a fortress in Ashvale\",\n    \"Time\": \"Dusk\"\n  },\n  \"player\": {},\n  \"characters\": [\n    {\n      \"name\": \"Captain Rowan\",\n      \"stats\": {\n        \"HP\": \"12/12\",\n        \"Armor\": \"10\",\n        \"Strength\": \"10\",\n        \"Dexterity\": \"10\",\n        \"Constitution\": \"10\",\n        \"Intelligence\": \"10\",\n        \"Wisdom\": \"10\",\n        \"Charisma\": \"10\",\n        \"Condition\": \"Healthy\",\n        \"Currency\": \"0\",\n        \"XP\": \"0/100\",\n        \"Level\": \"1\"\n      },\n      \"collections\": {\n        \"equipment\": {\n          \"add\": []\n        },\n        \"abilities\": {\n          \"add\": []\n        }\n      }\n    }\n  ],\n  \"locations\": {\n    \"currentRef\": \"Emberwatch Keep\",\n    \"currentEvidence\": \"Alex stands inside Emberwatch Keep, a fortress in Ashvale.\",\n    \"places\": [\n      {\n        \"ref\": \"Emberwatch Keep\",\n        \"name\": \"Emberwatch Keep\",\n        \"aliases\": [],\n        \"description\": \"A fortress in Ashvale with a cracked stone hearth in the guardroom.\",\n        \"parentRef\": null,\n        \"evidence\": \"Alex stands inside Emberwatch Keep, a fortress in Ashvale.\"\n      }\n    ]\n  }\n}\n```",
+      "parsed": {
+        "global": {
+          "Location": "Emberwatch Keep, a fortress in Ashvale",
+          "Time": "Dusk"
+        },
+        "player": {},
+        "characters": [
+          {
+            "name": "Captain Rowan",
+            "stats": {
+              "HP": "12/12",
+              "Armor": "10",
+              "Strength": "10",
+              "Dexterity": "10",
+              "Constitution": "10",
+              "Intelligence": "10",
+              "Wisdom": "10",
+              "Charisma": "10",
+              "Condition": "Healthy",
+              "Currency": "0",
+              "XP": "0/100",
+              "Level": "1"
+            },
+            "collections": {
+              "equipment": {
+                "add": []
+              },
+              "abilities": {
+                "add": []
+              }
+            }
+          }
+        ],
+        "locations": {
+          "currentRef": "Emberwatch Keep",
+          "currentEvidence": "Alex stands inside Emberwatch Keep, a fortress in Ashvale.",
+          "places": [
+            {
+              "ref": "Emberwatch Keep",
+              "name": "Emberwatch Keep",
+              "aliases": [],
+              "description": "A fortress in Ashvale with a cracked stone hearth in the guardroom.",
+              "parentRef": null,
+              "evidence": "Alex stands inside Emberwatch Keep, a fortress in Ashvale."
+            }
+          ]
+        }
+      },
+      "normalized": {
+        "update": {
+          "global": {
+            "Location": "Emberwatch Keep, a fortress in Ashvale",
+            "Time": "Dusk"
+          },
+          "player": {},
+          "characters": [
+            {
+              "name": "Captain Rowan",
+              "stats": {
+                "HP": "12/12",
+                "Armor": "10",
+                "Strength": "10",
+                "Dexterity": "10",
+                "Constitution": "10",
+                "Intelligence": "10",
+                "Wisdom": "10",
+                "Charisma": "10",
+                "Condition": "Healthy",
+                "Currency": "0",
+                "XP": "0/100",
+                "Level": "1"
+              },
+              "collections": {
+                "equipment": {
+                  "add": []
+                },
+                "abilities": {
+                  "add": []
+                }
+              }
+            }
+          ],
+          "locations": {
+            "currentRef": "Emberwatch Keep",
+            "currentEvidence": "Alex stands inside Emberwatch Keep, a fortress in Ashvale.",
+            "places": [
+              {
+                "ref": "Emberwatch Keep",
+                "name": "Emberwatch Keep",
+                "aliases": [],
+                "description": "A fortress in Ashvale with a cracked stone hearth in the guardroom.",
+                "parentRef": null,
+                "evidence": "Alex stands inside Emberwatch Keep, a fortress in Ashvale."
+              }
+            ]
+          }
+        },
+        "progression": null,
+        "holdings": {
+          "player": {
+            "stats": {
+              "HP": "12/12",
+              "Armor": "10",
+              "Strength": "10",
+              "Dexterity": "10",
+              "Constitution": "10",
+              "Intelligence": "10",
+              "Wisdom": "10",
+              "Charisma": "10",
+              "Condition": "Healthy",
+              "Currency": "0",
+              "XP": "0/100",
+              "Level": "1"
+            },
+            "collections": {
+              "equipment": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "Captain Rowan",
+              "npcTemplateId": "character",
+              "collections": {
+                "equipment": [],
+                "abilities": []
+              }
+            }
+          ]
+        },
+        "warnings": [
+          "Ignored Emberwatch Keep: The parent reference must be text.",
+          "Ignored the current place: its reference does not exist."
+        ],
+        "places": []
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "validJsonAndNotTruncated",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "placeCreated Emberwatch Keep",
+          "critical": true,
+          "passed": false
+        },
+        {
+          "name": "currentPlace Emberwatch Keep",
+          "critical": true,
+          "passed": false
+        },
+        {
+          "name": "worldContains Location Emberwatch",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "npcPresent Rowan",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "noXp ",
+          "critical": true,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "fantasy-holdout-cost",
+      "system": "fantasy",
+      "holdout": true,
+      "repeat": 1,
+      "elapsedMs": 5999,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 599,
+        "prompt_tokens": 5004,
+        "total_tokens": 5603,
+        "prompt_tokens_details": {
+          "cached_tokens": 4999
+        }
+      },
+      "content": "```json\n{\n  \"global\": {},\n  \"player\": {},\n  \"characters\": [\n    {\n      \"name\": \"Mira\"\n    }\n  ]\n}\n```",
+      "parsed": {
+        "global": {},
+        "player": {},
+        "characters": [
+          {
+            "name": "Mira"
+          }
+        ]
+      },
+      "normalized": {
+        "update": {
+          "global": {},
+          "player": {},
+          "characters": [
+            {
+              "name": "Mira"
+            }
+          ]
+        },
+        "progression": null,
+        "holdings": {
+          "player": {
+            "stats": {
+              "HP": "12/12",
+              "Armor": "10",
+              "Strength": "10",
+              "Dexterity": "10",
+              "Constitution": "10",
+              "Intelligence": "10",
+              "Wisdom": "10",
+              "Charisma": "10",
+              "Condition": "Healthy",
+              "Currency": "0",
+              "XP": "0/100",
+              "Level": "1"
+            },
+            "collections": {
+              "equipment": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "Mira",
+              "npcTemplateId": "character",
+              "stats": {
+                "HP": "12/12",
+                "Armor": "10",
+                "Strength": "10",
+                "Dexterity": "10",
+                "Constitution": "10",
+                "Intelligence": "10",
+                "Wisdom": "10",
+                "Charisma": "10",
+                "Condition": "Healthy",
+                "Currency": "0",
+                "XP": "0/100",
+                "Level": "1"
+              },
+              "collections": {}
+            }
+          ]
+        },
+        "warnings": [],
+        "places": []
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "validJsonAndNotTruncated",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "playerValue HP 12/12",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "noInventoryChanges ",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "noXp ",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "noMovement ",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "npcPresent Mira",
+          "critical": false,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "dating-holdout-opening",
+      "system": "dating",
+      "holdout": true,
+      "repeat": 1,
+      "elapsedMs": 6529,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 670,
+        "prompt_tokens": 3126,
+        "total_tokens": 3796,
+        "prompt_tokens_details": {
+          "cached_tokens": 2617
+        }
+      },
+      "content": "```json\n{\n  \"global\": {\n    \"Location\": \"Paper Crane bookstore on Linden Street\",\n    \"Day and Time\": \"Monday morning\",\n    \"Occasion\": \"\"\n  },\n  \"player\": {},\n  \"characters\": [\n    {\n      \"name\": \"Sam\",\n      \"stats\": {\n        \"Mood\": \"Neutral\",\n        \"Affection\": 0,\n        \"Trust\": 0,\n        \"Comfort\": 0,\n        \"Relationship\": \"\"\n      },\n      \"collections\": {\n        \"clothing\": {\n          \"add\": []\n        },\n        \"items\": {\n          \"add\": []\n        }\n      }\n    }\n  ],\n  \"locations\": {\n    \"currentRef\": \"loc_paper_crane_bookstore\",\n    \"currentEvidence\": \"Alex is inside the Paper Crane bookstore on Linden Street.\",\n    \"places\": [\n      {\n        \"ref\": \"loc_paper_crane_bookstore\",\n        \"name\": \"Paper Crane bookstore\",\n        \"aliases\": [\n          \"bookstore\"\n        ],\n        \"description\": \"A used bookstore with green reading lamps lighting shelves of novels, located on Linden Street.\",\n        \"parentRef\": null,\n        \"evidence\": \"Alex is inside the Paper Crane bookstore on Linden Street.\"\n      }\n    ]\n  }\n}\n```",
+      "parsed": {
+        "global": {
+          "Location": "Paper Crane bookstore on Linden Street",
+          "Day and Time": "Monday morning",
+          "Occasion": ""
+        },
+        "player": {},
+        "characters": [
+          {
+            "name": "Sam",
+            "stats": {
+              "Mood": "Neutral",
+              "Affection": 0,
+              "Trust": 0,
+              "Comfort": 0,
+              "Relationship": ""
+            },
+            "collections": {
+              "clothing": {
+                "add": []
+              },
+              "items": {
+                "add": []
+              }
+            }
+          }
+        ],
+        "locations": {
+          "currentRef": "loc_paper_crane_bookstore",
+          "currentEvidence": "Alex is inside the Paper Crane bookstore on Linden Street.",
+          "places": [
+            {
+              "ref": "loc_paper_crane_bookstore",
+              "name": "Paper Crane bookstore",
+              "aliases": [
+                "bookstore"
+              ],
+              "description": "A used bookstore with green reading lamps lighting shelves of novels, located on Linden Street.",
+              "parentRef": null,
+              "evidence": "Alex is inside the Paper Crane bookstore on Linden Street."
+            }
+          ]
+        }
+      },
+      "normalized": {
+        "update": {
+          "global": {
+            "Location": "Paper Crane bookstore on Linden Street",
+            "Day and Time": "Monday morning",
+            "Occasion": ""
+          },
+          "player": {},
+          "characters": [
+            {
+              "name": "Sam",
+              "stats": {
+                "Mood": "Neutral",
+                "Affection": "0/100",
+                "Trust": "0/100",
+                "Comfort": "0/100",
+                "Relationship": ""
+              },
+              "collections": {
+                "clothing": {
+                  "add": []
+                },
+                "items": {
+                  "add": []
+                }
+              }
+            }
+          ],
+          "locations": {
+            "currentRef": "loc_paper_crane_bookstore",
+            "currentEvidence": "Alex is inside the Paper Crane bookstore on Linden Street.",
+            "places": [
+              {
+                "ref": "loc_paper_crane_bookstore",
+                "name": "Paper Crane bookstore",
+                "aliases": [
+                  "bookstore"
+                ],
+                "description": "A used bookstore with green reading lamps lighting shelves of novels, located on Linden Street.",
+                "parentRef": null,
+                "evidence": "Alex is inside the Paper Crane bookstore on Linden Street."
+              }
+            ]
+          }
+        },
+        "progression": null,
+        "holdings": {
+          "player": {
+            "stats": {
+              "Social Energy": "10/10",
+              "Mood": "Neutral"
+            },
+            "collections": {
+              "items": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "Sam",
+              "npcTemplateId": "character",
+              "collections": {
+                "clothing": [],
+                "items": []
+              }
+            }
+          ]
+        },
+        "warnings": [
+          "Ignored Paper Crane bookstore: The parent reference must be text.",
+          "Ignored the current place: its reference does not exist."
+        ],
+        "places": []
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "validJsonAndNotTruncated",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "placeCreated Paper Crane",
+          "critical": true,
+          "passed": false
+        },
+        {
+          "name": "currentPlace Paper Crane",
+          "critical": true,
+          "passed": false
+        },
+        {
+          "name": "worldContains Location Paper Crane",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "npcPresent Sam",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "noInventoryChanges ",
+          "critical": true,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "dating-holdout-drink",
+      "system": "dating",
+      "holdout": true,
+      "repeat": 1,
+      "elapsedMs": 7289,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 758,
+        "prompt_tokens": 3233,
+        "total_tokens": 3991,
+        "prompt_tokens_details": {
+          "cached_tokens": 3228
+        }
+      },
+      "content": "```json\n{\n  \"player\": {\n    \"deltas\": {\n      \"Social Energy\": 1\n    },\n    \"collections\": {\n      \"items\": {\n        \"remove\": [\n          {\n            \"name\": \"mint candy\",\n            \"quantity\": 2\n          }\n        ]\n      }\n    }\n  },\n  \"characters\": [\n    {\n      \"name\": \"June\",\n      \"stats\": {\n        \"Mood\": \"Neutral\",\n        \"Affection\": 15,\n        \"Trust\": 10,\n        \"Comfort\": 20,\n        \"Relationship\": \"Friends\"\n      },\n      \"collections\": {\n        \"clothing\": {\n          \"add\": []\n        },\n        \"items\": {\n          \"add\": []\n        }\n      }\n    }\n  ]\n}\n```",
+      "parsed": {
+        "player": {
+          "deltas": {
+            "Social Energy": 1
+          },
+          "collections": {
+            "items": {
+              "remove": [
+                {
+                  "name": "mint candy",
+                  "quantity": 2
+                }
+              ]
+            }
+          }
+        },
+        "characters": [
+          {
+            "name": "June",
+            "stats": {
+              "Mood": "Neutral",
+              "Affection": 15,
+              "Trust": 10,
+              "Comfort": 20,
+              "Relationship": "Friends"
+            },
+            "collections": {
+              "clothing": {
+                "add": []
+              },
+              "items": {
+                "add": []
+              }
+            }
+          }
+        ]
+      },
+      "normalized": {
+        "update": {
+          "player": {
+            "collections": {
+              "items": {
+                "remove": [
+                  {
+                    "name": "mint candy",
+                    "quantity": 2
+                  }
+                ]
+              }
+            },
+            "Social Energy": "7/10"
+          },
+          "characters": [
+            {
+              "name": "June",
+              "stats": {
+                "Mood": "Neutral",
+                "Affection": "15",
+                "Trust": "10",
+                "Comfort": "20",
+                "Relationship": "Friends"
+              },
+              "collections": {
+                "clothing": {
+                  "add": []
+                },
+                "items": {
+                  "add": []
+                }
+              }
+            }
+          ],
+          "global": {}
+        },
+        "progression": null,
+        "holdings": {
+          "player": {
+            "stats": {
+              "Social Energy": "6/10",
+              "Mood": "Neutral"
+            },
+            "collections": {
+              "items": [
+                {
+                  "name": "mint candy",
+                  "quantity": 2
+                }
+              ],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "June",
+              "npcTemplateId": "character",
+              "stats": {
+                "Mood": "Neutral",
+                "Affection": "15",
+                "Trust": "10",
+                "Comfort": "20",
+                "Relationship": "Friends"
+              },
+              "collections": {
+                "clothing": [],
+                "items": []
+              }
+            }
+          ]
+        },
+        "warnings": [],
+        "places": []
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "validJsonAndNotTruncated",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "itemRemove items mint candy 2",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "playerValue Social Energy 7/10",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "relationshipUnchanged June",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "noMovement ",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "npcPresent June",
+          "critical": false,
+          "passed": true
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "checks": 144,
+    "passed": 105,
+    "rate": 0.7291666666666666,
+    "criticalFailures": [
+      "fantasy-opening #1: placeCreated Rusty Lantern",
+      "fantasy-opening #1: currentPlace Rusty Lantern",
+      "fantasy-travel #1: validJsonAndNotTruncated",
+      "fantasy-travel #1: placeCreated Old Mill",
+      "fantasy-travel #1: currentPlace Old Mill",
+      "dating-opening #1: validJsonAndNotTruncated",
+      "dating-opening #1: placeCreated Moonbeam Café",
+      "dating-opening #1: currentPlace Moonbeam Café",
+      "dating-gift #1: validJsonAndNotTruncated",
+      "dating-travel #1: placeCreated Glasshouse",
+      "dating-travel #1: currentPlace Glasshouse",
+      "fantasy-holdout-opening #1: placeCreated Emberwatch Keep",
+      "fantasy-holdout-opening #1: currentPlace Emberwatch Keep",
+      "dating-holdout-opening #1: placeCreated Paper Crane",
+      "dating-holdout-opening #1: currentPlace Paper Crane",
+      "fantasy-opening #2: placeCreated Rusty Lantern",
+      "fantasy-opening #2: currentPlace Rusty Lantern",
+      "fantasy-travel #2: placeCreated Old Mill",
+      "fantasy-travel #2: currentPlace Old Mill",
+      "dating-opening #2: placeCreated Moonbeam Café",
+      "dating-opening #2: currentPlace Moonbeam Café",
+      "dating-travel #2: placeCreated Glasshouse",
+      "dating-travel #2: currentPlace Glasshouse",
+      "fantasy-holdout-opening #2: placeCreated Emberwatch Keep",
+      "fantasy-holdout-opening #2: currentPlace Emberwatch Keep",
+      "dating-holdout-opening #2: placeCreated Paper Crane",
+      "dating-holdout-opening #2: currentPlace Paper Crane"
+    ],
+    "systems": {
+      "fantasy": 0.75,
+      "dating": 0.7083333333333334
+    },
+    "acceptable": false
+  }
+}

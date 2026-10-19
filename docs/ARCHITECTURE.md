@@ -11,6 +11,8 @@ is no build step. [FILE_MAP.md](FILE_MAP.md) locates the implementation.
 | Reusable System rules | `extension_settings.sillynpc.statusTracker.presets` |
 | Reusable character cards and item library | Extension settings |
 | NPC instances, cast selection, active System, tracker state | Chat metadata |
+| Place cards, containment, last confirmed place | Chat-wide tracker state (`locations`) |
+| Remember Places switch | System definition (`locations.enabled`), projected into active tracker/chat state |
 | Player identity, profile, portrait, lore link | Persona record in extension settings |
 | Player stats, collections, memories | Chat and selected persona |
 | Reader proposals, accepted rows, reply-specific reward choices | Message extras and swipe records |
@@ -21,7 +23,7 @@ remain separate for each persona in the chat.
 
 System exports contain a normalized `schemaVersion: 2` rules definition, including
 shared profile and character stat catalogs, assignment targets, NPC templates, collections, progression,
-memories, and HUD selections. Runtime consumers use player and NPC projections of the shared catalogs. Imports of older Systems keep rules and discard embedded
+memories, the Places switch, and HUD selections. Runtime consumers use player and NPC projections of the shared catalogs. Imports of older Systems keep rules and discard embedded
 world characters, persona records, and item libraries. Whole-settings backups and
 character-transfer files are separate formats with different import behavior.
 
@@ -38,12 +40,29 @@ default, which preserves existing cards and edits.
 Memory lists are manually editable and bounded by the System's configured active
 limit, default 50, with older entries archived.
 
+Place records are chat-owned independently of persona; their reader/recall switch is
+a System setting, enabled by default. The existing
+tracker reader proposes evidence-backed place cards, changes, containment, and
+movement; Ask Before Applying partitions them with other tracker changes. A bounded scene context recalls the last
+confirmed place, its ancestors, and explicitly mentioned places while the tracker is
+enabled. Read-only lorebook links can seed local descriptions through an explicit
+copy action. Shared lorebooks are never rewritten by place updates. See
+[location-persistence-plan.md](location-persistence-plan.md) for the contract.
+The same request handles stats and places, including the opening greeting in automatic
+mode. An explicitly established initial scene does not require an arrival event.
+
 ## Current-turn consistency and review
 
 Latest-reply changes use a pre-turn base. Swipe, regeneration, latest-reply editing,
 and deletion replace that reply's accepted changes rather than accumulating them.
 Manual corrections and one-step undo have separate handling. Arbitrary historical
 tracker restoration, multi-entry undo, and System checkpoints are removed.
+
+Reviewed places on the latest reply join its full-state turn effects. Discoveries
+reviewed later become manual corrections; historical movement cannot change today's
+current marker. Editing a newly discovered place manually adopts its record across
+reply replacement, with missing parents detached. Choosing a System for an unplayed
+chat resets rule-owned defaults while preserving its place records.
 
 New installations apply valid reader changes automatically; saved review preferences
 remain effective. Level-derived stat growth and collection rewards remain review

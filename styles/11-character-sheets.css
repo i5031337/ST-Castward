@@ -33,6 +33,9 @@
 /* Its own class, not .sillynpc-tab: that one belongs to the popup's tab bar,
    whose handler would switch the whole panel from here. */
 .sillynpc-charview-tab {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     background: transparent;
     border: 1px solid transparent;
     border-bottom: 2px solid transparent;

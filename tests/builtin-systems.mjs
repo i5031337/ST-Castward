@@ -21,6 +21,9 @@ test('shipped Systems validate and remain independent editable copies', () => {
         assert.ok(projectSystemTracker(definition).collections.length > 0);
         assert.ok(definition.npcTemplates.length >= 1);
         assert.equal(definition.metadata.author, 'Castward');
+        assert.deepEqual(definition.locations, { enabled: true });
+        assert.equal(definition.stats.world.some(stat => stat.id === 'location' || stat.name === 'Location'), false);
+        assert.equal(definition.hud.worldStatIds.includes('location'), false);
         definition.name = 'Edited';
         assert.equal(createBuiltinSystem(choice.id).name, choice.name);
     }

@@ -31,6 +31,21 @@ test('reader deltas become absolute values without changing ceilings or innate s
     assert.equal(reply.player.deltas, undefined);
 });
 
+test('an unchanged duplicate reading does not erase a simultaneous numeric recovery delta', () => {
+    const settings = { globalStats: [], playerStats: [{ name: 'HP', type: 'number' }],
+        npcStats: [{ name: 'HP', type: 'number' }] };
+    const state = { player: { stats: { HP: '3/12' } },
+        characters: [{ name: 'Mira', stats: { HP: '4/12' } }] };
+    const update = { player: { stats: { HP: '3/12' }, deltas: { HP: 1 } },
+        characters: [{ name: 'Mira', stats: { HP: '4/12' }, deltas: { HP: 2 } }] };
+    const warnings = [];
+    expandNumericDeltas(update, state, settings, { warnings });
+    assert.equal(update.player.stats.HP, '4/12');
+    assert.equal(update.characters[0].stats.HP, '6/12');
+    assert.equal(warnings.length, 2);
+    assert.ok(warnings.every(message => message.includes('unchanged absolute reading ignored')));
+});
+
 test('reader XP uses only a positive delta when raw XP is also present', () => {
     const settings = { globalStats: [], npcStats: [], playerStats: [{ name: 'XP', type: 'number', defaultValue: '0/100' }, { name: 'Level', type: 'number', defaultValue: '1' }] };
     const state = { global: {}, characters: [], player: { stats: { XP: '90/100', Level: '1' } } };

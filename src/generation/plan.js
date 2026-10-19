@@ -69,7 +69,7 @@ export function allocatePlan(source) {
 }
 export function emptyDefinition(plan) {
     const definition = normalizeSystemDefinition({ schemaVersion: 2, id: slug(plan.name), name: plan.name,
-        metadata: { description: plan.description, author: 'Generated' }, memories: plan.memories, profiles: [],
+        metadata: { description: plan.description, author: 'Generated' }, memories: plan.memories, locations: plan.locations, profiles: [],
         stats: { world: [], character: [] }, npcTemplates: [], collections: [],
         progression: { player: disabledProgression() } });
     // Preserve template identities while catalog stages are still pending.

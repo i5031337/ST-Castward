@@ -8,6 +8,7 @@ import { getSettings } from '../../core/settings.js';
 import { getAllCharacters } from '../../characters/character-repository.js';
 import { acceptedByDefault } from '../../tracker/status-diff.js';
 import { buildPointAllocation } from './ui-point-allocation.js';
+import { buildLocationReviewRow } from '../locations/ui-location-review.js';
 
 /**
  * The inline review panel.
@@ -297,6 +298,7 @@ function buildDestination(row, rows) {
 }
 
 function buildRow(row, rows) {
+    if (row.change.scope === 'location') return buildLocationReviewRow(row, rows);
     const { change } = row;
     const el = document.createElement('div');
     el.className = `sillynpc-review-row kind-${change.kind}`;

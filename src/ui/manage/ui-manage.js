@@ -18,17 +18,24 @@ import { renderCardGrid } from './ui-manage-grid.js';
 import { renderEditor } from './ui-manage-editor.js';
 import { commitStatEdits } from './ui-manage-overrides.js';
 import { renderPlayerView } from '../characters/ui-player-sheet.js';
+import { renderLocationsView } from '../locations/ui-locations.js';
 import { exportData, importData } from './ui-manage-transfer.js';
 
 // The menu can stay open while SillyTavern changes the current chat or persona.
 // Redraw after the host has loaded the new state; do not write old fields into it.
 for (const type of [event_types.CHAT_CHANGED, event_types.PERSONA_CHANGED]) {
     eventSource.on(type, () => setTimeout(() => {
-        if (manageState.manageRoot && manageState.activeTab === 'player') renderManageView();
+        const relevant = manageState.activeTab === 'player'
+            || (manageState.activeTab === 'places' && type === event_types.CHAT_CHANGED);
+        if (manageState.manageRoot && relevant) renderManageView();
     }, 0));
 }
 export function refreshManageOnStatusUpdate(state, details) {
-    if (!manageState.manageRoot || manageState.activeTab !== 'player') return;
+    if (!manageState.manageRoot || !['player', 'places'].includes(manageState.activeTab)) return;
+    if (details?.source === 'locations-editor') return;
+    // A place draft stays open while the reader works, including after an input blurs.
+    if (manageState.activeTab === 'places'
+        && manageState.manageRoot.querySelector('#sillynpc-locations-view .sillynpc-location-form')) return;
     // Collection controls already show the saved value. Redrawing here loses scroll
     // and interrupts numeric steppers when clicking an arrow leaves focus elsewhere.
     if (details?.source === 'collection-editor') return;
@@ -267,6 +274,8 @@ export function renderManageView() {
 
     if (manageState.activeTab === 'player') {
         draw('sillynpc-player-view', renderPlayerView);
+    } else if (manageState.activeTab === 'places') {
+        draw('sillynpc-locations-view', renderLocationsView);
     } else if (manageState.activeTab === 'characters') {
         const gridView = manageState.manageRoot.querySelector('#sillynpc-grid-view');
         const editView = manageState.manageRoot.querySelector('#sillynpc-editor-view');

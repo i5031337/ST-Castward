@@ -59,7 +59,17 @@ function expand(target, values, deltas, defs, { xpName = null, levelName = null,
         const held = def && heldValue(values, def.name);
         const reject = reason => warnings.push(`${owner} · ${key} delta "${String(raw)}" skipped: ${reason}.`);
         if (!def) { reject('no configured stat matches this name'); continue; }
-        if (heldValue(target, def.name) !== undefined) { reject('the reply also provided an absolute value'); continue; }
+        const absolute = heldValue(target, def.name);
+        if (absolute !== undefined) {
+            const oldReading = readable(held), repeated = readable(absolute);
+            const unchanged = oldReading && repeated && Number(oldReading[1]) === Number(repeated[1])
+                && (oldReading[2] === undefined && repeated[2] === undefined
+                    || oldReading[2] !== undefined && repeated[2] !== undefined
+                    && Number(oldReading[2]) === Number(repeated[2]));
+            if (!unchanged) { reject('the reply also provided an absolute value'); continue; }
+            for (const name of Object.keys(target)) if (name.toLowerCase() === def.name.toLowerCase()) delete target[name];
+            warnings.push(`${owner} · ${key}: unchanged absolute reading ignored in favor of the numeric delta.`);
+        }
         if (!eligible(def, held, { xpName, levelName, enabled })) {
             reject(def.locked ? 'this stat is locked' : !readable(held)
                 ? 'there is no numeric current value to change' : 'this field is managed by progression');

@@ -31,6 +31,7 @@ const memories = { enabled: false, guidance: '', interval: 8, maxEntriesPerChara
 const fantasyActors = ['player', 'template:character'];
 
 const fantasy = {
+    locations: { enabled: true },
     schemaVersion: 2, id: 'fantasy-adventure', name: 'Fantasy Adventure',
     metadata: { description: 'Characters of every kind, quests, gear, and magic.', author: 'Castward' },
     profiles: [
@@ -45,8 +46,7 @@ const fantasy = {
             progression: progression(true, ['hp'], 1) },
     ],
     stats: {
-        world: [world('location', 'Location', 'The place where the current scene is happening.'),
-            world('time', 'Time', 'The time of day or moment in the story.'),
+        world: [world('time', 'Time', 'The time of day or moment in the story.'),
             world('quest', 'Quest', 'The objective or lead the characters are currently pursuing.')],
         character: [
             number('hp', 'HP', fantasyActors, '12/12',
@@ -93,10 +93,11 @@ const fantasy = {
     progression: { player: progression(true, ['hp'], 1) }, memories,
     hud: { layout: 'plate', showWorld: true, showNpcPortraits: true,
         playerStatIds: ['hp', 'armor', 'condition', 'level', 'xp'],
-        npcStatIds: ['hp', 'armor', 'condition', 'level'], worldStatIds: ['location', 'time', 'quest'] },
+        npcStatIds: ['hp', 'armor', 'condition', 'level'], worldStatIds: ['time', 'quest'] },
 };
 
 const dating = {
+    locations: { enabled: true },
     schemaVersion: 2, id: 'dating-sim', name: 'Dating Sim',
     metadata: { description: 'Relationships, outfits, useful items, and personal memories.', author: 'Castward' },
     profiles: [
@@ -114,7 +115,7 @@ const dating = {
             progression: progression(false) },
     ],
     stats: {
-        world: [world('location', 'Location', 'Current place.'), world('day', 'Day and Time', 'Current day and time.'),
+        world: [world('day', 'Day and Time', 'Current day and time.'),
             world('occasion', 'Occasion', 'Current event or planned date.')],
         character: [
             number('energy', 'Social Energy', ['player'], '10/10', 'Current energy for social activity.',
@@ -149,10 +150,11 @@ const dating = {
         guidance: 'Keep meaningful shared experiences and changes in relationships as personal memories.' },
     hud: { layout: 'underline', showWorld: true, showNpcPortraits: true,
         playerStatIds: ['energy', 'mood'], npcStatIds: ['affection', 'trust', 'mood', 'relationship'],
-        worldStatIds: ['location', 'day', 'occasion'] },
+        worldStatIds: ['day', 'occasion'] },
 };
 
 const creature = {
+    locations: { enabled: true },
     schemaVersion: 2, id: 'creature-trainer', name: 'Creature Trainer',
     metadata: { description: 'Trainers, creatures, moves, teams, items, and growing stats.', author: 'Castward' },
     profiles: [
@@ -171,7 +173,7 @@ const creature = {
             progression: progression(true, ['hp', 'attack', 'defense', 'special_attack', 'special_defense', 'speed'], 2) },
     ],
     stats: {
-        world: [world('region', 'Region', 'Current region.'), world('location', 'Location', 'Current place.'),
+        world: [world('region', 'Region', 'Current region.'),
             world('objective', 'Objective', 'Current training or travel goal.')],
         character: [
             number('hp', 'HP', ['template:creature'], '10/10', 'Current and maximum HP; the pool can grow on level-up.',
@@ -207,7 +209,7 @@ const creature = {
     progression: { player: progression(false) }, memories,
     hud: { layout: 'pips', showWorld: true, showNpcPortraits: true,
         playerStatIds: [], npcStatIds: ['hp', 'condition', 'level', 'xp'],
-        worldStatIds: ['region', 'location', 'objective'] },
+        worldStatIds: ['region', 'objective'] },
 };
 
 const sources = { fantasy, dating, creature };

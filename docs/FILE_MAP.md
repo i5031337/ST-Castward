@@ -14,6 +14,7 @@ SillyTavern loads `index.js` and `style.css` from `manifest.json`. The JavaScrip
 | `src/chat/` | Chat ownership, message decoration, and reprocessing. |
 | `src/expressions/` | NPC sprite packs, per-line expression cache, static dialogue portraits, and full-size speech sprites. |
 | `src/lore/` | Lorebook entries and synchronization. |
+| `src/locations/` | Chat-owned place identities, containment, reviewed discoveries, bounded recall, and read-only lore references. |
 | `src/story/` | Story beats, mentions, and collection scans. |
 | `src/prompts/` | Built-in prompt templates, formatting rules, and prompt placement. |
 | `src/tracker/` | Current state, progression, memories, updates, and review; `extractor/`, `snapshots/`, and `ui/` hold focused parts. |
@@ -263,6 +264,7 @@ SillyTavern loads `index.js` and `style.css` from `manifest.json`. The JavaScrip
 | `src/tracker/ui/status-ui-guards.js` | Detect tracker editing and visible message content. |
 | `src/tracker/ui/status-ui-hidden.js` | Hide raw status data in message content. |
 | `src/tracker/ui/status-ui-box.js` | Build and place tracker boxes. |
+| `src/tracker/ui/status-ui-place.js` | Render the current chat's parent-to-place trail beside world stats. |
 | `src/tracker/ui/status-ui-placement.js` | Select the latest visible prose message when image-only messages are present. |
 | `src/tracker/ui/status-ui-menu.js` | Tracker menu and add-character controls. |
 | `src/tracker/ui/status-ui-template.js` | Assemble tracker HTML. |
@@ -376,6 +378,31 @@ SillyTavern loads `index.js` and `style.css` from `manifest.json`. The JavaScrip
 | `styles/13-system-profiles.css` | System profile field Builder controls. |
 | `styles/14-memories.css` | Character memory editor and archive presentation. |
 | `styles/15-setting-help.css` | Settings help icons and popover styling. |
+
+## Persistent places
+
+| File | Responsibility |
+| --- | --- |
+| `docs/location-persistence-plan.md` | Stage-one ownership, review, context, editing, and verification contract. |
+| `src/locations/location-store.js` | Pure place normalization, stable IDs, aliases, containment validation, CRUD, current marker, and display path. |
+| `src/locations/location-proposals.js` | Evidence-backed proposals, immutable review payloads, freshness, and dependent acceptance. |
+| `src/locations/location-runtime.js` | Reader provenance, source validation, chat saves, and reviewed turn effects. |
+| `src/locations/location-context.js` | Literal mention detection, bounded narrator recall, reader directory/instructions, and output schema. |
+| `src/locations/location-lore.js` | Read-only lorebook listings and entry reads. |
+| `src/ui/locations/ui-locations.js` | Chat-scoped Places management, search, manual editing, current marker, and deletion undo. |
+| `src/ui/locations/ui-location-lore.js` | Reference linking and explicit copying into an unsaved place description. |
+| `src/ui/locations/ui-location-review.js` | Visible place identities, containment, editable descriptions, and quoted review evidence. |
+| `styles/18-locations.css` | Places editor, responsive list, and review row layout. |
+| `tests/locations-store.mjs`, `tests/location-proposals.mjs` | Pure identities, validation, evidence, dependency, and acceptance checks. |
+| `tests/location-context.mjs`, `tests/locations-ui.mjs` | Prompt/schema integration, bounded matching, editor controls, and stale-chat guards. |
+| `tests/location-runtime.mjs`, `tests/location-turns.mjs` | Mixed review orchestration, provenance, current-turn replacement, manual corrections, and System independence. |
+| `tests/ui-locations.py` | Temporary unsaved browser check of Places, review, and the in-chat tracker trail. |
+| `tests/fixtures/gemma-tracker-scenarios.mjs`, `tests/fixtures/gemma-tracker-harness.mjs` | Pre-registered Fantasy/Dating tracker cases and production prompt, sanitizer, collection, progression, and place-review harness. |
+| `tests/fixtures/gemma-tracker-natural-scenarios.mjs`, `tests/gemma-tracker-apply.mjs` | Two-paragraph prose cases and production update-application checks for implied stat changes. |
+| `tests/eval-gemma-tracker.js`, `tests/gemma-evaluation.mjs` | Explicit local-model evaluation runner and offline checks of its scoring path. |
+| `tests/fixtures/gemma-profile-scenarios.mjs`, `tests/fixtures/gemma-profile-harness.mjs` | NPC profile Fill and opt-in automatic lore cases using production prompt and parser code. |
+| `tests/eval-gemma-profiles.js`, `tests/gemma-profile-evaluation.mjs` | Explicit local-model profile runner and offline harness checks. |
+| `docs/evaluations/` | Frozen prompt bundles, local Gemma response artifacts, and scoped results reports. |
 
 ## Maintenance notes
 

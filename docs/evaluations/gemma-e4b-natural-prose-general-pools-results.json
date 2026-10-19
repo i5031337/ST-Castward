@@ -1,0 +1,2867 @@
+{
+  "startedAt": "2026-10-18T22:51:00.772Z",
+  "label": "natural-prose-general-pools",
+  "criteria": {
+    "validJsonAndNotTruncated": 1,
+    "overallRequiredCheckRate": 0.9,
+    "perSystemRequiredCheckRate": 0.85,
+    "criticalFailuresAllowed": 0,
+    "suite": "natural-prose"
+  },
+  "sourceHashes": {
+    "src/core/builtin-systems.js": "b0dabb51c6c521d22cdca485747a0ae7172152d35b7b7b6e9c62113630fbed18",
+    "src/core/settings-tracker-defaults.js": "3beb026157e41638c7b7cdf0c5f5268c425f4f8dc0f7d126d426f5caf289b035",
+    "src/core/constants-prompts.js": "8c0aabb4d16d4e3d3e98017c8e8f27cbdcd944dd0f608338fcd475bfe1ce9a4c",
+    "src/prompts/prompt-texts-reader.js": "c53f67ca2528d8b1d5a2bd585c3de7f4ad5039b93960622039eebb1b828c0158",
+    "src/tracker/extractor/status-extractor-prompt.js": "a99d8fa838f495e6372001ba64cbb5dddf9c05213452bc3135da25e95dd5f0f3",
+    "src/tracker/extractor/status-extractor-prompt-state.js": "3c80588bfa7fbe800971e3a92e6f3336425023460ab2a033fa7c0ca2da9c0fdb",
+    "src/tracker/extractor/status-extractor-schema.js": "c296d5606d4fd3ca7466cd6c55f37e56c2bbd8a3bba7dfa8be43e346e8d4faa4",
+    "src/locations/location-context.js": "62b43cba21d4aa5cc74edf0391d828a8976bd13e97276b130d517c3e46fe6d78",
+    "src/locations/location-proposals.js": "68ad344fecfef3ee8cf78731e8524d95b8a5b166eab2279e4811f179c64c4a36",
+    "src/tracker/status-stat-values.js": "7b1de4e964ab34f8d30d4b29b77999a669bfdeae11e738819bdb5b6e48c8d82d",
+    "src/tracker/status-collection-updates.js": "36788c1112211883b5617823f4be2fc0aa30a876ff6e21eaf130193e3584a3f7",
+    "src/tracker/status-update-constraints.js": "e3f63de6675b36bf2200c81f739acd1883696c5ccc550d8c221907802c0f11e0",
+    "src/tracker/status-update-parser.js": "c1894cd0836b093c93c64139daebf0f51e3cec846fbf92bb7920d3c838927405",
+    "src/tracker/status-apply-update.js": "8eedf95a4ea7fc33e8c535c87ead072dd8884078f73691d2a0f9736a49c1fee7",
+    "src/tracker/progression.js": "53b41aaa840971d98c0d66bbef3b0e750126fcf8855a428301fa4711a9ef2855"
+  },
+  "endpoint": "http://127.0.0.1:9931/v1",
+  "model": "/mnt/D/backup_models/gemma-4-E4B-it-qat-UD-Q4_K_XL.gguf",
+  "server": {
+    "build": "b11669-620d2225c",
+    "defaults": {
+      "params": {
+        "seed": 4294967295,
+        "temperature": 1,
+        "dynatemp_range": 0,
+        "dynatemp_exponent": 1,
+        "top_k": 64,
+        "top_p": 0.949999988079071,
+        "min_p": 0,
+        "top_n_sigma": -1,
+        "xtc_probability": 0,
+        "xtc_threshold": 0.10000000149011612,
+        "typical_p": 1,
+        "repeat_last_n": 64,
+        "repeat_penalty": 1,
+        "presence_penalty": 0,
+        "frequency_penalty": 0,
+        "dry_multiplier": 0,
+        "dry_base": 1.75,
+        "dry_allowed_length": 2,
+        "dry_penalty_last_n": 64,
+        "mirostat": 0,
+        "mirostat_tau": 5,
+        "mirostat_eta": 0.10000000149011612,
+        "adaptive_target": -1,
+        "adaptive_decay": 0.8999999761581421,
+        "max_tokens": -1,
+        "n_predict": -1,
+        "n_keep": 0,
+        "n_discard": 0,
+        "ignore_eos": false,
+        "stream": false,
+        "n_probs": 0,
+        "min_keep": 0,
+        "chat_format": "Content-only",
+        "reasoning_format": "none",
+        "reasoning_in_content": false,
+        "generation_prompt": "",
+        "samplers": [
+          "penalties",
+          "dry",
+          "top_n_sigma",
+          "top_k",
+          "typ_p",
+          "top_p",
+          "min_p",
+          "xtc",
+          "temperature"
+        ],
+        "speculative.types": "none",
+        "timings_per_token": false,
+        "post_sampling_probs": false,
+        "backend_sampling": false,
+        "lora": []
+      },
+      "n_ctx": 65536
+    },
+    "model": "/mnt/D/backup_models/gemma-4-E4B-it-qat-UD-Q4_K_XL.gguf",
+    "slots": 1
+  },
+  "repeats": 2,
+  "trials": [
+    {
+      "id": "dating-restful-night",
+      "system": "dating",
+      "holdout": false,
+      "repeat": 0,
+      "elapsedMs": 8870,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 902,
+        "prompt_tokens": 3342,
+        "total_tokens": 4244,
+        "prompt_tokens_details": {
+          "cached_tokens": 2771
+        }
+      },
+      "content": "```json\n{\n  \"player\": {\n    \"stats\": {\n      \"Mood\": \"Refreshed\"\n    },\n    \"deltas\": {\n      \"Social Energy\": 8\n    }\n  },\n  \"characters\": []\n}\n```",
+      "parsed": {
+        "player": {
+          "stats": {
+            "Mood": "Refreshed"
+          },
+          "deltas": {
+            "Social Energy": 8
+          }
+        },
+        "characters": []
+      },
+      "normalized": {
+        "update": {
+          "player": {
+            "stats": {
+              "Mood": "Refreshed",
+              "Social Energy": "10/10"
+            }
+          },
+          "characters": [],
+          "global": {}
+        },
+        "effective": {
+          "global": {
+            "Location": "Alex’s apartment",
+            "Day and Time": "",
+            "Occasion": ""
+          },
+          "player": {
+            "stats": {
+              "Social Energy": "10/10",
+              "Mood": "Refreshed"
+            },
+            "collections": {
+              "items": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [],
+          "locations": {
+            "enabled": true,
+            "currentId": "home",
+            "records": {
+              "home": {
+                "id": "home",
+                "name": "Alex’s apartment",
+                "description": "",
+                "aliases": [],
+                "parentId": ""
+              }
+            }
+          },
+          "timestamp": 1792363869700
+        },
+        "progression": null,
+        "holdings": {
+          "player": {
+            "stats": {
+              "Social Energy": "2/10",
+              "Mood": "Neutral"
+            },
+            "collections": {
+              "items": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": []
+        },
+        "warnings": [],
+        "places": []
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "validJsonAndNotTruncated",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "appliedPlayerValue Social Energy 10/10",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "noMovement ",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "noInventoryChanges ",
+          "critical": true,
+          "passed": true
+        }
+      ],
+      "audit": {
+        "placeholderInventory": false,
+        "openingInventedInventory": false,
+        "xpProgression": null
+      }
+    },
+    {
+      "id": "dating-draining-evening",
+      "system": "dating",
+      "holdout": false,
+      "repeat": 0,
+      "elapsedMs": 9777,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 1000,
+        "prompt_tokens": 3448,
+        "total_tokens": 4448,
+        "prompt_tokens_details": {
+          "cached_tokens": 2877
+        }
+      },
+      "content": "```json\n{\n  \"player\": {\n    \"deltas\": {\n      \"Social Energy\": -1\n    }\n  },\n  \"characters\": [\n    {\n      \"name\": \"June\",\n      \"deltas\": {\n        \"Affection\": 2\n      }\n    }\n  ]\n}\n```",
+      "parsed": {
+        "player": {
+          "deltas": {
+            "Social Energy": -1
+          }
+        },
+        "characters": [
+          {
+            "name": "June",
+            "deltas": {
+              "Affection": 2
+            }
+          }
+        ]
+      },
+      "normalized": {
+        "update": {
+          "player": {
+            "Social Energy": "8/10"
+          },
+          "characters": [
+            {
+              "name": "June",
+              "Affection": "17"
+            }
+          ],
+          "global": {}
+        },
+        "effective": {
+          "global": {
+            "Location": "Moonbeam Café",
+            "Day and Time": "",
+            "Occasion": ""
+          },
+          "player": {
+            "stats": {
+              "Social Energy": "8/10",
+              "Mood": "Neutral"
+            },
+            "collections": {
+              "items": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "June",
+              "npcTemplateId": "character",
+              "stats": {
+                "Mood": "Neutral",
+                "Affection": "17",
+                "Trust": "10",
+                "Comfort": "20",
+                "Relationship": "Friends"
+              },
+              "collections": {}
+            }
+          ],
+          "locations": {
+            "enabled": true,
+            "currentId": "home",
+            "records": {
+              "home": {
+                "id": "home",
+                "name": "Moonbeam Café",
+                "description": "",
+                "aliases": [],
+                "parentId": ""
+              }
+            }
+          },
+          "timestamp": 1792363879478
+        },
+        "progression": null,
+        "holdings": {
+          "player": {
+            "stats": {
+              "Social Energy": "9/10",
+              "Mood": "Neutral"
+            },
+            "collections": {
+              "items": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "June",
+              "npcTemplateId": "character",
+              "stats": {
+                "Mood": "Neutral",
+                "Affection": "15",
+                "Trust": "10",
+                "Comfort": "20",
+                "Relationship": "Friends"
+              },
+              "collections": {}
+            }
+          ]
+        },
+        "warnings": [],
+        "places": []
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "validJsonAndNotTruncated",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "playerDecreased Social Energy",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "npcPresent June",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "noMovement ",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "noInventoryChanges ",
+          "critical": true,
+          "passed": true
+        }
+      ],
+      "audit": {
+        "placeholderInventory": false,
+        "openingInventedInventory": false,
+        "xpProgression": null
+      }
+    },
+    {
+      "id": "dating-quiet-control",
+      "system": "dating",
+      "holdout": false,
+      "repeat": 0,
+      "elapsedMs": 9230,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 913,
+        "prompt_tokens": 3441,
+        "total_tokens": 4354,
+        "prompt_tokens_details": {
+          "cached_tokens": 2870
+        }
+      },
+      "content": "```json\n{\n  \"global\": {\n    \"Location\": \"Moonbeam Café\"\n  },\n  \"player\": {},\n  \"characters\": [\n    {\n      \"name\": \"June\"\n    }\n  ]\n}\n```",
+      "parsed": {
+        "global": {
+          "Location": "Moonbeam Café"
+        },
+        "player": {},
+        "characters": [
+          {
+            "name": "June"
+          }
+        ]
+      },
+      "normalized": {
+        "update": {
+          "global": {
+            "Location": "Moonbeam Café"
+          },
+          "player": {},
+          "characters": [
+            {
+              "name": "June"
+            }
+          ]
+        },
+        "effective": {
+          "global": {
+            "Location": "Moonbeam Café",
+            "Day and Time": "",
+            "Occasion": ""
+          },
+          "player": {
+            "stats": {
+              "Social Energy": "6/10",
+              "Mood": "Neutral"
+            },
+            "collections": {
+              "items": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "June",
+              "npcTemplateId": "character",
+              "stats": {
+                "Mood": "Neutral",
+                "Affection": "15",
+                "Trust": "10",
+                "Comfort": "20",
+                "Relationship": "Friends"
+              },
+              "collections": {}
+            }
+          ],
+          "locations": {
+            "enabled": true,
+            "currentId": "home",
+            "records": {
+              "home": {
+                "id": "home",
+                "name": "Moonbeam Café",
+                "description": "",
+                "aliases": [],
+                "parentId": ""
+              }
+            }
+          },
+          "timestamp": 1792363888709
+        },
+        "progression": null,
+        "holdings": {
+          "player": {
+            "stats": {
+              "Social Energy": "6/10",
+              "Mood": "Neutral"
+            },
+            "collections": {
+              "items": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "June",
+              "npcTemplateId": "character",
+              "stats": {
+                "Mood": "Neutral",
+                "Affection": "15",
+                "Trust": "10",
+                "Comfort": "20",
+                "Relationship": "Friends"
+              },
+              "collections": {}
+            }
+          ]
+        },
+        "warnings": [],
+        "places": []
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "validJsonAndNotTruncated",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "playerUnchanged Social Energy",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "relationshipUnchanged June",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "noMovement ",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "noPlaceCreated Glasshouse",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "noInventoryChanges ",
+          "critical": true,
+          "passed": true
+        }
+      ],
+      "audit": {
+        "placeholderInventory": false,
+        "openingInventedInventory": false,
+        "xpProgression": null
+      }
+    },
+    {
+      "id": "fantasy-cellar-injury",
+      "system": "fantasy",
+      "holdout": false,
+      "repeat": 0,
+      "elapsedMs": 13313,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 1265,
+        "prompt_tokens": 5169,
+        "total_tokens": 6434,
+        "prompt_tokens_details": {
+          "cached_tokens": 557
+        }
+      },
+      "content": "```json\n{\n  \"global\": {\n    \"Location\": \"Cellar stairs of the Rusty Lantern\"\n  },\n  \"player\": {\n    \"deltas\": {\n      \"HP\": -1\n    },\n    \"Condition\": \"Bruised shoulder\"\n  },\n  \"characters\": [\n    {\n      \"name\": \"Mira\",\n      \"stats\": {\n        \"HP\": \"12/12\",\n        \"Armor\": \"10\",\n        \"Strength\": \"10\",\n        \"Dexterity\": \"10\",\n        \"Constitution\": \"10\",\n        \"Intelligence\": \"10\",\n        \"Wisdom\": \"10\",\n        \"Charisma\": \"10\",\n        \"Condition\": \"Healthy\",\n        \"Currency\": \"0\",\n        \"XP\": \"0/100\",\n        \"Level\": \"1\"\n      }\n    }\n  ],\n  \"locations\": {\n    \"places\": [\n      {\n        \"ref\": \"cellar_stairs_rusty_lantern\",\n        \"name\": \"Cellar stairs of the Rusty Lantern\",\n        \"aliases\": [\n          \"Rusty Lantern cellar\"\n        ],\n        \"description\": \"A set of slick wooden stairs leading down into the cellar, currently covered in dust in the lantern light.\",\n        \"parentRef\": \"rusty_lantern\",\n        \"evidence\": \"The cellar stairs of the Rusty Lantern are slick from a leaking barrel.\"\n      },\n      {\n        \"ref\": \"rusty_lantern\",\n        \"name\": \"Rusty Lantern\",\n        \"aliases\": [],\n        \"description\": \"A tavern setting containing a taproom and cellar access.\",\n        \"parentRef\": null,\n        \"evidence\": \"The cellar stairs of the Rusty Lantern are slick from a leaking barrel.\"\n      }\n    ],\n    \"currentRef\": \"cellar_stairs_rusty_lantern\",\n    \"currentEvidence\": \"The cellar stairs of the Rusty Lantern are slick from a leaking barrel.\"\n  }\n}\n```",
+      "parsed": {
+        "global": {
+          "Location": "Cellar stairs of the Rusty Lantern"
+        },
+        "player": {
+          "deltas": {
+            "HP": -1
+          },
+          "Condition": "Bruised shoulder"
+        },
+        "characters": [
+          {
+            "name": "Mira",
+            "stats": {
+              "HP": "12/12",
+              "Armor": "10",
+              "Strength": "10",
+              "Dexterity": "10",
+              "Constitution": "10",
+              "Intelligence": "10",
+              "Wisdom": "10",
+              "Charisma": "10",
+              "Condition": "Healthy",
+              "Currency": "0",
+              "XP": "0/100",
+              "Level": "1"
+            }
+          }
+        ],
+        "locations": {
+          "places": [
+            {
+              "ref": "cellar_stairs_rusty_lantern",
+              "name": "Cellar stairs of the Rusty Lantern",
+              "aliases": [
+                "Rusty Lantern cellar"
+              ],
+              "description": "A set of slick wooden stairs leading down into the cellar, currently covered in dust in the lantern light.",
+              "parentRef": "rusty_lantern",
+              "evidence": "The cellar stairs of the Rusty Lantern are slick from a leaking barrel."
+            },
+            {
+              "ref": "rusty_lantern",
+              "name": "Rusty Lantern",
+              "aliases": [],
+              "description": "A tavern setting containing a taproom and cellar access.",
+              "parentRef": null,
+              "evidence": "The cellar stairs of the Rusty Lantern are slick from a leaking barrel."
+            }
+          ],
+          "currentRef": "cellar_stairs_rusty_lantern",
+          "currentEvidence": "The cellar stairs of the Rusty Lantern are slick from a leaking barrel."
+        }
+      },
+      "normalized": {
+        "update": {
+          "global": {
+            "Location": "Cellar stairs of the Rusty Lantern"
+          },
+          "player": {
+            "Condition": "Bruised shoulder",
+            "HP": "11/12"
+          },
+          "characters": [
+            {
+              "name": "Mira",
+              "stats": {
+                "HP": "12/12",
+                "Armor": "10",
+                "Strength": "10",
+                "Dexterity": "10",
+                "Constitution": "10",
+                "Intelligence": "10",
+                "Wisdom": "10",
+                "Charisma": "10",
+                "Condition": "Healthy",
+                "Currency": "0"
+              }
+            }
+          ],
+          "locations": {
+            "places": [
+              {
+                "ref": "cellar_stairs_rusty_lantern",
+                "name": "Cellar stairs of the Rusty Lantern",
+                "aliases": [
+                  "Rusty Lantern cellar"
+                ],
+                "description": "A set of slick wooden stairs leading down into the cellar, currently covered in dust in the lantern light.",
+                "parentRef": "rusty_lantern",
+                "evidence": "The cellar stairs of the Rusty Lantern are slick from a leaking barrel."
+              },
+              {
+                "ref": "rusty_lantern",
+                "name": "Rusty Lantern",
+                "aliases": [],
+                "description": "A tavern setting containing a taproom and cellar access.",
+                "parentRef": null,
+                "evidence": "The cellar stairs of the Rusty Lantern are slick from a leaking barrel."
+              }
+            ],
+            "currentRef": "cellar_stairs_rusty_lantern",
+            "currentEvidence": "The cellar stairs of the Rusty Lantern are slick from a leaking barrel."
+          }
+        },
+        "effective": {
+          "global": {
+            "Location": "Cellar stairs of the Rusty Lantern",
+            "Time": "",
+            "Quest": ""
+          },
+          "player": {
+            "stats": {
+              "HP": "11/12",
+              "Armor": "10",
+              "Strength": "10",
+              "Dexterity": "10",
+              "Constitution": "10",
+              "Intelligence": "10",
+              "Wisdom": "10",
+              "Charisma": "10",
+              "Condition": "Bruised shoulder",
+              "Currency": "0",
+              "XP": "0/100",
+              "Level": "1"
+            },
+            "collections": {
+              "equipment": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "Mira",
+              "npcTemplateId": "character",
+              "stats": {
+                "HP": "12/12",
+                "Armor": "10",
+                "Strength": "10",
+                "Dexterity": "10",
+                "Constitution": "10",
+                "Intelligence": "10",
+                "Wisdom": "10",
+                "Charisma": "10",
+                "Condition": "Healthy",
+                "Currency": "0",
+                "XP": "0/100",
+                "Level": "1"
+              },
+              "collections": {}
+            }
+          ],
+          "locations": {
+            "enabled": true,
+            "currentId": "home",
+            "records": {
+              "home": {
+                "id": "home",
+                "name": "Rusty Lantern",
+                "description": "",
+                "aliases": [],
+                "parentId": ""
+              }
+            }
+          },
+          "timestamp": 1792363902022
+        },
+        "progression": null,
+        "holdings": {
+          "player": {
+            "stats": {
+              "HP": "12/12",
+              "Armor": "10",
+              "Strength": "10",
+              "Dexterity": "10",
+              "Constitution": "10",
+              "Intelligence": "10",
+              "Wisdom": "10",
+              "Charisma": "10",
+              "Condition": "Healthy",
+              "Currency": "0",
+              "XP": "0/100",
+              "Level": "1"
+            },
+            "collections": {
+              "equipment": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "Mira",
+              "npcTemplateId": "character",
+              "stats": {
+                "HP": "12/12",
+                "Armor": "10",
+                "Strength": "10",
+                "Dexterity": "10",
+                "Constitution": "10",
+                "Intelligence": "10",
+                "Wisdom": "10",
+                "Charisma": "10",
+                "Condition": "Healthy",
+                "Currency": "0",
+                "XP": "0/100",
+                "Level": "1"
+              },
+              "collections": {}
+            }
+          ]
+        },
+        "warnings": [
+          "Mira · XP: \"0/100\" skipped: earned XP must be reported as a positive delta.",
+          "Mira · Level: \"1\" skipped: Level is managed by XP progression.",
+          "Ignored Rusty Lantern: The place name or alias already belongs to Rusty Lantern.",
+          "Ignored the unknown parent for Cellar stairs of the Rusty Lantern."
+        ],
+        "places": [
+          {
+            "id": "place-426fe8c8-6eff-44cb-a8e7-584ff8b7c769",
+            "kind": "location-create",
+            "scope": "location",
+            "actor": "Cellar stairs of the Rusty Lantern",
+            "label": "New place",
+            "before": "",
+            "after": "A set of slick wooden stairs leading down into the cellar, currently covered in dust in the lantern light.",
+            "risk": "risky",
+            "note": "The cellar stairs of the Rusty Lantern are slick from a leaking barrel.",
+            "location": {
+              "id": "place-0254d3a2-9b44-4bf7-913f-46f79f0eb729",
+              "record": {
+                "id": "place-0254d3a2-9b44-4bf7-913f-46f79f0eb729",
+                "name": "Cellar stairs of the Rusty Lantern",
+                "aliases": [
+                  "Rusty Lantern cellar"
+                ],
+                "description": "A set of slick wooden stairs leading down into the cellar, currently covered in dust in the lantern light.",
+                "parentId": "",
+                "lorebook": "",
+                "loreEntryId": null
+              },
+              "before": null,
+              "provenance": {
+                "messageId": 1
+              }
+            }
+          },
+          {
+            "id": "place-43e69237-2a7a-4bb2-b9f5-5f0f6a2d8e1f",
+            "kind": "location-current",
+            "scope": "location",
+            "actor": "Cellar stairs of the Rusty Lantern",
+            "label": "Current place",
+            "before": "Rusty Lantern",
+            "after": "Cellar stairs of the Rusty Lantern",
+            "risk": "risky",
+            "note": "The cellar stairs of the Rusty Lantern are slick from a leaking barrel.",
+            "location": {
+              "id": "place-0254d3a2-9b44-4bf7-913f-46f79f0eb729",
+              "record": {
+                "id": "place-0254d3a2-9b44-4bf7-913f-46f79f0eb729",
+                "name": "Cellar stairs of the Rusty Lantern",
+                "aliases": [
+                  "Rusty Lantern cellar"
+                ],
+                "description": "A set of slick wooden stairs leading down into the cellar, currently covered in dust in the lantern light.",
+                "parentId": "",
+                "lorebook": "",
+                "loreEntryId": null
+              },
+              "before": null,
+              "provenance": {
+                "messageId": 1
+              },
+              "currentBefore": "home"
+            }
+          }
+        ]
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "validJsonAndNotTruncated",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "playerDecreased HP",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "npcPresent Mira",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "noInventoryAddsOrRemoves ",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "noXp ",
+          "critical": true,
+          "passed": true
+        }
+      ],
+      "audit": {
+        "placeholderInventory": false,
+        "openingInventedInventory": false,
+        "xpProgression": null
+      }
+    },
+    {
+      "id": "fantasy-wound-treated",
+      "system": "fantasy",
+      "holdout": false,
+      "repeat": 0,
+      "elapsedMs": 11407,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 1145,
+        "prompt_tokens": 5305,
+        "total_tokens": 6450,
+        "prompt_tokens_details": {
+          "cached_tokens": 4657
+        }
+      },
+      "content": "```json\n{\n  \"player\": {\n    \"deltas\": {\n      \"HP\": 2\n    }\n  },\n  \"characters\": [\n    {\n      \"name\": \"Mira\"\n    }\n  ],\n  \"locations\": {\n    \"places\": [\n      {\n        \"ref\": \"Rusty Lantern\",\n        \"name\": \"Rusty Lantern\",\n        \"aliases\": [],\n        \"description\": \"A location where Alex sits beside the hearth and Mira tends to their injuries.\",\n        \"parentRef\": null,\n        \"evidence\": \"Alex sits beside the Rusty Lantern hearth\"\n      }\n    ],\n    \"currentRef\": \"Rusty Lantern\",\n    \"currentEvidence\": \"Alex sits beside the Rusty Lantern hearth\"\n  }\n}\n```",
+      "parsed": {
+        "player": {
+          "deltas": {
+            "HP": 2
+          }
+        },
+        "characters": [
+          {
+            "name": "Mira"
+          }
+        ],
+        "locations": {
+          "places": [
+            {
+              "ref": "Rusty Lantern",
+              "name": "Rusty Lantern",
+              "aliases": [],
+              "description": "A location where Alex sits beside the hearth and Mira tends to their injuries.",
+              "parentRef": null,
+              "evidence": "Alex sits beside the Rusty Lantern hearth"
+            }
+          ],
+          "currentRef": "Rusty Lantern",
+          "currentEvidence": "Alex sits beside the Rusty Lantern hearth"
+        }
+      },
+      "normalized": {
+        "update": {
+          "player": {
+            "HP": "7/12"
+          },
+          "characters": [
+            {
+              "name": "Mira"
+            }
+          ],
+          "locations": {
+            "places": [
+              {
+                "ref": "Rusty Lantern",
+                "name": "Rusty Lantern",
+                "aliases": [],
+                "description": "A location where Alex sits beside the hearth and Mira tends to their injuries.",
+                "parentRef": null,
+                "evidence": "Alex sits beside the Rusty Lantern hearth"
+              }
+            ],
+            "currentRef": "Rusty Lantern",
+            "currentEvidence": "Alex sits beside the Rusty Lantern hearth"
+          },
+          "global": {}
+        },
+        "effective": {
+          "global": {
+            "Location": "Rusty Lantern",
+            "Time": "",
+            "Quest": ""
+          },
+          "player": {
+            "stats": {
+              "HP": "7/12",
+              "Armor": "10",
+              "Strength": "10",
+              "Dexterity": "10",
+              "Constitution": "10",
+              "Intelligence": "10",
+              "Wisdom": "10",
+              "Charisma": "10",
+              "Condition": "Wounded",
+              "Currency": "0",
+              "XP": "0/100",
+              "Level": "1"
+            },
+            "collections": {
+              "equipment": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "Mira",
+              "npcTemplateId": "character",
+              "stats": {
+                "HP": "12/12",
+                "Armor": "10",
+                "Strength": "10",
+                "Dexterity": "10",
+                "Constitution": "10",
+                "Intelligence": "10",
+                "Wisdom": "10",
+                "Charisma": "10",
+                "Condition": "Healthy",
+                "Currency": "0",
+                "XP": "0/100",
+                "Level": "1"
+              },
+              "collections": {}
+            }
+          ],
+          "locations": {
+            "enabled": true,
+            "currentId": "home",
+            "records": {
+              "home": {
+                "id": "home",
+                "name": "Rusty Lantern",
+                "description": "",
+                "aliases": [],
+                "parentId": ""
+              }
+            }
+          },
+          "timestamp": 1792363913429
+        },
+        "progression": null,
+        "holdings": {
+          "player": {
+            "stats": {
+              "HP": "5/12",
+              "Armor": "10",
+              "Strength": "10",
+              "Dexterity": "10",
+              "Constitution": "10",
+              "Intelligence": "10",
+              "Wisdom": "10",
+              "Charisma": "10",
+              "Condition": "Wounded",
+              "Currency": "0",
+              "XP": "0/100",
+              "Level": "1"
+            },
+            "collections": {
+              "equipment": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "Mira",
+              "npcTemplateId": "character",
+              "stats": {
+                "HP": "12/12",
+                "Armor": "10",
+                "Strength": "10",
+                "Dexterity": "10",
+                "Constitution": "10",
+                "Intelligence": "10",
+                "Wisdom": "10",
+                "Charisma": "10",
+                "Condition": "Healthy",
+                "Currency": "0",
+                "XP": "0/100",
+                "Level": "1"
+              },
+              "collections": {}
+            }
+          ]
+        },
+        "warnings": [
+          "Ignored Rusty Lantern: The place name or alias already belongs to Rusty Lantern.",
+          "Ignored the current place: its reference does not exist."
+        ],
+        "places": []
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "validJsonAndNotTruncated",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "playerIncreased HP",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "npcPresent Mira",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "noMovement ",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "noPlayerInventoryChanges ",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "noXp ",
+          "critical": true,
+          "passed": true
+        }
+      ],
+      "audit": {
+        "placeholderInventory": false,
+        "openingInventedInventory": false,
+        "xpProgression": null
+      }
+    },
+    {
+      "id": "fantasy-shared-recovery",
+      "system": "fantasy",
+      "holdout": false,
+      "repeat": 0,
+      "elapsedMs": 15652,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 1514,
+        "prompt_tokens": 5310,
+        "total_tokens": 6824,
+        "prompt_tokens_details": {
+          "cached_tokens": 557
+        }
+      },
+      "content": "```json\n{\n  \"global\": {\n    \"Location\": \"Rusty Lantern\"\n  },\n  \"player\": {\n    \"deltas\": {\n      \"HP\": 8\n    },\n    \"stats\": {\n      \"Condition\": \"Healthy\"\n    }\n  },\n  \"characters\": [\n    {\n      \"name\": \"Mira\",\n      \"deltas\": {\n        \"HP\": 6\n      },\n      \"stats\": {\n        \"Condition\": \"Healthy\"\n      }\n    }\n  ],\n  \"locations\": {\n    \"places\": [\n      {\n        \"ref\": \"rusty_lantern\",\n        \"name\": \"Rusty Lantern\",\n        \"aliases\": [],\n        \"description\": \"A tavern with rooms, currently situated as the setting for a quiet morning rest.\",\n        \"parentRef\": null,\n        \"evidence\": \"Alex and Mira return to their rooms at the Rusty Lantern\"\n      }\n    ],\n    \"currentRef\": \"rusty_lantern\",\n    \"currentEvidence\": \"Alex and Mira return to their rooms at the Rusty Lantern\"\n  }\n}\n```",
+      "parsed": {
+        "global": {
+          "Location": "Rusty Lantern"
+        },
+        "player": {
+          "deltas": {
+            "HP": 8
+          },
+          "stats": {
+            "Condition": "Healthy"
+          }
+        },
+        "characters": [
+          {
+            "name": "Mira",
+            "deltas": {
+              "HP": 6
+            },
+            "stats": {
+              "Condition": "Healthy"
+            }
+          }
+        ],
+        "locations": {
+          "places": [
+            {
+              "ref": "rusty_lantern",
+              "name": "Rusty Lantern",
+              "aliases": [],
+              "description": "A tavern with rooms, currently situated as the setting for a quiet morning rest.",
+              "parentRef": null,
+              "evidence": "Alex and Mira return to their rooms at the Rusty Lantern"
+            }
+          ],
+          "currentRef": "rusty_lantern",
+          "currentEvidence": "Alex and Mira return to their rooms at the Rusty Lantern"
+        }
+      },
+      "normalized": {
+        "update": {
+          "global": {
+            "Location": "Rusty Lantern"
+          },
+          "player": {
+            "stats": {
+              "Condition": "Healthy",
+              "HP": "12/12"
+            }
+          },
+          "characters": [
+            {
+              "name": "Mira",
+              "stats": {
+                "Condition": "Healthy",
+                "HP": "12/12"
+              }
+            }
+          ],
+          "locations": {
+            "places": [
+              {
+                "ref": "rusty_lantern",
+                "name": "Rusty Lantern",
+                "aliases": [],
+                "description": "A tavern with rooms, currently situated as the setting for a quiet morning rest.",
+                "parentRef": null,
+                "evidence": "Alex and Mira return to their rooms at the Rusty Lantern"
+              }
+            ],
+            "currentRef": "rusty_lantern",
+            "currentEvidence": "Alex and Mira return to their rooms at the Rusty Lantern"
+          }
+        },
+        "effective": {
+          "global": {
+            "Location": "Rusty Lantern",
+            "Time": "",
+            "Quest": ""
+          },
+          "player": {
+            "stats": {
+              "HP": "12/12",
+              "Armor": "10",
+              "Strength": "10",
+              "Dexterity": "10",
+              "Constitution": "10",
+              "Intelligence": "10",
+              "Wisdom": "10",
+              "Charisma": "10",
+              "Condition": "Healthy",
+              "Currency": "0",
+              "XP": "0/100",
+              "Level": "1"
+            },
+            "collections": {
+              "equipment": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "Mira",
+              "npcTemplateId": "character",
+              "stats": {
+                "HP": "12/12",
+                "Armor": "10",
+                "Strength": "10",
+                "Dexterity": "10",
+                "Constitution": "10",
+                "Intelligence": "10",
+                "Wisdom": "10",
+                "Charisma": "10",
+                "Condition": "Healthy",
+                "Currency": "0",
+                "XP": "0/100",
+                "Level": "1"
+              },
+              "collections": {}
+            }
+          ],
+          "locations": {
+            "enabled": true,
+            "currentId": "home",
+            "records": {
+              "home": {
+                "id": "home",
+                "name": "Rusty Lantern",
+                "description": "",
+                "aliases": [],
+                "parentId": ""
+              }
+            }
+          },
+          "timestamp": 1792363929082
+        },
+        "progression": null,
+        "holdings": {
+          "player": {
+            "stats": {
+              "HP": "4/12",
+              "Armor": "10",
+              "Strength": "10",
+              "Dexterity": "10",
+              "Constitution": "10",
+              "Intelligence": "10",
+              "Wisdom": "10",
+              "Charisma": "10",
+              "Condition": "Healthy",
+              "Currency": "0",
+              "XP": "0/100",
+              "Level": "1"
+            },
+            "collections": {
+              "equipment": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "Mira",
+              "npcTemplateId": "character",
+              "stats": {
+                "HP": "6/12",
+                "Armor": "10",
+                "Strength": "10",
+                "Dexterity": "10",
+                "Constitution": "10",
+                "Intelligence": "10",
+                "Wisdom": "10",
+                "Charisma": "10",
+                "Condition": "Healthy",
+                "Currency": "0",
+                "XP": "0/100",
+                "Level": "1"
+              },
+              "collections": {}
+            }
+          ]
+        },
+        "warnings": [
+          "Ignored Rusty Lantern: The place name or alias already belongs to Rusty Lantern.",
+          "Ignored the current place: its reference does not exist."
+        ],
+        "places": []
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "validJsonAndNotTruncated",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "appliedPlayerValue HP 12/12",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "appliedNpcValue Mira HP 12/12",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "npcPresent Mira",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "noInventoryChanges ",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "noXp ",
+          "critical": true,
+          "passed": true
+        }
+      ],
+      "audit": {
+        "placeholderInventory": false,
+        "openingInventedInventory": false,
+        "xpProgression": null
+      }
+    },
+    {
+      "id": "fantasy-rumor-control",
+      "system": "fantasy",
+      "holdout": false,
+      "repeat": 0,
+      "elapsedMs": 6388,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 638,
+        "prompt_tokens": 5305,
+        "total_tokens": 5943,
+        "prompt_tokens_details": {
+          "cached_tokens": 4657
+        }
+      },
+      "content": "```json\n{\"global\":{},\"player\":{},\"characters\":[{\"name\":\"Mira\"}]}\n```",
+      "parsed": {
+        "global": {},
+        "player": {},
+        "characters": [
+          {
+            "name": "Mira"
+          }
+        ]
+      },
+      "normalized": {
+        "update": {
+          "global": {},
+          "player": {},
+          "characters": [
+            {
+              "name": "Mira"
+            }
+          ]
+        },
+        "effective": {
+          "global": {
+            "Location": "Rusty Lantern",
+            "Time": "",
+            "Quest": ""
+          },
+          "player": {
+            "stats": {
+              "HP": "8/12",
+              "Armor": "10",
+              "Strength": "10",
+              "Dexterity": "10",
+              "Constitution": "10",
+              "Intelligence": "10",
+              "Wisdom": "10",
+              "Charisma": "10",
+              "Condition": "Healthy",
+              "Currency": "0",
+              "XP": "0/100",
+              "Level": "1"
+            },
+            "collections": {
+              "equipment": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "Mira",
+              "npcTemplateId": "character",
+              "stats": {
+                "HP": "12/12",
+                "Armor": "10",
+                "Strength": "10",
+                "Dexterity": "10",
+                "Constitution": "10",
+                "Intelligence": "10",
+                "Wisdom": "10",
+                "Charisma": "10",
+                "Condition": "Healthy",
+                "Currency": "0",
+                "XP": "0/100",
+                "Level": "1"
+              },
+              "collections": {}
+            }
+          ],
+          "locations": {
+            "enabled": true,
+            "currentId": "home",
+            "records": {
+              "home": {
+                "id": "home",
+                "name": "Rusty Lantern",
+                "description": "",
+                "aliases": [],
+                "parentId": ""
+              }
+            }
+          },
+          "timestamp": 1792363935470
+        },
+        "progression": null,
+        "holdings": {
+          "player": {
+            "stats": {
+              "HP": "8/12",
+              "Armor": "10",
+              "Strength": "10",
+              "Dexterity": "10",
+              "Constitution": "10",
+              "Intelligence": "10",
+              "Wisdom": "10",
+              "Charisma": "10",
+              "Condition": "Healthy",
+              "Currency": "0",
+              "XP": "0/100",
+              "Level": "1"
+            },
+            "collections": {
+              "equipment": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "Mira",
+              "npcTemplateId": "character",
+              "stats": {
+                "HP": "12/12",
+                "Armor": "10",
+                "Strength": "10",
+                "Dexterity": "10",
+                "Constitution": "10",
+                "Intelligence": "10",
+                "Wisdom": "10",
+                "Charisma": "10",
+                "Condition": "Healthy",
+                "Currency": "0",
+                "XP": "0/100",
+                "Level": "1"
+              },
+              "collections": {}
+            }
+          ]
+        },
+        "warnings": [],
+        "places": []
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "validJsonAndNotTruncated",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "playerUnchanged HP",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "noXp ",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "noMovement ",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "noPlaceCreated old mill",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "noInventoryChanges ",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "npcPresent Mira",
+          "critical": false,
+          "passed": true
+        }
+      ],
+      "audit": {
+        "placeholderInventory": false,
+        "openingInventedInventory": false,
+        "xpProgression": null
+      }
+    },
+    {
+      "id": "dating-restful-night",
+      "system": "dating",
+      "holdout": false,
+      "repeat": 1,
+      "elapsedMs": 9322,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 976,
+        "prompt_tokens": 3342,
+        "total_tokens": 4318,
+        "prompt_tokens_details": {
+          "cached_tokens": 3337
+        }
+      },
+      "content": "```json\n{\n  \"global\": {},\n  \"player\": {\n    \"deltas\": {\n      \"Social Energy\": 8\n    },\n    \"stats\": {\n      \"Mood\": \"Refreshed\"\n    }\n  },\n  \"characters\": []\n}\n```",
+      "parsed": {
+        "global": {},
+        "player": {
+          "deltas": {
+            "Social Energy": 8
+          },
+          "stats": {
+            "Mood": "Refreshed"
+          }
+        },
+        "characters": []
+      },
+      "normalized": {
+        "update": {
+          "global": {},
+          "player": {
+            "stats": {
+              "Mood": "Refreshed",
+              "Social Energy": "10/10"
+            }
+          },
+          "characters": []
+        },
+        "effective": {
+          "global": {
+            "Location": "Alex’s apartment",
+            "Day and Time": "",
+            "Occasion": ""
+          },
+          "player": {
+            "stats": {
+              "Social Energy": "10/10",
+              "Mood": "Refreshed"
+            },
+            "collections": {
+              "items": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [],
+          "locations": {
+            "enabled": true,
+            "currentId": "home",
+            "records": {
+              "home": {
+                "id": "home",
+                "name": "Alex’s apartment",
+                "description": "",
+                "aliases": [],
+                "parentId": ""
+              }
+            }
+          },
+          "timestamp": 1792363944792
+        },
+        "progression": null,
+        "holdings": {
+          "player": {
+            "stats": {
+              "Social Energy": "2/10",
+              "Mood": "Neutral"
+            },
+            "collections": {
+              "items": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": []
+        },
+        "warnings": [],
+        "places": []
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "validJsonAndNotTruncated",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "appliedPlayerValue Social Energy 10/10",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "noMovement ",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "noInventoryChanges ",
+          "critical": true,
+          "passed": true
+        }
+      ],
+      "audit": {
+        "placeholderInventory": false,
+        "openingInventedInventory": false,
+        "xpProgression": null
+      }
+    },
+    {
+      "id": "dating-draining-evening",
+      "system": "dating",
+      "holdout": false,
+      "repeat": 1,
+      "elapsedMs": 10110,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 973,
+        "prompt_tokens": 3448,
+        "total_tokens": 4421,
+        "prompt_tokens_details": {
+          "cached_tokens": 3443
+        }
+      },
+      "content": "```json\n{\n  \"player\": {\n    \"deltas\": {\n      \"Social Energy\": -2\n    },\n    \"stats\": {\n      \"Mood\": \"Weariness\"\n    }\n  },\n  \"characters\": [\n    {\n      \"name\": \"June\",\n      \"deltas\": {\n        \"Affection\": 3,\n        \"Comfort\": 2\n      }\n    }\n  ]\n}\n```",
+      "parsed": {
+        "player": {
+          "deltas": {
+            "Social Energy": -2
+          },
+          "stats": {
+            "Mood": "Weariness"
+          }
+        },
+        "characters": [
+          {
+            "name": "June",
+            "deltas": {
+              "Affection": 3,
+              "Comfort": 2
+            }
+          }
+        ]
+      },
+      "normalized": {
+        "update": {
+          "player": {
+            "stats": {
+              "Mood": "Weariness",
+              "Social Energy": "7/10"
+            }
+          },
+          "characters": [
+            {
+              "name": "June",
+              "Affection": "18",
+              "Comfort": "22"
+            }
+          ],
+          "global": {}
+        },
+        "effective": {
+          "global": {
+            "Location": "Moonbeam Café",
+            "Day and Time": "",
+            "Occasion": ""
+          },
+          "player": {
+            "stats": {
+              "Social Energy": "7/10",
+              "Mood": "Weariness"
+            },
+            "collections": {
+              "items": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "June",
+              "npcTemplateId": "character",
+              "stats": {
+                "Mood": "Neutral",
+                "Affection": "18",
+                "Trust": "10",
+                "Comfort": "22",
+                "Relationship": "Friends"
+              },
+              "collections": {}
+            }
+          ],
+          "locations": {
+            "enabled": true,
+            "currentId": "home",
+            "records": {
+              "home": {
+                "id": "home",
+                "name": "Moonbeam Café",
+                "description": "",
+                "aliases": [],
+                "parentId": ""
+              }
+            }
+          },
+          "timestamp": 1792363954903
+        },
+        "progression": null,
+        "holdings": {
+          "player": {
+            "stats": {
+              "Social Energy": "9/10",
+              "Mood": "Neutral"
+            },
+            "collections": {
+              "items": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "June",
+              "npcTemplateId": "character",
+              "stats": {
+                "Mood": "Neutral",
+                "Affection": "15",
+                "Trust": "10",
+                "Comfort": "20",
+                "Relationship": "Friends"
+              },
+              "collections": {}
+            }
+          ]
+        },
+        "warnings": [],
+        "places": []
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "validJsonAndNotTruncated",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "playerDecreased Social Energy",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "npcPresent June",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "noMovement ",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "noInventoryChanges ",
+          "critical": true,
+          "passed": true
+        }
+      ],
+      "audit": {
+        "placeholderInventory": false,
+        "openingInventedInventory": false,
+        "xpProgression": null
+      }
+    },
+    {
+      "id": "dating-quiet-control",
+      "system": "dating",
+      "holdout": false,
+      "repeat": 1,
+      "elapsedMs": 9917,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 1023,
+        "prompt_tokens": 3441,
+        "total_tokens": 4464,
+        "prompt_tokens_details": {
+          "cached_tokens": 3436
+        }
+      },
+      "content": "```json\n{\n  \"player\": {\n    \"deltas\": {\n      \"Social Energy\": -1\n    }\n  },\n  \"characters\": [\n    {\n      \"name\": \"June\",\n      \"deltas\": {\n        \"Affection\": 1\n      }\n    }\n  ]\n}\n```",
+      "parsed": {
+        "player": {
+          "deltas": {
+            "Social Energy": -1
+          }
+        },
+        "characters": [
+          {
+            "name": "June",
+            "deltas": {
+              "Affection": 1
+            }
+          }
+        ]
+      },
+      "normalized": {
+        "update": {
+          "player": {
+            "Social Energy": "5/10"
+          },
+          "characters": [
+            {
+              "name": "June",
+              "Affection": "16"
+            }
+          ],
+          "global": {}
+        },
+        "effective": {
+          "global": {
+            "Location": "Moonbeam Café",
+            "Day and Time": "",
+            "Occasion": ""
+          },
+          "player": {
+            "stats": {
+              "Social Energy": "5/10",
+              "Mood": "Neutral"
+            },
+            "collections": {
+              "items": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "June",
+              "npcTemplateId": "character",
+              "stats": {
+                "Mood": "Neutral",
+                "Affection": "16",
+                "Trust": "10",
+                "Comfort": "20",
+                "Relationship": "Friends"
+              },
+              "collections": {}
+            }
+          ],
+          "locations": {
+            "enabled": true,
+            "currentId": "home",
+            "records": {
+              "home": {
+                "id": "home",
+                "name": "Moonbeam Café",
+                "description": "",
+                "aliases": [],
+                "parentId": ""
+              }
+            }
+          },
+          "timestamp": 1792363964821
+        },
+        "progression": null,
+        "holdings": {
+          "player": {
+            "stats": {
+              "Social Energy": "6/10",
+              "Mood": "Neutral"
+            },
+            "collections": {
+              "items": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "June",
+              "npcTemplateId": "character",
+              "stats": {
+                "Mood": "Neutral",
+                "Affection": "15",
+                "Trust": "10",
+                "Comfort": "20",
+                "Relationship": "Friends"
+              },
+              "collections": {}
+            }
+          ]
+        },
+        "warnings": [],
+        "places": []
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "validJsonAndNotTruncated",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "playerUnchanged Social Energy",
+          "critical": false,
+          "passed": false
+        },
+        {
+          "name": "relationshipUnchanged June",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "noMovement ",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "noPlaceCreated Glasshouse",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "noInventoryChanges ",
+          "critical": true,
+          "passed": true
+        }
+      ],
+      "audit": {
+        "placeholderInventory": false,
+        "openingInventedInventory": false,
+        "xpProgression": null
+      }
+    },
+    {
+      "id": "fantasy-cellar-injury",
+      "system": "fantasy",
+      "holdout": false,
+      "repeat": 1,
+      "elapsedMs": 9674,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 1005,
+        "prompt_tokens": 5169,
+        "total_tokens": 6174,
+        "prompt_tokens_details": {
+          "cached_tokens": 5164
+        }
+      },
+      "content": "```json\n{\n  \"global\": {\n    \"Location\": \"Rusty Lantern Cellar Stairs\"\n  },\n  \"player\": {\n    \"deltas\": {\n      \"HP\": -2\n    },\n    \"Condition\": \"Shoulder pain and bruise\"\n  },\n  \"characters\": [\n    {\n      \"name\": \"Mira\"\n    }\n  ],\n  \"locations\": {\n    \"places\": [\n      {\n        \"ref\": \"CellarStairsRustyLantern\",\n        \"name\": \"Cellar Stairs of the Rusty Lantern\",\n        \"description\": \"The cellar stairs of the Rusty Lantern are slick from a leaking barrel, illuminated by lantern light, where dust has settled.\",\n        \"parentRef\": \"RustyLantern\",\n        \"evidence\": \"The cellar stairs of the Rusty Lantern are slick from a leaking barrel.\"\n      },\n      {\n        \"ref\": \"RustyLantern\",\n        \"name\": \"Rusty Lantern\",\n        \"description\": \"A location containing the cellar stairs.\",\n        \"parentRef\": null,\n        \"evidence\": \"The cellar stairs of the Rusty Lantern are slick from a leaking barrel.\"\n      }\n    ],\n    \"currentRef\": \"CellarStairsRustyLantern\",\n    \"currentEvidence\": \"Alex misses a step and lands hard against the edge of a wooden crate.\"\n  }\n}\n```",
+      "parsed": {
+        "global": {
+          "Location": "Rusty Lantern Cellar Stairs"
+        },
+        "player": {
+          "deltas": {
+            "HP": -2
+          },
+          "Condition": "Shoulder pain and bruise"
+        },
+        "characters": [
+          {
+            "name": "Mira"
+          }
+        ],
+        "locations": {
+          "places": [
+            {
+              "ref": "CellarStairsRustyLantern",
+              "name": "Cellar Stairs of the Rusty Lantern",
+              "description": "The cellar stairs of the Rusty Lantern are slick from a leaking barrel, illuminated by lantern light, where dust has settled.",
+              "parentRef": "RustyLantern",
+              "evidence": "The cellar stairs of the Rusty Lantern are slick from a leaking barrel."
+            },
+            {
+              "ref": "RustyLantern",
+              "name": "Rusty Lantern",
+              "description": "A location containing the cellar stairs.",
+              "parentRef": null,
+              "evidence": "The cellar stairs of the Rusty Lantern are slick from a leaking barrel."
+            }
+          ],
+          "currentRef": "CellarStairsRustyLantern",
+          "currentEvidence": "Alex misses a step and lands hard against the edge of a wooden crate."
+        }
+      },
+      "normalized": {
+        "update": {
+          "global": {
+            "Location": "Rusty Lantern Cellar Stairs"
+          },
+          "player": {
+            "Condition": "Shoulder pain and bruise",
+            "HP": "10/12"
+          },
+          "characters": [
+            {
+              "name": "Mira"
+            }
+          ],
+          "locations": {
+            "places": [
+              {
+                "ref": "CellarStairsRustyLantern",
+                "name": "Cellar Stairs of the Rusty Lantern",
+                "description": "The cellar stairs of the Rusty Lantern are slick from a leaking barrel, illuminated by lantern light, where dust has settled.",
+                "parentRef": "RustyLantern",
+                "evidence": "The cellar stairs of the Rusty Lantern are slick from a leaking barrel."
+              },
+              {
+                "ref": "RustyLantern",
+                "name": "Rusty Lantern",
+                "description": "A location containing the cellar stairs.",
+                "parentRef": null,
+                "evidence": "The cellar stairs of the Rusty Lantern are slick from a leaking barrel."
+              }
+            ],
+            "currentRef": "CellarStairsRustyLantern",
+            "currentEvidence": "Alex misses a step and lands hard against the edge of a wooden crate."
+          }
+        },
+        "effective": {
+          "global": {
+            "Location": "Rusty Lantern Cellar Stairs",
+            "Time": "",
+            "Quest": ""
+          },
+          "player": {
+            "stats": {
+              "HP": "10/12",
+              "Armor": "10",
+              "Strength": "10",
+              "Dexterity": "10",
+              "Constitution": "10",
+              "Intelligence": "10",
+              "Wisdom": "10",
+              "Charisma": "10",
+              "Condition": "Shoulder pain and bruise",
+              "Currency": "0",
+              "XP": "0/100",
+              "Level": "1"
+            },
+            "collections": {
+              "equipment": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "Mira",
+              "npcTemplateId": "character",
+              "stats": {
+                "HP": "12/12",
+                "Armor": "10",
+                "Strength": "10",
+                "Dexterity": "10",
+                "Constitution": "10",
+                "Intelligence": "10",
+                "Wisdom": "10",
+                "Charisma": "10",
+                "Condition": "Healthy",
+                "Currency": "0",
+                "XP": "0/100",
+                "Level": "1"
+              },
+              "collections": {}
+            }
+          ],
+          "locations": {
+            "enabled": true,
+            "currentId": "home",
+            "records": {
+              "home": {
+                "id": "home",
+                "name": "Rusty Lantern",
+                "description": "",
+                "aliases": [],
+                "parentId": ""
+              }
+            }
+          },
+          "timestamp": 1792363974496
+        },
+        "progression": null,
+        "holdings": {
+          "player": {
+            "stats": {
+              "HP": "12/12",
+              "Armor": "10",
+              "Strength": "10",
+              "Dexterity": "10",
+              "Constitution": "10",
+              "Intelligence": "10",
+              "Wisdom": "10",
+              "Charisma": "10",
+              "Condition": "Healthy",
+              "Currency": "0",
+              "XP": "0/100",
+              "Level": "1"
+            },
+            "collections": {
+              "equipment": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "Mira",
+              "npcTemplateId": "character",
+              "stats": {
+                "HP": "12/12",
+                "Armor": "10",
+                "Strength": "10",
+                "Dexterity": "10",
+                "Constitution": "10",
+                "Intelligence": "10",
+                "Wisdom": "10",
+                "Charisma": "10",
+                "Condition": "Healthy",
+                "Currency": "0",
+                "XP": "0/100",
+                "Level": "1"
+              },
+              "collections": {}
+            }
+          ]
+        },
+        "warnings": [
+          "Ignored Rusty Lantern: The place name or alias already belongs to Rusty Lantern.",
+          "Ignored the unknown parent for Cellar Stairs of the Rusty Lantern."
+        ],
+        "places": [
+          {
+            "id": "place-b1876b26-02e4-4786-a4af-47bf3252e062",
+            "kind": "location-create",
+            "scope": "location",
+            "actor": "Cellar Stairs of the Rusty Lantern",
+            "label": "New place",
+            "before": "",
+            "after": "The cellar stairs of the Rusty Lantern are slick from a leaking barrel, illuminated by lantern light, where dust has settled.",
+            "risk": "risky",
+            "note": "The cellar stairs of the Rusty Lantern are slick from a leaking barrel.",
+            "location": {
+              "id": "place-806b68df-56ea-4f3d-96b5-51c42b45180e",
+              "record": {
+                "id": "place-806b68df-56ea-4f3d-96b5-51c42b45180e",
+                "name": "Cellar Stairs of the Rusty Lantern",
+                "aliases": [],
+                "description": "The cellar stairs of the Rusty Lantern are slick from a leaking barrel, illuminated by lantern light, where dust has settled.",
+                "parentId": "",
+                "lorebook": "",
+                "loreEntryId": null
+              },
+              "before": null,
+              "provenance": {
+                "messageId": 1
+              }
+            }
+          },
+          {
+            "id": "place-f4a5eeca-998d-45d6-a476-dd1560e61cfd",
+            "kind": "location-current",
+            "scope": "location",
+            "actor": "Cellar Stairs of the Rusty Lantern",
+            "label": "Current place",
+            "before": "Rusty Lantern",
+            "after": "Cellar Stairs of the Rusty Lantern",
+            "risk": "risky",
+            "note": "Alex misses a step and lands hard against the edge of a wooden crate.",
+            "location": {
+              "id": "place-806b68df-56ea-4f3d-96b5-51c42b45180e",
+              "record": {
+                "id": "place-806b68df-56ea-4f3d-96b5-51c42b45180e",
+                "name": "Cellar Stairs of the Rusty Lantern",
+                "aliases": [],
+                "description": "The cellar stairs of the Rusty Lantern are slick from a leaking barrel, illuminated by lantern light, where dust has settled.",
+                "parentId": "",
+                "lorebook": "",
+                "loreEntryId": null
+              },
+              "before": null,
+              "provenance": {
+                "messageId": 1
+              },
+              "currentBefore": "home"
+            }
+          }
+        ]
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "validJsonAndNotTruncated",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "playerDecreased HP",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "npcPresent Mira",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "noInventoryAddsOrRemoves ",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "noXp ",
+          "critical": true,
+          "passed": true
+        }
+      ],
+      "audit": {
+        "placeholderInventory": false,
+        "openingInventedInventory": false,
+        "xpProgression": null
+      }
+    },
+    {
+      "id": "fantasy-wound-treated",
+      "system": "fantasy",
+      "holdout": false,
+      "repeat": 1,
+      "elapsedMs": 9093,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 940,
+        "prompt_tokens": 5305,
+        "total_tokens": 6245,
+        "prompt_tokens_details": {
+          "cached_tokens": 5300
+        }
+      },
+      "content": "```json\n{\n  \"player\": {\n    \"deltas\": {\n      \"HP\": 2,\n      \"XP\": 5\n    }\n  },\n  \"characters\": [\n    {\n      \"name\": \"Mira\"\n    }\n  ]\n}\n```",
+      "parsed": {
+        "player": {
+          "deltas": {
+            "HP": 2,
+            "XP": 5
+          }
+        },
+        "characters": [
+          {
+            "name": "Mira"
+          }
+        ]
+      },
+      "normalized": {
+        "update": {
+          "player": {
+            "HP": "7/12",
+            "XP": "5/100"
+          },
+          "characters": [
+            {
+              "name": "Mira"
+            }
+          ],
+          "global": {}
+        },
+        "effective": {
+          "global": {
+            "Location": "Rusty Lantern",
+            "Time": "",
+            "Quest": ""
+          },
+          "player": {
+            "stats": {
+              "HP": "7/12",
+              "Armor": "10",
+              "Strength": "10",
+              "Dexterity": "10",
+              "Constitution": "10",
+              "Intelligence": "10",
+              "Wisdom": "10",
+              "Charisma": "10",
+              "Condition": "Wounded",
+              "Currency": "0",
+              "XP": "5/100",
+              "Level": "1"
+            },
+            "collections": {
+              "equipment": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "Mira",
+              "npcTemplateId": "character",
+              "stats": {
+                "HP": "12/12",
+                "Armor": "10",
+                "Strength": "10",
+                "Dexterity": "10",
+                "Constitution": "10",
+                "Intelligence": "10",
+                "Wisdom": "10",
+                "Charisma": "10",
+                "Condition": "Healthy",
+                "Currency": "0",
+                "XP": "0/100",
+                "Level": "1"
+              },
+              "collections": {}
+            }
+          ],
+          "locations": {
+            "enabled": true,
+            "currentId": "home",
+            "records": {
+              "home": {
+                "id": "home",
+                "name": "Rusty Lantern",
+                "description": "",
+                "aliases": [],
+                "parentId": ""
+              }
+            }
+          },
+          "timestamp": 1792363983590
+        },
+        "progression": {
+          "xp": "5/100",
+          "level": "1",
+          "levelsGained": 0
+        },
+        "holdings": {
+          "player": {
+            "stats": {
+              "HP": "5/12",
+              "Armor": "10",
+              "Strength": "10",
+              "Dexterity": "10",
+              "Constitution": "10",
+              "Intelligence": "10",
+              "Wisdom": "10",
+              "Charisma": "10",
+              "Condition": "Wounded",
+              "Currency": "0",
+              "XP": "0/100",
+              "Level": "1"
+            },
+            "collections": {
+              "equipment": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "Mira",
+              "npcTemplateId": "character",
+              "stats": {
+                "HP": "12/12",
+                "Armor": "10",
+                "Strength": "10",
+                "Dexterity": "10",
+                "Constitution": "10",
+                "Intelligence": "10",
+                "Wisdom": "10",
+                "Charisma": "10",
+                "Condition": "Healthy",
+                "Currency": "0",
+                "XP": "0/100",
+                "Level": "1"
+              },
+              "collections": {}
+            }
+          ]
+        },
+        "warnings": [],
+        "places": []
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "validJsonAndNotTruncated",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "playerIncreased HP",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "npcPresent Mira",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "noMovement ",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "noPlayerInventoryChanges ",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "noXp ",
+          "critical": true,
+          "passed": false
+        }
+      ],
+      "audit": {
+        "placeholderInventory": false,
+        "openingInventedInventory": false,
+        "xpProgression": {
+          "xp": "5/100",
+          "level": "1",
+          "levelsGained": 0
+        }
+      }
+    },
+    {
+      "id": "fantasy-shared-recovery",
+      "system": "fantasy",
+      "holdout": false,
+      "repeat": 1,
+      "elapsedMs": 10522,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 1087,
+        "prompt_tokens": 5310,
+        "total_tokens": 6397,
+        "prompt_tokens_details": {
+          "cached_tokens": 5305
+        }
+      },
+      "content": "```json\n{\n  \"global\": {\n    \"Time\": \"morning\"\n  },\n  \"player\": {\n    \"deltas\": {\n      \"HP\": 8\n    }\n  },\n  \"characters\": [\n    {\n      \"name\": \"Mira\",\n      \"deltas\": {\n        \"HP\": 6\n      }\n    }\n  ]\n}\n```",
+      "parsed": {
+        "global": {
+          "Time": "morning"
+        },
+        "player": {
+          "deltas": {
+            "HP": 8
+          }
+        },
+        "characters": [
+          {
+            "name": "Mira",
+            "deltas": {
+              "HP": 6
+            }
+          }
+        ]
+      },
+      "normalized": {
+        "update": {
+          "global": {
+            "Time": "morning"
+          },
+          "player": {
+            "HP": "12/12"
+          },
+          "characters": [
+            {
+              "name": "Mira",
+              "HP": "12/12"
+            }
+          ]
+        },
+        "effective": {
+          "global": {
+            "Location": "Rusty Lantern",
+            "Time": "morning",
+            "Quest": ""
+          },
+          "player": {
+            "stats": {
+              "HP": "12/12",
+              "Armor": "10",
+              "Strength": "10",
+              "Dexterity": "10",
+              "Constitution": "10",
+              "Intelligence": "10",
+              "Wisdom": "10",
+              "Charisma": "10",
+              "Condition": "Healthy",
+              "Currency": "0",
+              "XP": "0/100",
+              "Level": "1"
+            },
+            "collections": {
+              "equipment": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "Mira",
+              "npcTemplateId": "character",
+              "stats": {
+                "HP": "12/12",
+                "Armor": "10",
+                "Strength": "10",
+                "Dexterity": "10",
+                "Constitution": "10",
+                "Intelligence": "10",
+                "Wisdom": "10",
+                "Charisma": "10",
+                "Condition": "Healthy",
+                "Currency": "0",
+                "XP": "0/100",
+                "Level": "1"
+              },
+              "collections": {}
+            }
+          ],
+          "locations": {
+            "enabled": true,
+            "currentId": "home",
+            "records": {
+              "home": {
+                "id": "home",
+                "name": "Rusty Lantern",
+                "description": "",
+                "aliases": [],
+                "parentId": ""
+              }
+            }
+          },
+          "timestamp": 1792363994113
+        },
+        "progression": null,
+        "holdings": {
+          "player": {
+            "stats": {
+              "HP": "4/12",
+              "Armor": "10",
+              "Strength": "10",
+              "Dexterity": "10",
+              "Constitution": "10",
+              "Intelligence": "10",
+              "Wisdom": "10",
+              "Charisma": "10",
+              "Condition": "Healthy",
+              "Currency": "0",
+              "XP": "0/100",
+              "Level": "1"
+            },
+            "collections": {
+              "equipment": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "Mira",
+              "npcTemplateId": "character",
+              "stats": {
+                "HP": "6/12",
+                "Armor": "10",
+                "Strength": "10",
+                "Dexterity": "10",
+                "Constitution": "10",
+                "Intelligence": "10",
+                "Wisdom": "10",
+                "Charisma": "10",
+                "Condition": "Healthy",
+                "Currency": "0",
+                "XP": "0/100",
+                "Level": "1"
+              },
+              "collections": {}
+            }
+          ]
+        },
+        "warnings": [],
+        "places": []
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "validJsonAndNotTruncated",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "appliedPlayerValue HP 12/12",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "appliedNpcValue Mira HP 12/12",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "npcPresent Mira",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "noInventoryChanges ",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "noXp ",
+          "critical": true,
+          "passed": true
+        }
+      ],
+      "audit": {
+        "placeholderInventory": false,
+        "openingInventedInventory": false,
+        "xpProgression": null
+      }
+    },
+    {
+      "id": "fantasy-rumor-control",
+      "system": "fantasy",
+      "holdout": false,
+      "repeat": 1,
+      "elapsedMs": 6033,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 619,
+        "prompt_tokens": 5305,
+        "total_tokens": 5924,
+        "prompt_tokens_details": {
+          "cached_tokens": 5300
+        }
+      },
+      "content": "```json\n{\n  \"global\": {},\n  \"player\": {},\n  \"characters\": [\n    {\n      \"name\": \"Mira\"\n    }\n  ]\n}\n```",
+      "parsed": {
+        "global": {},
+        "player": {},
+        "characters": [
+          {
+            "name": "Mira"
+          }
+        ]
+      },
+      "normalized": {
+        "update": {
+          "global": {},
+          "player": {},
+          "characters": [
+            {
+              "name": "Mira"
+            }
+          ]
+        },
+        "effective": {
+          "global": {
+            "Location": "Rusty Lantern",
+            "Time": "",
+            "Quest": ""
+          },
+          "player": {
+            "stats": {
+              "HP": "8/12",
+              "Armor": "10",
+              "Strength": "10",
+              "Dexterity": "10",
+              "Constitution": "10",
+              "Intelligence": "10",
+              "Wisdom": "10",
+              "Charisma": "10",
+              "Condition": "Healthy",
+              "Currency": "0",
+              "XP": "0/100",
+              "Level": "1"
+            },
+            "collections": {
+              "equipment": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "Mira",
+              "npcTemplateId": "character",
+              "stats": {
+                "HP": "12/12",
+                "Armor": "10",
+                "Strength": "10",
+                "Dexterity": "10",
+                "Constitution": "10",
+                "Intelligence": "10",
+                "Wisdom": "10",
+                "Charisma": "10",
+                "Condition": "Healthy",
+                "Currency": "0",
+                "XP": "0/100",
+                "Level": "1"
+              },
+              "collections": {}
+            }
+          ],
+          "locations": {
+            "enabled": true,
+            "currentId": "home",
+            "records": {
+              "home": {
+                "id": "home",
+                "name": "Rusty Lantern",
+                "description": "",
+                "aliases": [],
+                "parentId": ""
+              }
+            }
+          },
+          "timestamp": 1792364000147
+        },
+        "progression": null,
+        "holdings": {
+          "player": {
+            "stats": {
+              "HP": "8/12",
+              "Armor": "10",
+              "Strength": "10",
+              "Dexterity": "10",
+              "Constitution": "10",
+              "Intelligence": "10",
+              "Wisdom": "10",
+              "Charisma": "10",
+              "Condition": "Healthy",
+              "Currency": "0",
+              "XP": "0/100",
+              "Level": "1"
+            },
+            "collections": {
+              "equipment": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "Mira",
+              "npcTemplateId": "character",
+              "stats": {
+                "HP": "12/12",
+                "Armor": "10",
+                "Strength": "10",
+                "Dexterity": "10",
+                "Constitution": "10",
+                "Intelligence": "10",
+                "Wisdom": "10",
+                "Charisma": "10",
+                "Condition": "Healthy",
+                "Currency": "0",
+                "XP": "0/100",
+                "Level": "1"
+              },
+              "collections": {}
+            }
+          ]
+        },
+        "warnings": [],
+        "places": []
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "validJsonAndNotTruncated",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "playerUnchanged HP",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "noXp ",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "noMovement ",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "noPlaceCreated old mill",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "noInventoryChanges ",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "npcPresent Mira",
+          "critical": false,
+          "passed": true
+        }
+      ],
+      "audit": {
+        "placeholderInventory": false,
+        "openingInventedInventory": false,
+        "xpProgression": null
+      }
+    }
+  ],
+  "summary": {
+    "checks": 78,
+    "passed": 76,
+    "rate": 0.9743589743589743,
+    "criticalFailures": [
+      "fantasy-wound-treated #2: noXp "
+    ],
+    "systems": {
+      "fantasy": 0.9791666666666666,
+      "dating": 0.9666666666666667
+    },
+    "perSystemCounts": {
+      "fantasy": {
+        "checks": 48,
+        "passed": 47,
+        "rate": 0.9791666666666666
+      },
+      "dating": {
+        "checks": 30,
+        "passed": 29,
+        "rate": 0.9666666666666667
+      }
+    },
+    "splits": {
+      "main": {
+        "checks": 78,
+        "passed": 76,
+        "rate": 0.9743589743589743
+      },
+      "originalHoldout": {
+        "checks": 0,
+        "passed": 0,
+        "rate": null
+      }
+    },
+    "auditFailures": [],
+    "acceptable": false
+  }
+}

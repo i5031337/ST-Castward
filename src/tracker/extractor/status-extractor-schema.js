@@ -1,3 +1,4 @@
+import { locationExtractionSchema } from '../../locations/location-context.js';
 import { collectionQuantityField } from '../../core/collection-fields.js';
 import { collectionAppliesTo } from '../../core/collection-targets.js';
 import { progressionFields } from '../progression-fields.js';
@@ -100,6 +101,7 @@ export function buildExtractionSchema(trackerSettings, { strangers = [], state =
             ...(trackerSettings.extractionReasons === false ? {} : {
                 why: { type: 'object', additionalProperties: { type: 'string' } },
             }),
+            ...(state?.locations?.enabled ? { locations: locationExtractionSchema() } : {}),
             global: stringMap(globalStatDefs),
             ...(worldDeltas.length ? { globalDeltas: deltaMap(worldDeltas) } : {}),
             player: {
