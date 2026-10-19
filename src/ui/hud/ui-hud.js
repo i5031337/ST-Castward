@@ -14,26 +14,14 @@ let dragOffset = { x: 0, y: 0 };
 /** Keep at least this much of the HUD on screen so it can never be dragged out of reach. */
 const HUD_VIEWPORT_MARGIN = 48;
 
-/**
- * The corner classes, which are the ones that have to be cleared before another is set.
- *
- * Named rather than cleared wholesale. Three separate functions put classes on this
- * element - the corner and theme here, the portrait's shape and side in
- * applyHudAppearance, the meter style in applyHudProportions - and for a long time this
- * one assigned `className` outright, so it silently deleted the other two's work every
- * time the HUD updated. That is why choosing a portrait side or shape appeared to do
- * nothing at all unless the meter style happened to be re-applied afterwards.
- */
+/** Clear only corner classes; theme, portrait and meter classes share this element. */
 const HUD_CORNERS = ['top-left', 'top-right', 'bottom-left', 'bottom-right'];
 
 /** How far the pointer must travel before a press on the portrait counts as a drag. */
 const DRAG_THRESHOLD = 5;
 
 /**
- * Whether a press has become a drag.
- *
- * The mini-portrait is both the drag handle and the button that opens the player sheet,
- * so a hand that moves slightly while clicking has to still be clicking.
+ * Distinguish portrait clicks from drags.
  *
  * @param {number} dx
  * @param {number} dy
@@ -44,11 +32,7 @@ export function passedDragThreshold(dx, dy) {
 }
 
 /**
- * Keeps a position inside the viewport, given the size actually on screen.
- *
- * Split from the DOM so the arithmetic can be checked on its own. The awkward case is a
- * HUD bigger than the window - at a large scale on a small screen - which has to start at
- * 0 rather than at a negative offset that would push its top-left off the edge.
+ * Clamp the rendered HUD to the viewport; oversized HUDs start at zero.
  *
  * @param {number} x
  * @param {number} y
@@ -65,15 +49,7 @@ export function clampHudPosition(x, y, box, viewport) {
     };
 }
 
-/**
- * Clamps a position so the HUD stays on screen.
- *
- * Measured from the rendered box rather than a flat margin, because the box is scaled:
- * getBoundingClientRect already accounts for the zoom, so this is the size the user
- * actually sees.
- *
- * @returns {{x: number, y: number}}
- */
+/** Clamp using the rendered box, which already includes zoom. */
 function clampToViewport(x, y) {
     const rect = hudContainer?.getBoundingClientRect();
     return clampHudPosition(
@@ -92,18 +68,7 @@ function hudZoom() {
     return zoom > 0 ? zoom : 1;
 }
 
-/**
- * Applies HUD Scale as zoom rather than transform: scale().
- *
- * A transform draws the HUD at its normal size and then stretches the result, which is
- * what made the portrait soft however good the picture was - you compared the two ways
- * side by side on your own screen and the stretched one was the blurry one. Zoom lays the
- * HUD out at the larger size, so it is drawn sharp at the size you see.
- *
- * Zoom also scales the element's own left, top, right and bottom, and a translate. So
- * positions are written divided by it (placeHud), and the corner offsets in the stylesheet
- * divide by --sillynpc-hud-zoom.
- */
+/** Use zoom for sharp portraits. Divide position and translation coordinates by zoom. */
 function applyHudZoom() {
     const zoom = hudZoom();
     hudContainer.style.transform = '';
@@ -151,9 +116,7 @@ export function initHUD() {
     hudContainer.classList.remove(...HUD_CORNERS);
     hudContainer.classList.add(settings.hudPosition);
     hudContainer.style.position = 'fixed';
-    // z-index comes from --sillynpc-z-hud so the HUD sits above the chat but below
-    // SillyTavern's own panels, drawers and menus. An inline 10000 here used to beat
-    // them all and cover whatever the user had just opened.
+    // CSS keeps the HUD above chat and below SillyTavern panels.
     applyHudZoom();
 
     // Restore position
@@ -170,32 +133,16 @@ export function initHUD() {
     const portrait = document.createElement('div');
     portrait.className = 'sillynpc-hud-portrait';
 
-    /* The face is an <img> inside the frame rather than the frame's background-image.
-       Every other portrait in the extension - the chat avatars, the character cards, the
-       tracker rows - is an <img>, and those are the ones that looked right; this was the
-       only background-image and the only one that came out coarse at any HUD scale.
-
-       Inside rather than instead of: the div carries the drag handle, the click that opens
-       the sheet, the keyboard activation, and the plate layout's corner marks, which are
-       positioned outside its edges. Clipping the picture with overflow on the frame would
-       cut those off, so the picture rounds itself with border-radius: inherit and the
-       frame keeps its overflow. */
+    /* Keep the image inside the frame so it can crop independently of external corner marks. */
     ensurePortraitImage(portrait);
-    /* Watch for whoever sets display on it. The picture ends up with an inline
-       `display: none` that no stylesheet accounts for, and neither this extension nor
-       SillyTavern nor the installed theme has a line that obviously would - so the
-       assignment is caught where it happens and the caller written down. Recording only;
-       the value still lands. See trapInlineDisplay. */
+    /* Record the caller when JavaScript hides the portrait inline; preserve the assigned value. */
     const trapped = portrait.querySelector('.sillynpc-hud-portrait-img');
     if (trapped) {
         trapInlineDisplay(trapped, (value, stack) => {
             if (value !== 'none') return;
             const by = shortenStack(stack);
             portrait.dataset.faceHiddenBy = by;
-            /* And onto the visible attribute straight away, rather than waiting for the
-               next draw to fold it in. Every draw rebuilds the frame, so a hide arriving
-               after updateHUD has finished would be recorded on an element that is thrown
-               away before anything reads it - the reason recorded and never shown. */
+            /* Record immediately because the next draw replaces the frame. */
             portrait.dataset.faceWhy = `inline:none << ${by}`;
         });
     }
@@ -264,13 +211,7 @@ function startDrag(e) {
     dragOffset.x = startX - rect.left;
     dragOffset.y = startY - rect.top;
 
-    /* Moved with `translate` on every move, and put down with left/top only on release.
-     *
-     * It used to write left/top on every mouse move. That is a layout per move, and the HUD
-     * has a blurred see-through background, so each one also re-blurred everything behind
-     * it - a video background included. Dragging lagged, and on a weaker machine it could
-     * stall. translate is moved by the compositor without layout, and the blur is switched
-     * off for the length of the drag (is-dragging), so a move costs almost nothing. */
+    /* Use translate while dragging to avoid layout; disable blur until release. */
     let offsetX = 0;
     let offsetY = 0;
     const zoom = hudZoom();
@@ -288,9 +229,7 @@ function startDrag(e) {
 
         offsetX = moveEvent.clientX - startX;
         offsetY = moveEvent.clientY - startY;
-        // Straight away, on every move - not saved up for the next frame. Of the three ways
-        // you tried, this is the one that felt like a window. Divided by the zoom, which
-        // scales a translate too.
+        // Zoom also scales translate coordinates.
         hudContainer.style.translate = `${offsetX / zoom}px ${offsetY / zoom}px`;
     };
 

@@ -35,16 +35,16 @@ export function profileHarness(scenario) {
     const card = { name: scenario.name, isPlayer: false, npcTemplateId: 'character', profile: { ...scenario.profile } };
     const fields = profileFieldsForCard(card);
     const describeProfile = functionFrom(body('../../src/api/api-lore-facts.js',
-        'export function describeProfile', '\n/**\n * The stats and collections'),
+        'export function describeProfile', 'export function liveFactsFor'),
     { fieldsForCard: profileFieldsForCard, profileFieldValue }, 'describeProfile');
     const profileDependencies = { promptText, getPersonaData: () => ({ name: 'Alex' }),
         describeProfile, describeTrackedFacts: () => scenario.facts || '',
         hintFor, fillTemplate, fieldsForCard: profileFieldsForCard, profileFieldValue };
     const buildProfilePrompt = functionFrom(body('../../src/characters/character-fill.js',
-        'export function buildProfilePrompt', '\n/**\n * Fills in who somebody is'),
+        'export function buildProfilePrompt', 'export async function fillProfile'),
     profileDependencies, 'buildProfilePrompt');
     const missingProfileFields = functionFrom(body('../../src/characters/character-fill.js',
-        'export function missingProfileFields', '\n/**\n * What there is to go on'),
+        'export function missingProfileFields', 'export async function fillSources'),
     profileDependencies, 'missingProfileFields');
     const sources = { story: scenario.story || '', lore: scenario.lore || '', personaDescription: '', enough: true };
     const wanted = missingProfileFields(card);
@@ -58,7 +58,7 @@ export function profileHarness(scenario) {
     let loreResponse = { text: '', truncated: false };
     let capturedLorePrompt = '';
     const generateLoreContent = functionFrom(body('../../src/api/api-lore-generate.js',
-        'export async function generateLoreContent', '\n\n/**\n * Saves tags and content'), {
+        'export async function generateLoreContent', 'export async function saveLoreContent'), {
         loadWorldInfo: async () => ({ entries: {} }), chat: [],
         buildLoreExcerpt: () => ({ text: scenario.story || '', used: 1, available: 1, trimmed: false }),
         retrieveWorldFacts: async () => '', DEFAULT_LORE_PROMPT, mergeLoreValues,

@@ -5,7 +5,10 @@ import { extensionName, LOG_PREFIX } from '../../core/constants.js';
 import { getSettings } from '../../core/settings.js';
 import { reprocessAllMessages, chatRenderSignature } from '../../chat/chat.js';
 import { resetLorebookState } from '../story/ui-lorebook-section.js';
-import { renderAppearanceView, renderWritingRulesView, renderAdvancedView, renderImageSettingsView, renderLoreSettingsView } from '../settings/ui-settings-tabs.js';
+import { renderAppearanceView } from '../settings/ui-settings-appearance.js';
+import { renderWritingRulesView } from '../settings/ui-settings-writing.js';
+import { renderAdvancedView } from '../settings/ui-settings-advanced.js';
+import { renderImageSettingsView, renderLoreSettingsView } from '../settings/ui-settings-generation.js';
 import { renderStatusView } from '../tracker/ui-tracker-settings.js';
 import { renderTtsSettings } from '../tts/ui-tts-settings.js';
 import { stopNpcTts, previewNpcVoice } from '../../tts/npc-tts.js';
@@ -120,7 +123,6 @@ function applyPopupSize() {
         dlg.style.setProperty('margin', '2vh auto', 'important');
     }
 
-    // ─── ADD THESE LINES TO SOLVE THE PROBLEM ────────────────────────
     dlg.style.setProperty('padding', '0px', 'important');          // Removes the 20px padding gap
     dlg.style.setProperty('background', 'transparent', 'important'); // Makes the parent container invisible
     dlg.style.setProperty('border', 'none', 'important');          // Removes any actual borders
@@ -392,5 +394,3 @@ function renderSystemsView(view) {
 function updateManageTheme(root, popupInstance = null) {
     updateExtensionTheme(root, popupInstance);
 }
-
-/* ─── Characters Tab ────────────────────────────────────────────────────── */

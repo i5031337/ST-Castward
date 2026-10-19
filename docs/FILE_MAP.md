@@ -38,9 +38,11 @@ SillyTavern loads `index.js` and `style.css` from `manifest.json`. The JavaScrip
 | `docs/system-generation-plan.md` | Implemented staged System generator design, verification criteria, and schema simplification candidates. |
 | `img/branding/castward-logo.svg`, `img/branding/castward-icon.svg` | README logo and extension-header character emblem; outlined lettering and transparent backgrounds. |
 | `img/SillyNPCLogo.jpg` | Retained upstream SillyNPC logo; not used for Castward branding. |
-| `img/charactersexmp.png`, `img/charcterexmp.png`, `img/chatexmp.png` | Character and chat screenshots in the README. |
-| `img/floathudbar.png`, `img/floathudcircle.png`, `img/playerexmp.png` | HUD and player screenshots in the README. |
-| `img/stats.png`, `img/styleexmp.png` | Stats and appearance screenshots in the README. |
+| `img/screenshots/` | Current Castward README captures: dialogue expressions, the expression editor, present scene sprites, tracker collections and progression, player HUD, System generation, and speech settings. Captures use staged example data. |
+| `img/screenshots/example-portraits.webp` | Original generated example artwork used in the captures: Mira neutral/joy and Rowan neutral/fear, arranged in a two-by-two sheet. |
+| `img/charactersexmp.png`, `img/charcterexmp.png`, `img/chatexmp.png` | Retained upstream character and chat screenshots. |
+| `img/floathudbar.png`, `img/floathudcircle.png`, `img/playerexmp.png` | Retained upstream HUD and player screenshots. |
+| `img/stats.png`, `img/styleexmp.png` | Retained upstream stats and appearance screenshots. |
 | `tests/chat-character-ownership.mjs` | Character visibility, chat NPC routing, persona identity, and chat-local player state boundaries. |
 | `tests/fill-new-character.mjs` | Automatic fill stages, new chat cards, shared locks, and retry behavior. |
 | `tests/lore-entry-store.mjs` | Concurrent lore creation, ownership, and entry reuse tests. |
@@ -272,7 +274,6 @@ SillyTavern loads `index.js` and `style.css` from `manifest.json`. The JavaScrip
 | `src/tracker/ui/status-ui-template-characters.js` | Render character sections in the tracker. |
 | `src/tracker/ui/status-ui-edit.js` | Wire inline tracker editing. |
 | `src/ui/manage/ui-manage.js` | Management popup and tab routing, including the Player view. |
-| `src/ui/api/ui-api.js` | Lore and portrait generation dialogs. |
 | `src/ui/api/ui-api-lore.js` | Lore generation dialog workflow. |
 | `src/ui/api/ui-api-image.js` | Portrait generation dialog workflow. |
 | `src/ui/shared/ui-banlist.js` | Banlist editor. |
@@ -301,7 +302,6 @@ SillyTavern loads `index.js` and `style.css` from `manifest.json`. The JavaScrip
 | `src/ui/settings/ui-setting-help.js` | Hover, focus, and tap help hints for settings controls. |
 | `src/ui/settings/ui-settings-details.js` | Group less-used settings in disclosures. |
 | `src/ui/settings/ui-settings-search.js` | Search settings and jump to results. |
-| `src/ui/settings/ui-settings-tabs.js` | Public entry point for settings views. |
 | `src/ui/settings/ui-settings-appearance.js` | Appearance settings. |
 | `src/ui/settings/ui-settings-writing.js` | Writing rule settings. |
 | `src/ui/settings/ui-settings-advanced.js` | Advanced settings. |

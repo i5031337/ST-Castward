@@ -1,11 +1,5 @@
-import { paletteIndexFor } from './hash.js';
-/**
- * Detect the extension folder name from this script's URL so the extension keeps
- * working regardless of what the user renamed the folder to.
- * URL pattern: .../extensions/third-party/<folder-name>/index.js
- */
+/** Resolve the installed folder name, including renamed extension folders. */
 const _scriptUrl = import.meta.url;
-// Adjust regex to account for being in a subfolder (src/)
 const _match = _scriptUrl.match(/extensions\/(?:third-party\/)?([^/]+)\//);
 export const extensionName = _match 
     ? (_scriptUrl.includes('third-party') ? `third-party/${_match[1]}` : _match[1]) 
@@ -13,21 +7,10 @@ export const extensionName = _match
 
 export const LOG_PREFIX = '[Castward]';
 
-// Auto-downscale uploaded images to keep extension_settings small.
-/**
- * Cap for images stored inline in settings.json, where every pixel is base64 in a file
- * that is rewritten on every save. Small on purpose.
- */
+/** Maximum dimension for images stored inline in extension settings. */
 export const IMAGE_MAX_DIMENSION = 256;
 
-/**
- * Cap for images written to disk instead: character portraits and generation references.
- *
- * The 256 cap above was the only one there was, so browsing for a portrait quietly shrank
- * it to thumbnail size - which no longer made sense once portraits went to disk, and made
- * a poor reference image besides. Still bounded, because a reference is base64-encoded
- * into a request where size costs latency and tokens.
- */
+/** Maximum dimension for disk portraits and image-generation references. */
 export const IMAGE_PORTRAIT_MAX_DIMENSION = 1536;
 export const IMAGE_JPEG_QUALITY = 0.85;
 
@@ -45,24 +28,10 @@ export const BUILT_IN_DEFAULT_AVATAR = 'data:image/svg+xml;charset=utf-8,' + enc
     '</svg>',
 );
 
-/**
- * Extension version. Keep in sync with manifest.json.
- *
- * This used to be duplicated as defaultSettings.version and doubled as the gate
- * that decided whether migrations ran, so bumping one without the other silently
- * skipped them. Migrations now always run; this value is informational.
- */
+/** Informational version; keep in sync with manifest.json. */
 export const EXTENSION_VERSION = '0.8.0';
 
-/**
- * Themes shipped by the extension (each has a `.sillynpc-theme-<id>` block in
- * style.css). Anything not in this list is treated as a SillyTavern-native theme
- * and gets the `theme-<id>` class instead.
- *
- * This list was previously hardcoded in three separate modules and had already
- * started to drift.
- * @type {readonly string[]}
- */
+/** Built-in theme IDs; other IDs use native theme classes. @type {readonly string[]} */
 export const SILLYNPC_THEMES = Object.freeze([
     'terminal',
     'cyberpunk',
@@ -94,27 +63,12 @@ export function allThemeClasses() {
  * @returns {string}
  */
 export function themeClassFor(theme) {
-    // Seamless Native is deliberately kept out of SILLYNPC_THEMES so the theme picker,
-    // which prepends it, does not list it twice. But style.css does define ten
-    // .sillynpc-theme-default rules, and defines nothing at all for .theme-default - so
-    // returning that left the panel transparent and its text on the chat behind it.
+    // The native-looking default uses extension CSS but is listed separately in the picker.
     if (theme === 'default') return 'sillynpc-theme-default';
     return SILLYNPC_THEMES.includes(theme) ? `sillynpc-theme-${theme}` : `theme-${theme}`;
 }
 
-/**
- * How the floating HUD is laid out. Each has a `.sillynpc-hud-<id>` block in style.css.
- *
- * This replaced a "Meter Style" setting that offered bar, segmented, rings and text. The
- * two were never really independent: in every one of these the shape of the meter and the
- * shape of the frame around it are the same decision - underlines drawn as segmented pips
- * is not a thing anybody wants - so a layout decides both, and there is one setting where
- * there were two.
- *
- * `meters` is which drawing routine the layout needs, and it is the field that keeps this
- * honest: a layout wanting a fifth kind of meter is a layout that needs new code in
- * ui-hud.js, not just a new block of CSS.
- *
+/** HUD layouts and their meter renderers.
  * @type {ReadonlyArray<{id: string, label: string, meters: 'bar'|'pips'|'ring', note: string}>}
  */
 export const HUD_LAYOUTS = Object.freeze([
@@ -148,29 +102,12 @@ export function allHudLayoutClasses() {
     return HUD_LAYOUTS.map(l => `sillynpc-hud-${l.id}`);
 }
 
-/**
- * Chatty per-message / per-update logging, off by default.
- *
- * The extension logged on every state load, every stat merge and every HUD
- * refresh, which buried real errors in SillyTavern's console. Errors and warnings
- * are always shown; only the running commentary is gated.
- *
- * Toggle at runtime from DevTools:  window.SILLYNPC_DEBUG = true
- *
- * @param {...any} args
- */
+/** Request/update diagnostics, enabled by settings or window.SILLYNPC_DEBUG. */
 export function debugLog(...args) {
     if (globalThis.SILLYNPC_DEBUG) console.log(LOG_PREFIX, ...args);
 }
 
-/**
- * Turns debug logging on or off.
- *
- * The flag stays a global so DevTools can still drive it directly, which is how it worked
- * before there was a setting; this only gives the setting a way to reach it.
- *
- * @param {boolean} enabled
- */
+/** Share the setting with the DevTools logging flag. */
 export function setDebugLogging(enabled) {
     globalThis.SILLYNPC_DEBUG = !!enabled;
 }
@@ -186,12 +123,3 @@ export const PORTRAIT_SHAPES = Object.freeze({
 
 /** Fallback shape: what the avatar frames and character cards are built around. */
 export const DEFAULT_PORTRAIT_SHAPE = '3:4';
-
-/**
- * Accent colours handed out to character cards.
- *
- * Chosen to stay readable on both light and dark chat backgrounds and to be told apart at
- * a glance, since their whole job is separating two speakers mid-scene.
- *
- * @type {readonly string[]}
- */

@@ -1,19 +1,10 @@
 import { debugLog } from './constants.js';
-import { getContext } from '../../../../../st-context.js';
 
 export function escapeRegExp(s) {
     return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-/**
- * Escapes the five HTML-significant characters so untrusted text (AI output,
- * persona fields, user-typed names) can be interpolated into markup — or into
- * an attribute value — without breaking out of it.
- *
- * The previous map had its entity strings HTML-decoded by a bad edit
- * (`{ '&': '&', '<': '<', ... }`), which made this a no-op for
- * everything except the single quote. Every caller was effectively unescaped.
- */
+/** Escape text for HTML content or quoted attributes. */
 export function escapeHtml(unsafe) {
     if (unsafe === undefined || unsafe === null) return '';
     const map = {
@@ -145,27 +136,8 @@ function tryRepairAndParse(str) {
     return null;
 }
 
-/**
- * A model's reply, parsed if it can be and repaired if it cannot.
- *
- * Three attempts in order: as written after trailing commas are removed; then
- * closeOpenStructures, which closes whatever the reply ran out of room to close - the common
- * failure, since a truncated object is what a token budget produces; then a last pass that
- * quotes bare keys.
- *
- * That last pass cannot tell a key from text inside a string value, so it will rewrite
- * `beta:` inside "alpha, beta: gamma" if it ever reaches it. **The safety is that JSON.parse
- * then rejects the result**, not that anything checks - mangling a string leaves unbalanced
- * quotes, so the parse throws and this returns null. That is worth knowing before changing
- * it: making the pass smarter without keeping the parse as the arbiter would turn a safe
- * failure into a quiet corruption.
- *
- * Measured against the shapes a model actually produces, it repairs trailing commas,
- * truncated objects, truncated strings and unquoted keys, and returns null - never wrong
- * data - for the two cases where unquoted keys and a colon inside a string value coincide.
- *
- * @param {string} jsonStr
- * @returns {any} The parsed value, or null when nothing safe could be recovered.
+/** Parse model JSON, then try trailing-comma, truncation, and bare-key repairs.
+ * Each repair must pass JSON.parse; returns null if all attempts fail.
  */
 export function safeJsonParse(jsonStr) {
     if (!jsonStr) return null;
@@ -193,17 +165,7 @@ export function safeJsonParse(jsonStr) {
     }
 }
 
-/**
- * Splits a "current/maximum" value into its halves. A plain value has no maximum.
- *
- * Lived in five places at once - status-diff, status-extractor, status-logic,
- * status-snapshots and here - and the copies had already drifted: some trimmed the whole
- * string before splitting, some trimmed the halves afterwards. What each caller does with
- * the halves is still its own business; only the parsing is shared.
- *
- * @param {*} value
- * @returns {{ current: string, max: string }}
- */
+/** Split a current/maximum reading, trimming both halves; a plain value has no maximum. */
 export function splitValue(value) {
     const text = value === undefined || value === null ? '' : String(value).trim();
     const slash = text.indexOf('/');
@@ -211,36 +173,8 @@ export function splitValue(value) {
     return { current: text.slice(0, slash).trim(), max: text.slice(slash + 1).trim() };
 }
 
-/**
- * Works out how to draw a stat as a meter.
- *
- * Lives here rather than in ui-shared so it stays dependency-free and testable: the
- * HUD and the in-chat tracker both need it, and ui-shared already participates in an
- * import cycle with ui-hud.
- *
- * Handles the shapes stats actually arrive in: "8/10", a bare "42", a negative value
- * for ranges like an affinity of -100..100, and prose the model invented. The old HUD
- * maths used /(\d+)/ which silently read "-40" as 40 - fine for HP, wrong for anything
- * that can go below zero.
- *
- * @see splitValue - the "cur/max" parsing itself, which five modules were each doing
- * their own slightly different way.
- *
- * @param {{ rawValue?: any, min?: any, max?: any }} input
- * @returns {{ current: number, min: number, max: number, percent: number, numeric: boolean }}
- */
-/**
- * The ceiling a value carries in itself, or null when it carries none.
- *
- * Shared so the meter maths and the HUD's own "should this be a meter at all" test cannot
- * disagree. They did: computeStatBar learned that a denominator with a second slash is a
- * date rather than a ceiling, while meterHasCeiling went on running its own parseFloat -
- * which reads "01/2012" as 1 - so the HUD kept drawing a date as a full bar after the
- * maths had stopped treating it as one.
- *
- * @param {*} rawValue
- * @returns {number|null}
- */
+
+/** Read an inline maximum; a second slash marks a date rather than a numeric ceiling. */
 export function ceilingFromValue(rawValue) {
     const { max } = splitValue(rawValue);
     // A denominator is one number. A second slash means this is a date, not "cur/max".
@@ -249,28 +183,12 @@ export function ceilingFromValue(rawValue) {
     return Number.isFinite(parsed) ? parsed : null;
 }
 
+/** Resolve signed readings and bounds into a clamped meter percentage. */
 export function computeStatBar({ rawValue, min, max }) {
-    /* A date and a clock are not quantities, and both used to read as full meters.
-     *
-     * splitValue takes the FIRST slash, so "14/01/2012" came apart as 14 over "01/2012",
-     * parseFloat made that ceiling 1, and 14 clamped to it at 100%. Worse, meterHasCeiling
-     * asks the same parseFloat, so the HUD agreed it had a ceiling and drew the bar. A
-     * second slash is the tell: a denominator is one number, not a date.
-     *
-     * "05:30 AM" went the other way - the digit matcher took "05" and, with no ceiling
-     * anywhere, one was invented from the value itself. A colon is the tell there. "Morning"
-     * was always handled, because it has no digits at all; a clock does.
-     *
-     * A unit is still allowed on either side: "3/4 cups" stays a meter at 75%.
-     */
     const { current: currentText } = splitValue(rawValue);
     const impliedMax = ceilingFromValue(rawValue);
 
-    /* Two shapes that carry digits without being quantities.
-       A clock has a colon. A date has two separators, including both the dash form
-       and the slash, because "2012-01-14" carries no slash at all and would
-       otherwise be read as a bare 2012 with an invented ceiling. Two separators is what
-       keeps "-40" and "8-10" out of it. */
+    // Exclude clocks and dates while allowing negative values and unit-bearing readings.
     const clocklike = String(currentText).includes(':');
     const datelike = /\d{1,4}[-/]\d{1,2}[-/]\d{1,4}/.test(String(rawValue ?? ''));
     const signed = (clocklike || datelike) ? null : String(currentText).match(/-?\d+(?:\.\d+)?/);
@@ -289,43 +207,16 @@ export function computeStatBar({ rawValue, min, max }) {
     return { current, min: lower, max: upper, percent, numeric: true };
 }
 
-/**
- * Fills in a field's Format string.
- *
- * `{{name}}` is what makes a label follow its field: it resolves to the field's current
- * name at render time, so renaming can never leave a label saying something the rest of
- * the extension has stopped calling it. A label written as literal text - "HP [{{HP}}]"
- * in a display template - is prose, and prose does not know it was renamed.
- *
- * The caller passes strings that are already fit for where they are going: the tracker box
- * hands in an HTML span for the value and escapes the name, the HUD hands in plain text.
- * Escaping here would have to guess which.
- *
- * @param {string} format e.g. `{{name}}: {{value}}`. Empty means just the value.
- * @param {{ value?: string, name?: string, max?: string }} parts
- * @returns {string}
- */
+/** Resolve {{value}}, {{name}}, and {{max}}; callers escape parts for their output context. */
 export function applyStatFormat(format, { value = '', name = '', max = '' } = {}) {
     let out = String(format || '{{value}}');
     out = out.split('{{value}}').join(value);
     out = out.split('{{name}}').join(name);
-    // Only when there is one: a format asking for {{max}} on a stat without a ceiling
-    // should not print the placeholder at people.
     out = out.split('{{max}}').join(max);
     return out;
 }
 
-/**
- * The persona filename behind a message's avatar, whatever shape it was written in.
- *
- * SillyTavern stamps the persona that wrote a message onto it as `force_avatar`, in one of
- * two forms: a thumbnail URL, `/thumbnail?type=persona&file=x.png`, which is what messages
- * carry now, and a plain `User Avatars/x.png` in older chats. Anything else - a character
- * portrait, a system avatar - is not a persona and comes back empty.
- *
- * @param {string} src
- * @returns {string} '' when this is not a persona avatar.
- */
+/** Resolve a persona filename from a thumbnail URL or legacy User Avatars/ path. */
 export function personaFileFromAvatar(src) {
     const text = String(src ?? '');
     if (!text) return '';
@@ -348,29 +239,11 @@ export function personaFileFromAvatar(src) {
     }
 }
 
-/**
- * Makes something that is not a button behave like one.
- *
- * Most of this interface is built from real `<button>` and `<select>` elements, which are
- * reachable and operable for free. A handful of controls are not, because they are an icon,
- * a card or a coloured cell rather than a label in a box: the tracker's four header icons,
- * the HUD portrait, the portrait carousel's arrows, the System Builder's tab bar.
- *
- * Those had a click handler and nothing else. Tab moved straight past them, so the only way
- * to reach them was with a mouse - and the character card was worse than that. It carried
- * role="button" and tabindex="0" but no key handler, so it took focus, announced itself as a
- * button, and did nothing when pressed. A promise with nothing behind it is worse than no
- * promise.
- *
- * Activation goes through `el.click()` rather than a copy of the handler, so whatever the
- * element already does on click is exactly what a keypress does. There is no second path to
- * keep in step.
- *
+/** Add keyboard activation and accessibility attributes to a custom control.
+ * Enter and Space trigger the existing click handler.
  * @param {HTMLElement} el
- * @param {{ label?: string, role?: string }} [options] `label` is what a screen reader
- *   announces, and defaults to the element's own tooltip - which is usually the only place
- *   an icon says what it does. `role` is 'button' unless the thing is really a tab.
- * @returns {HTMLElement} The same element, so this can wrap a creation expression.
+ * @param {{ label?: string, role?: string }} [options]
+ * @returns {HTMLElement}
  */
 export function makeActivatable(el, { label, role = 'button' } = {}) {
     if (!el) return el;
@@ -390,8 +263,7 @@ export function makeActivatable(el, { label, role = 'button' } = {}) {
 
     el.addEventListener('keydown', (event) => {
         if (event.key !== 'Enter' && event.key !== ' ') return;
-        // Space scrolls the page and Enter can submit a surrounding form; a control that
-        // did its job and also scrolled would be a worse answer than not working.
+        // Prevent scrolling or form submission alongside activation.
         event.preventDefault();
         el.click();
     });

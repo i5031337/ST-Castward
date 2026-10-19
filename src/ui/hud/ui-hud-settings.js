@@ -1,6 +1,5 @@
 import { getSettings, saveSettings } from '../../core/settings.js';
 import { buildSettingToggle, buildSettingSlider, buildSettingSelect } from '../shared/ui-shared.js';
-import { triggerReprocess } from '../../chat/chat.js';
 import { updateHUD, resetHudPosition } from './ui-hud.js';
 import { HUD_LAYOUTS, hudLayoutFor } from '../../core/constants.js';
 import { foldSettings } from '../settings/ui-settings-details.js';

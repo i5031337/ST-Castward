@@ -1,18 +1,8 @@
 import { BUILT_IN_DEFAULT_AVATAR } from '../../core/constants.js';
-import { portraitRendition } from '../../core/utils.js';
 import { whyHidden } from '../shared/css-origin.js';
 
 /**
- * The portrait's <img>, made if it is not there.
- *
- * Called on every draw, not only when the HUD is built. The frame is looked up by class
- * and the picture inside it by another, so anything that leaves the frame without its
- * image - and the reported case is real, even if what does it is not yet known - leaves
- * the HUD permanently faceless: updateHUD finds nothing and does nothing, and only
- * rebuilding the whole widget with a page refresh puts it back.
- *
- * Making it here instead means the invariant is restored by the next draw rather than by
- * the reader.
+ * Ensure the portrait image exists on every draw.
  *
  * @param {HTMLElement} portrait The frame.
  * @returns {HTMLImageElement|null}
@@ -25,12 +15,7 @@ export function ensurePortraitImage(portrait) {
     const face = document.createElement('img');
     face.className = 'sillynpc-hud-portrait-img';
     face.alt = '';
-    /* A picture that cannot be drawn falls back rather than staying blank.
-     *
-     * Deliberately not `img.remove()`, which is what the chat's avatars do: those are one
-     * of many and a missing one is a gap, while this is the only portrait the HUD has.
-     * First the full picture, in case a downscaled rendition was the problem, and then
-     * the built-in face. */
+    /* On image error, try the full source, then the built-in avatar. */
     face.addEventListener('error', () => {
         const full = face.dataset.sillynpcSource;
         if (full && face.getAttribute('src') !== full) face.src = full;
@@ -43,19 +28,7 @@ export function ensurePortraitImage(portrait) {
 }
 
 /**
- * Writes down what state the portrait is actually in.
- *
- * Every way this can fail looks the same from outside - an empty circle - and that is why
- * it has been misdiagnosed repeatedly: a missing element, a src that was never written, a
- * src cleared to nothing, and a picture that loaded perfectly and draws nothing are four
- * different bugs wearing one face. None can be told apart without a console, and a console
- * is not always available to the person seeing it.
- *
- * So the frame carries the answer. No visual effect; two attributes a stylesheet can read
- * out with `content: attr(data-face)`.
- *
- * It also earns its keep beyond any one bug: the frame shows a tint while no picture has
- * loaded, and until now had no way to tell "still fetching" from "gave up".
+ * Record image loading and visibility diagnostics on the portrait frame.
  *
  * @param {HTMLElement} portrait The frame.
  * @param {HTMLImageElement|null} face
@@ -77,17 +50,7 @@ export function recordFaceState(portrait, face, src) {
        that matters, without putting a whole base64 image into an attribute. */
     portrait.dataset.faceTail = String(src ?? '').slice(-40);
 
-    /* And how it is being laid out, because `ok` turned out not to mean visible.
-     *
-     * The first reading of this diagnostic came back `ok:864` over a circle with nothing
-     * in it: the file is fetched, decoded and 864 pixels wide, and still nothing is
-     * painted. That eliminates every question about data and loading at once and leaves
-     * only how the element is drawn - a box collapsed to nothing, or display, visibility
-     * or opacity turned off by something.
-     *
-     * Reported as one string rather than guessed at a fifth time. The frame's box comes
-     * with it: a frame of the right size holding an image of no size is a different bug
-     * from both of them being wrong. */
+    /* Record rendered image and frame dimensions to distinguish loading from layout failures. */
     if (face) {
         const box = face.getBoundingClientRect();
         const frame = portrait.getBoundingClientRect();

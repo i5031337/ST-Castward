@@ -8,26 +8,9 @@ import { normaliseSpeakerLabel } from '../story/speaker-labels.js';
 import { debugLog } from '../core/constants.js';
 
 /**
- * Phrases the model leans on, stopped rather than asked about.
- *
- * SillyTavern already has a real mechanism for this and it is not a prompt: a text
- * completion backend is sent `banned_strings`, and the sampler cannot emit them. The other
- * extension that ships a "ban list" does not use it - it writes the phrases into the prompt
- * as an instruction, every turn, at that cost, and a model that was going to lean on a
- * phrase is exactly the model that ignores being asked not to.
- *
- * HOW THE REAL BAN IS REACHED, because it is not obvious:
- *
- *   `{{banned "phrase"}}` is a SillyTavern macro. Expanding it pushes the phrase onto
- *   `textgenerationwebui_banned_in_macros` and renders to an empty string.
- *   `getExtensionPrompt` runs `substituteParams` over what it returns, so a macro carried
- *   in an extension prompt is expanded like any other - and getCustomTokenBans reads that
- *   array when it builds the request, then clears it.
- *
- * So the carrier is invisible, costs nothing, never touches the user's own banned-tokens
- * setting, and cannot accumulate. It goes at IN_PROMPT rather than IN_CHAT because that is
- * the position whose text is definitely substituted; where it sits does not matter when
- * the text is empty by the time anyone sees it.
+ * Send approved phrases through SillyTavern's {{banned "phrase"}} macro when supported.
+ * Expanding the macro adds a request-scoped sampler ban and produces no visible text.
+ * IN_PROMPT ensures substitution runs before the backend reads and clears those bans.
  */
 
 /** The key SillyTavern files the carrier under. */
@@ -41,10 +24,6 @@ export function bannedPhrases() {
 
 /**
  * Whether a real ban can be sent, and if not, why.
- *
- * Two conditions, and both are somebody else's switch, so neither may fail quietly - a
- * ban list that is silently doing nothing is worse than no ban list, because you stop
- * looking for the phrase.
  *
  * @returns {{ mode: 'sampler'|'prompt', reason: string }}
  */
@@ -70,9 +49,7 @@ export function banMode() {
 /**
  * The carrier: one macro per phrase, which expands to nothing.
  *
- * Quotes inside a phrase would close the macro's own argument early and leave the rest of
- * it in the prompt as visible text, so a phrase carrying one is dropped rather than half
- * banned. Rare enough to be worth the simplicity of not escaping it.
+ * Drop phrases with double quotes to avoid closing the macro argument early.
  */
 export function buildBanMacros(phrases) {
     return phrases
@@ -123,10 +100,7 @@ export function applyBanList() {
 /**
  * Reads the recent chat and proposes what to ban.
  *
- * Nothing here bans anything. It returns two lists for the panel to offer, because a
- * phrase banned by mistake is a phrase the model can no longer write at all - the sampler
- * does not know it was a mistake, and the failure looks like the model going strange
- * rather than like a setting.
+ * Returns candidates for approval without changing the ban list.
  *
  * @returns {Promise<{ phrases: string[], notPeople: string[], read: number }>}
  */
@@ -135,8 +109,7 @@ export async function scanForBanCandidates() {
     const chat = getContext()?.chat || [];
 
     const depth = Number(settings.banScanDepth) || 50;
-    // Only what the model wrote. The user's own turns are their voice, and a writer's own
-    // habits are not what this is for.
+    // Scan assistant turns only.
     const written = chat.filter(m => !m?.is_user && String(m?.mes ?? '').trim());
     const recent = depth > 0 ? written.slice(-depth) : written;
 
@@ -161,13 +134,7 @@ export async function scanForBanCandidates() {
     };
 }
 
-/**
- * Trims a proposed list into something offerable.
- *
- * A phrase carrying a double quote is dropped here rather than at send time: the macro
- * that carries a ban is quoted, and half a ban reaching the prompt as visible text is the
- * kind of failure nobody would connect back to this.
- */
+/** Trim and deduplicate candidates; reject quotes that would break the ban macro. */
 function cleanList(list) {
     if (!Array.isArray(list)) return [];
     const seen = new Set();
@@ -200,13 +167,7 @@ export function addBannedPhrases(phrases) {
     return added;
 }
 
-/**
- * Adds approved labels to the Not Speakers list.
- *
- * That setting is a newline-or-comma separated string rather than an array - it is
- * something people type into - so this appends to it in the same shape rather than
- * rewriting it into a form the box would then show differently.
- */
+/** Append approved labels while preserving the newline-or-comma separated setting. */
 export function addNotPeople(labels) {
     const settings = getSettings();
     const current = String(settings.speakerIgnoreList ?? '');

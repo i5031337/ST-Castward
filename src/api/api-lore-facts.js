@@ -1,7 +1,5 @@
 import { collectionAppliesTo } from '../core/collection-targets.js';
 import { npcStatsFor } from '../core/npc-templates.js';
-import { promptText } from '../prompts/prompt-texts.js';
-import { chat } from '../../../../../../script.js';
 import { executeSlashCommandsOnChatInput } from '../../../../../slash-commands.js';
 import { LOG_PREFIX, debugLog } from '../core/constants.js';
 import { profileFieldValue, profileFieldsForCard as fieldsForCard } from '../core/profile-fields.js';
@@ -12,35 +10,10 @@ import { imageItemsFromCollections } from './api-image-items.js';
 
 export { createLoreEntry } from '../lore/lore-entries.js';
 
-/**
- * What the tracker already knows about this character, as lines for the lore prompt.
- *
- * The prompt used to see a name, whatever lore existed, and raw chat. Meanwhile the
- * extension was separately tracking this character's inventory, spells, skills and stats
- * and telling the model none of it - so generated lore re-inferred abilities from prose,
- * and contradicted the sheet it sits beside.
- *
- * Reads the scene first and falls back to the card, since a character who is not in the
- * room right now still has everything they own recorded there.
- *
- * @param {object} char The Castward character card.
- * @returns {string} Empty when nothing is known, so the caller can substitute a note.
- */
-/**
- * The character's profile fields, as lines for a prompt.
- *
- * Leads the established facts rather than sitting under them: who somebody is comes before
- * what they are currently carrying, and the lore writer is being told not to describe
- * these - which only works if it can see them.
- *
- * @param {object} char
- * @returns {string} Empty when nothing is filled in, so a caller can leave it out.
- */
+
+/** Profile fields for a prompt, excluding fields being regenerated. */
 export function describeProfile(char, except = null) {
     const profile = char?.profile || {};
-    // A field being rewritten is left out. Showing the model the old personality under
-    // "already known, do not contradict it" and then asking for a new one is asking it to
-    // paraphrase what is already there, which is not what regenerating means.
     const skip = except instanceof Set ? except : new Set(except || []);
     return fieldsForCard(char)
         .filter(field => !skip.has(field.id))
@@ -52,21 +25,7 @@ export function describeProfile(char, except = null) {
         .join('\n');
 }
 
-/**
- * The stats and collections a character actually has right now.
- *
- * The player is not one of the scene cast - that is what "this is me" means - so looking
- * them up by name in state.characters finds nothing, and both prompt builders quietly
- * fell back to the card's stored fields, which for the player are the master copy rather
- * than this chat. Their live facts are at state.player, and this is the one place that
- * says so.
- *
- * @param {object} char
- * Exported for the character page, which shows these and must not show the card's copy
- * for somebody currently on stage - those are what they last walked in carrying.
- *
- * @returns {{ stats: object, collections: object }}
- */
+/** Live chat facts, falling back to the card when absent; player state lives outside the NPC cast. */
 export function liveFactsFor(char) {
     let state = null;
     try { state = loadStateFromMetadata(); } catch { /* no chat open */ }
@@ -100,9 +59,7 @@ export function describeTrackedFacts(char, except = null) {
     const { stats, collections } = liveFactsFor(char);
     const lines = [];
 
-    // Who they are comes before what they are carrying. The exclusion is forwarded because
-    // this is the second place a profile reaches the fill prompt, and leaving it out of only
-    // the first would put the old value straight back in under another heading.
+    // Apply regeneration exclusions to this copy of the profile too.
     const profile = describeProfile(char, except);
     if (profile) lines.push(profile);
 
@@ -155,25 +112,14 @@ export function describeCarriedItems(char) {
 /** How much retrieved reference text the prompt will take. */
 const WORLD_FACTS_CAP = 8000;
 
-/**
- * What your Data Bank has to say about this character.
- *
- * SillyTavern's Vector Storage skips quiet prompts by design - `rearrangeChat` returns
- * immediately on type 'quiet' - so lore generation has never seen the Data Bank, before
- * or after it stopped using the story pipeline. This asks for it outright instead.
- *
- * Searched by name alone: predictable, and it finds the material that actually mentions
- * them rather than everything their inventory happens to resemble. No count argument, so
- * SillyTavern's own chunk-count setting decides and this does not compete with it.
- *
- * @param {string} name
- * @returns {Promise<string>} Empty when switched off, unavailable, or nothing matched.
+/** Explicit Data Bank lookup by name, using the host chunk-count setting.
+ * Quiet lore requests do not trigger host Vector Storage retrieval.
+ * @returns {Promise<string>} Empty when disabled, unavailable, or unmatched.
  */
 export async function retrieveWorldFacts(name) {
     if (!getSettings().loreUseDataBank) return '';
 
-    // The parser splits on newlines and pipes and reads quotes, so a name carrying any of
-    // them would take the rest of the command with it. Same treatment as the /sd prompt.
+    // Escape slash-command separators and quotes in names.
     const query = String(name ?? '')
         .replace(/\r?\n/g, ' ')
         .replace(/\|/g, ' ')
@@ -194,12 +140,8 @@ export async function retrieveWorldFacts(name) {
             ? trimmed.slice(0, WORLD_FACTS_CAP)
             : trimmed;
     } catch (err) {
-        // No index, no command, no Vector Storage. None of it should stop an entry being
-        // written from what the extension already knows.
+        // Retrieval failure must not block lore generation.
         console.warn(LOG_PREFIX, 'Data Bank search unavailable, writing without it', err);
         return '';
     }
 }
-
-/** What the lore writer is told it is, since it no longer inherits a character card. */
-// The built-in wording; what is sent is promptText('loreSystem'), which may be your own.

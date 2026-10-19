@@ -5,7 +5,7 @@ import { saveSettings } from '../../core/settings.js';
 import { escapeHtml } from '../../core/utils.js';
 import { LOG_PREFIX } from '../../core/constants.js';
 import { tryAutoSyncLorebook, updateLorebookEntry, deleteLorebookEntry } from '../../lore/lorebook.js';
-import { generateLoreEntry } from '../api/ui-api.js';
+import { generateLoreEntry } from '../api/ui-api-lore.js';
 import { readLoreValues, syncProfileToLore } from '../../lore/lore-sync.js';
 
 /**

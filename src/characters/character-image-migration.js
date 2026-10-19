@@ -9,15 +9,7 @@ const IMAGES_AND_VIDEOS = 0b011;
 /* ─── Moving what is already on disk ──────────────────────────────────────── */
 
 /**
- * Every path that belongs to something other than a character.
- *
- * The fallback portrait pool and the personas share the flat folder, and a file can be in
- * two places at once - a character's gallery and the pool both pointing at one picture.
- * Moving such a file would fix one and break the other, so it is left exactly where it is
- * and the character keeps pointing at it there.
- *
- * Personas are left alone wholesale: a persona record has no name to make a folder from,
- * and the player has one avatar rather than forty.
+ * Protect fallback portraits and persona images from moves, including files also referenced by a character.
  *
  * @returns {Set<string>}
  */
@@ -53,11 +45,7 @@ async function readAsBase64(path) {
     return dataUri.slice(comma + 1);
 }
 
-/**
- * Whether a file is really there and really a picture or a video, before the original is
- * deleted. Video because a location's background can be one, and moving a folder moves
- * everything in it.
- */
+/** Verify the copied image or video is readable before deleting its source. */
 async function copyLanded(path) {
     try {
         const response = await fetch(path, { cache: 'no-store' });
@@ -84,12 +72,7 @@ async function listFolder(folder) {
 }
 
 /**
- * The name a folder really has on disk, when one exists under the same letters in any case.
- *
- * Windows ignores case in folder names, so asking for "Location - House Inside" when
- * "Location - House inside" exists opens the one that exists - and SillyTavern can neither
- * rename a folder nor delete an empty one, so its capitals can never be changed from here.
- * Using the name as it really is keeps every stored path in agreement with the disk.
+ * Resolve existing folder casing for Windows. The host cannot rename or remove empty folders.
  *
  * @returns {Promise<string>} '' when there is no such folder, or the listing fails.
  */
@@ -106,21 +89,7 @@ async function folderOnDisk(name) {
 }
 
 /**
- * Moves everything in a card's folder to the folder for a new name, and re-points the card.
- *
- * SillyTavern has no move or rename for folders, so this is the migration's own sequence
- * file by file: **copy, confirm the copy reads back, re-point, then delete the original.**
- * An interruption never leaves a card pointing at a file that is not there. The old folder
- * itself stays behind, empty - SillyTavern cannot delete a folder.
- *
- * It refuses, and changes nothing, when moving would take somebody else's pictures or
- * pour these into somebody else's:
- * - another card uses the old folder too (two characters that once shared a name);
- * - another card already uses the new folder;
- * - the new folder already has files in it.
- *
- * Works on anything shaped like a card - `imageFolder`, `images`, `imageUrl`, `imageTags` -
- * so a location moves the same way a character does.
+ * Move a card or location folder by copying, verifying, updating references, then deleting originals. Refuse shared source folders, shared destinations, or nonempty destinations. The host leaves empty folders behind.
  *
  * @param {object} owner
  * @param {string} name The name the folder should now follow.
@@ -144,9 +113,7 @@ export async function moveFolder(owner, name, options = {}) {
     const capitalsNote = (kept) => `the folder is still called "${kept}": a folder of that name in different capitals `
         + 'already exists, and SillyTavern cannot rename folders. Rename or delete it by hand to change the capitals.';
 
-    /* A change of capitals only. Windows sees one folder, so there is nothing to move - and
-       the stored folder must stay the name the disk has, or every picture path and tag stored
-       under it stops matching what the folder lists. */
+    /** Case-only rename: preserve actual disk casing so stored image paths and tags still match. */
     if (!from || same(from, wanted)) {
         const kept = from || (await folderOnDisk(wanted)) || wanted;
         owner.imageFolder = kept;
@@ -179,20 +146,14 @@ export async function moveFolder(owner, name, options = {}) {
         }
     }
 
-    /* The new folder from here on, even if a file stayed behind: the name has changed, and
-       new pictures belong under it. What was left is reported, so it can be moved by hand. */
+    /** Use the new folder for future images; report any files left behind. */
     owner.imageFolder = target;
     save();
     return { ...result, folder: target };
 }
 
 /**
- * Moves one picture into its character's folder, and re-points everything that named it.
- *
- * **Copy, confirm, re-point, and only then delete.** In that order, and the order is the
- * whole safety of this: an interruption at any point leaves a picture that exists in at
- * least one place and a card that points at one that exists. The worst outcome is a file
- * left behind in the old folder, which costs disk and nothing else.
+ * Copy, verify, update references, then delete the original. An interrupted move can leave an extra file without losing the image.
  *
  * @returns {Promise<string>} The new path, or '' when nothing moved.
  */
@@ -206,12 +167,7 @@ async function moveOne(char, oldPath, folder) {
 
     const base64 = await readAsBase64(oldPath);
 
-    /* The endpoint directly rather than SillyTavern's saveBase64AsFile wrapper.
-     *
-     * That wrapper rewrites dots in the name into underscores, which is right for a name
-     * it is about to append an extension to and wrong for one that already survived a
-     * rename by hand - and a picture called `wounded.rain.png` is exactly the shape this
-     * whole feature encourages. Moving a file must not quietly rename it. */
+    /** Use the endpoint directly: saveBase64AsFile rewrites dots in filenames, but moves must preserve them. */
     const upload = await fetch('/api/images/upload', {
         method: 'POST',
         headers: getRequestHeaders(),
@@ -247,18 +203,7 @@ async function moveOne(char, oldPath, folder) {
 }
 
 /**
- * Puts every character's pictures into their own folder, once.
- *
- * Runs on load rather than behind a button, which was asked for with the risk stated. What
- * makes that survivable is that it is **resumable and never destructive in the wrong
- * order**: each picture is copied, read back, re-pointed and only then deleted, and the
- * settings are saved after each character. A failure stops the pass with everything before
- * it done and everything after it untouched, and the next load carries on. Nothing is ever
- * in a state where a card points at a file that is not there.
- *
- * Filenames are kept exactly as they are. Tidier names would be nice and are one more
- * thing to go wrong in a pass that is already moving every picture in the library; the
- * point of the folders is that a *new* name can now say what a picture is for.
+ * Resume image-folder migration on load, preserving filenames. Copy and verify before deleting, save after each character, and stop on failure so the next load can resume.
  *
  * @returns {Promise<{ moved: number, characters: number, failed: string }>}
  */
@@ -295,8 +240,7 @@ export async function migrateImagesToFolders() {
         if (failed) return { moved, characters, failed };
     }
 
-    /* Only once everything got through. Set on a partial pass, the pictures left behind
-       would never be looked at again. */
+    /** Mark complete only after the entire pass succeeds, so partial migrations resume. */
     settings.imagesFoldered = true;
     saveSettings();
     return { moved, characters, failed };

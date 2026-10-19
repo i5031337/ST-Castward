@@ -1,15 +1,6 @@
 import { getSettings } from '../core/settings.js';
 
-/**
- * Which labels are not people.
- *
- * Lived in chat.js, where only the chat decorator could reach it - so a name you had
- * excluded was still admitted to the tracker's cast by the extractor, which reports
- * whoever it thinks is present without consulting the setting at all. status-logic.js
- * needs it now and cannot import chat.js, because chat.js imports status-logic.js.
- *
- * Nothing here reaches for the DOM or the chat, so it can be imported from anywhere.
- */
+/** Shared speaker exclusions for chat decoration and tracker extraction, without DOM dependencies. */
 
 /** Configured field names and user exclusions that cannot be unknown speakers. */
 export function getIgnoredSpeakerLabels() {

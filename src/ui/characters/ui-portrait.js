@@ -5,7 +5,7 @@ import { triggerReprocess } from '../../chat/reprocess.js';
 import { saveSettings } from '../../core/settings.js';
 import { pickAndProcessImage } from '../../core/utils.js';
 import { adoptImageForCharacter, removeCharacterImage } from '../../api/api.js';
-import { generateCharacterImage } from '../api/ui-api.js';
+import { generateCharacterImage } from '../api/ui-api-image.js';
 import { makeActivatable } from '../../core/utils.js';
 
 /**

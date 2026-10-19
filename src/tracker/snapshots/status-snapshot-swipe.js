@@ -74,40 +74,9 @@ function rebaseRecordedTurn(messageId, { removed = false } = {}) {
 }
 
 /**
- * Puts the tracker back in step with the swipe now on screen.
- *
- * Swiping replaces the newest reply. The changes already applied describe the reply that
- * was there before, so the state is rebuilt from what it was before that message and the
- * chosen swipe's own record is applied to it. Nothing is inverted: by the time
- * MESSAGE_SWIPED fires SillyTavern has already swapped `extra` to the incoming swipe, so
- * the outgoing swipe's rows are no longer readable - and rebuilding from a known base is
- * both simpler and exact.
- *
- * A swipe with no record of its own leaves the state at the base. That is the right answer
- * for a swipe about to be generated: the extraction that follows applies to the base
- * rather than stacking on the swipe you left.
- *
- * @param {string|number} messageId
- * @returns {{ rebased: boolean, reason: string }}
- */
-/**
- * Keeps the swipe base in step with corrections nobody's message made.
- *
- * The base is the state before a message was read, and rebaseToSwipe rebuilds from it. So
- * anything changed between reading that message and swiping it - a stat corrected on the
- * player sheet, an item added by hand - is in neither the base nor the message's rows, and
- * the rebuild has nowhere to put it. It came back as "I edit a value and the moment I
- * swipe, it goes back to what it was".
- *
- * The rule needs no diff and no undo, which is what makes it safe: **whatever this message
- * did not touch, the base should agree with now.** The message's rows say exactly what it
- * touched, so those values stay as the base recorded them - a swipe still undoes the reply
- * - and everything else is brought up to date.
- *
- * That also survives an editor that mutates the live state in place, which several of them
- * do. Comparing before and after would have seen nothing there, because before and after
- * are the same object.
- *
+ * Carry manual corrections into legacy swipe bases for values the reply did not touch.
+ * Touched values retain their original base so switching replies still undoes them.
+ * This uses recorded rows because some editors mutate live state in place.
  * @returns {number} How many values were brought up to date.
  */
 export function alignSwipeBaseToNow() {
@@ -218,6 +187,12 @@ export function alignSwipeBaseToNow() {
     return moved;
 }
 
+/**
+ * Rebuild from the pre-turn base and replay the selected swipe's recorded changes.
+ * A swipe without a record leaves the base ready for extraction.
+ * @param {string|number} messageId
+ * @returns {{ rebased: boolean, reason: string }}
+ */
 export function rebaseToSwipe(messageId) {
     const recorded = rebaseRecordedTurn(messageId);
     if (recorded) return recorded;
@@ -247,21 +222,8 @@ export function rebaseToSwipe(messageId) {
 }
 
 /**
- * Puts the tracker back to before a message that is about to stop existing.
- *
- * rebaseToSwipe's sibling, and the difference is that nothing is replayed. A swipe is a
- * message being *replaced*, so the incoming swipe's own record goes back on top; this is a
- * message being *removed*, so its rows die with it.
- *
- * Written for Regenerate, which is not a swipe: SillyTavern truncates the chat and emits
- * MESSAGE_DELETED, never MESSAGE_SWIPED, so nothing here used to run at all. The discarded
- * reply's stat changes stayed applied, the replacement was refused by the
- * extraction guard as already read, and the tracker held the wrong numbers from then on.
- *
- * The base is deliberately left in place. The replacement occupies the same index, so the
- * state remembered before the old one is exactly the right base for the new one, and
- * rememberSwipeBase declines to overwrite an entry that already names that message.
- *
+ * Restore the base without replaying rows when a message is removed or regenerated.
+ * Keep the base: a regenerated reply reuses the removed message's index.
  * @param {string|number} messageId
  * @returns {{ reverted: boolean, reason: string }}
  */

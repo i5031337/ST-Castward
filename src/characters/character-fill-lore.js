@@ -1,6 +1,6 @@
 import { loadWorldInfo } from '../../../../../world-info.js';
 import { debugLog } from '../core/constants.js';
-import { getSettings, saveSettings } from '../core/settings.js';
+import { saveSettings } from '../core/settings.js';
 import { createLoreEntry, generateLoreContent, saveLoreContent } from '../api/api.js';
 import { tryAutoSyncLorebook, ensureChatLorebookForFill } from '../lore/lorebook.js';
 import { profileFieldValue, profileFieldsForCard } from '../core/profile-fields.js';

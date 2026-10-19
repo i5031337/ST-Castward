@@ -8,35 +8,13 @@ export function portraitSizeFor(meterCount, style) {
     const MAX = 120;
     // Rings wrap the portrait rather than stacking beside it, so they add no height.
     const rows = style === 'ring' ? 0 : meterCount;
-    // The portrait is the thing being looked at and the meters are the caption. It used to
-    // measure exactly the height of the column beside it, which made it the smaller half
-    // of the HUD at every stat count - so it is deliberately a little taller than the
-    // column now, and it starts larger with one stat rather than shrinking to a token.
+    // Keep the portrait slightly taller than the meter column.
     return Math.max(MIN, Math.min(MAX, rows * ROW + 26));
 }
 
 /**
- * Put a portrait on screen at about the resolution it is actually drawn at.
- *
- * An 864x1184 file in a hundred-pixel circle came out coarse here while the same file in
- * the chat and on the character cards did not, and enlarging it in place showed it was
- * crisp all along - so what went wrong was the reduction, not the picture. This hands the
- * browser one that is already close to the right size.
- *
- * The size is measured, not calculated. getBoundingClientRect reports the box after the
- * HUD's own zoom, so a portrait 72 CSS pixels wide at hudScale 1.7 measures about 122
- * - the scale is already in the number and must not be multiplied in again. Only
- * devicePixelRatio is left to apply, and it is the one a display running at 125% or 150%
- * quietly makes matter.
- *
- * Under-sizing the rendition would be worse than not doing this at all, so renditionStep
- * rounds up and the measurement is taken from the element rather than from the settings.
- *
- * The full picture is shown first and swapped when the rendition is ready, so nothing waits
- * on a canvas; after the first time the cache answers immediately. The guard against a
- * stale swap is the element's own source - by the time this resolves the persona may have
- * changed, and writing the old face over the new one would be a worse bug than the one
- * being fixed.
+ * Request a rendition sized to the rendered frame and device pixel ratio.
+ * Show the full image while it loads; discard results if the source changed.
  *
  * @param {HTMLImageElement} face
  * @param {string} src
@@ -56,13 +34,7 @@ export function showPortraitAtSize(face, src) {
     }).catch(() => { /* the full picture is already on screen */ });
 }
 
-/**
- * The layout's class, the meter geometry, and the portrait's size.
- *
- * The class is removed and re-added by name rather than by clearing the attribute: three
- * functions put classes on this element, and one of them clearing everything is the bug
- * that made the portrait's shape and side settings do nothing for months.
- */
+/** Apply layout and portrait size without clearing classes owned by other HUD settings. */
 export function applyHudProportions(container, meterCount, layout) {
     container.classList.remove(...allHudLayoutClasses());
     container.classList.add(`sillynpc-hud-${layout.id}`);
@@ -77,12 +49,7 @@ export function applyHudProportions(container, meterCount, layout) {
 }
 
 /**
- * The colour a primary stat's meter is drawn in.
- *
- * Colours used to live in the stylesheet keyed to the stat's *name* - `.hud-bar.hp` was
- * red, `.hud-bar.energy` blue - so marking any other stat as Primary produced a meter
- * with no background at all. It appeared, drew nothing, and read as "Primary does
- * nothing". The colour belongs to the stat, so it is stored on the stat.
+ * Use the stat's configured meter colour, with the theme accent as fallback.
  *
  * @param {object} statDef
  * @returns {string}
@@ -92,11 +59,7 @@ function meterColour(statDef) {
 }
 
 /**
- * Builds one meter row.
- *
- * A value with no number in it - a text stat, or a number with no ceiling - cannot fill
- * anything, and used to render a bar stuck at 0% for the life of the chat. Those fall
- * back to the value alone, which is the only honest way to show them.
+ * Build one meter row; values without a numeric range render as text.
  *
  * @param {object} statDef
  * @param {string} rawValue
@@ -171,29 +134,14 @@ export function buildMeterRow(statDef, rawValue, bar, style) {
     return row;
 }
 
-/**
- * Space between the portrait's border and the first ring, and between rings, in pixels.
- *
- * One pixel apart is enough to read as separate rings without opening a gap; the first
- * ring is meant to sit on the portrait's edge rather than float away from it.
- */
+/** Gap between the portrait border and rings, in pixels. */
 const RING_GAP = 1;
 
-/**
- * The portrait's own border, which the first ring has to clear.
- *
- * Must match `.sillynpc-hud-portrait`'s border-width. It said 2 for a while after that
- * border was thinned to 1, so every ring sat a pixel further out than it was meant to and
- * the panel reserved a pixel of padding for space nothing occupied.
- */
+/** Portrait border width; keep in sync with `.sillynpc-hud-portrait`. */
 const PORTRAIT_BORDER = 1;
 
 /**
- * How far outside the portrait the rings reach, in pixels.
- *
- * Computed rather than fixed, because it depends on how many meters there are and how
- * thick they are drawn. A constant meant the rings either floated far from the portrait
- * with one meter, or ran off the panel with three thick ones.
+ * Ring overhang in pixels, including the portrait border and gaps.
  *
  * @param {number} count How many rings will be drawn.
  * @param {number} thickness Ring thickness in pixels.
@@ -205,11 +153,7 @@ export function ringOverhang(count, thickness) {
 }
 
 /**
- * The centre-line radius of ring `index`, in pixels.
- *
- * Exported so the test measures the real rule rather than a copy of it. A previous test
- * reimplemented the geometry inline and went on passing while the code it described was
- * wrong - the second and third rings were being drawn across the portrait.
+ * Centre-line radius of ring `index`, in pixels.
  *
  * @param {number} size Portrait size in pixels.
  * @param {number} thickness Ring thickness in pixels.
@@ -221,16 +165,8 @@ export function ringRadius(size, thickness, index) {
 }
 
 /**
- * Draws the meters as one ring around the portrait, divided into a segment per stat.
- *
- * This replaced concentric rings - one ring per stat, stacked outward. Those grew the
- * panel with every stat added and were unreadable past three, because each new ring had to
- * clear the last. Segments share a single circumference instead, so a fourth stat makes
- * the segments shorter rather than the HUD wider.
- *
- * The ring takes the portrait's shape: a circle around a circle, a square around a square.
- * `pathLength="100"` normalises either outline so a dash length is a percentage directly,
- * which is what lets one routine draw both.
+ * Draw one ring split into stat segments around the portrait.
+ * `pathLength="100"` makes dash lengths percentages for both circles and squares.
  *
  * @param {HTMLElement} portrait
  * @param {Array<{ statDef: object, rawValue: string, bar: object }>} meters
@@ -266,20 +202,12 @@ export function paintSplitRing(portrait, meters, { square, size, thickness }) {
         rect.setAttribute('y', String(centre - radius));
         rect.setAttribute('width', String(radius * 2));
         rect.setAttribute('height', String(radius * 2));
-        // No rx. Square means square, and rounding by the thickness made the ring less
-        // square the thicker it was drawn - the opposite of what the option is chosen for.
+        // Leave square ring corners unrounded.
         return rect;
     };
 
-    // A gap between neighbours so the segments read as separate meters rather than as one
-    // ring in changing colours.
-    //
-    // It has to grow with the thickness. The gap is in path units - hundredths of the
-    // circumference - while a round cap sticks out by half the stroke width in real
-    // pixels at each end, so two neighbours eat a whole stroke width of the space between
-    // them. At a thin ring a flat 4 was plenty; at the thickest the caps closed it
-    // completely and the segments ran together. A square ring uses butt caps and needs
-    // none of that, only enough to be seen.
+    // Round caps extend into the segment gap by one stroke width in total.
+    // Convert that width to path units; square rings use butt caps.
     const perimeter = square ? 8 * radius : 2 * Math.PI * radius;
     const capUnits = (square ? 0 : thickness) / perimeter * 100;
     const slice = 100 / meters.length;
@@ -322,12 +250,7 @@ export function paintSplitRing(portrait, meters, { square, size, thickness }) {
 }
 
 /**
- * Portrait shape, side and border colour.
- *
- * The side used to be implied by the HUD corner - the two left corners set
- * flex-direction: row-reverse and that was the only way to move it - so a HUD in the top
- * left could not keep its portrait on the right. "Follow the corner" preserves that as a
- * choice rather than as the only behaviour.
+ * Apply portrait shape, side and border colour.
  *
  * @param {HTMLElement} container
  * @param {object} settings The tracker settings.

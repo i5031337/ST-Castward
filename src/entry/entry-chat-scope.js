@@ -5,14 +5,7 @@ import { CAST_KEY, setChatCast, getAllCategories, UNCATEGORISED } from '../chara
 import { triggerReprocess } from '../chat/chat.js';
 import { Popup, POPUP_TYPE, POPUP_RESULT } from '../../../../../popup.js';
 
-/**
- * Offers to scope a brand new chat to some of your categories.
- *
- * Deliberately narrow. It only asks for a chat that is genuinely new, has never been
- * scoped, and belongs to a system with more than one category to choose between - so it
- * appears when you are starting a story and never as noise on an ordinary chat switch.
- * Declining leaves the chat unscoped, which includes every character.
- */
+/** Offer category scope for new, unscoped chats with multiple categories. Declining includes every character. */
 export async function offerChatScope() {
     if (!getSettings().enabled || !hasOpenChat()) return;
 

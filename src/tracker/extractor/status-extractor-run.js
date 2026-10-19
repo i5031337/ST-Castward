@@ -36,17 +36,8 @@ export function resetExtractionState() {
 }
 
 /**
- * Forgets that messages from this index onward were ever read.
- *
- * The guard is keyed `messageId:swipeId`, and message ids are positions rather than
- * identities - delete the newest message and the next one written takes its number back.
- * Regenerate does exactly that, and the replacement arrives at the same index on swipe 0,
- * so the key was already in the set and the new reply was refused with 'already extracted'
- * - the tracker kept the discarded reply's numbers and never looked at the one on screen.
- *
- * Always safe: an index past the end of the chat has nothing to re-read, so the only thing
- * a stale entry there can do is refuse whatever occupies that position next.
- *
+ * Clear extraction guards from an index onward. Message IDs are positions reused by
+ * regenerated replies, which must be extracted even if the old reply was already read.
  * @param {string|number} index
  * @returns {number} How many were forgotten.
  */
@@ -63,19 +54,7 @@ export function forgetExtractionsFrom(index) {
     if (forgotten) debugLog(`Forgot ${forgotten} extraction(s) from message ${from} on`);
     return forgotten;
 }
-/**
- * Tells the user an extraction failed, without becoming a nuisance.
- *
- * Only the two cases where the tracker wanted to change something and could not: a reply
- * that would not parse, and a request that threw. A reply that parsed and found nothing to
- * change is the ordinary case and says nothing, and neither do the guards that decline to
- * run at all.
- *
- * Repeats are swallowed. A model that returns unusable output does it on every message,
- * and a toast per message would bury the chat it is complaining about.
- *
- * @param {string} message
- */
+/** Report request or parse failures, suppressing repeated warnings until success. */
 let lastReportedProblem = '';
 function reportExtractionProblem(message) {
     if (message === lastReportedProblem) return;

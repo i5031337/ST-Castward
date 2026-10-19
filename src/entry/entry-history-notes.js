@@ -4,15 +4,7 @@ import { LOG_PREFIX, debugLog } from '../core/constants.js';
 import { noteHistory, noteFieldNames, stripWorldNote } from '../story/history-notes.js';
 import { promptText } from '../prompts/prompt-texts.js';
 
-/**
- * SillyTavern's generation interceptor, named in manifest.json.
- *
- * Called with a copy of the history just before the prompt is built, and only for a story
- * generation - never for a dry run, and never for the tracker's own request. Each message
- * carries its own world snapshot, which is what the note is made of; see history-notes.js.
- *
- * It never aborts and never throws outward: a note is not worth losing a reply over.
- */
+/** Generation interceptor named in manifest.json. Add per-message world notes to copied history; failures must not interrupt generation. */
 globalThis.sillyNpcHistoryNotes = function sillyNpcHistoryNotes(chat) {
     try {
         const tracker = getSettings().statusTracker;
@@ -28,11 +20,7 @@ globalThis.sillyNpcHistoryNotes = function sillyNpcHistoryNotes(chat) {
 };
 
 /**
- * Takes a copied world note off a reply that starts with one.
- *
- * Told not to write them, a model still copies the shape it has just read on forty
- * messages. Removed here instead: before the message is drawn (MESSAGE_RECEIVED) and again
- * once it is (CHARACTER_MESSAGE_RENDERED), because a streamed reply skips the first.
+ * Remove echoed world notes before rendering and after streamed replies render.
  *
  * @param {string|number} messageId
  * @param {boolean} redraw Whether the message is already on screen.

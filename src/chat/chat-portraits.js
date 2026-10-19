@@ -1,23 +1,12 @@
-import { fnv1a } from '../core/hash.js';
-import { LOG_PREFIX, BUILT_IN_DEFAULT_AVATAR, paletteColorFor, debugLog } from '../core/constants.js';
+import { BUILT_IN_DEFAULT_AVATAR, paletteColorFor } from '../core/constants.js';
 import { getSettings } from '../core/settings.js';
 import { getContext } from '../../../../../st-context.js';
-import { findCharacter, getActiveCharacters, getChatCast } from '../characters/characters.js';
-import { getAllCharacters, isChatCharacter } from '../characters/character-repository.js';
+import { findCharacter, getActiveCharacters } from '../characters/characters.js';
+import { isChatCharacter } from '../characters/character-repository.js';
 import { personaFileFromAvatar } from '../core/utils.js';
-import { processStatusUpdate, renderStatusTrackerBox, redrawStatusBoxes } from '../tracker/ui/status-ui.js';
-import {
-    reconcileScenePresence, resolvePersonaSpeaker,
-    getPlayerImageUrl, getCurrentPersonaKey, getCastDecisions,
-} from '../tracker/status-logic.js';
-import { faceFor, faceAssignmentVersion } from '../characters/default-portraits.js';
-import { getIgnoredSpeakerLabels, normaliseSpeakerLabel } from '../story/speaker-labels.js';
-import { charactersMentionedIn } from '../story/mentions.js';
-import { triggerReprocess, setReprocessCallback } from './reprocess.js';
-import { updateHUD } from '../ui/hud/ui-hud.js';
-import { getTrackerView, setTrackerView, nextTrackerView } from '../tracker/tracker-view.js';
-import { eventSource } from '../../../../../events.js';
-import { messageBeats, MESSAGE_RENDERED_EVENT } from '../story/beats.js';
+import { reconcileScenePresence, resolvePersonaSpeaker, getPlayerImageUrl, getCurrentPersonaKey } from '../tracker/status-logic.js';
+import { faceFor } from '../characters/default-portraits.js';
+import { messageBeats } from '../story/beats.js';
 import { injectAtDialogueLines } from './chat-speech.js';
 
 export function playerPortraitFor(record) {
@@ -33,12 +22,7 @@ export function playerPortraitFor(record) {
 }
 
 /**
- * Puts that picture on the message, and takes it off again when it should not be there.
- *
- * SillyTavern's own src is remembered at the moment it is replaced, and forgotten again
- * the moment it is put back. Remembering it on every pass instead would leave a stale
- * copy: switch persona and SillyTavern redraws the same element with a new picture, which
- * we would then "restore" over the top of.
+ * Remember the host avatar only while replacing it. Clear the saved source on restoration so persona changes cannot restore a stale image.
  *
  * @param {Element} mesEl
  */
@@ -155,13 +139,7 @@ export function clearDecorations(textContainer) {
  */
 let pendingActiveCharacters = null;
 
-/**
- * The one place a speaker's portrait is built. Both injection paths come through here,
- * which is why the "is this me?" question is asked here rather than at each of them.
- *
- * Exported so it can be tested: injecting avatars needs a parsed document, but deciding
- * which picture to draw does not.
- */
+/** Build speaker portraits for both injection paths, sharing persona and fallback selection. */
 export function createAvatarImg({ char, defaultImage, name, isLastMessage, persona: resolvedPersona }) {
     const img = document.createElement('img');
     const shape = getSettings().avatarShape || 'rounded';
@@ -233,11 +211,7 @@ export function createAvatarImg({ char, defaultImage, name, isLastMessage, perso
 }
 
 /**
- * The colour a speech block should carry.
- *
- * A card's own colour always wins. Without one, the speaker's name is enough: they had an
- * avatar and a block but plain text, which is the gap a persona prompt full of <font> tags
- * was filling, and the name gives a shade that is the same in every message.
+ * Prefer the card colour; otherwise derive a stable shade from the speaker name.
  *
  * @param {string} [charId] From the avatar, when the speaker has a card.
  * @param {string} [charName] From the avatar, carded or not.
@@ -252,16 +226,7 @@ export function resolveSpeakerColor(charId, charName) {
 }
 
 /**
- * Stops a colour the model wrote from overriding the one the extension chose.
- *
- * An inline <font> sits inside the speech block and beats the colour set on it, so the
- * Character Coloring Logic setting quietly stopped applying to any line a persona prompt
- * had told the model to colour.
- *
- * A class rather than an edit to the message: this pass runs over the rendered DOM without
- * re-reading the message text, so anything destructive could not be undone until
- * SillyTavern next re-rendered. clearDecorations takes the class off again, which is what
- * makes turning the setting off give the model's colours straight back.
+ * Override nested model-written colours with a removable class. Clearing decorations restores them without changing message text.
  *
  * @param {Element} block
  * @returns {number} How many tags were neutralised.
@@ -276,18 +241,7 @@ export function neutraliseModelColors(block) {
     }
     return count;
 }
-/**
- * Colours each speaker's paragraph.
- *
- * Reads the beats rather than finding the paragraphs itself. It used to walk the avatars
- * and climb each one to its block, which is the same walk messageBeats now does - and two
- * walks answering "whose paragraph is this" is how they start answering differently. That
- * has already cost this project twice, with the HUD and with deleted stats, so the walk is
- * shared the moment there is a second caller for it.
- *
- * Narration beats are skipped here and only here: a paragraph with nobody speaking has no
- * colour to take. It is still a beat, and the visual novel uses it.
- */
+/** Colour speaker paragraphs using the shared beat discovery. Leave narration uncoloured. */
 function decorateSpeechBlocks(container) {
     const settings = getSettings();
     for (const beat of messageBeats(container)) {

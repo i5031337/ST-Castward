@@ -63,10 +63,7 @@ function getStatusInstructions() {
  */
 // Exported for the tests, as getStatusInstructions is.
 function getStatusExample() {
-    /* Built from this setup's own stats and collections, with placeholders where values
-     * would be. It used to be a goblin fight with "quantity" and "description" fields
-     * written in, which taught every story model that status updates are about combat and
-     * that items have fields many setups do not. */
+    // Use configured fields so the example does not invent stats or imply a genre.
     const settings = getSettings().statusTracker;
     const state = deps.committedState || deps.loadStateFromMetadata();
     const first = (list) => (list || []).map(s => s?.name).filter(Boolean)[0];
@@ -104,21 +101,9 @@ function getStatusExample() {
 }
 
 /**
- * Writes whichever prompts this mode uses, from the state as it stands right now.
- *
- * Called twice per turn, and the second call is the point. SillyTavern fires
- * WORLD_INFO_ACTIVATED while it assembles the prompt, and that is where we learn which
- * characters' lorebook entries fired - which is exactly who the scene block should be
- * describing, and is not known yet at GENERATION_STARTED.
- *
- * That it arrives in time was not obvious and is worth writing down: in Generate,
- * getWorldInfoPrompt is awaited at script.js:4576 and doChatInject - which reads these
- * IN_CHAT prompts - is called at 4686. A comment in index.js used to claim the opposite and
- * was wrong, which is why the narrator spent a long time being handed somebody's lore with
- * none of their numbers.
- *
- * Same key and depth both times, so the second write replaces the first rather than adding
- * to it.
+ * Refresh mode-specific prompts at generation start and after WORLD_INFO_ACTIVATED.
+ * Lore activation identifies scene characters before SillyTavern reads IN_CHAT prompts.
+ * Reusing the same keys and depths replaces the earlier injection.
  */
 function applyScenePrompt() {
     const settings = getSettings().statusTracker;

@@ -7,11 +7,7 @@ import { getAllCharacters } from '../characters/character-repository.js';
 import { canAutoLinkLorebook } from '../characters/character-scope.js';
 import { existingFillLorebookName, newChatLorebookName } from './lorebook-target.js';
 
-/**
- * SillyTavern declares `export let world_names;` and only assigns it once its own
- * initialisation has run, so it is undefined until then. Every read here goes through
- * this rather than assuming an array.
- */
+/** world_names is undefined until SillyTavern initialization finishes. */
 function knownWorlds() {
     return Array.isArray(world_names) ? world_names : [];
 }
@@ -32,11 +28,7 @@ export async function updateLorebookEntry(world, uid, { comment, content }) {
 }
 
 /**
- * Removes an entry from its lorebook for good.
- *
- * Distinct from ejecting, which only forgets the link and leaves the entry behind. There
- * was no way to do this at all: entries created by the extension accumulated in the world
- * and could only be removed from SillyTavern's own editor.
+ * Delete the entry itself; unlinking only removes the card's reference.
  *
  * @param {string} world
  * @param {number} uid
@@ -55,12 +47,7 @@ export async function deleteLorebookEntry(world, uid) {
 }
 
 /**
- * Returns the lorebook bound to the current chat, if any.
- *
- * The old code read chat?.world_name, but `chat` is SillyTavern's message *array* --
- * it has no world_name. The chat-bound world lives in chat metadata under
- * METADATA_KEY ('world_info'), so that lookup silently always returned undefined and
- * every caller fell through to world_names[0].
+ * Read the chat-bound lorebook from metadata and verify that it still exists.
  *
  * @returns {string} The world name, or '' when the chat has none.
  */
@@ -95,12 +82,7 @@ export async function ensureChatLorebookForFill() {
     finally { pendingChatBooks.delete(metadata); }
 }
 
-/**
- * Every name this card answers to: its own, plus its aliases.
- *
- * An alias is a `{ pattern }` on a character, or a plain string - which is how a location
- * keeps the other names the story has used for it, so a place's lore fires on those too.
- */
+/** Collect the card name and literal aliases. Locations use strings; character aliases use pattern objects. */
 export function namesFor(char) {
     const names = [String(char.name ?? '').trim()].filter(Boolean);
     for (const alias of char.aliases || []) {
@@ -116,16 +98,7 @@ export function namesFor(char) {
 }
 
 /**
- * Adds generated keywords to the ones an entry already has.
- *
- * Replacing them was quietly destructive in two ways. Keywords curated by hand in
- * SillyTavern were thrown away on every regeneration - and when the model omitted its
- * "Tags:" line the result was an empty list, which on an entry that is not `constant`
- * means it is never injected again. The entry still looks right in the editor and simply
- * stops working.
- *
- * Lived in api.js until syncEntryIdentity needed it. api.js imports this file now, so it
- * had to move rather than be imported back the other way.
+ * Merge keywords case-insensitively, preserving existing triggers when generation omits tags.
  *
  * @param {string[]|string|undefined} existing
  * @param {string} generated Comma-separated.
@@ -148,21 +121,7 @@ export function mergeKeywords(existing, generated) {
     return merged;
 }
 
-/**
- * The line that says whose entry this is.
- *
- * SillyTavern sends an entry's `content` and nothing else - the title is editor furniture
- * and the keywords only decide whether it fires - so an entry that does not name its own
- * subject reaches the model anonymous. Several of them, joined with a bare newline and no
- * separator, arrive as one run-on wall in which "She actively monitors the player" belongs
- * to nobody in particular.
- *
- * A heading rather than a bare name, because it has to break this entry from the one
- * before it as well as name it. Aliases in the parenthetical because nothing else in the
- * prompt carries them: the tracker collapses a nickname to the canonical name before it
- * records anything, so without this the model has no way to tell that the "Niki" in the
- * prose is the "Nikolett" in the lore.
- */
+/** Name the subject and aliases in a heading: SillyTavern injects entry content without its title, and adjacent entries need a boundary. */
 export function identityHeader(char) {
     const [name, ...aliases] = namesFor(char);
     if (!name) return '';
@@ -178,17 +137,7 @@ export function stripIdentityHeader(content) {
 }
 
 /**
- * Writes a character's identity onto their entry: title, keywords and heading.
- *
- * All three drifted independently before this. The heading was never written at all; the
- * keywords were the name as it stood the day the entry was created, so configured aliases
- * never became triggers; and renaming a character changed neither, which meant the entry
- * silently stopped firing because the only name it answered to was the old one.
- *
- * Keywords merge rather than replace, so a rename leaves the old name behind as a trigger.
- * That is deliberate: the chat above still says it.
- *
- * Does not save. The caller owns the write, so a pass over many entries costs one.
+ * Synchronize title, keywords, and heading without saving. Retain old names as triggers for earlier chat references.
  *
  * @returns {boolean} Whether anything changed - false lets a bulk pass skip the write
  *   entirely rather than rewriting a lorebook file on every chat switch.
@@ -226,12 +175,7 @@ function entryMatches(entry, names) {
 }
 
 /**
- * Links the character to a matching lorebook entry, if one exists.
- *
- * Matching used to be the entry title against the character's name, exactly - so an
- * entry titled "Instructor Kovács" never matched the card "Mr. Kovács", although the
- * extension has had an alias system throughout. Aliases count now, and so do the entry's
- * own keywords, which is where a name usually ends up.
+ * Link using the character's name and aliases against entry titles and keywords.
  *
  * @param {object} char
  * @param {{ silent?: boolean, worlds?: string[] }} [options] silent suppresses the toast, for
@@ -281,15 +225,7 @@ export async function tryAutoSyncLorebook(char, { silent = false, worlds: only =
 }
 
 /**
- * Turns the lore entries this extension owns on or off to match the chat's cast.
- *
- * Filtering stops Castward injecting an out-of-chat character, but it cannot stop
- * SillyTavern firing their entry on its own when a keyword happens to match. Only entries
- * a character card actually points at are touched - anything you wrote by hand is left
- * exactly as you set it, including its own disable state.
- *
- * Each world is loaded once and written only if something changed, because this runs on
- * every chat switch and a world file is not small.
+ * Enable linked entries for the chat cast and disable those outside it. Leave unlinked entries untouched; load each world once and save only changes.
  *
  * @returns {Promise<number>} How many entries were flipped.
  */
@@ -329,11 +265,7 @@ export async function syncLorebookScope() {
 }
 
 /**
- * Runs the sync for every character that has no lorebook yet.
- *
- * Auto-sync only ever ran when a character was created from a detected speaker, so
- * characters made any other way, or made before their entry existed, stayed unlinked
- * with no way to fix it but opening each one.
+ * Attempt to link characters that have no lorebook entry.
  *
  * @returns {Promise<{ linked: number, checked: number }>}
  */
@@ -354,10 +286,7 @@ export async function syncAllLorebooks() {
 }
 
 /**
- * Puts a character's current name onto their entry, if they have one.
- *
- * Called when the name field is done being edited. Silent and harmless when the character
- * has no entry, which is the common case.
+ * Update linked entry identity after a character rename.
  *
  * @returns {Promise<boolean>} Whether anything was written.
  */
@@ -376,17 +305,7 @@ export async function renameLorebookEntry(char) {
 }
 
 /**
- * Brings already-linked entries up to date with the characters they belong to.
- *
- * Entries written before syncEntryIdentity existed carry no heading, and their keywords are
- * the name as it stood the day they were created. Regenerating each one by hand to fix that
- * is work nobody should have to do, so it is done once on load.
- *
- * Writes only when something actually differs. syncEntryIdentity says so, and without that
- * this would rewrite every lorebook file on every chat switch - which is somebody's data,
- * possibly under version control, and a diff they never asked for.
- *
- * One save per world, not per entry.
+ * Refresh linked entry identities, saving changed entries once per world.
  *
  * @returns {Promise<{ updated: number, checked: number }>}
  */

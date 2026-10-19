@@ -5,7 +5,7 @@ import { getSettings, saveSettings } from '../../core/settings.js';
 import { escapeHtml } from '../../core/utils.js';
 import { updateExtensionTheme, repositionCloseButton } from '../shared/ui-shared.js';
 import { buildBulkBar } from '../shared/ui-bulk-select.js';
-import { loadStateFromMetadata, updateMasterItem, deleteMasterItem } from '../../tracker/status-logic.js';
+import { loadStateFromMetadata, deleteMasterItem } from '../../tracker/status-logic.js';
 import { DISMISSED_KEY, PROTECTED_KEY } from '../../tracker/status-review.js';
 
 /**

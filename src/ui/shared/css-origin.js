@@ -1,19 +1,4 @@
-/**
- * Which CSS rule is doing that to this element.
- *
- * Written for a bug that took five rounds to corner: the HUD portrait was loading
- * perfectly - the right file, decoded, 864 pixels wide - and rendering nothing, because
- * something had set `display: none` on it. Nothing in this extension, in SillyTavern's
- * stylesheets or in the installed theme had a selector that could match it, and there was
- * no way to find out which rule was responsible without devtools.
- *
- * The browser knows. This asks it: every stylesheet, every rule that sets the property,
- * and whether the element matches its selector - which is what the devtools style panel
- * shows in a glance, for somebody who cannot open one.
- *
- * Imports nothing, so the test harness can exercise it against real stylesheets in a real
- * browser. A diagnostic that lies costs more than the bug it was meant to find.
- */
+/** Inspect matching CSS rules and inline display changes for HUD portrait diagnostics. */
 
 /** Where a rule came from, short enough to read in a data attribute. */
 function sheetName(sheet) {
@@ -36,14 +21,7 @@ export function rulesSetting(el, property, value) {
 
     const scan = (rules, sheet) => {
         for (const rule of rules ?? []) {
-            /* Both, never either-or.
-             *
-             * The first version treated any rule with a `cssRules` property as a
-             * container and skipped it - and since CSS nesting arrived, an ordinary
-             * style rule *has* a cssRules list. It is empty, and it is truthy, so every
-             * plain rule was stepped over and the finder confidently reported "no rule
-             * found" for a selector sitting right there. Caught by the harness on its
-             * first run, which is the entire reason this module imports nothing. */
+            /* Inspect style rules and their nested rules; CSS nesting gives ordinary rules a cssRules list. */
             if (rule.selectorText && rule.style?.[property] === value) {
                 try {
                     if (el.matches(rule.selectorText)) {
@@ -52,9 +30,7 @@ export function rulesSetting(el, property, value) {
                 } catch { /* a selector this browser will not parse */ }
             }
 
-            /* And into whatever it contains: a media query, a layer, a supports block,
-               or a rule nested inside another. A HUD is exactly the sort of thing
-               somebody hides at a narrow width. */
+            /* Recurse into grouping rules and nested style rules. */
             if (rule.cssRules?.length) scan(rule.cssRules, sheet);
         }
     };
@@ -68,19 +44,8 @@ export function rulesSetting(el, property, value) {
 }
 
 /**
- * Catches whoever sets `display` inline on an element, and remembers where they were.
- *
- * The last unknown in a bug that has taken six rounds: the HUD portrait ends up with an
- * inline `display: none` that no stylesheet accounts for, so some JavaScript is doing it -
- * and neither this extension, SillyTavern nor the installed theme has a line that
- * obviously would. A MutationObserver can say the attribute changed but not who changed
- * it; the callback runs later, on its own stack.
- *
- * An own property on the element's style object shadows the prototype's accessor, so the
- * assignment can be caught synchronously - and `new Error().stack` inside the setter is
- * the caller's stack, which is the entire question.
- *
- * The value is always applied. This watches; it does not defend.
+ * Intercept inline display assignments synchronously to record the caller stack.
+ * Always apply the assigned value; the trap only observes.
  *
  * @param {HTMLElement} el
  * @param {(value: string, stack: string) => void} report
@@ -100,21 +65,7 @@ export function trapInlineDisplay(el, report) {
     });
 }
 
-/**
- * The frames of a stack that are not this trap, shortened to something readable.
- *
- * Everything is one long file path in a browser, and a data attribute has to stay a line
- * somebody can look at.
- *
- * The **first frame outside a library comes first**, because it is the answer and the
- * frames above it are not. The first reading of this reported three frames and all three
- * were jQuery's own `hide` machinery - true, and useless: what nobody could see was which
- * line called it. Anything under a lib/ directory is somebody else's plumbing.
- *
- * The library frames are kept after it rather than dropped, since "jQuery hide" and
- * "jQuery fadeOut's completion" are different answers and the chain is what tells them
- * apart.
- */
+/** Shorten the caller stack, putting the first non-library frame before library frames. */
 export function shortenStack(stack, frames = 10) {
     const lines = String(stack ?? '')
         .split('\n')
@@ -135,10 +86,7 @@ export function shortenStack(stack, frames = 10) {
 }
 
 /**
- * A one-line answer to "why can I not see this".
- *
- * The inline style comes first when there is one, because that says JavaScript did it
- * rather than a stylesheet - a different search entirely.
+ * Report inline and matching stylesheet rules that hide the element.
  *
  * @param {HTMLElement} el
  * @returns {string}

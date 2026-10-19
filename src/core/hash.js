@@ -1,15 +1,4 @@
-/**
- * The string hashes the extension uses, one copy of each.
- *
- * There are three recipes here and not one, on purpose. Each of them already decides
- * something a person can see or relies on - which shade a speaker is drawn in, which
- * fallback face a stranger wears, whether a redraw can be skipped - and swapping one recipe
- * for another would quietly recolour and re-face everybody in every existing chat. So they
- * were gathered into one file without changing a single result, and each says what it is
- * for.
- *
- * Imports nothing, so anything can use it.
- */
+/** Preserve each hash algorithm: saved colors, portraits, and redraw signatures depend on their outputs. */
 
 /**
  * FNV-1a, 32 bits, as an unsigned number. Spreads a change of one character well.
@@ -54,17 +43,7 @@ export function djb2(text) {
     return hash;
 }
 
-/**
- * The palette index a name starts from: `index * 31 + code point`, reduced as it goes.
- *
- * By code point rather than UTF-16 unit, which is not the same as hash31 for a name with a
- * character outside the basic plane - and names can carry emoji. Kept exactly as it was
- * for that reason.
- *
- * @param {string} name
- * @param {number} size The palette's length.
- * @returns {number} 0 .. size - 1, or 0 for an empty palette.
- */
+/** Palette index by Unicode code point; unlike hash31, emoji count as one character. */
 export function paletteIndexFor(name, size) {
     if (!(size > 0)) return 0;
     let index = 0;

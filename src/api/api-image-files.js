@@ -1,4 +1,4 @@
-import { chat, getRequestHeaders } from '../../../../../../script.js';
+import { getRequestHeaders } from '../../../../../../script.js';
 import { getAllCharacters, getLibraryCharacters } from '../characters/character-repository.js';
 import { listChatHeaders } from '../chat/chat-listing.js';
 import { chatNpcImagePaths } from '../chat/chat-npc-sources.js';

@@ -6,11 +6,7 @@ import { getAllCharacters } from '../characters/character-repository.js';
 let activatedEntries = [];
 
 /**
- * Records which entries the last generation activated.
- *
- * A character can be linked to a lorebook entry, so an entry firing is a strong signal that
- * the narrator is about to write that character in - which is precisely when both the reader
- * and the narrator need to know they already have a card.
+ * Record activated entries so the narrator and reader can recognize existing cards.
  *
  * @param {Array<object>} entries
  */
@@ -19,10 +15,7 @@ export function noteActivatedLore(entries) {
 }
 
 /**
- * Characters whose linked entry fired this turn.
- *
- * Only cards that point at an entry. Anything written by hand in SillyTavern's own editor
- * belongs to nobody here and is left alone.
+ * Return cards whose linked lore entry fired this turn.
  *
  * @returns {object[]}
  */
