@@ -164,16 +164,16 @@ export async function checkLocations(root) {
             acceptedByDefault: () => true, buildLocationReviewRow,
         }, 'renderReviewPanel');
         let pending = [{ kind: 'location-add', scope: 'location', actor: 'Moonlit Wharf', label: 'New place',
-            before: '', after: 'A narrow wooden wharf.', note: 'We arrive at Moonlit Wharf.',
+            before: '', after: 'A narrow wooden wharf.',
             location: { record: { id: 'wharf', name: 'Moonlit Wharf', aliases: ['The Wharf'], parentId: '', description: 'A narrow wooden wharf.' } } }];
         let accepted = [];
         renderReview(reviewView, 42, {
             getPendingChanges: () => pending,
             resolvePendingChanges: (_id, changes) => { accepted = changes; pending = []; },
         });
-        check('reviewIdentityAndEvidence', reviewView.textContent.includes('Moonlit Wharf')
+        check('reviewIdentityWithoutCitation', reviewView.textContent.includes('Moonlit Wharf')
             && reviewView.textContent.includes('Also called: The Wharf')
-            && reviewView.textContent.includes('Story evidence: We arrive at Moonlit Wharf.'));
+            && !reviewView.textContent.includes('Story evidence:'));
         const description = reviewView.querySelector('textarea');
         check('reviewDescriptionVisible', description.value === 'A narrow wooden wharf.');
         description.value = 'A weathered wooden wharf.'; fire(description, 'input');

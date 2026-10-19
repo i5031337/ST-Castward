@@ -14,12 +14,11 @@ export function partitionLocationRows(rows, settings) {
     return { auto: auto.filter(row => !dependent.includes(row)), pending: [...pending, ...dependent] };
 }
 
-/** Keep source identities internal; the reader supplies only place facts and quotes. */
-export function locationProposalsForReading(state, output, messageId, sourceText) {
+/** Keep source identities internal; the reader supplies only place facts. */
+export function locationProposalsForReading(state, output, messageId) {
     const context = getContext();
     const message = context?.chat?.[Number(messageId)];
     return buildLocationProposals(state, output, {
-        sourceText,
         provenance: {
             chatId: String(context?.getCurrentChatId?.() ?? ''),
             messageId: Number(messageId),

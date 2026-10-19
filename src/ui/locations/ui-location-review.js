@@ -50,10 +50,12 @@ export function buildLocationReviewRow(row, rows) {
         for (const type of ['keydown', 'keyup', 'keypress']) description.addEventListener(type, event => event.stopPropagation());
         body.append(description);
     }
-    const evidence = document.createElement('small');
-    evidence.className = 'sillynpc-review-why has-note';
-    evidence.textContent = `Story evidence: ${change.note || ''}`;
-    body.append(evidence);
+    if (change.note) {
+        const evidence = document.createElement('small');
+        evidence.className = 'sillynpc-review-why has-note';
+        evidence.textContent = `Story evidence: ${change.note}`;
+        body.append(evidence);
+    }
     const hint = document.createElement('small');
     hint.className = 'sillynpc-hint';
     hint.textContent = change.reason || 'Accept any new parent or destination place with this change. Unresolved selected changes stay pending.';

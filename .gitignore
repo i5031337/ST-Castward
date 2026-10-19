@@ -15,3 +15,12 @@ docs/evaluations/*.json
 !docs/evaluations/gemma-e4b-natural-prose-generic-partial-npc-audit-results.json
 !docs/evaluations/gemma-e4b-profiles-final-prompts.json
 !docs/evaluations/gemma-e4b-profiles-final-results.json
+!docs/evaluations/gemma-e4b-location-tree-clear-evidence-prompts.json
+!docs/evaluations/gemma-e4b-location-tree-clear-evidence-results.json
+!docs/evaluations/gemma-e4b-location-tree-prose-prompts.json
+!docs/evaluations/gemma-e4b-location-tree-prose-results.json
+!docs/evaluations/gemma-e4b-location-tree-mixed-final-v2-prompts.json
+!docs/evaluations/gemma-e4b-location-tree-mixed-final-v2-results.json
+!docs/evaluations/gemma-e4b-location-evidence-ab.json
+!docs/evaluations/gemma-e4b-location-tree-no-citations-prompts.json
+!docs/evaluations/gemma-e4b-location-tree-no-citations-results.json

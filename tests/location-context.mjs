@@ -24,7 +24,7 @@ test('reader recognizes an established opening scene without requiring travel', 
     assert.match(notes, /"characters":\[\],"locations":\{"places":/);
     assert.match(notes, /Mentioning a place, remembering it, planning travel/);
     assert.match(notes, /opening a door, inviting the player inside/);
-    assert.match(notes, /never join excerpts with ellipses/);
+    assert.doesNotMatch(notes, /currentEvidence|"evidence"|exact quote/i);
 });
 
 test('recall includes current ancestors and places named by the player without a global dump', () => {
@@ -83,7 +83,6 @@ test('reader directory preserves identities with selected full descriptions and 
     assert.equal(directory.places[0].description.length, 4000);
     assert.ok(directory.places.length <= 80);
     assert.match(notes, /directory is partial/);
-    assert.match(notes, /every place proposal requires one continuous exact quote/i);
     assert.match(notes, /explicit departure with no known destination/);
     assert.ok(notes.length < 27000);
     assert.ok(!directory.places.find(place => place.ref === 'other')?.description);
@@ -98,11 +97,12 @@ test('narrator context remains bounded under large saved records', () => {
     assert.ok(buildLocationSceneContext(current, ['Old Ruins Unmentioned Cave']).length < 14500);
 });
 
-test('schema allows field omission for updates and requires quoted place evidence', () => {
+test('schema allows uncited place discoveries and field omission for updates', () => {
     const schema = locationExtractionSchema();
-    assert.deepEqual(schema.properties.places.items.required, ['ref', 'evidence']);
+    assert.deepEqual(schema.properties.places.items.required, ['ref']);
     assert.equal(schema.required, undefined);
-    assert.equal(schema.properties.currentEvidence.type, 'string');
+    assert.equal(schema.properties.places.items.properties.evidence, undefined);
+    assert.equal(schema.properties.currentEvidence, undefined);
 });
 
 test('lore helpers only read entries and return detached scalar data', async () => {

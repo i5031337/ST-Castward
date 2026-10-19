@@ -8,30 +8,28 @@ function freeze(value) {
     if (value && typeof value === 'object') { Object.values(value).forEach(freeze); Object.freeze(value); }
     return value;
 }
-function sourceEvidence(quote, source) {
-    const wanted = text(quote);
-    if (!wanted || typeof source !== 'string') return '';
-    const lowerAscii = value => value.replace(/[A-Z]/g, letter => letter.toLowerCase());
-    const exact = source.indexOf(wanted);
-    const at = exact >= 0 ? exact : lowerAscii(source).indexOf(lowerAscii(wanted));
-    return at < 0 ? '' : source.slice(at, at + wanted.length);
-}
-function rowFor(kind, record, before, provenance, evidence, currentBefore, currentBeforeName) {
+function rowFor(kind, record, before, provenance, currentBefore, currentBeforeName) {
     const current = kind === 'location-current';
     return { id: createLocationId(), kind, scope: 'location', actor: record.name,
         label: current ? 'Current place' : kind === 'location-create' ? 'New place' : 'Place details',
         before: current ? currentBeforeName || 'Unknown' : before?.description || '',
-        after: current ? record.name : record.description, risk: current ? 'safe' : 'risky', note: text(evidence),
+        after: current ? record.name : record.description, risk: current ? 'safe' : 'risky',
         location: freeze({ id: record.id, record: clone(record), before: clone(before),
             provenance: clone(provenance), ...(current ? { currentBefore } : {}) }) };
 }
 
-/** Evidence-bearing discoveries use the tracker's review policy after validation. */
-export function buildLocationProposals(state, input, { provenance, sourceText = '', makeId = createLocationId } = {}) {
+/** Story-derived discoveries use the tracker's review policy after validation. */
+export function buildLocationProposals(state, input, { provenance, makeId = createLocationId } = {}) {
     const original = readLocationStore(state);
     const rows = [], warnings = [];
     if (!original.enabled || !input || typeof input !== 'object') return { rows, warnings };
     const refs = new Map(Object.keys(original.records).map(id => [id, id]));
+    const resolveRef = value => {
+        const ref = text(value);
+        if (refs.has(ref)) return ref;
+        const matches = [...refs.keys()].filter(candidate => candidate.toLowerCase() === ref.toLowerCase());
+        return matches.length === 1 ? matches[0] : ref;
+    };
     const candidates = [];
     const submittedPlaces = Array.isArray(input.places) ? input.places : [];
     const places = submittedPlaces.slice(0, 40);
@@ -46,16 +44,12 @@ export function buildLocationProposals(state, input, { provenance, sourceText = 
         if (!ref || refCounts.get(ref) > 1) {
             warnings.push('Ignored a place with a missing or repeated reference.'); continue;
         }
-        const evidence = sourceEvidence(place.evidence, sourceText);
-        if (!evidence) {
-            warnings.push(`Ignored ${text(place.name) || ref}: evidence must quote the latest message.`); continue;
-        }
         if (!refs.has(ref)) {
             const id = makeId();
             if ([...refs.values()].includes(id)) { warnings.push(`Ignored ${text(place.name) || ref}: place ID collision.`); continue; }
             refs.set(ref, id);
         }
-        candidates.push({ ref, place, id: refs.get(ref), evidence });
+        candidates.push({ ref, place, id: refs.get(ref) });
     }
     let working = { ...state, locations: original };
     let waiting = candidates;
@@ -64,8 +58,8 @@ export function buildLocationProposals(state, input, { provenance, sourceText = 
         let progress = false;
         const next = [];
         for (const candidate of waiting) {
-            const { ref, place, id, evidence } = candidate;
-            const parentRef = text(place.parentRef);
+            const { ref, place, id } = candidate;
+            const parentRef = resolveRef(place.parentRef);
             if (parentRef && refs.has(parentRef) && !failedRefs.has(parentRef)
                 && !own(working.locations.records, refs.get(parentRef))) { next.push(candidate); continue; }
             try {
@@ -88,30 +82,26 @@ export function buildLocationProposals(state, input, { provenance, sourceText = 
                 const record = updated.locations.records[id];
                 working = updated;
                 if (!same(before, record)) rows.push(rowFor(before ? 'location-update' : 'location-create',
-                    record, before, provenance, evidence));
+                    record, before, provenance));
                 progress = true;
             } catch (error) { failedRefs.add(ref); warnings.push(`Ignored ${text(place.name) || ref}: ${error.message}`); progress = true; }
         }
         if (!progress) { warnings.push('Ignored places with missing or cyclic parent dependencies.'); break; }
         waiting = next;
     }
-    const currentRef = text(input.currentRef);
+    const currentRef = resolveRef(input.currentRef);
     if (currentRef && refs.has(currentRef) && own(working.locations.records, refs.get(currentRef))) {
         const record = working.locations.records[refs.get(currentRef)];
         if (record.id !== original.currentId) {
-            const evidence = sourceEvidence(input.currentEvidence, sourceText);
-            if (evidence) rows.push(rowFor('location-current', record,
-                original.records[record.id] || null, provenance, evidence, original.currentId,
+            rows.push(rowFor('location-current', record,
+                original.records[record.id] || null, provenance, original.currentId,
                 original.records[original.currentId]?.name));
-            else warnings.push('Ignored the current place: evidence must be one continuous exact quote from the latest message.');
         }
     } else if (currentRef) warnings.push('Ignored the current place: its reference does not exist.');
     else if (own(input, 'currentRef') && input.currentRef === '' && original.currentId) {
-        const evidence = sourceEvidence(input.currentEvidence, sourceText);
-        if (evidence) rows.push(rowFor('location-current',
-            { id: '', name: 'Unknown' }, null, provenance, evidence, original.currentId,
+        rows.push(rowFor('location-current',
+            { id: '', name: 'Unknown' }, null, provenance, original.currentId,
             original.records[original.currentId]?.name));
-        else warnings.push('Ignored clearing the current place: evidence must be one continuous exact quote from the latest message.');
     }
     return { rows, warnings };
 }

@@ -32,9 +32,9 @@ function fixture() {
     const runtime = evaluate('../src/locations/location-runtime.js', dependencies,
         '{ locationProposalsForReading, resolveLocationRows }');
     const discover = (movement = true) => runtime.locationProposalsForReading(state, {
-        places: [{ ref: 'new-tavern', name: 'The Lantern', description: 'A tavern.', evidence: 'Lantern tavern' }],
-        ...(movement ? { currentRef: 'new-tavern', currentEvidence: 'We enter' } : {}),
-    }, 0, context.chat[0].mes).rows;
+        places: [{ ref: 'new-tavern', name: 'The Lantern', description: 'A tavern.' }],
+        ...(movement ? { currentRef: 'new-tavern' } : {}),
+    }, 0).rows;
     return { context, saves, records, refreshes, events, dependencies, runtime, discover,
         get state() { return state; }, set chatId(value) { chatId = value; } };
 }

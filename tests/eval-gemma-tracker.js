@@ -7,12 +7,21 @@ import { createHash } from 'node:crypto';
 import { harness, constants } from './fixtures/gemma-tracker-harness.mjs';
 import { scenarios as standardScenarios, criteria as standardCriteria, makeState } from './fixtures/gemma-tracker-scenarios.mjs';
 import { naturalScenarios, makeNaturalState } from './fixtures/gemma-tracker-natural-scenarios.mjs';
+import { locationTreeScenarios, naturalLocationTreeScenarios, mixedLocationTreeScenarios } from './fixtures/gemma-location-tree-scenarios.mjs';
 const args = process.argv.slice(2), action = args[0], label = args[1];
-if (!['--freeze', '--run', '--score'].includes(action) || !/^[a-z0-9-]+$/.test(label || '')) throw Error('Usage: --freeze|--run|--score LABEL [--natural] [--repeats N]');
+if (!['--freeze', '--run', '--score'].includes(action) || !/^[a-z0-9-]+$/.test(label || '')) throw Error('Usage: --freeze|--run|--score LABEL [--natural|--location-tree|--location-tree-prose|--location-tree-mixed] [--repeats N]');
 const natural = args.includes('--natural');
-const scenarios = natural ? naturalScenarios : standardScenarios;
+const locationTree = args.includes('--location-tree');
+const locationTreeProse = args.includes('--location-tree-prose');
+const locationTreeMixed = args.includes('--location-tree-mixed');
+if ([natural, locationTree, locationTreeProse, locationTreeMixed].filter(Boolean).length > 1) throw Error('Choose only one scenario suite.');
+const scenarios = locationTreeMixed ? mixedLocationTreeScenarios : locationTreeProse ? naturalLocationTreeScenarios
+    : locationTree ? locationTreeScenarios : natural ? naturalScenarios : standardScenarios;
 const makeScenarioState = natural ? makeNaturalState : makeState;
-const freezeCriteria = natural ? { ...standardCriteria, suite: 'natural-prose' } : standardCriteria;
+const freezeCriteria = natural ? { ...standardCriteria, suite: 'natural-prose' }
+    : locationTree || locationTreeProse || locationTreeMixed ? { ...standardCriteria,
+        suite: locationTreeMixed ? 'location-tree-mixed' : locationTreeProse ? 'location-tree-prose' : 'location-tree', overallRequiredCheckRate: 1,
+        perSystemRequiredCheckRate: 1 } : standardCriteria;
 const directory = new URL('../docs/evaluations/', import.meta.url);
 mkdirSync(directory, { recursive: true });
 const sourceFiles = ['src/core/builtin-systems.js', 'src/core/settings-tracker-defaults.js',
@@ -59,6 +68,14 @@ function score(bundle, normalized, raw, finishReason) {
     const methods = {
         placeCreated: name => rows.some(row => row.kind === 'location-create' && includes(row.actor, name)),
         currentPlace: name => rows.some(row => row.kind === 'location-current' && includes(row.actor, name)),
+        placeParent: (childName, parentName) => {
+            const child = rows.find(row => row.kind === 'location-create' && includes(row.actor, childName));
+            const parent = rows.find(row => row.kind === 'location-create' && includes(row.actor, parentName));
+            return Boolean(child && parent && child.location?.record?.parentId === parent.location?.id);
+        },
+        placeRoot: name => rows.some(row => row.kind === 'location-create' && includes(row.actor, name)
+            && row.location?.record?.parentId === ''),
+        createdPlaceCount: count => rows.filter(row => row.kind === 'location-create').length === count,
         worldContains: (key, value) => includes(u.global?.[key] ?? state.global[key], value),
         npcPresent: name => Boolean(actor(name) && !actor(name).offstage),
         noXp: () => Number.parseFloat(stat('XP') || '0') === Number.parseFloat(state.player.stats.XP || '0'),

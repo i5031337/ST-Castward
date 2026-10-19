@@ -252,7 +252,7 @@ export async function extractStateFromMessage(messageText, messageId, options = 
         pending.push(...grants.rows.filter(change => !isItemDecided(change)));
         let automaticPlaces = [];
         if (locationBase && currentState.locations?.enabled) {
-            const places = locationProposalsForReading(locationBase, parsed.locations, messageId, String(messageText));
+            const places = locationProposalsForReading(locationBase, parsed.locations, messageId);
             const placeReview = partitionLocationRows(places.rows, trackerSettings);
             automaticPlaces = placeReview.auto;
             pending.push(...placeReview.pending);

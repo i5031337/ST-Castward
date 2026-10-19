@@ -93,7 +93,7 @@ export async function harness(systemId, state) {
             const warnings = normalizeCollectionUpdates(update, settings, state);
             expandNumericDeltas(update, state, settings, { warnings });
             deps.sanitizeModelUpdate(update, state, settings, { warnings });
-            const places = buildLocationProposals(state, update.locations, { sourceText: text, provenance: { messageId: 1 } });
+            const places = buildLocationProposals(state, update.locations, { provenance: { messageId: 1 } });
             // This is the same dry run used by review. It applies configured stat rules,
             // XP progression and collection updates to a disposable state copy.
             deps.committedState = structuredClone(state);

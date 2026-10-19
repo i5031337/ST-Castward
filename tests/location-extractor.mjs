@@ -12,7 +12,7 @@ function evaluate(file, dependencies, result) {
     return new Function(...Object.keys(dependencies), `${source}\nreturn ${result};`)(...Object.values(dependencies));
 }
 
-function fixture({ enabled = true, evidence = 'Lantern tavern', afterRequest, reviewMode = 'off',
+function fixture({ enabled = true, afterRequest, reviewMode = 'off',
     knownPlace = false } = {}) {
     let state = { global: { Time: 'noon' }, characters: [],
         locations: { enabled, currentId: '', records: knownPlace ? { 'new-tavern': {
@@ -33,8 +33,8 @@ function fixture({ enabled = true, evidence = 'Lantern tavern', afterRequest, re
         eventSource: { emit: () => {} },
     }, '{ locationProposalsForReading, partitionLocationRows, resolveLocationRows }');
     const output = { global: { Time: 'dusk' }, player: {}, characters: [], locations: {
-        places: [{ ref: 'new-tavern', name: 'The Lantern', description: 'A tavern.', evidence }],
-        currentRef: 'new-tavern', currentEvidence: 'We enter',
+        places: [{ ref: 'new-tavern', name: 'The Lantern', description: 'A tavern.' }],
+        currentRef: 'new-tavern',
     } };
     const dependencies = {
         getContext: () => context, getSettings: () => settings, getAllCharacters: () => [],
@@ -124,12 +124,12 @@ test('disabled place tracking ignores unsolicited location output', async () => 
     assert.deepEqual(f.pending, []);
 });
 
-test('invalid place evidence becomes a report warning without changing remembered places', async () => {
-    const f = fixture({ evidence: 'An invented quote never present in this reply.', reviewMode: 'risky' });
-    assert.deepEqual(await f.run(), { applied: true, pending: 0 });
+test('uncited place proposals enter normal review alongside ordinary changes', async () => {
+    const f = fixture({ reviewMode: 'risky' });
+    assert.deepEqual(await f.run(), { applied: true, pending: 2 });
     assert.deepEqual(f.state.locations.records, {});
-    assert.deepEqual(f.pending, []);
-    assert.ok(f.reports[0].warnings.some(warning => warning.includes('evidence must quote')));
+    assert.deepEqual(f.pending.map(row => row.kind), ['location-create', 'location-current']);
+    assert.ok(!f.reports[0].warnings.some(warning => warning.includes('evidence')));
 });
 
 test('async source changes cannot publish place proposals or ordinary changes', async () => {

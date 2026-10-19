@@ -42,7 +42,7 @@ limit, default 50, with older entries archived.
 
 Place records are chat-owned independently of persona; their reader/recall switch is
 a System setting, enabled by default. The existing
-tracker reader proposes evidence-backed place cards, changes, containment, and
+tracker reader proposes story-derived place cards, changes, containment, and
 movement; Ask Before Applying partitions them with other tracker changes. A bounded scene context recalls the last
 confirmed place, its ancestors, and explicitly mentioned places while the tracker is
 enabled. Read-only lorebook links can seed local descriptions through an explicit

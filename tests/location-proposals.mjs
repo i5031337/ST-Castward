@@ -5,29 +5,28 @@ import { buildLocationProposals, applyLocationReview } from '../src/locations/lo
 
 const enabled = () => setLocationsEnabled({}, true);
 const options = () => { let id = 0; return { provenance: { messageId: 3, hash: 'original' },
-    sourceText: 'You enter the Lantern in Town. Its roof has burned.', makeId: () => `p${++id}` }; };
+    makeId: () => `p${++id}` }; };
 const discovery = { places: [
-    { ref: 'inn', name: 'Lantern', description: 'An inn in Town.', parentRef: 'town', evidence: 'the Lantern in Town' },
-    { ref: 'town', name: 'Town', description: 'A town.', evidence: 'in Town' },
-], currentRef: 'inn', currentEvidence: 'You enter the Lantern' };
+    { ref: 'inn', name: 'Lantern', description: 'An inn in Town.', parentRef: 'town' },
+    { ref: 'town', name: 'Town', description: 'A town.' },
+], currentRef: 'inn' };
 
-test('location discovery requires opt-in and exact evidence from the source message', () => {
+test('location discovery requires opt-in but accepts proposals without citations', () => {
     assert.equal(buildLocationProposals({}, discovery, options()).rows.length, 0);
     const result = buildLocationProposals(enabled(), { places: [
-        { ref: 'x', name: 'Invented', evidence: 'an invented place' },
-    ], currentRef: 'x', currentEvidence: 'You enter' }, options());
-    assert.equal(result.rows.length, 0);
-    assert.ok(result.warnings.length);
+        { ref: 'x', name: 'Lantern' },
+    ], currentRef: 'x' }, options());
+    assert.deepEqual(result.rows.map(row => row.kind), ['location-create', 'location-current']);
+    assert.deepEqual(result.warnings, []);
+    assert.ok(result.rows.every(row => !Object.hasOwn(row, 'note')));
 });
 
-test('a spliced arrival quote cannot move the current marker', () => {
-    const sourceText = 'She leads you down a short, quiet hallway. She opens a door at the end and gestures for you to enter. Her office is small and smells of vanilla and old paper.';
+test('a current marker needs a known or proposed place reference', () => {
     const result = buildLocationProposals(enabled(), { places: [
-        { ref: 'office', name: 'Penelope\'s Office', evidence: 'Her office is small and smells of vanilla and old paper.' },
-    ], currentRef: 'office', currentEvidence: 'She leads you down a short, quiet hallway... gestures for you to enter.' },
-    { ...options(), sourceText });
+        { ref: 'office', name: 'Penelope\'s Office' },
+    ], currentRef: 'missing' }, options());
     assert.deepEqual(result.rows.map(row => row.kind), ['location-create']);
-    assert.match(result.warnings[0], /one continuous exact quote/);
+    assert.match(result.warnings[0], /reference does not exist/);
 });
 
 test('new parent dependencies and current place apply in any review order', () => {
@@ -41,6 +40,28 @@ test('new parent dependencies and current place apply in any review order', () =
     assert.equal(result.state.locations.currentId, 'p1');
     assert.equal(result.state.locations.records.p1.parentId, 'p2');
     assert.deepEqual(state.locations.records, {});
+});
+
+test('case drift in a unique place reference preserves proposed containment and movement', () => {
+    const state = enabled();
+    const { rows, warnings } = buildLocationProposals(state, { places: [
+        { ref: 'inn', name: 'Lantern', parentRef: 'TOWN' },
+        { ref: 'town', name: 'Town' },
+    ], currentRef: 'INN' }, options());
+    assert.deepEqual(warnings, []);
+    const result = applyLocationReview(state, rows, rows);
+    assert.equal(result.state.locations.records.p1.parentId, 'p2');
+    assert.equal(result.state.locations.currentId, 'p1');
+});
+
+test('ambiguous case-only references never choose a parent', () => {
+    let state = editLocation(enabled(), { name: 'North Town' }, { makeId: () => 'Ab' });
+    state = editLocation(state, { name: 'South Town' }, { makeId: () => 'aB' });
+    const { rows, warnings } = buildLocationProposals(state, { places: [
+        { ref: 'inn', name: 'Lantern', parentRef: 'AB' },
+    ] }, options());
+    assert.equal(rows[0].location.record.parentId, '');
+    assert.ok(warnings.some(warning => /unknown parent/.test(warning)));
 });
 
 test('rejecting a parent or a new current target cannot create dangling links', () => {
@@ -70,7 +91,7 @@ test('reviews trust stored payloads, accept description edits and reject stale s
 test('updates preserve omitted fields and fail safely after manual edits', () => {
     let state = editLocation(enabled(), { name: 'Lantern', aliases: ['Inn'], description: 'An inn.', lorebook: 'World', loreEntryId: 4 }, { makeId: () => 'inn' });
     const { rows } = buildLocationProposals(state, { places: [
-        { ref: 'inn', description: 'An inn with a burned roof.', evidence: 'Its roof has burned.' },
+        { ref: 'inn', description: 'An inn with a burned roof.' },
     ] }, options());
     const applied = applyLocationReview(state, rows, rows);
     assert.equal(applied.state.locations.records.inn.description, 'An inn with a burned roof.');
@@ -84,7 +105,7 @@ test('null optional parent from a reader preserves existing containment', () => 
     let state = editLocation(enabled(), { name: 'Town' }, { makeId: () => 'town' });
     state = editLocation(state, { name: 'Lantern', parentId: 'town', description: 'An inn.' }, { makeId: () => 'inn' });
     const { rows, warnings } = buildLocationProposals(state, { places: [
-        { ref: 'inn', description: 'An inn with a burned roof.', parentRef: null, evidence: 'Its roof has burned.' },
+        { ref: 'inn', description: 'An inn with a burned roof.', parentRef: null },
     ] }, options());
     assert.deepEqual(warnings, []);
     assert.equal(rows.length, 1);
@@ -93,54 +114,48 @@ test('null optional parent from a reader preserves existing containment', () => 
     assert.equal(result.state.locations.records.inn.description, 'An inn with a burned roof.');
 });
 
-test('unknown parent reference does not discard an evidenced place or invent containment', () => {
+test('unknown parent reference does not discard a proposed place or invent containment', () => {
     const state = enabled();
     const { rows, warnings } = buildLocationProposals(state, { places: [
-        { ref: 'mill', name: 'Old Mill', parentRef: 'not-a-known-id', evidence: 'inside the Old Mill' },
-    ], currentRef: 'mill', currentEvidence: 'You arrive inside the Old Mill' },
-    { ...options(), sourceText: 'You arrive inside the Old Mill.' });
+        { ref: 'mill', name: 'Old Mill', parentRef: 'not-a-known-id' },
+    ], currentRef: 'mill' }, options());
     assert.deepEqual(rows.map(row => row.kind), ['location-create', 'location-current']);
     assert.equal(rows[0].location.record.parentId, '');
     assert.ok(warnings.some(warning => /unknown parent/.test(warning)));
 });
 
-test('rejected duplicate parent proposal cannot strand a new evidenced place', () => {
+test('rejected duplicate parent proposal cannot strand a new proposed place', () => {
     const state = editLocation(enabled(), { name: 'Moonbeam Café' }, { makeId: () => 'home' });
-    const sourceText = 'Alex and June leave Moonbeam Café and arrive inside the Glasshouse.';
     const { rows, warnings } = buildLocationProposals(state, { places: [
-        { ref: 'glass', name: 'Glasshouse', parentRef: 'cafe', evidence: 'arrive inside the Glasshouse' },
-        { ref: 'cafe', name: 'Moonbeam Café', evidence: 'leave Moonbeam Café' },
-    ], currentRef: 'glass', currentEvidence: sourceText },
-    { ...options(), sourceText });
+        { ref: 'glass', name: 'Glasshouse', parentRef: 'cafe' },
+        { ref: 'cafe', name: 'Moonbeam Café' },
+    ], currentRef: 'glass' }, options());
     assert.deepEqual(rows.map(row => row.kind), ['location-create', 'location-current']);
     assert.equal(rows[0].location.record.parentId, '');
     assert.ok(warnings.some(warning => /already belongs/.test(warning)));
     assert.ok(warnings.some(warning => /unknown parent/.test(warning)));
 });
 
-test('case-only evidence drift displays the exact source excerpt in review', () => {
+test('legacy citation fields are ignored without blocking a place proposal', () => {
     const { rows } = buildLocationProposals(enabled(), { places: [
-        { ref: 'mill', name: 'Old Mill', evidence: 'Arrive inside the Old Mill' },
-    ], currentRef: 'mill', currentEvidence: 'Arrive inside the Old Mill' },
-    { ...options(), sourceText: 'You arrive inside the Old Mill.' });
+        { ref: 'mill', name: 'Old Mill', evidence: 'A paraphrase' },
+    ], currentRef: 'mill', currentEvidence: 'An unrelated quote' }, options());
     assert.equal(rows.length, 2);
-    assert.equal(rows[0].note, 'arrive inside the Old Mill');
-    assert.equal(rows[1].note, 'arrive inside the Old Mill');
+    assert.ok(rows.every(row => !Object.hasOwn(row, 'note')));
 });
 
 test('current-place proposals cannot overwrite a later manual scene change', () => {
     let state = editLocation(enabled(), { name: 'Lantern' }, { makeId: () => 'inn' });
-    const { rows } = buildLocationProposals(state, { currentRef: 'inn', currentEvidence: 'You enter the Lantern' }, options());
+    const { rows } = buildLocationProposals(state, { currentRef: 'inn' }, options());
     state = editLocation(state, { name: 'Town' }, { makeId: () => 'town' });
     state = setCurrentLocation(state, 'town');
     assert.equal(applyLocationReview(state, rows, rows).appliedRows.length, 0);
 });
 
-test('clearing current place requires an explicit empty reference and source evidence', () => {
+test('clearing current place requires an explicit empty reference', () => {
     const state = setCurrentLocation(editLocation(enabled(), { name: 'Lantern' }, { makeId: () => 'inn' }), 'inn');
-    assert.equal(buildLocationProposals(state, { currentRef: '' }, options()).rows.length, 0);
     assert.equal(buildLocationProposals(state, {}, options()).rows.length, 0);
-    const { rows } = buildLocationProposals(state, { currentRef: '', currentEvidence: 'You enter' }, options());
+    const { rows } = buildLocationProposals(state, { currentRef: '' }, options());
     const result = applyLocationReview(state, rows, rows);
     assert.equal(result.appliedRows.length, 1);
     assert.equal(result.state.locations.currentId, '');
@@ -148,14 +163,14 @@ test('clearing current place requires an explicit empty reference and source evi
 
 test('cyclic and ambiguous reader discoveries are held out of the store', () => {
     const cycle = buildLocationProposals(enabled(), { places: [
-        { ref: 'a', name: 'A', parentRef: 'b', evidence: 'Town' },
-        { ref: 'b', name: 'B', parentRef: 'a', evidence: 'Town' },
+        { ref: 'a', name: 'A', parentRef: 'b' },
+        { ref: 'b', name: 'B', parentRef: 'a' },
     ] }, options());
     assert.equal(cycle.rows.length, 0);
     assert.ok(cycle.warnings.length);
     const duplicate = buildLocationProposals(enabled(), { places: [
-        { ref: 'a', name: 'Inn', evidence: 'Town' },
-        { ref: 'b', name: 'Other', aliases: ['inn'], evidence: 'Town' },
+        { ref: 'a', name: 'Inn' },
+        { ref: 'b', name: 'Other', aliases: ['inn'] },
     ] }, options());
     assert.equal(duplicate.rows.length, 1);
 });
@@ -163,13 +178,13 @@ test('cyclic and ambiguous reader discoveries are held out of the store', () => 
 test('malformed supplied fields cannot erase saved fields, and repeated refs are never resolved arbitrarily', () => {
     const state = editLocation(enabled(), { name: 'Lantern', aliases: ['Inn'], description: 'A familiar inn.' }, { makeId: () => 'inn' });
     for (const patch of [{ aliases: null }, { aliases: 'Other' }, { description: null }, { parentRef: 3 }]) {
-        const result = buildLocationProposals(state, { places: [{ ref: 'inn', evidence: 'Town', ...patch }] }, options());
+        const result = buildLocationProposals(state, { places: [{ ref: 'inn', ...patch }] }, options());
         assert.equal(result.rows.length, 0);
         assert.ok(result.warnings.length);
     }
     const result = buildLocationProposals(state, { places: [
-        { ref: 'inn', name: 'First guess', evidence: 'Town' },
-        { ref: 'inn', name: 'Second guess', evidence: 'Town' },
+        { ref: 'inn', name: 'First guess' },
+        { ref: 'inn', name: 'Second guess' },
     ] }, options());
     assert.equal(result.rows.length, 0);
     assert.equal(state.locations.records.inn.name, 'Lantern');
@@ -178,13 +193,13 @@ test('malformed supplied fields cannot erase saved fields, and repeated refs are
 test('allocated stable IDs cannot overwrite existing places or collide across discoveries', () => {
     const state = editLocation(enabled(), { name: 'Existing' }, { makeId: () => 'p1' });
     const result = buildLocationProposals(state, { places: [
-        { ref: 'new', name: 'Different', evidence: 'Town' },
+        { ref: 'new', name: 'Different' },
     ] }, options());
     assert.equal(result.rows.length, 0);
     assert.ok(result.warnings.some(warning => /collision/.test(warning)));
     const duplicates = buildLocationProposals(enabled(), { places: [
-        { ref: 'a', name: 'One', evidence: 'Town' },
-        { ref: 'b', name: 'Two', evidence: 'Town' },
+        { ref: 'a', name: 'One' },
+        { ref: 'b', name: 'Two' },
     ] }, { ...options(), makeId: () => 'same' });
     assert.equal(duplicates.rows.length, 1);
     assert.ok(duplicates.warnings.some(warning => /collision/.test(warning)));
@@ -213,13 +228,13 @@ test('serialized pending rows keep trusted identity and prevent repeated applica
 });
 
 test('reader place proposals are bounded and never truncate a replacement description', () => {
-    const input = { places: Array.from({ length: 45 }, (_, i) => ({ ref: `r${i}`, name: `Place ${i}`, evidence: 'Town' })) };
+    const input = { places: Array.from({ length: 45 }, (_, i) => ({ ref: `r${i}`, name: `Place ${i}` })) };
     const result = buildLocationProposals(enabled(), input, options());
     assert.equal(result.rows.length, 40);
     assert.ok(result.warnings.some(warning => /first 40/.test(warning)));
-    const tooLong = buildLocationProposals(enabled(), { places: [{ ref: 'x', name: 'Place', description: 'x'.repeat(4001), evidence: 'Town' }] }, options());
+    const tooLong = buildLocationProposals(enabled(), { places: [{ ref: 'x', name: 'Place', description: 'x'.repeat(4001) }] }, options());
     assert.equal(tooLong.rows.length, 0);
-    const pending = buildLocationProposals(enabled(), { places: [{ ref: 'x', name: 'Place', evidence: 'Town' }] }, options()).rows;
+    const pending = buildLocationProposals(enabled(), { places: [{ ref: 'x', name: 'Place' }] }, options()).rows;
     const edited = applyLocationReview(enabled(), pending, pending.map(row => ({ ...row, after: 'x'.repeat(4001) })));
     assert.equal(edited.appliedRows.length, 0);
     assert.deepEqual(edited.state.locations.records, {});

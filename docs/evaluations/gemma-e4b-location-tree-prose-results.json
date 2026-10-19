@@ -1,0 +1,1039 @@
+{
+  "startedAt": "2026-10-19T02:37:34.951Z",
+  "label": "location-tree-prose",
+  "criteria": {
+    "validJsonAndNotTruncated": 1,
+    "overallRequiredCheckRate": 1,
+    "perSystemRequiredCheckRate": 1,
+    "criticalFailuresAllowed": 0,
+    "suite": "location-tree-prose"
+  },
+  "sourceHashes": {
+    "src/core/builtin-systems.js": "4635c9510bc5236894d20bd6ef639bbf7f8c8fc9672deaee695a2c63d013f31d",
+    "src/core/settings-tracker-defaults.js": "3beb026157e41638c7b7cdf0c5f5268c425f4f8dc0f7d126d426f5caf289b035",
+    "src/core/constants-prompts.js": "8c0aabb4d16d4e3d3e98017c8e8f27cbdcd944dd0f608338fcd475bfe1ce9a4c",
+    "src/prompts/prompt-texts-reader.js": "c53f67ca2528d8b1d5a2bd585c3de7f4ad5039b93960622039eebb1b828c0158",
+    "src/tracker/extractor/status-extractor-prompt.js": "9e684673a54696a9fcc37c88239253ddb246c68ce594bb50ac34a2db8759dc79",
+    "src/tracker/extractor/status-extractor-prompt-state.js": "3c80588bfa7fbe800971e3a92e6f3336425023460ab2a033fa7c0ca2da9c0fdb",
+    "src/tracker/extractor/status-extractor-schema.js": "c296d5606d4fd3ca7466cd6c55f37e56c2bbd8a3bba7dfa8be43e346e8d4faa4",
+    "src/locations/location-context.js": "492a0e617e118cd872bb8e19ec17d199b8120697b00a8176e5a3a4cd97f657ec",
+    "src/locations/location-proposals.js": "105e06e1b2d7e92e04a221ba62cc9ce96ade1f9fc7f154926bb53a5ed95d3e55",
+    "src/tracker/status-stat-values.js": "7b1de4e964ab34f8d30d4b29b77999a669bfdeae11e738819bdb5b6e48c8d82d",
+    "src/tracker/status-collection-updates.js": "36788c1112211883b5617823f4be2fc0aa30a876ff6e21eaf130193e3584a3f7",
+    "src/tracker/status-update-constraints.js": "e3f63de6675b36bf2200c81f739acd1883696c5ccc550d8c221907802c0f11e0",
+    "src/tracker/status-update-parser.js": "c1894cd0836b093c93c64139daebf0f51e3cec846fbf92bb7920d3c838927405",
+    "src/tracker/status-apply-update.js": "8eedf95a4ea7fc33e8c535c87ead072dd8884078f73691d2a0f9736a49c1fee7",
+    "src/tracker/progression.js": "53b41aaa840971d98c0d66bbef3b0e750126fcf8855a428301fa4711a9ef2855"
+  },
+  "endpoint": "http://127.0.0.1:9931/v1",
+  "model": "/mnt/D/backup_models/gemma-4-E4B-it-qat-UD-Q4_K_XL.gguf",
+  "server": {
+    "build": "b11669-620d2225c",
+    "defaults": {
+      "params": {
+        "seed": 4294967295,
+        "temperature": 1,
+        "dynatemp_range": 0,
+        "dynatemp_exponent": 1,
+        "top_k": 64,
+        "top_p": 0.949999988079071,
+        "min_p": 0,
+        "top_n_sigma": -1,
+        "xtc_probability": 0,
+        "xtc_threshold": 0.10000000149011612,
+        "typical_p": 1,
+        "repeat_last_n": 64,
+        "repeat_penalty": 1,
+        "presence_penalty": 0,
+        "frequency_penalty": 0,
+        "dry_multiplier": 0,
+        "dry_base": 1.75,
+        "dry_allowed_length": 2,
+        "dry_penalty_last_n": 64,
+        "mirostat": 0,
+        "mirostat_tau": 5,
+        "mirostat_eta": 0.10000000149011612,
+        "adaptive_target": -1,
+        "adaptive_decay": 0.8999999761581421,
+        "max_tokens": -1,
+        "n_predict": -1,
+        "n_keep": 0,
+        "n_discard": 0,
+        "ignore_eos": false,
+        "stream": false,
+        "n_probs": 0,
+        "min_keep": 0,
+        "chat_format": "Content-only",
+        "reasoning_format": "none",
+        "reasoning_in_content": false,
+        "generation_prompt": "",
+        "samplers": [
+          "penalties",
+          "dry",
+          "top_n_sigma",
+          "top_k",
+          "typ_p",
+          "top_p",
+          "min_p",
+          "xtc",
+          "temperature"
+        ],
+        "speculative.types": "none",
+        "timings_per_token": false,
+        "post_sampling_probs": false,
+        "backend_sampling": false,
+        "lora": []
+      },
+      "n_ctx": 65536
+    },
+    "model": "/mnt/D/backup_models/gemma-4-E4B-it-qat-UD-Q4_K_XL.gguf",
+    "slots": 1
+  },
+  "repeats": 2,
+  "trials": [
+    {
+      "id": "fantasy-new-parent-prose",
+      "system": "fantasy",
+      "holdout": false,
+      "repeat": 0,
+      "elapsedMs": 9046,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 824,
+        "prompt_tokens": 4995,
+        "total_tokens": 5819,
+        "prompt_tokens_details": {
+          "cached_tokens": 557
+        }
+      },
+      "content": "```json\n{\n  \"global\": {\n    \"Time\": \"Dusk, raining\"\n  },\n  \"player\": {},\n  \"characters\": [],\n  \"locations\": {\n    \"places\": [\n      {\n        \"ref\": \"blue_heron_inn\",\n        \"name\": \"Blue Heron Inn\",\n        \"aliases\": [\n          \"inn\"\n        ],\n        \"description\": \"A tavern tucked among Brackenport's narrow lanes\",\n        \"parentRef\": \"Brackenport\",\n        \"evidence\": \"Alex slips into the Blue Heron Inn, a tavern tucked among Brackenport's narrow lanes.\"\n      }\n    ],\n    \"currentRef\": \"blue_heron_inn\",\n    \"currentEvidence\": \"Alex slips into the Blue Heron Inn, a tavern tucked among Brackenport's narrow lanes.\"\n  }\n}\n```",
+      "parsed": {
+        "global": {
+          "Time": "Dusk, raining"
+        },
+        "player": {},
+        "characters": [],
+        "locations": {
+          "places": [
+            {
+              "ref": "blue_heron_inn",
+              "name": "Blue Heron Inn",
+              "aliases": [
+                "inn"
+              ],
+              "description": "A tavern tucked among Brackenport's narrow lanes",
+              "parentRef": "Brackenport",
+              "evidence": "Alex slips into the Blue Heron Inn, a tavern tucked among Brackenport's narrow lanes."
+            }
+          ],
+          "currentRef": "blue_heron_inn",
+          "currentEvidence": "Alex slips into the Blue Heron Inn, a tavern tucked among Brackenport's narrow lanes."
+        }
+      },
+      "normalized": {
+        "update": {
+          "global": {
+            "Time": "Dusk, raining"
+          },
+          "player": {},
+          "characters": [],
+          "locations": {
+            "places": [
+              {
+                "ref": "blue_heron_inn",
+                "name": "Blue Heron Inn",
+                "aliases": [
+                  "inn"
+                ],
+                "description": "A tavern tucked among Brackenport's narrow lanes",
+                "parentRef": "Brackenport",
+                "evidence": "Alex slips into the Blue Heron Inn, a tavern tucked among Brackenport's narrow lanes."
+              }
+            ],
+            "currentRef": "blue_heron_inn",
+            "currentEvidence": "Alex slips into the Blue Heron Inn, a tavern tucked among Brackenport's narrow lanes."
+          }
+        },
+        "effective": {
+          "global": {
+            "Time": "Dusk, raining",
+            "Quest": "",
+            "Location": "Rusty Lantern"
+          },
+          "player": {
+            "stats": {
+              "HP": "12/12",
+              "Armor": "10",
+              "Strength": "10",
+              "Dexterity": "10",
+              "Constitution": "10",
+              "Intelligence": "10",
+              "Wisdom": "10",
+              "Charisma": "10",
+              "Condition": "Healthy",
+              "Currency": "0",
+              "XP": "0/100",
+              "Level": "1"
+            },
+            "collections": {
+              "equipment": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [],
+          "locations": {
+            "enabled": true,
+            "currentId": "home",
+            "records": {
+              "home": {
+                "id": "home",
+                "name": "Rusty Lantern",
+                "description": "",
+                "aliases": [],
+                "parentId": ""
+              }
+            }
+          },
+          "timestamp": 1792377464053
+        },
+        "progression": null,
+        "holdings": {
+          "player": {
+            "stats": {
+              "HP": "12/12",
+              "Armor": "10",
+              "Strength": "10",
+              "Dexterity": "10",
+              "Constitution": "10",
+              "Intelligence": "10",
+              "Wisdom": "10",
+              "Charisma": "10",
+              "Condition": "Healthy",
+              "Currency": "0",
+              "XP": "0/100",
+              "Level": "1"
+            },
+            "collections": {
+              "equipment": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": []
+        },
+        "warnings": [
+          "Ignored the unknown parent for Blue Heron Inn."
+        ],
+        "places": [
+          {
+            "id": "place-f133cea7-6de5-4049-8969-8eee62ec755a",
+            "kind": "location-create",
+            "scope": "location",
+            "actor": "Blue Heron Inn",
+            "label": "New place",
+            "before": "",
+            "after": "A tavern tucked among Brackenport's narrow lanes",
+            "risk": "risky",
+            "note": "Alex slips into the Blue Heron Inn, a tavern tucked among Brackenport's narrow lanes.",
+            "location": {
+              "id": "place-9e7a82d1-602e-4aba-ba87-722ba88ba311",
+              "record": {
+                "id": "place-9e7a82d1-602e-4aba-ba87-722ba88ba311",
+                "name": "Blue Heron Inn",
+                "aliases": [
+                  "inn"
+                ],
+                "description": "A tavern tucked among Brackenport's narrow lanes",
+                "parentId": "",
+                "lorebook": "",
+                "loreEntryId": null
+              },
+              "before": null,
+              "provenance": {
+                "messageId": 1
+              }
+            }
+          },
+          {
+            "id": "place-017f9b57-c2ca-41f8-994b-a0cd8c1a9f45",
+            "kind": "location-current",
+            "scope": "location",
+            "actor": "Blue Heron Inn",
+            "label": "Current place",
+            "before": "Rusty Lantern",
+            "after": "Blue Heron Inn",
+            "risk": "safe",
+            "note": "Alex slips into the Blue Heron Inn, a tavern tucked among Brackenport's narrow lanes.",
+            "location": {
+              "id": "place-9e7a82d1-602e-4aba-ba87-722ba88ba311",
+              "record": {
+                "id": "place-9e7a82d1-602e-4aba-ba87-722ba88ba311",
+                "name": "Blue Heron Inn",
+                "aliases": [
+                  "inn"
+                ],
+                "description": "A tavern tucked among Brackenport's narrow lanes",
+                "parentId": "",
+                "lorebook": "",
+                "loreEntryId": null
+              },
+              "before": null,
+              "provenance": {
+                "messageId": 1
+              },
+              "currentBefore": "home"
+            }
+          }
+        ]
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "validJsonAndNotTruncated",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "placeCreated Brackenport",
+          "critical": true,
+          "passed": false
+        },
+        {
+          "name": "placeCreated Blue Heron Inn",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "placeParent Blue Heron Inn Brackenport",
+          "critical": true,
+          "passed": false
+        },
+        {
+          "name": "placeRoot Brackenport",
+          "critical": true,
+          "passed": false
+        },
+        {
+          "name": "currentPlace Blue Heron Inn",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "createdPlaceCount 2",
+          "critical": true,
+          "passed": false
+        }
+      ],
+      "audit": {
+        "placeholderInventory": false,
+        "openingInventedInventory": false,
+        "xpProgression": null
+      }
+    },
+    {
+      "id": "dating-new-root-prose",
+      "system": "dating",
+      "holdout": false,
+      "repeat": 0,
+      "elapsedMs": 6561,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 606,
+        "prompt_tokens": 3178,
+        "total_tokens": 3784,
+        "prompt_tokens_details": {
+          "cached_tokens": 557
+        }
+      },
+      "content": "```json\n{\n  \"global\": {},\n  \"player\": {},\n  \"characters\": [],\n  \"locations\": {\n    \"places\": [\n      {\n        \"ref\": \"marigold_theater\",\n        \"name\": \"Marigold Theater\",\n        \"aliases\": [],\n        \"description\": \"A theater with red velvet seats sloping toward a small stage and an old marquee.\",\n        \"parentRef\": null,\n        \"evidence\": \"Alex steps inside the theater. Red velvet seats slope toward a small stage, and the house lights dim as Alex finds a place among the audience.\"\n      }\n    ],\n    \"currentRef\": \"marigold_theater\",\n    \"currentEvidence\": \"Alex steps inside the theater. Red velvet seats slope toward a small stage, and the house lights dim as Alex finds a place among the audience.\"\n  }\n}\n```",
+      "parsed": {
+        "global": {},
+        "player": {},
+        "characters": [],
+        "locations": {
+          "places": [
+            {
+              "ref": "marigold_theater",
+              "name": "Marigold Theater",
+              "aliases": [],
+              "description": "A theater with red velvet seats sloping toward a small stage and an old marquee.",
+              "parentRef": null,
+              "evidence": "Alex steps inside the theater. Red velvet seats slope toward a small stage, and the house lights dim as Alex finds a place among the audience."
+            }
+          ],
+          "currentRef": "marigold_theater",
+          "currentEvidence": "Alex steps inside the theater. Red velvet seats slope toward a small stage, and the house lights dim as Alex finds a place among the audience."
+        }
+      },
+      "normalized": {
+        "update": {
+          "global": {},
+          "player": {},
+          "characters": [],
+          "locations": {
+            "places": [
+              {
+                "ref": "marigold_theater",
+                "name": "Marigold Theater",
+                "aliases": [],
+                "description": "A theater with red velvet seats sloping toward a small stage and an old marquee.",
+                "parentRef": null,
+                "evidence": "Alex steps inside the theater. Red velvet seats slope toward a small stage, and the house lights dim as Alex finds a place among the audience."
+              }
+            ],
+            "currentRef": "marigold_theater",
+            "currentEvidence": "Alex steps inside the theater. Red velvet seats slope toward a small stage, and the house lights dim as Alex finds a place among the audience."
+          }
+        },
+        "effective": {
+          "global": {
+            "Day and Time": "",
+            "Occasion": "",
+            "Location": "Moonbeam Café"
+          },
+          "player": {
+            "stats": {
+              "Social Energy": "10/10",
+              "Mood": "Neutral"
+            },
+            "collections": {
+              "items": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [],
+          "locations": {
+            "enabled": true,
+            "currentId": "home",
+            "records": {
+              "home": {
+                "id": "home",
+                "name": "Moonbeam Café",
+                "description": "",
+                "aliases": [],
+                "parentId": ""
+              }
+            }
+          },
+          "timestamp": 1792377470615
+        },
+        "progression": null,
+        "holdings": {
+          "player": {
+            "stats": {
+              "Social Energy": "10/10",
+              "Mood": "Neutral"
+            },
+            "collections": {
+              "items": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": []
+        },
+        "warnings": [],
+        "places": [
+          {
+            "id": "place-6ca4f9bf-bd41-48f1-9605-7aa03f76f7d3",
+            "kind": "location-create",
+            "scope": "location",
+            "actor": "Marigold Theater",
+            "label": "New place",
+            "before": "",
+            "after": "A theater with red velvet seats sloping toward a small stage and an old marquee.",
+            "risk": "risky",
+            "note": "Alex steps inside the theater. Red velvet seats slope toward a small stage, and the house lights dim as Alex finds a place among the audience.",
+            "location": {
+              "id": "place-3628c100-eca0-4d2d-859f-b5d4bb463b1e",
+              "record": {
+                "id": "place-3628c100-eca0-4d2d-859f-b5d4bb463b1e",
+                "name": "Marigold Theater",
+                "aliases": [],
+                "description": "A theater with red velvet seats sloping toward a small stage and an old marquee.",
+                "parentId": "",
+                "lorebook": "",
+                "loreEntryId": null
+              },
+              "before": null,
+              "provenance": {
+                "messageId": 1
+              }
+            }
+          },
+          {
+            "id": "place-93d07202-af48-4f04-b43c-66f46e4eb390",
+            "kind": "location-current",
+            "scope": "location",
+            "actor": "Marigold Theater",
+            "label": "Current place",
+            "before": "Moonbeam Café",
+            "after": "Marigold Theater",
+            "risk": "safe",
+            "note": "Alex steps inside the theater. Red velvet seats slope toward a small stage, and the house lights dim as Alex finds a place among the audience.",
+            "location": {
+              "id": "place-3628c100-eca0-4d2d-859f-b5d4bb463b1e",
+              "record": {
+                "id": "place-3628c100-eca0-4d2d-859f-b5d4bb463b1e",
+                "name": "Marigold Theater",
+                "aliases": [],
+                "description": "A theater with red velvet seats sloping toward a small stage and an old marquee.",
+                "parentId": "",
+                "lorebook": "",
+                "loreEntryId": null
+              },
+              "before": null,
+              "provenance": {
+                "messageId": 1
+              },
+              "currentBefore": "home"
+            }
+          }
+        ]
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "validJsonAndNotTruncated",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "placeCreated Marigold Theater",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "placeRoot Marigold Theater",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "currentPlace Marigold Theater",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "createdPlaceCount 1",
+          "critical": true,
+          "passed": true
+        }
+      ],
+      "audit": {
+        "placeholderInventory": false,
+        "openingInventedInventory": false,
+        "xpProgression": null
+      }
+    },
+    {
+      "id": "fantasy-new-parent-prose",
+      "system": "fantasy",
+      "holdout": false,
+      "repeat": 1,
+      "elapsedMs": 9944,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 990,
+        "prompt_tokens": 4995,
+        "total_tokens": 5985,
+        "prompt_tokens_details": {
+          "cached_tokens": 4990
+        }
+      },
+      "content": "{\n  \"global\": {},\n  \"player\": {},\n  \"characters\": [],\n  \"locations\": {\n    \"places\": [\n      {\n        \"ref\": \"Brackenport\",\n        \"name\": \"Brackenport\",\n        \"aliases\": [],\n        \"description\": \"A coastal town with salt-streaked houses and narrow lanes.\",\n        \"parentRef\": \"Coastal Road\",\n        \"evidence\": \"By dusk, Brackenport's salt-streaked houses rise around the travelers\"\n      },\n      {\n        \"ref\": \"Blue Heron Inn\",\n        \"name\": \"Blue Heron Inn\",\n        \"aliases\": [],\n        \"description\": \"A tavern tucked among Brackenport's narrow lanes, currently having water tapping against its shutters.\",\n        \"parentRef\": \"Brackenport\",\n        \"evidence\": \"Alex slips into the Blue Heron Inn, a tavern tucked among Brackenport's narrow lanes.\"\n      }\n    ],\n    \"currentRef\": \"Blue Heron Inn\",\n    \"currentEvidence\": \"Alex settles beside the inn's hearth while water taps against the shutters.\"\n  }\n}",
+      "parsed": {
+        "global": {},
+        "player": {},
+        "characters": [],
+        "locations": {
+          "places": [
+            {
+              "ref": "Brackenport",
+              "name": "Brackenport",
+              "aliases": [],
+              "description": "A coastal town with salt-streaked houses and narrow lanes.",
+              "parentRef": "Coastal Road",
+              "evidence": "By dusk, Brackenport's salt-streaked houses rise around the travelers"
+            },
+            {
+              "ref": "Blue Heron Inn",
+              "name": "Blue Heron Inn",
+              "aliases": [],
+              "description": "A tavern tucked among Brackenport's narrow lanes, currently having water tapping against its shutters.",
+              "parentRef": "Brackenport",
+              "evidence": "Alex slips into the Blue Heron Inn, a tavern tucked among Brackenport's narrow lanes."
+            }
+          ],
+          "currentRef": "Blue Heron Inn",
+          "currentEvidence": "Alex settles beside the inn's hearth while water taps against the shutters."
+        }
+      },
+      "normalized": {
+        "update": {
+          "global": {},
+          "player": {},
+          "characters": [],
+          "locations": {
+            "places": [
+              {
+                "ref": "Brackenport",
+                "name": "Brackenport",
+                "aliases": [],
+                "description": "A coastal town with salt-streaked houses and narrow lanes.",
+                "parentRef": "Coastal Road",
+                "evidence": "By dusk, Brackenport's salt-streaked houses rise around the travelers"
+              },
+              {
+                "ref": "Blue Heron Inn",
+                "name": "Blue Heron Inn",
+                "aliases": [],
+                "description": "A tavern tucked among Brackenport's narrow lanes, currently having water tapping against its shutters.",
+                "parentRef": "Brackenport",
+                "evidence": "Alex slips into the Blue Heron Inn, a tavern tucked among Brackenport's narrow lanes."
+              }
+            ],
+            "currentRef": "Blue Heron Inn",
+            "currentEvidence": "Alex settles beside the inn's hearth while water taps against the shutters."
+          }
+        },
+        "effective": {
+          "global": {
+            "Time": "",
+            "Quest": "",
+            "Location": "Rusty Lantern"
+          },
+          "player": {
+            "stats": {
+              "HP": "12/12",
+              "Armor": "10",
+              "Strength": "10",
+              "Dexterity": "10",
+              "Constitution": "10",
+              "Intelligence": "10",
+              "Wisdom": "10",
+              "Charisma": "10",
+              "Condition": "Healthy",
+              "Currency": "0",
+              "XP": "0/100",
+              "Level": "1"
+            },
+            "collections": {
+              "equipment": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [],
+          "locations": {
+            "enabled": true,
+            "currentId": "home",
+            "records": {
+              "home": {
+                "id": "home",
+                "name": "Rusty Lantern",
+                "description": "",
+                "aliases": [],
+                "parentId": ""
+              }
+            }
+          },
+          "timestamp": 1792377480558
+        },
+        "progression": null,
+        "holdings": {
+          "player": {
+            "stats": {
+              "HP": "12/12",
+              "Armor": "10",
+              "Strength": "10",
+              "Dexterity": "10",
+              "Constitution": "10",
+              "Intelligence": "10",
+              "Wisdom": "10",
+              "Charisma": "10",
+              "Condition": "Healthy",
+              "Currency": "0",
+              "XP": "0/100",
+              "Level": "1"
+            },
+            "collections": {
+              "equipment": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": []
+        },
+        "warnings": [
+          "Ignored the unknown parent for Brackenport."
+        ],
+        "places": [
+          {
+            "id": "place-0ed6b050-d677-4b0a-be53-ca3c33640421",
+            "kind": "location-create",
+            "scope": "location",
+            "actor": "Brackenport",
+            "label": "New place",
+            "before": "",
+            "after": "A coastal town with salt-streaked houses and narrow lanes.",
+            "risk": "risky",
+            "note": "By dusk, Brackenport's salt-streaked houses rise around the travelers",
+            "location": {
+              "id": "place-a5cff751-99eb-469f-8d2e-d1cd41f7338d",
+              "record": {
+                "id": "place-a5cff751-99eb-469f-8d2e-d1cd41f7338d",
+                "name": "Brackenport",
+                "aliases": [],
+                "description": "A coastal town with salt-streaked houses and narrow lanes.",
+                "parentId": "",
+                "lorebook": "",
+                "loreEntryId": null
+              },
+              "before": null,
+              "provenance": {
+                "messageId": 1
+              }
+            }
+          },
+          {
+            "id": "place-88c26b65-e673-4cc1-8db6-4fd7e224ab03",
+            "kind": "location-create",
+            "scope": "location",
+            "actor": "Blue Heron Inn",
+            "label": "New place",
+            "before": "",
+            "after": "A tavern tucked among Brackenport's narrow lanes, currently having water tapping against its shutters.",
+            "risk": "risky",
+            "note": "Alex slips into the Blue Heron Inn, a tavern tucked among Brackenport's narrow lanes.",
+            "location": {
+              "id": "place-ff6c0218-8bb6-49df-befe-77167bf768a1",
+              "record": {
+                "id": "place-ff6c0218-8bb6-49df-befe-77167bf768a1",
+                "name": "Blue Heron Inn",
+                "aliases": [],
+                "description": "A tavern tucked among Brackenport's narrow lanes, currently having water tapping against its shutters.",
+                "parentId": "place-a5cff751-99eb-469f-8d2e-d1cd41f7338d",
+                "lorebook": "",
+                "loreEntryId": null
+              },
+              "before": null,
+              "provenance": {
+                "messageId": 1
+              }
+            }
+          },
+          {
+            "id": "place-ae65093a-49e9-4244-a875-06245b8b2de4",
+            "kind": "location-current",
+            "scope": "location",
+            "actor": "Blue Heron Inn",
+            "label": "Current place",
+            "before": "Rusty Lantern",
+            "after": "Blue Heron Inn",
+            "risk": "safe",
+            "note": "Alex settles beside the inn's hearth while water taps against the shutters.",
+            "location": {
+              "id": "place-ff6c0218-8bb6-49df-befe-77167bf768a1",
+              "record": {
+                "id": "place-ff6c0218-8bb6-49df-befe-77167bf768a1",
+                "name": "Blue Heron Inn",
+                "aliases": [],
+                "description": "A tavern tucked among Brackenport's narrow lanes, currently having water tapping against its shutters.",
+                "parentId": "place-a5cff751-99eb-469f-8d2e-d1cd41f7338d",
+                "lorebook": "",
+                "loreEntryId": null
+              },
+              "before": null,
+              "provenance": {
+                "messageId": 1
+              },
+              "currentBefore": "home"
+            }
+          }
+        ]
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "validJsonAndNotTruncated",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "placeCreated Brackenport",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "placeCreated Blue Heron Inn",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "placeParent Blue Heron Inn Brackenport",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "placeRoot Brackenport",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "currentPlace Blue Heron Inn",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "createdPlaceCount 2",
+          "critical": true,
+          "passed": true
+        }
+      ],
+      "audit": {
+        "placeholderInventory": false,
+        "openingInventedInventory": false,
+        "xpProgression": null
+      }
+    },
+    {
+      "id": "dating-new-root-prose",
+      "system": "dating",
+      "holdout": false,
+      "repeat": 1,
+      "elapsedMs": 7856,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 808,
+        "prompt_tokens": 3178,
+        "total_tokens": 3986,
+        "prompt_tokens_details": {
+          "cached_tokens": 3173
+        }
+      },
+      "content": "```json\n{\n  \"global\": {},\n  \"player\": {},\n  \"characters\": [],\n  \"locations\": {\n    \"places\": [\n      {\n        \"ref\": \"Marigold Theater\",\n        \"name\": \"Marigold Theater\",\n        \"aliases\": [],\n        \"description\": \"A theater with red velvet seats sloping toward a small stage, where the house lights dim for the performance.\",\n        \"parentRef\": null,\n        \"evidence\": \"Red velvet seats slope toward a small stage, and the house lights dim as Alex finds a place among the audience.\"\n      }\n    ],\n    \"currentRef\": \"Marigold Theater\",\n    \"currentEvidence\": \"Alex steps inside the theater.\"\n  }\n}\n```",
+      "parsed": {
+        "global": {},
+        "player": {},
+        "characters": [],
+        "locations": {
+          "places": [
+            {
+              "ref": "Marigold Theater",
+              "name": "Marigold Theater",
+              "aliases": [],
+              "description": "A theater with red velvet seats sloping toward a small stage, where the house lights dim for the performance.",
+              "parentRef": null,
+              "evidence": "Red velvet seats slope toward a small stage, and the house lights dim as Alex finds a place among the audience."
+            }
+          ],
+          "currentRef": "Marigold Theater",
+          "currentEvidence": "Alex steps inside the theater."
+        }
+      },
+      "normalized": {
+        "update": {
+          "global": {},
+          "player": {},
+          "characters": [],
+          "locations": {
+            "places": [
+              {
+                "ref": "Marigold Theater",
+                "name": "Marigold Theater",
+                "aliases": [],
+                "description": "A theater with red velvet seats sloping toward a small stage, where the house lights dim for the performance.",
+                "parentRef": null,
+                "evidence": "Red velvet seats slope toward a small stage, and the house lights dim as Alex finds a place among the audience."
+              }
+            ],
+            "currentRef": "Marigold Theater",
+            "currentEvidence": "Alex steps inside the theater."
+          }
+        },
+        "effective": {
+          "global": {
+            "Day and Time": "",
+            "Occasion": "",
+            "Location": "Moonbeam Café"
+          },
+          "player": {
+            "stats": {
+              "Social Energy": "10/10",
+              "Mood": "Neutral"
+            },
+            "collections": {
+              "items": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [],
+          "locations": {
+            "enabled": true,
+            "currentId": "home",
+            "records": {
+              "home": {
+                "id": "home",
+                "name": "Moonbeam Café",
+                "description": "",
+                "aliases": [],
+                "parentId": ""
+              }
+            }
+          },
+          "timestamp": 1792377488415
+        },
+        "progression": null,
+        "holdings": {
+          "player": {
+            "stats": {
+              "Social Energy": "10/10",
+              "Mood": "Neutral"
+            },
+            "collections": {
+              "items": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": []
+        },
+        "warnings": [],
+        "places": [
+          {
+            "id": "place-6e2c4eff-a118-4378-8c28-29e6910191f9",
+            "kind": "location-create",
+            "scope": "location",
+            "actor": "Marigold Theater",
+            "label": "New place",
+            "before": "",
+            "after": "A theater with red velvet seats sloping toward a small stage, where the house lights dim for the performance.",
+            "risk": "risky",
+            "note": "Red velvet seats slope toward a small stage, and the house lights dim as Alex finds a place among the audience.",
+            "location": {
+              "id": "place-338ac30c-b010-4681-b49d-66001333318c",
+              "record": {
+                "id": "place-338ac30c-b010-4681-b49d-66001333318c",
+                "name": "Marigold Theater",
+                "aliases": [],
+                "description": "A theater with red velvet seats sloping toward a small stage, where the house lights dim for the performance.",
+                "parentId": "",
+                "lorebook": "",
+                "loreEntryId": null
+              },
+              "before": null,
+              "provenance": {
+                "messageId": 1
+              }
+            }
+          },
+          {
+            "id": "place-36c8bf2a-e730-4483-8d91-83009b9ed8c5",
+            "kind": "location-current",
+            "scope": "location",
+            "actor": "Marigold Theater",
+            "label": "Current place",
+            "before": "Moonbeam Café",
+            "after": "Marigold Theater",
+            "risk": "safe",
+            "note": "Alex steps inside the theater.",
+            "location": {
+              "id": "place-338ac30c-b010-4681-b49d-66001333318c",
+              "record": {
+                "id": "place-338ac30c-b010-4681-b49d-66001333318c",
+                "name": "Marigold Theater",
+                "aliases": [],
+                "description": "A theater with red velvet seats sloping toward a small stage, where the house lights dim for the performance.",
+                "parentId": "",
+                "lorebook": "",
+                "loreEntryId": null
+              },
+              "before": null,
+              "provenance": {
+                "messageId": 1
+              },
+              "currentBefore": "home"
+            }
+          }
+        ]
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "validJsonAndNotTruncated",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "placeCreated Marigold Theater",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "placeRoot Marigold Theater",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "currentPlace Marigold Theater",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "createdPlaceCount 1",
+          "critical": true,
+          "passed": true
+        }
+      ],
+      "audit": {
+        "placeholderInventory": false,
+        "openingInventedInventory": false,
+        "xpProgression": null
+      }
+    }
+  ],
+  "summary": {
+    "checks": 24,
+    "passed": 20,
+    "rate": 0.8333333333333334,
+    "criticalFailures": [
+      "fantasy-new-parent-prose #1: placeCreated Brackenport",
+      "fantasy-new-parent-prose #1: placeParent Blue Heron Inn Brackenport",
+      "fantasy-new-parent-prose #1: placeRoot Brackenport",
+      "fantasy-new-parent-prose #1: createdPlaceCount 2"
+    ],
+    "systems": {
+      "fantasy": 0.7142857142857143,
+      "dating": 1
+    },
+    "perSystemCounts": {
+      "fantasy": {
+        "checks": 14,
+        "passed": 10,
+        "rate": 0.7142857142857143
+      },
+      "dating": {
+        "checks": 10,
+        "passed": 10,
+        "rate": 1
+      }
+    },
+    "splits": {
+      "main": {
+        "checks": 24,
+        "passed": 20,
+        "rate": 0.8333333333333334
+      },
+      "originalHoldout": {
+        "checks": 0,
+        "passed": 0,
+        "rate": null
+      }
+    },
+    "auditFailures": [],
+    "acceptable": false
+  }
+}

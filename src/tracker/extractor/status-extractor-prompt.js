@@ -138,7 +138,7 @@ function readerValues(state, messageText, trackerSettings, leadUp = [], { strang
         // Whatever else has asked to be told to the reader - see registerExtractionNotes.
         notes: [describeNpcTemplates(), describeExtractionNotes(state, messageText),
             state?.locations?.enabled ? buildLocationReaderNotes(state, messageText, leadUp) : ''].filter(Boolean).join('\n'),
-        locationReminder: state?.locations?.enabled ? 'Before returning JSON, check the latest message for a named setting containing the player or an established move. If one is established, include the top-level "locations" object with evidenced places and currentRef. Use one continuous exact quote for currentEvidence. An opened door or invitation alone does not establish arrival. Omit "locations" when no place fact changed.' : '',
+        locationReminder: state?.locations?.enabled ? 'Before returning JSON, check the latest message for a named setting containing the player or an established move. If one is established, include the top-level "locations" object with established places and currentRef. An opened door or invitation alone does not establish arrival. Omit "locations" when no place fact changed.' : '',
         quantityReminder: (trackerSettings.collections || []).some(collection => collection.trackQuantity === true)
             ? 'For any counted item consumed or lost, use collections.<ID>.remove with the exact identifier and quantity spent. Never use update to change an item quantity.' : '',
         poolRecovery: describePoolRecovery(state, trackerSettings),

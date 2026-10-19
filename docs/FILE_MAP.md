@@ -385,21 +385,23 @@ SillyTavern loads `index.js` and `style.css` from `manifest.json`. The JavaScrip
 | --- | --- |
 | `docs/location-persistence-plan.md` | Stage-one ownership, review, context, editing, and verification contract. |
 | `src/locations/location-store.js` | Pure place normalization, stable IDs, aliases, containment validation, CRUD, current marker, and display path. |
-| `src/locations/location-proposals.js` | Evidence-backed proposals, immutable review payloads, freshness, and dependent acceptance. |
+| `src/locations/location-proposals.js` | Story-derived proposals, immutable review payloads, freshness, and dependent acceptance. |
 | `src/locations/location-runtime.js` | Reader provenance, source validation, chat saves, and reviewed turn effects. |
 | `src/locations/location-context.js` | Literal mention detection, bounded narrator recall, reader directory/instructions, and output schema. |
 | `src/locations/location-lore.js` | Read-only lorebook listings and entry reads. |
 | `src/ui/locations/ui-locations.js` | Chat-scoped Places management, search, manual editing, current marker, and deletion undo. |
 | `src/ui/locations/ui-location-lore.js` | Reference linking and explicit copying into an unsaved place description. |
-| `src/ui/locations/ui-location-review.js` | Visible place identities, containment, editable descriptions, and quoted review evidence. |
+| `src/ui/locations/ui-location-review.js` | Visible place identities, containment, editable descriptions, and legacy citation display. |
 | `styles/18-locations.css` | Places editor, responsive list, and review row layout. |
-| `tests/locations-store.mjs`, `tests/location-proposals.mjs` | Pure identities, validation, evidence, dependency, and acceptance checks. |
+| `tests/locations-store.mjs`, `tests/location-proposals.mjs` | Pure identities, validation, uncited proposals, dependency, and acceptance checks. |
 | `tests/location-context.mjs`, `tests/locations-ui.mjs` | Prompt/schema integration, bounded matching, editor controls, and stale-chat guards. |
 | `tests/location-runtime.mjs`, `tests/location-turns.mjs` | Mixed review orchestration, provenance, current-turn replacement, manual corrections, and System independence. |
 | `tests/ui-locations.py` | Temporary unsaved browser check of Places, review, and the in-chat tracker trail. |
 | `tests/fixtures/gemma-tracker-scenarios.mjs`, `tests/fixtures/gemma-tracker-harness.mjs` | Pre-registered Fantasy/Dating tracker cases and production prompt, sanitizer, collection, progression, and place-review harness. |
 | `tests/fixtures/gemma-tracker-natural-scenarios.mjs`, `tests/gemma-tracker-apply.mjs` | Two-paragraph prose cases and production update-application checks for implied stat changes. |
+| `tests/fixtures/gemma-location-tree-scenarios.mjs` | Focused Fantasy/Dating cases for a new parent and an independent new root, in explicit, narrative, and mixed-turn prose. |
 | `tests/eval-gemma-tracker.js`, `tests/gemma-evaluation.mjs` | Explicit local-model evaluation runner and offline checks of its scoring path. |
+| `tests/eval-gemma-location-evidence.js` | Historical A/B probe replaying frozen quote and no-quote prompts against raw model place choices. |
 | `tests/fixtures/gemma-profile-scenarios.mjs`, `tests/fixtures/gemma-profile-harness.mjs` | NPC profile Fill and opt-in automatic lore cases using production prompt and parser code. |
 | `tests/eval-gemma-profiles.js`, `tests/gemma-profile-evaluation.mjs` | Explicit local-model profile runner and offline harness checks. |
 | `docs/evaluations/` | Final frozen prompt/result pairs and scoped Gemma evaluation reports. Intermediate runs are excluded from the current tree. |

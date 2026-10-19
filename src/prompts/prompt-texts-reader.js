@@ -20,7 +20,7 @@ export const readerPromptTexts = [
             minimalReply: 'A no-change reply listing the cast present.',
             changedReply: 'A configured example with player and NPC stats and collections.',
             newNpcReply: 'A new NPC reply example with configured stat guidance, even with an empty scene.',
-            locationReminder: 'Final reminder to include evidenced top-level places for a named opening scene or movement.',
+            locationReminder: 'Final reminder to include established top-level places for a named opening scene or movement.',
             quantityReminder: 'Final reminder that counted item consumption is a remove delta.',
             poolRecovery: 'Conditional recovery rule and current missing amounts for configured pools.',
             injuryConsequence: 'Conditional harm and healing reminder for a configured player health pool.',

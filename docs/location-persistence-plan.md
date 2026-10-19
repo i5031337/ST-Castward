@@ -75,19 +75,21 @@ later replies. An explicitly established named initial scene can propose both it
 card and current marker without a travel event. Location output is nested under the
 top-level `locations` key, alongside the usual `global`, `player`, and `characters`.
 
-Every place proposal needs a nonempty evidence excerpt from the latest reply.
-ASCII case-only drift is matched back to and displayed as the exact source excerpt;
-paraphrases and unsupported references are rejected.
+Place proposals do not require textual citations. The reader selects established
+place facts from the latest reply, and the review shows its proposed cards and
+scene marker. A matching quote did not clearly improve place selection in the
+focused Gemma comparison, so the quote fields were removed from the output
+contract. Source chat, message text, and swipe remain bound to each proposal for
+freshness checks when a user reviews it.
 Prompt instructions require established facts only: no invented geography, inferred
 routes/distances/directions, hearsay treated as fact, or permanent NPC residency.
 Descriptions are concise current facts; updates preserve useful existing facts and
 replace superseded facts rather than append a visit log. Omitted update fields retain
 their values. Aliases refer to the same place; containment requires explicit support.
-Evidence matching validates provenance, not the truth of a model's interpretation;
-the review is the user's decision about that interpretation.
+The review is the user's decision about the model's interpretation.
 
 Place changes follow Ask Before Applying: new or edited place details count as risky, while movement to a known place is ordinary. Movement to a newly proposed place waits with its card. Apply everything accepts both automatically.
-Review rows show the proposed place details and story evidence. Descriptions can be
+Review rows show the proposed place details. Descriptions can be
 corrected before acceptance; identity, destination, source, and dependencies come
 from the stored proposal, never from a returned UI object. Manual record editing is
 available for other corrections.
@@ -139,8 +141,8 @@ small runtime helpers own host context, saving, and provenance. Files remain bel
 1. Pure storage tests: disabled defaults, stable IDs through rename/save roundtrip,
    immutable CRUD, bounds, literal aliases, duplicate/ambiguous identities, safe
    record keys, parent cycles, deletion cleanup, and preservation of other state.
-2. Proposal tests: evidence, omissions, invalid references, new-place dependencies,
-  rejection, source/record freshness, source-case canonicalization, forged
+2. Proposal tests: uncited output, omissions, invalid references, new-place dependencies,
+  rejection, source/record freshness, forged
   acceptance payloads, and replay.
 3. Context/schema tests: opt-in behavior, bounded directory and recall, mentions,
    ancestors, ambiguous aliases, no geography inference, and inline/manual modes.
@@ -167,7 +169,7 @@ replies and manual corrections behave like the rest of Castward.
   and a 420 px layout. Host chat and
   metadata were unchanged. Browser execution needed sandbox escalation.
 - Extractor regressions verify a single request, location review modes alongside
-  ordinary stat acceptance, disabled behavior, invalid evidence, async source
+  ordinary stat acceptance, disabled behavior, uncited output, async source
   changes, and a pre-request place baseline that protects concurrent manual edits.
 - Turn regressions exercise the real session/snapshot code for swipes, regeneration,
   deletion, manual adoption of discoveries, legacy bases, and rule selection before

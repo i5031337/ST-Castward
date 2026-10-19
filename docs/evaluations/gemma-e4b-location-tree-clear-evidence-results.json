@@ -1,0 +1,1110 @@
+{
+  "startedAt": "2026-10-19T02:33:17.305Z",
+  "label": "location-tree-clear-evidence",
+  "criteria": {
+    "validJsonAndNotTruncated": 1,
+    "overallRequiredCheckRate": 1,
+    "perSystemRequiredCheckRate": 1,
+    "criticalFailuresAllowed": 0,
+    "suite": "location-tree"
+  },
+  "sourceHashes": {
+    "src/core/builtin-systems.js": "4635c9510bc5236894d20bd6ef639bbf7f8c8fc9672deaee695a2c63d013f31d",
+    "src/core/settings-tracker-defaults.js": "3beb026157e41638c7b7cdf0c5f5268c425f4f8dc0f7d126d426f5caf289b035",
+    "src/core/constants-prompts.js": "8c0aabb4d16d4e3d3e98017c8e8f27cbdcd944dd0f608338fcd475bfe1ce9a4c",
+    "src/prompts/prompt-texts-reader.js": "c53f67ca2528d8b1d5a2bd585c3de7f4ad5039b93960622039eebb1b828c0158",
+    "src/tracker/extractor/status-extractor-prompt.js": "9e684673a54696a9fcc37c88239253ddb246c68ce594bb50ac34a2db8759dc79",
+    "src/tracker/extractor/status-extractor-prompt-state.js": "3c80588bfa7fbe800971e3a92e6f3336425023460ab2a033fa7c0ca2da9c0fdb",
+    "src/tracker/extractor/status-extractor-schema.js": "c296d5606d4fd3ca7466cd6c55f37e56c2bbd8a3bba7dfa8be43e346e8d4faa4",
+    "src/locations/location-context.js": "492a0e617e118cd872bb8e19ec17d199b8120697b00a8176e5a3a4cd97f657ec",
+    "src/locations/location-proposals.js": "105e06e1b2d7e92e04a221ba62cc9ce96ade1f9fc7f154926bb53a5ed95d3e55",
+    "src/tracker/status-stat-values.js": "7b1de4e964ab34f8d30d4b29b77999a669bfdeae11e738819bdb5b6e48c8d82d",
+    "src/tracker/status-collection-updates.js": "36788c1112211883b5617823f4be2fc0aa30a876ff6e21eaf130193e3584a3f7",
+    "src/tracker/status-update-constraints.js": "e3f63de6675b36bf2200c81f739acd1883696c5ccc550d8c221907802c0f11e0",
+    "src/tracker/status-update-parser.js": "c1894cd0836b093c93c64139daebf0f51e3cec846fbf92bb7920d3c838927405",
+    "src/tracker/status-apply-update.js": "8eedf95a4ea7fc33e8c535c87ead072dd8884078f73691d2a0f9736a49c1fee7",
+    "src/tracker/progression.js": "53b41aaa840971d98c0d66bbef3b0e750126fcf8855a428301fa4711a9ef2855"
+  },
+  "endpoint": "http://127.0.0.1:9931/v1",
+  "model": "/mnt/D/backup_models/gemma-4-E4B-it-qat-UD-Q4_K_XL.gguf",
+  "server": {
+    "build": "b11669-620d2225c",
+    "defaults": {
+      "params": {
+        "seed": 4294967295,
+        "temperature": 1,
+        "dynatemp_range": 0,
+        "dynatemp_exponent": 1,
+        "top_k": 64,
+        "top_p": 0.949999988079071,
+        "min_p": 0,
+        "top_n_sigma": -1,
+        "xtc_probability": 0,
+        "xtc_threshold": 0.10000000149011612,
+        "typical_p": 1,
+        "repeat_last_n": 64,
+        "repeat_penalty": 1,
+        "presence_penalty": 0,
+        "frequency_penalty": 0,
+        "dry_multiplier": 0,
+        "dry_base": 1.75,
+        "dry_allowed_length": 2,
+        "dry_penalty_last_n": 64,
+        "mirostat": 0,
+        "mirostat_tau": 5,
+        "mirostat_eta": 0.10000000149011612,
+        "adaptive_target": -1,
+        "adaptive_decay": 0.8999999761581421,
+        "max_tokens": -1,
+        "n_predict": -1,
+        "n_keep": 0,
+        "n_discard": 0,
+        "ignore_eos": false,
+        "stream": false,
+        "n_probs": 0,
+        "min_keep": 0,
+        "chat_format": "Content-only",
+        "reasoning_format": "none",
+        "reasoning_in_content": false,
+        "generation_prompt": "",
+        "samplers": [
+          "penalties",
+          "dry",
+          "top_n_sigma",
+          "top_k",
+          "typ_p",
+          "top_p",
+          "min_p",
+          "xtc",
+          "temperature"
+        ],
+        "speculative.types": "none",
+        "timings_per_token": false,
+        "post_sampling_probs": false,
+        "backend_sampling": false,
+        "lora": []
+      },
+      "n_ctx": 65536
+    },
+    "model": "/mnt/D/backup_models/gemma-4-E4B-it-qat-UD-Q4_K_XL.gguf",
+    "slots": 1
+  },
+  "repeats": 2,
+  "trials": [
+    {
+      "id": "fantasy-new-parent",
+      "system": "fantasy",
+      "holdout": false,
+      "repeat": 0,
+      "elapsedMs": 8729,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 794,
+        "prompt_tokens": 4961,
+        "total_tokens": 5755,
+        "prompt_tokens_details": {
+          "cached_tokens": 557
+        }
+      },
+      "content": "```json\n{\n  \"global\": {},\n  \"player\": {},\n  \"characters\": [],\n  \"locations\": {\n    \"places\": [\n      {\n        \"ref\": \"Rusty Lantern\",\n        \"name\": \"Rusty Lantern\",\n        \"aliases\": [],\n        \"description\": \"A tavern in an unspecified location where Alex was previously.\",\n        \"parentRef\": null,\n        \"evidence\": \"Alex leaves the Rusty Lantern.\"\n      },\n      {\n        \"ref\": \"Brackenport\",\n        \"name\": \"Brackenport\",\n        \"aliases\": [],\n        \"description\": \"A coastal town.\",\n        \"parentRef\": null,\n        \"evidence\": \"Alex arrives in Brackenport, a coastal town.\"\n      },\n      {\n        \"ref\": \"Blue Heron Inn\",\n        \"name\": \"Blue Heron Inn\",\n        \"aliases\": [],\n        \"description\": \"A tavern within Brackenport.\",\n        \"parentRef\": \"Brackenport\",\n        \"evidence\": \"Alex enters the Blue Heron Inn inside Brackenport.\"\n      }\n    ],\n    \"currentRef\": \"Blue Heron Inn\",\n    \"currentEvidence\": \"Alex enters the Blue Heron Inn inside Brackenport.\"\n  }\n}\n```",
+      "parsed": {
+        "global": {},
+        "player": {},
+        "characters": [],
+        "locations": {
+          "places": [
+            {
+              "ref": "Rusty Lantern",
+              "name": "Rusty Lantern",
+              "aliases": [],
+              "description": "A tavern in an unspecified location where Alex was previously.",
+              "parentRef": null,
+              "evidence": "Alex leaves the Rusty Lantern."
+            },
+            {
+              "ref": "Brackenport",
+              "name": "Brackenport",
+              "aliases": [],
+              "description": "A coastal town.",
+              "parentRef": null,
+              "evidence": "Alex arrives in Brackenport, a coastal town."
+            },
+            {
+              "ref": "Blue Heron Inn",
+              "name": "Blue Heron Inn",
+              "aliases": [],
+              "description": "A tavern within Brackenport.",
+              "parentRef": "Brackenport",
+              "evidence": "Alex enters the Blue Heron Inn inside Brackenport."
+            }
+          ],
+          "currentRef": "Blue Heron Inn",
+          "currentEvidence": "Alex enters the Blue Heron Inn inside Brackenport."
+        }
+      },
+      "normalized": {
+        "update": {
+          "global": {},
+          "player": {},
+          "characters": [],
+          "locations": {
+            "places": [
+              {
+                "ref": "Rusty Lantern",
+                "name": "Rusty Lantern",
+                "aliases": [],
+                "description": "A tavern in an unspecified location where Alex was previously.",
+                "parentRef": null,
+                "evidence": "Alex leaves the Rusty Lantern."
+              },
+              {
+                "ref": "Brackenport",
+                "name": "Brackenport",
+                "aliases": [],
+                "description": "A coastal town.",
+                "parentRef": null,
+                "evidence": "Alex arrives in Brackenport, a coastal town."
+              },
+              {
+                "ref": "Blue Heron Inn",
+                "name": "Blue Heron Inn",
+                "aliases": [],
+                "description": "A tavern within Brackenport.",
+                "parentRef": "Brackenport",
+                "evidence": "Alex enters the Blue Heron Inn inside Brackenport."
+              }
+            ],
+            "currentRef": "Blue Heron Inn",
+            "currentEvidence": "Alex enters the Blue Heron Inn inside Brackenport."
+          }
+        },
+        "effective": {
+          "global": {
+            "Time": "",
+            "Quest": "",
+            "Location": "Rusty Lantern"
+          },
+          "player": {
+            "stats": {
+              "HP": "12/12",
+              "Armor": "10",
+              "Strength": "10",
+              "Dexterity": "10",
+              "Constitution": "10",
+              "Intelligence": "10",
+              "Wisdom": "10",
+              "Charisma": "10",
+              "Condition": "Healthy",
+              "Currency": "0",
+              "XP": "0/100",
+              "Level": "1"
+            },
+            "collections": {
+              "equipment": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [],
+          "locations": {
+            "enabled": true,
+            "currentId": "home",
+            "records": {
+              "home": {
+                "id": "home",
+                "name": "Rusty Lantern",
+                "description": "",
+                "aliases": [],
+                "parentId": ""
+              }
+            }
+          },
+          "timestamp": 1792377206092
+        },
+        "progression": null,
+        "holdings": {
+          "player": {
+            "stats": {
+              "HP": "12/12",
+              "Armor": "10",
+              "Strength": "10",
+              "Dexterity": "10",
+              "Constitution": "10",
+              "Intelligence": "10",
+              "Wisdom": "10",
+              "Charisma": "10",
+              "Condition": "Healthy",
+              "Currency": "0",
+              "XP": "0/100",
+              "Level": "1"
+            },
+            "collections": {
+              "equipment": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": []
+        },
+        "warnings": [
+          "Ignored Rusty Lantern: The place name or alias already belongs to Rusty Lantern."
+        ],
+        "places": [
+          {
+            "id": "place-1cf341f8-3e7d-450a-b85d-3bfab71dbcf2",
+            "kind": "location-create",
+            "scope": "location",
+            "actor": "Brackenport",
+            "label": "New place",
+            "before": "",
+            "after": "A coastal town.",
+            "risk": "risky",
+            "note": "Alex arrives in Brackenport, a coastal town.",
+            "location": {
+              "id": "place-c99ca495-ddd6-4102-896f-23dde9c838d9",
+              "record": {
+                "id": "place-c99ca495-ddd6-4102-896f-23dde9c838d9",
+                "name": "Brackenport",
+                "aliases": [],
+                "description": "A coastal town.",
+                "parentId": "",
+                "lorebook": "",
+                "loreEntryId": null
+              },
+              "before": null,
+              "provenance": {
+                "messageId": 1
+              }
+            }
+          },
+          {
+            "id": "place-e8685977-e6b7-4556-988d-03bfcd050b12",
+            "kind": "location-create",
+            "scope": "location",
+            "actor": "Blue Heron Inn",
+            "label": "New place",
+            "before": "",
+            "after": "A tavern within Brackenport.",
+            "risk": "risky",
+            "note": "Alex enters the Blue Heron Inn inside Brackenport.",
+            "location": {
+              "id": "place-6a9bb099-a071-49e2-aa65-25db675928e5",
+              "record": {
+                "id": "place-6a9bb099-a071-49e2-aa65-25db675928e5",
+                "name": "Blue Heron Inn",
+                "aliases": [],
+                "description": "A tavern within Brackenport.",
+                "parentId": "place-c99ca495-ddd6-4102-896f-23dde9c838d9",
+                "lorebook": "",
+                "loreEntryId": null
+              },
+              "before": null,
+              "provenance": {
+                "messageId": 1
+              }
+            }
+          },
+          {
+            "id": "place-a963db54-63dc-4771-a92b-2d248d3e8796",
+            "kind": "location-current",
+            "scope": "location",
+            "actor": "Blue Heron Inn",
+            "label": "Current place",
+            "before": "Rusty Lantern",
+            "after": "Blue Heron Inn",
+            "risk": "safe",
+            "note": "Alex enters the Blue Heron Inn inside Brackenport.",
+            "location": {
+              "id": "place-6a9bb099-a071-49e2-aa65-25db675928e5",
+              "record": {
+                "id": "place-6a9bb099-a071-49e2-aa65-25db675928e5",
+                "name": "Blue Heron Inn",
+                "aliases": [],
+                "description": "A tavern within Brackenport.",
+                "parentId": "place-c99ca495-ddd6-4102-896f-23dde9c838d9",
+                "lorebook": "",
+                "loreEntryId": null
+              },
+              "before": null,
+              "provenance": {
+                "messageId": 1
+              },
+              "currentBefore": "home"
+            }
+          }
+        ]
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "validJsonAndNotTruncated",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "placeCreated Brackenport",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "placeCreated Blue Heron Inn",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "placeParent Blue Heron Inn Brackenport",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "placeRoot Brackenport",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "currentPlace Blue Heron Inn",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "createdPlaceCount 2",
+          "critical": true,
+          "passed": true
+        }
+      ],
+      "audit": {
+        "placeholderInventory": false,
+        "openingInventedInventory": false,
+        "xpProgression": null
+      }
+    },
+    {
+      "id": "dating-new-root",
+      "system": "dating",
+      "holdout": false,
+      "repeat": 0,
+      "elapsedMs": 6152,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 641,
+        "prompt_tokens": 3155,
+        "total_tokens": 3796,
+        "prompt_tokens_details": {
+          "cached_tokens": 3150
+        }
+      },
+      "content": "```json\n{\n  \"locations\": {\n    \"places\": [\n      {\n        \"ref\": \"moonbeam_cafe\",\n        \"name\": \"Moonbeam Café\",\n        \"aliases\": [],\n        \"description\": \"A café.\",\n        \"parentRef\": null,\n        \"evidence\": \"Alex leaves Moonbeam Café and arrives inside the Marigold Theater.\"\n      },\n      {\n        \"ref\": \"marigold_theater\",\n        \"name\": \"Marigold Theater\",\n        \"aliases\": [],\n        \"description\": \"a named performance venue with red velvet seats and a small stage.\",\n        \"parentRef\": null,\n        \"evidence\": \"Alex leaves Moonbeam Café and arrives inside the Marigold Theater.\"\n      }\n    ],\n    \"currentRef\": \"marigold_theater\",\n    \"currentEvidence\": \"Alex leaves Moonbeam Café and arrives inside the Marigold Theater.\"\n  }\n}\n```",
+      "parsed": {
+        "locations": {
+          "places": [
+            {
+              "ref": "moonbeam_cafe",
+              "name": "Moonbeam Café",
+              "aliases": [],
+              "description": "A café.",
+              "parentRef": null,
+              "evidence": "Alex leaves Moonbeam Café and arrives inside the Marigold Theater."
+            },
+            {
+              "ref": "marigold_theater",
+              "name": "Marigold Theater",
+              "aliases": [],
+              "description": "a named performance venue with red velvet seats and a small stage.",
+              "parentRef": null,
+              "evidence": "Alex leaves Moonbeam Café and arrives inside the Marigold Theater."
+            }
+          ],
+          "currentRef": "marigold_theater",
+          "currentEvidence": "Alex leaves Moonbeam Café and arrives inside the Marigold Theater."
+        }
+      },
+      "normalized": {
+        "update": {
+          "locations": {
+            "places": [
+              {
+                "ref": "moonbeam_cafe",
+                "name": "Moonbeam Café",
+                "aliases": [],
+                "description": "A café.",
+                "parentRef": null,
+                "evidence": "Alex leaves Moonbeam Café and arrives inside the Marigold Theater."
+              },
+              {
+                "ref": "marigold_theater",
+                "name": "Marigold Theater",
+                "aliases": [],
+                "description": "a named performance venue with red velvet seats and a small stage.",
+                "parentRef": null,
+                "evidence": "Alex leaves Moonbeam Café and arrives inside the Marigold Theater."
+              }
+            ],
+            "currentRef": "marigold_theater",
+            "currentEvidence": "Alex leaves Moonbeam Café and arrives inside the Marigold Theater."
+          },
+          "global": {}
+        },
+        "effective": {
+          "global": {
+            "Day and Time": "",
+            "Occasion": "",
+            "Location": "Moonbeam Café"
+          },
+          "player": {
+            "stats": {
+              "Social Energy": "10/10",
+              "Mood": "Neutral"
+            },
+            "collections": {
+              "items": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [],
+          "locations": {
+            "enabled": true,
+            "currentId": "home",
+            "records": {
+              "home": {
+                "id": "home",
+                "name": "Moonbeam Café",
+                "description": "",
+                "aliases": [],
+                "parentId": ""
+              }
+            }
+          },
+          "timestamp": 1792377212245
+        },
+        "progression": null,
+        "holdings": {
+          "player": {
+            "stats": {
+              "Social Energy": "10/10",
+              "Mood": "Neutral"
+            },
+            "collections": {
+              "items": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": []
+        },
+        "warnings": [
+          "Ignored Moonbeam Café: The place name or alias already belongs to Moonbeam Café."
+        ],
+        "places": [
+          {
+            "id": "place-1ab3c84c-8e8f-4ca1-90dc-df73f50ff649",
+            "kind": "location-create",
+            "scope": "location",
+            "actor": "Marigold Theater",
+            "label": "New place",
+            "before": "",
+            "after": "a named performance venue with red velvet seats and a small stage.",
+            "risk": "risky",
+            "note": "Alex leaves Moonbeam Café and arrives inside the Marigold Theater.",
+            "location": {
+              "id": "place-bbd489c7-d1fa-455f-aefb-30538811731c",
+              "record": {
+                "id": "place-bbd489c7-d1fa-455f-aefb-30538811731c",
+                "name": "Marigold Theater",
+                "aliases": [],
+                "description": "a named performance venue with red velvet seats and a small stage.",
+                "parentId": "",
+                "lorebook": "",
+                "loreEntryId": null
+              },
+              "before": null,
+              "provenance": {
+                "messageId": 1
+              }
+            }
+          },
+          {
+            "id": "place-02e60957-7fbd-4e1b-828a-059a653fb769",
+            "kind": "location-current",
+            "scope": "location",
+            "actor": "Marigold Theater",
+            "label": "Current place",
+            "before": "Moonbeam Café",
+            "after": "Marigold Theater",
+            "risk": "safe",
+            "note": "Alex leaves Moonbeam Café and arrives inside the Marigold Theater.",
+            "location": {
+              "id": "place-bbd489c7-d1fa-455f-aefb-30538811731c",
+              "record": {
+                "id": "place-bbd489c7-d1fa-455f-aefb-30538811731c",
+                "name": "Marigold Theater",
+                "aliases": [],
+                "description": "a named performance venue with red velvet seats and a small stage.",
+                "parentId": "",
+                "lorebook": "",
+                "loreEntryId": null
+              },
+              "before": null,
+              "provenance": {
+                "messageId": 1
+              },
+              "currentBefore": "home"
+            }
+          }
+        ]
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "validJsonAndNotTruncated",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "placeCreated Marigold Theater",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "placeRoot Marigold Theater",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "currentPlace Marigold Theater",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "createdPlaceCount 1",
+          "critical": true,
+          "passed": true
+        }
+      ],
+      "audit": {
+        "placeholderInventory": false,
+        "openingInventedInventory": false,
+        "xpProgression": null
+      }
+    },
+    {
+      "id": "fantasy-new-parent",
+      "system": "fantasy",
+      "holdout": false,
+      "repeat": 1,
+      "elapsedMs": 9079,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 934,
+        "prompt_tokens": 4961,
+        "total_tokens": 5895,
+        "prompt_tokens_details": {
+          "cached_tokens": 4956
+        }
+      },
+      "content": "```json\n{\n  \"global\": {},\n  \"player\": {},\n  \"characters\": [],\n  \"locations\": {\n    \"places\": [\n      {\n        \"ref\": \"rusty_lantern\",\n        \"name\": \"Rusty Lantern\",\n        \"aliases\": [],\n        \"description\": \"A previously known location.\",\n        \"parentRef\": null,\n        \"evidence\": \"Alex leaves the Rusty Lantern.\"\n      },\n      {\n        \"ref\": \"brackenport\",\n        \"name\": \"Brackenport\",\n        \"aliases\": [],\n        \"description\": \"A coastal town.\",\n        \"parentRef\": null,\n        \"evidence\": \"Alex arrives in Brackenport, a coastal town.\"\n      },\n      {\n        \"ref\": \"blue_heron_inn\",\n        \"name\": \"Blue Heron Inn\",\n        \"aliases\": [],\n        \"description\": \"A tavern within Brackenport.\",\n        \"parentRef\": \"brackenport\",\n        \"evidence\": \"Alex enters the Blue Heron Inn inside Brackenport.\"\n      }\n    ],\n    \"currentRef\": \"blue_heron_inn\",\n    \"currentEvidence\": \"Alex remains inside the Blue Heron Inn.\"\n  }\n}\n```",
+      "parsed": {
+        "global": {},
+        "player": {},
+        "characters": [],
+        "locations": {
+          "places": [
+            {
+              "ref": "rusty_lantern",
+              "name": "Rusty Lantern",
+              "aliases": [],
+              "description": "A previously known location.",
+              "parentRef": null,
+              "evidence": "Alex leaves the Rusty Lantern."
+            },
+            {
+              "ref": "brackenport",
+              "name": "Brackenport",
+              "aliases": [],
+              "description": "A coastal town.",
+              "parentRef": null,
+              "evidence": "Alex arrives in Brackenport, a coastal town."
+            },
+            {
+              "ref": "blue_heron_inn",
+              "name": "Blue Heron Inn",
+              "aliases": [],
+              "description": "A tavern within Brackenport.",
+              "parentRef": "brackenport",
+              "evidence": "Alex enters the Blue Heron Inn inside Brackenport."
+            }
+          ],
+          "currentRef": "blue_heron_inn",
+          "currentEvidence": "Alex remains inside the Blue Heron Inn."
+        }
+      },
+      "normalized": {
+        "update": {
+          "global": {},
+          "player": {},
+          "characters": [],
+          "locations": {
+            "places": [
+              {
+                "ref": "rusty_lantern",
+                "name": "Rusty Lantern",
+                "aliases": [],
+                "description": "A previously known location.",
+                "parentRef": null,
+                "evidence": "Alex leaves the Rusty Lantern."
+              },
+              {
+                "ref": "brackenport",
+                "name": "Brackenport",
+                "aliases": [],
+                "description": "A coastal town.",
+                "parentRef": null,
+                "evidence": "Alex arrives in Brackenport, a coastal town."
+              },
+              {
+                "ref": "blue_heron_inn",
+                "name": "Blue Heron Inn",
+                "aliases": [],
+                "description": "A tavern within Brackenport.",
+                "parentRef": "brackenport",
+                "evidence": "Alex enters the Blue Heron Inn inside Brackenport."
+              }
+            ],
+            "currentRef": "blue_heron_inn",
+            "currentEvidence": "Alex remains inside the Blue Heron Inn."
+          }
+        },
+        "effective": {
+          "global": {
+            "Time": "",
+            "Quest": "",
+            "Location": "Rusty Lantern"
+          },
+          "player": {
+            "stats": {
+              "HP": "12/12",
+              "Armor": "10",
+              "Strength": "10",
+              "Dexterity": "10",
+              "Constitution": "10",
+              "Intelligence": "10",
+              "Wisdom": "10",
+              "Charisma": "10",
+              "Condition": "Healthy",
+              "Currency": "0",
+              "XP": "0/100",
+              "Level": "1"
+            },
+            "collections": {
+              "equipment": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [],
+          "locations": {
+            "enabled": true,
+            "currentId": "home",
+            "records": {
+              "home": {
+                "id": "home",
+                "name": "Rusty Lantern",
+                "description": "",
+                "aliases": [],
+                "parentId": ""
+              }
+            }
+          },
+          "timestamp": 1792377221325
+        },
+        "progression": null,
+        "holdings": {
+          "player": {
+            "stats": {
+              "HP": "12/12",
+              "Armor": "10",
+              "Strength": "10",
+              "Dexterity": "10",
+              "Constitution": "10",
+              "Intelligence": "10",
+              "Wisdom": "10",
+              "Charisma": "10",
+              "Condition": "Healthy",
+              "Currency": "0",
+              "XP": "0/100",
+              "Level": "1"
+            },
+            "collections": {
+              "equipment": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": []
+        },
+        "warnings": [
+          "Ignored Rusty Lantern: The place name or alias already belongs to Rusty Lantern."
+        ],
+        "places": [
+          {
+            "id": "place-2132f821-97f8-4ecb-b359-dc18315285c6",
+            "kind": "location-create",
+            "scope": "location",
+            "actor": "Brackenport",
+            "label": "New place",
+            "before": "",
+            "after": "A coastal town.",
+            "risk": "risky",
+            "note": "Alex arrives in Brackenport, a coastal town.",
+            "location": {
+              "id": "place-c038964c-43c1-4a25-a1a5-6b818fe355fa",
+              "record": {
+                "id": "place-c038964c-43c1-4a25-a1a5-6b818fe355fa",
+                "name": "Brackenport",
+                "aliases": [],
+                "description": "A coastal town.",
+                "parentId": "",
+                "lorebook": "",
+                "loreEntryId": null
+              },
+              "before": null,
+              "provenance": {
+                "messageId": 1
+              }
+            }
+          },
+          {
+            "id": "place-db92ae7a-1d87-44bf-bae5-53459c550fa7",
+            "kind": "location-create",
+            "scope": "location",
+            "actor": "Blue Heron Inn",
+            "label": "New place",
+            "before": "",
+            "after": "A tavern within Brackenport.",
+            "risk": "risky",
+            "note": "Alex enters the Blue Heron Inn inside Brackenport.",
+            "location": {
+              "id": "place-67f46da9-dfa6-4879-a822-dd275f562be6",
+              "record": {
+                "id": "place-67f46da9-dfa6-4879-a822-dd275f562be6",
+                "name": "Blue Heron Inn",
+                "aliases": [],
+                "description": "A tavern within Brackenport.",
+                "parentId": "place-c038964c-43c1-4a25-a1a5-6b818fe355fa",
+                "lorebook": "",
+                "loreEntryId": null
+              },
+              "before": null,
+              "provenance": {
+                "messageId": 1
+              }
+            }
+          },
+          {
+            "id": "place-459574f1-ca6b-4ed3-ab7b-af04361a5097",
+            "kind": "location-current",
+            "scope": "location",
+            "actor": "Blue Heron Inn",
+            "label": "Current place",
+            "before": "Rusty Lantern",
+            "after": "Blue Heron Inn",
+            "risk": "safe",
+            "note": "Alex remains inside the Blue Heron Inn.",
+            "location": {
+              "id": "place-67f46da9-dfa6-4879-a822-dd275f562be6",
+              "record": {
+                "id": "place-67f46da9-dfa6-4879-a822-dd275f562be6",
+                "name": "Blue Heron Inn",
+                "aliases": [],
+                "description": "A tavern within Brackenport.",
+                "parentId": "place-c038964c-43c1-4a25-a1a5-6b818fe355fa",
+                "lorebook": "",
+                "loreEntryId": null
+              },
+              "before": null,
+              "provenance": {
+                "messageId": 1
+              },
+              "currentBefore": "home"
+            }
+          }
+        ]
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "validJsonAndNotTruncated",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "placeCreated Brackenport",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "placeCreated Blue Heron Inn",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "placeParent Blue Heron Inn Brackenport",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "placeRoot Brackenport",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "currentPlace Blue Heron Inn",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "createdPlaceCount 2",
+          "critical": true,
+          "passed": true
+        }
+      ],
+      "audit": {
+        "placeholderInventory": false,
+        "openingInventedInventory": false,
+        "xpProgression": null
+      }
+    },
+    {
+      "id": "dating-new-root",
+      "system": "dating",
+      "holdout": false,
+      "repeat": 1,
+      "elapsedMs": 7785,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 805,
+        "prompt_tokens": 3155,
+        "total_tokens": 3960,
+        "prompt_tokens_details": {
+          "cached_tokens": 3150
+        }
+      },
+      "content": "```json\n{\n  \"locations\": {\n    \"places\": [\n      {\n        \"ref\": \"MarigoldTheater\",\n        \"name\": \"Marigold Theater\",\n        \"aliases\": [],\n        \"description\": \"A named performance venue with red velvet seats and a small stage.\",\n        \"parentRef\": \"\",\n        \"evidence\": \"Alex leaves Moonbeam Café and arrives inside the Marigold Theater. The theater is a named performance venue with red velvet seats and a small stage.\"\n      }\n    ],\n    \"currentRef\": \"MarigoldTheater\",\n    \"currentEvidence\": \"Alex leaves Moonbeam Café and arrives inside the Marigold Theater. The theater is a named performance venue with red velvet seats and a small stage.\"\n  },\n  \"global\": {},\n  \"player\": {},\n  \"characters\": []\n}\n```",
+      "parsed": {
+        "locations": {
+          "places": [
+            {
+              "ref": "MarigoldTheater",
+              "name": "Marigold Theater",
+              "aliases": [],
+              "description": "A named performance venue with red velvet seats and a small stage.",
+              "parentRef": "",
+              "evidence": "Alex leaves Moonbeam Café and arrives inside the Marigold Theater. The theater is a named performance venue with red velvet seats and a small stage."
+            }
+          ],
+          "currentRef": "MarigoldTheater",
+          "currentEvidence": "Alex leaves Moonbeam Café and arrives inside the Marigold Theater. The theater is a named performance venue with red velvet seats and a small stage."
+        },
+        "global": {},
+        "player": {},
+        "characters": []
+      },
+      "normalized": {
+        "update": {
+          "locations": {
+            "places": [
+              {
+                "ref": "MarigoldTheater",
+                "name": "Marigold Theater",
+                "aliases": [],
+                "description": "A named performance venue with red velvet seats and a small stage.",
+                "parentRef": "",
+                "evidence": "Alex leaves Moonbeam Café and arrives inside the Marigold Theater. The theater is a named performance venue with red velvet seats and a small stage."
+              }
+            ],
+            "currentRef": "MarigoldTheater",
+            "currentEvidence": "Alex leaves Moonbeam Café and arrives inside the Marigold Theater. The theater is a named performance venue with red velvet seats and a small stage."
+          },
+          "global": {},
+          "player": {},
+          "characters": []
+        },
+        "effective": {
+          "global": {
+            "Day and Time": "",
+            "Occasion": "",
+            "Location": "Moonbeam Café"
+          },
+          "player": {
+            "stats": {
+              "Social Energy": "10/10",
+              "Mood": "Neutral"
+            },
+            "collections": {
+              "items": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [],
+          "locations": {
+            "enabled": true,
+            "currentId": "home",
+            "records": {
+              "home": {
+                "id": "home",
+                "name": "Moonbeam Café",
+                "description": "",
+                "aliases": [],
+                "parentId": ""
+              }
+            }
+          },
+          "timestamp": 1792377229110
+        },
+        "progression": null,
+        "holdings": {
+          "player": {
+            "stats": {
+              "Social Energy": "10/10",
+              "Mood": "Neutral"
+            },
+            "collections": {
+              "items": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": []
+        },
+        "warnings": [],
+        "places": [
+          {
+            "id": "place-7249333d-1d4f-4fd6-9a58-783516ffafbe",
+            "kind": "location-create",
+            "scope": "location",
+            "actor": "Marigold Theater",
+            "label": "New place",
+            "before": "",
+            "after": "A named performance venue with red velvet seats and a small stage.",
+            "risk": "risky",
+            "note": "Alex leaves Moonbeam Café and arrives inside the Marigold Theater. The theater is a named performance venue with red velvet seats and a small stage.",
+            "location": {
+              "id": "place-4fd17986-0342-4fbe-879b-ed377b16a2d3",
+              "record": {
+                "id": "place-4fd17986-0342-4fbe-879b-ed377b16a2d3",
+                "name": "Marigold Theater",
+                "aliases": [],
+                "description": "A named performance venue with red velvet seats and a small stage.",
+                "parentId": "",
+                "lorebook": "",
+                "loreEntryId": null
+              },
+              "before": null,
+              "provenance": {
+                "messageId": 1
+              }
+            }
+          },
+          {
+            "id": "place-43d3587a-47e6-418c-8605-9e1a96d665f0",
+            "kind": "location-current",
+            "scope": "location",
+            "actor": "Marigold Theater",
+            "label": "Current place",
+            "before": "Moonbeam Café",
+            "after": "Marigold Theater",
+            "risk": "safe",
+            "note": "Alex leaves Moonbeam Café and arrives inside the Marigold Theater. The theater is a named performance venue with red velvet seats and a small stage.",
+            "location": {
+              "id": "place-4fd17986-0342-4fbe-879b-ed377b16a2d3",
+              "record": {
+                "id": "place-4fd17986-0342-4fbe-879b-ed377b16a2d3",
+                "name": "Marigold Theater",
+                "aliases": [],
+                "description": "A named performance venue with red velvet seats and a small stage.",
+                "parentId": "",
+                "lorebook": "",
+                "loreEntryId": null
+              },
+              "before": null,
+              "provenance": {
+                "messageId": 1
+              },
+              "currentBefore": "home"
+            }
+          }
+        ]
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "validJsonAndNotTruncated",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "placeCreated Marigold Theater",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "placeRoot Marigold Theater",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "currentPlace Marigold Theater",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "createdPlaceCount 1",
+          "critical": true,
+          "passed": true
+        }
+      ],
+      "audit": {
+        "placeholderInventory": false,
+        "openingInventedInventory": false,
+        "xpProgression": null
+      }
+    }
+  ],
+  "summary": {
+    "checks": 24,
+    "passed": 24,
+    "rate": 1,
+    "criticalFailures": [],
+    "systems": {
+      "fantasy": 1,
+      "dating": 1
+    },
+    "perSystemCounts": {
+      "fantasy": {
+        "checks": 14,
+        "passed": 14,
+        "rate": 1
+      },
+      "dating": {
+        "checks": 10,
+        "passed": 10,
+        "rate": 1
+      }
+    },
+    "splits": {
+      "main": {
+        "checks": 24,
+        "passed": 24,
+        "rate": 1
+      },
+      "originalHoldout": {
+        "checks": 0,
+        "passed": 0,
+        "rate": null
+      }
+    },
+    "auditFailures": [],
+    "acceptable": true
+  }
+}
