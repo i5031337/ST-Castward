@@ -72,3 +72,12 @@ test('manual memory button prevents duplicate requests and reports pending revie
     assert.match(f.notices[0], /2 memories awaiting review/);
     assert.match(f.notices[1], /5 unread replies remain.*again to continue/);
 });
+
+test('manual memory button reports memories saved automatically', async () => {
+    const f = fixture();
+    f.refreshMemoryButton();
+    const request = f.button().listeners.click();
+    f.finish({ ok: true, applied: 2, pending: 0, remainingReplies: 0 });
+    await request;
+    assert.match(f.notices[0], /2 NPC memories saved/);
+});

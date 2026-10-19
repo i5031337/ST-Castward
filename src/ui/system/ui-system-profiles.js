@@ -161,9 +161,9 @@ function buildMemoryControls(definition, saveSettings, refreshMemoryButton) {
     enabled.type = 'checkbox';
     enabled.checked = memories.enabled === true;
     enabled.addEventListener('change', () => { memories.enabled = enabled.checked; saveSettings(); refreshMemoryButton?.(); });
-    enabledLabel.append(enabled, ' Automatically propose NPC memories for review');
+    enabledLabel.append(enabled, ' Read NPC memories automatically');
     const help = document.createElement('p');
-    help.textContent = 'A separate reader occasionally proposes durable events and knowledge for NPCs. Manual memory editing is always available.';
+    help.textContent = 'A separate reader occasionally finds durable events and knowledge for NPCs. Ask Before Applying controls whether new memories are saved or reviewed. Manual editing is always available.';
     const guidance = control('textarea', 'profile-memory-guidance', memories.guidance || '');
     guidance.rows = 3;
     guidance.maxLength = 4000;

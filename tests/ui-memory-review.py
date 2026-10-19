@@ -34,7 +34,7 @@ with browser_session() as browser:
           guidance.dispatchEvent(new Event('input'));
           result.systemControlsSave = definition.memories.enabled && definition.memories.guidance === 'Remember promises'
             && saves === 2 && refreshes === 1;
-          const fixtureSettings = { enabled:true, activeSystem:'fixture', statusTracker:{presets:{fixture:{definition}}} };
+          const fixtureSettings = { enabled:true, activeSystem:'fixture', statusTracker:{reviewMode:'risky',presets:{fixture:{definition}}} };
           const fixtureContext = { chatMetadata:{}, getCurrentChatId: () => 'fixture-chat',
             chat:[{is_user:true,mes:'Ada, please guard the bridge.'},{mes:'Ada promises to guard the bridge.'}] };
           let fixtureState = {characters:[]}, proposals = [], requests = 0;

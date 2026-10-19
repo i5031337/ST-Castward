@@ -26,6 +26,16 @@ Castward (formerly **SillyNPC XP**) is maintained by **i5031337**. Built on [Sil
 
 Dialogue and HUD examples are from upstream; the tracker shows the current fork with example data. Click any image for a closer look.
 
+## Built around your cast
+
+Castward connects the people in your story to the rules and presentation of each adventure:
+
+- **One cast for each adventure.** NPCs have chat-owned identities and state. Reuse a world character in another chat without carrying over everything that happened to them here; export a character when you do want to bring selected details along.
+- **Rules that fit the cast and world.** A System defines player and NPC profile fields, character and world stats, collections, and progression. Start with fantasy, dating, or creature-training rules, build your own, or generate a System from a premise. The same rules guide the reader, sheets, and HUD.
+- **Story-derived changes you can check.** The background reader proposes stat, inventory, XP, condition, and place changes from the conversation. Choose automatic application or review, correct the values, and keep level rewards under review.
+- **A tested local-model setup.** The tracker and profile generation have been evaluated with Gemma 4 E4B served locally by llama.cpp. The linked evaluations above show the setup and its limits.
+- **Characters you can recognize on sight and by voice.** Speaker portraits and coloured dialogue lead to their sheets; NPC voices, expressions, and scene sprites give the same cast a presence beyond stat bars.
+
 ## What's changed from upstream?
 
 The original dialogue styling, portraits, tracker, and floating HUD are still here. This fork adds:
@@ -34,7 +44,7 @@ The original dialogue styling, portraits, tracker, and floating HUD are still he
 - **A cast for each chat.** NPCs belong to the adventure where you meet them. Reuse world characters without sharing their current state.
 - **Your own rules.** Build stats, profile fields, and collections for the player and NPC templates such as sailors, robots, and spirits.
 - **Complete starter Systems.** Begin with Fantasy Adventure, Dating Sim, or Creature Trainer. Each gives the reader a cast, stats, collections, and a matching HUD; edit any rule to suit your story. You can also generate a System from your own premise.
-- **Character memories.** Keep memories on sheets. Reader suggestions always wait for your approval.
+- **Character memories.** Keep memories on sheets. Reader suggestions follow the Tracker's **Ask Before Applying** setting: save automatically with **Nothing**, or wait for review with **Risky changes only** or **Every change**.
 - **Persistent places.** Remember locations, aliases, descriptions, and containment in each chat. Place changes follow the Tracker's Ask Before Applying setting.
 - **Individual TTS voices.** Give NPCs their own voices, with a separate narrator. Optional automatic playback starts as dialogue lines finish streaming.
 - **Expressions and scene sprites.** Use expression packs or generate missing emotions from NPC portraits. Keep the whole present cast visible beside the chat.

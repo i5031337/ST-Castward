@@ -2,6 +2,7 @@ import { buildMemoryBatch, validateMemoryResponse } from './memory-batch.js';
 import { firstChangedMemorySource, memorySourcesMatch, invalidateMemoryStore } from '../core/profile-memories.js';
 import { readNpcMemories, writeNpcMemories } from '../tracker/npc-memories.js';
 import { buildMemoryPrompt, MEMORY_SYSTEM_PROMPT, MEMORY_RESPONSE_SCHEMA } from './memory-prompt.js';
+import { applyReviewedMemories } from './memory-review.js';
 
 export const MEMORY_PROGRESS_KEY = 'sillynpc_memory_progress';
 
@@ -98,12 +99,26 @@ export function createMemoryService(deps) {
                     pending: pending(run.chat), systemId, chatId: run.chatId });
             }
             if (!isCurrent()) return { ok: false, reason: 'The memory reading is no longer current.' };
-            if (rows.length) deps.enqueue(batch.checkpoint, rows);
+            const automatic = deps.getSettings().statusTracker?.reviewMode === 'off';
+            let applied = 0;
+            if (rows.length && automatic) {
+                const currentState = deps.loadState();
+                const result = applyReviewedMemories(currentState, rows, deps.getCards(), {
+                    messages: run.chat, systemId, chatId: run.chatId,
+                    limit: config().maxEntriesPerCharacter,
+                });
+                applied = result.applied;
+                if (applied) {
+                    deps.saveState(currentState, { label: 'NPC memories' });
+                    for (const { card, store } of result.changed) deps.syncLore(card, store);
+                }
+            } else if (rows.length) deps.enqueue(batch.checkpoint, rows);
             const sources = new Map(record.sources.map(source => [source.messageId, source]));
             for (const source of batch.sources) sources.set(source.messageId, source);
             records[systemId] = { checkpoint: batch.checkpoint, sources: [...sources.values()] };
             deps.saveChat();
-            return { ok: true, pending: rows.length, messages: batch.messages.filter(message => message.unread).length,
+            return { ok: true, applied, pending: automatic ? 0 : rows.length,
+                messages: batch.messages.filter(message => message.unread).length,
                 remainingReplies: batch.unreadReplies - batch.replyCount };
         } catch (error) {
             return { ok: false, reason: String(error?.message || error) };

@@ -33,7 +33,9 @@ System profile fields have stable IDs and editable labels and guidance.
 Retirement hides a field without discarding its stored prose. Fill and lore generation
 seed empty fields; manual edits and explicit regeneration can revise them. The turn
 reader updates tracked stats and collections, while a separate opt-in memory reader
-periodically proposes NPC memories for review. The turn reader does not update profile
+periodically proposes NPC memories. Memory additions are risky changes: the Tracker's
+Ask Before Applying setting saves them automatically in Nothing mode and holds them
+for review in Risky changes only or Every change mode. The turn reader does not update profile
 fields. Optional new-NPC profile generation is a separate request, disabled by
 default, which preserves existing cards and edits.
 

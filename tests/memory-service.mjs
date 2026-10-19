@@ -68,7 +68,7 @@ test('interval, enablement and host busy gates prevent requests, manual read byp
 
 test('successful empty pass saves progress and reload does not reread; request failures do not advance', async () => {
     const f = fixture();
-    assert.deepEqual(await f.service.read(), { ok: true, pending: 0, messages: 8, remainingReplies: 0 });
+    assert.deepEqual(await f.service.read(), { ok: true, applied: 0, pending: 0, messages: 8, remainingReplies: 0 });
     assert.equal(progress(f).checkpoint, 7);
     const reloaded = createMemoryService(f.deps);
     assert.deepEqual(await reloaded.read({ manual: true }), { ok: true, pending: 0, messages: 0 });
@@ -119,6 +119,34 @@ test('proposals dedupe persisted/archive/pending memories and append to existing
     assert.equal(f.rows.get(7).length, 3);
     assert.deepEqual(f.rows.get(7).slice(0, 2), [trackerRow, pendingRow]);
     assert.equal(f.rows.get(7)[2].after, 'New promise');
+});
+
+test('memory additions follow Ask Before Applying without losing provenance or review rows', async () => {
+    for (const mode of ['off', 'risky', 'all']) {
+        const f = fixture();
+        f.settings.statusTracker.reviewMode = mode;
+        f.setResponse({ memories: [proposal('Promised to guard the bridge')] });
+        const result = await f.service.read();
+        assert.equal(result.applied, mode === 'off' ? 1 : 0);
+        assert.equal(result.pending, mode === 'off' ? 0 : 1);
+        assert.equal(f.calls.stateSaves, mode === 'off' ? 1 : 0);
+        assert.equal(f.calls.lore.length, mode === 'off' ? 1 : 0);
+        if (mode === 'off') {
+            assert.equal(f.rows.size, 0);
+            const entry = readNpcMemories(f.state, f.cards[0]).entries[0];
+            assert.equal(entry.text, 'Promised to guard the bridge');
+            assert.equal(entry.provenance.chatId, 'chat-one');
+            assert.equal(entry.provenance.sources[0].messageId, 7);
+            f.context.chat[7].mes = 'Captain broke the promise.';
+            f.service.reconcile();
+            assert.equal(readNpcMemories(f.state, f.cards[0]).entries.length, 0);
+            assert.equal(progress(f).checkpoint, 6);
+        } else {
+            assert.equal(f.rows.get(7)[0].kind, 'memory-add');
+            assert.equal(readNpcMemories(f.state, f.cards[0]).entries.length, 0);
+            assert.equal(progress(f).checkpoint, 7);
+        }
+    }
 });
 
 test('in-flight chat, System, settings and source changes discard results; simultaneous reading is blocked', async () => {

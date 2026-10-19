@@ -49,6 +49,8 @@ async function onMemoryClicked() {
             toastr.info(result.reason || 'The memory reading did not complete.', 'Castward');
         } else if (result.pending) {
             toastr.info(`${result.pending} memor${result.pending === 1 ? 'y' : 'ies'} awaiting review under the last message.`, 'Castward');
+        } else if (result.applied) {
+            toastr.success(`${result.applied} NPC memor${result.applied === 1 ? 'y' : 'ies'} saved.`, 'Castward');
         } else {
             toastr.success('Memory reading complete. Nothing to add.', 'Castward');
         }
