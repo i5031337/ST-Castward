@@ -48,8 +48,8 @@ test('offstage prompt exposes filled locked stats as initialization reference da
     assert.deepEqual(records[0].stats, { Experience: '90/100', Rank: '1', Power: '5' });
     const prompt = readerPromptTexts.find(entry => entry.id === 'reader').text;
     assert.match(prompt, /"offstage": true/);
-    assert.match(prompt, /Never mark an unknown NPC offstage/);
-    assert.match(prompt, /complete present cast/);
+    assert.match(prompt, /known NPC who remains absent/);
+    assert.match(prompt, /List every present NPC/);
 });
 
 test('collection removal schema uses the configured primary field type', () => {

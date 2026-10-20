@@ -60,8 +60,8 @@ test('fantasy starter gives people and beasts the same prose-described stats', (
         assert.equal(isReaderStat(character.find(field => field.id === id)), true, id);
     }
     const prompt = describeReaderStats(projectSystemTracker(system));
-    assert.match(prompt, /NPC\.Strength: number; Physical power used to lift/);
-    assert.match(prompt, /NPC\.Armor: number; Protection from worn gear/);
+    assert.match(prompt, /NPC\.Strength: number\. Physical power used to lift/);
+    assert.match(prompt, /NPC\.Armor: number\. Protection from worn gear/);
     assert.doesNotMatch(JSON.stringify(system), /external rules|rules pipeline|rules engine/i);
     assert.equal(system.progression.player.enabled, true);
     assert.equal(system.npcTemplates[0].progression.enabled, true);

@@ -48,7 +48,7 @@ export function describeCollections(trackerSettings) {
                 String(f.maxStatValue ?? '').trim() ? `maximum ${f.maxStatValue}` : '',
             ].filter(Boolean).join(', ') : '';
             const library = !f.isPrimary && f.isMultiline && isStaticField(f)
-                ? ' [write it when adding; kept in the library afterwards]' : '';
+                ? ' [include when adding]' : '';
             /* What the field is for, in the owner's words. A collection could say what it
                held and a stat could say how it was written, and a collection's fields had
                nowhere to say anything at all - so "value (number)" reached the reader as a
@@ -72,7 +72,7 @@ export function describeCollections(trackerSettings) {
         lines.push(`- ${title} for ${collectionTargetLabel(col)}`
             + `${note ? ` - ${endsSentence(note)}` : ''}`
             + ` Fields: ${fields || 'name'}`
-            + (collectionQuantityField(col) ? ` Quantity enabled: ${collectionQuantityField(col).name} reports amounts gained in add and spent in remove; all: true removes the whole entry. update changes other fields.` : ''));
+            + (collectionQuantityField(col) ? ` Quantity field: ${collectionQuantityField(col).name}.` : ''));
     }
     return lines.join('\n');
 }
@@ -118,7 +118,7 @@ export function buildDeltaExample(trackerSettings) {
        user's own names, so a verb missing from it is a verb the reader does not use. */
     const changed = { [primary]: primaryValue, ...Object.fromEntries(
         Object.entries(item).filter(([key]) => key !== primary && key !== collectionQuantityField(col)?.name).slice(0, 1)
-            .map(([key]) => [key, '<new value>'])) };
+            .map(([key, value]) => [key, typeof value === 'number' ? 2 : typeof value === 'boolean' ? false : '<new value>'])) };
     return [
         ['Acquired item', { add: [item] }],
         ['Lost item', { remove: [collectionQuantityField(col)

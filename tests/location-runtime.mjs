@@ -32,8 +32,8 @@ function fixture() {
     const runtime = evaluate('../src/locations/location-runtime.js', dependencies,
         '{ locationProposalsForReading, resolveLocationRows }');
     const discover = (movement = true) => runtime.locationProposalsForReading(state, {
-        places: [{ ref: 'new-tavern', name: 'The Lantern', description: 'A tavern.' }],
-        ...(movement ? { currentRef: 'new-tavern' } : {}),
+        places: [{ name: 'The Lantern', description: 'A tavern.' }],
+        ...(movement ? { current: 'The Lantern' } : {}),
     }, 0).rows;
     return { context, saves, records, refreshes, events, dependencies, runtime, discover,
         get state() { return state; }, set chatId(value) { chatId = value; } };

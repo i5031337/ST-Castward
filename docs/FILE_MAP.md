@@ -392,7 +392,7 @@ SillyTavern loads `index.js` and `style.css` from `manifest.json`. The JavaScrip
 | `src/locations/location-store.js` | Pure place normalization, stable IDs, aliases, containment validation, CRUD, current marker, and display path. |
 | `src/locations/location-proposals.js` | Story-derived proposals, immutable review payloads, freshness, and dependent acceptance. |
 | `src/locations/location-runtime.js` | Reader provenance, source validation, chat saves, and reviewed turn effects. |
-| `src/locations/location-context.js` | Literal mention detection, bounded narrator recall, reader directory/instructions, and output schema. |
+| `src/locations/location-context.js` | Literal mention detection, bounded narrator recall, name-based reader directory/instructions, and output schema. |
 | `src/locations/location-lore.js` | Read-only lorebook listings and entry reads. |
 | `src/ui/locations/ui-locations.js` | Chat-scoped Places management, search, manual editing, current marker, and deletion undo. |
 | `src/ui/locations/ui-location-lore.js` | Reference linking and explicit copying into an unsaved place description. |
@@ -406,6 +406,9 @@ SillyTavern loads `index.js` and `style.css` from `manifest.json`. The JavaScrip
 | `tests/fixtures/gemma-tracker-natural-scenarios.mjs`, `tests/gemma-tracker-apply.mjs` | Two-paragraph prose cases and production update-application checks for implied stat changes. |
 | `tests/fixtures/gemma-location-tree-scenarios.mjs` | Focused Fantasy/Dating cases for a new parent and an independent new root, in explicit, narrative, and mixed-turn prose. |
 | `tests/eval-gemma-tracker.js`, `tests/gemma-evaluation.mjs` | Explicit local-model evaluation runner and offline checks of its scoring path. |
+| `tests/fixtures/gemma-request-batches.mjs` | Bound parallel evaluation requests per endpoint; keep normalization serial. |
+| `tests/fixtures/gemma-location-check.mjs` | Score current places through their recorded containment chain. |
+| `tests/fixtures/tracker-pool-audit.mjs` | Audit raw reader proposals for changes to established pool maxima before sanitation. |
 | `tests/eval-gemma-location-evidence.js` | Historical A/B probe replaying frozen quote and no-quote prompts against raw model place choices. |
 | `tests/fixtures/gemma-profile-scenarios.mjs`, `tests/fixtures/gemma-profile-harness.mjs` | NPC profile Fill and opt-in automatic lore cases using production prompt and parser code. |
 | `tests/eval-gemma-profiles.js`, `tests/gemma-profile-evaluation.mjs` | Explicit local-model profile runner and offline harness checks. |

@@ -202,7 +202,7 @@ test('renaming a shared stat preserves template membership and reader guidance s
     assert.deepEqual(npcStatsFor({ npcTemplateId: 'human' }, settings.statusTracker).map(stat => stat.name), ['Health']);
     const note = describeNpcTemplates();
     assert.match(note, /npcTemplateId/);
-    assert.match(note, /omit it if uncertain/);
+    assert.match(note, /each unassigned NPC whose type is clear/);
     assert.match(note, /pokemon.*Friendship/);
     assert.equal(note.split('\n').length, 3);
     setProfileSettingsProvider(() => null);

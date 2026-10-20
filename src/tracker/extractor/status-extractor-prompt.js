@@ -1,4 +1,5 @@
 import { buildLocationReaderNotes } from '../../locations/location-context.js';
+import { collectionQuantityField } from '../../core/collection-fields.js';
 import { collectionAppliesTo } from '../../core/collection-targets.js';
 import { describeNpcTemplates, npcTemplates, npcStatsFor } from '../../core/npc-templates.js';
 import { promptText } from '../../prompts/prompt-texts.js';
@@ -9,6 +10,7 @@ import { strangerValues } from './status-extractor-schema.js';
 import { describeCollections, buildDeltaExample, describeCurrentState, describeLimits } from './status-extractor-prompt-state.js';
 import { describeAbsentButNamed } from './status-extractor-prompt-offstage.js';
 import { describeNumericDeltas, numericDeltaNames, progressionXpName } from './status-extractor-deltas.js';
+import { isPoolStat } from '../numeric-stat-bounds.js';
 import { isReaderStat } from '../stat-update-policy.js';
 import { getCurrentPersonaName } from '../status-logic.js';
 import { progressionFields } from '../progression-fields.js';
@@ -78,17 +80,19 @@ function describePoolRecovery(state, settings) {
         return [`${owner.label}.${stat.name} ${current}/${maximum} needs +${Number((maximum - current).toPrecision(12))} to reach capacity.`];
     }));
     if (!entries.length) return '';
-    return 'When the latest message establishes complete recovery of an applicable pool for an owner, refill that pool to its existing maximum even if the narrator gives no number. '
-        + 'A full night of sound sleep followed by waking refreshed can fully restore applicable health, magic, or energy pools when the System permits; effective healing or recharging can do the same. '
-        + 'Match the recovery to the owner and pools affected, following configured rules and any stated limits; do not automatically refill every pool or other characters. '
-        + 'Missing amounts: ' + entries.join(' ') + ' A brief rest or partial recovery warrants a smaller gain. XP and Level are never recovery pools.';
+    return 'For complete recovery, report the full missing amount for each affected pool.\n'
+        + 'Sound sleep followed by waking refreshed, effective healing, or recharging can establish complete recovery when field rules permit.\n'
+        + 'Match recovery to the affected owner and pools.\n'
+        + 'Use a smaller gain for partial recovery.\n'
+        + 'Missing amounts:\n' + entries.join('\n');
 }
 
 /** Keep narrated harm and healing aligned with a configured health pool. */
 function describeInjuryConsequence(settings) {
-    const health = (settings.playerStats || []).find(stat => stat.type === 'bar'
+    const health = (settings.playerStats || []).find(stat => isReaderStat(stat)
+        && ['number', 'bar'].includes(stat.type) && isPoolStat(stat)
         && /\b(?:hp|health|hit points|vitality)\b/i.test(`${stat.name || ''} ${stat.purpose || ''} ${stat.guidance || ''}`));
-    return health ? `If the latest message establishes a bodily injury to the player, decrease Player.${health.name} by an estimated amount appropriate to the injury. If wound care or healing measurably improves the player, increase Player.${health.name} by a conservative amount, short of full recovery unless the story establishes it. A text condition change alone does not account for either health effect.` : '';
+    return health ? `Report bodily injury as a decrease in player.deltas.${health.name}.\nReport effective wound care or healing as an increase in that field.\nInclude any text condition change separately.\nEstimate a conservative amount for partial healing.` : '';
 }
 
 /**
@@ -115,17 +119,6 @@ function describeInjuryConsequence(settings) {
 // Exported for the tests: what reaches the model on every message is worth holding to
 // a shape, and the vocabulary in it is the whole point of this function.
 function readerValues(state, messageText, trackerSettings, leadUp = [], { strangers = [] } = {}) {
-    /* One text, 'reader' in prompt-texts.js: every section of this request, in order. What
-     * each section is for, since the wording is now yours to change:
-     *
-     * - WHAT YOU MAY CHANGE comes before any of the words it defines. The system prompt may be
-     *   the shipped one or your own, and either way talks about stats and collections in the
-     *   abstract; this says what they are here, and that the lists are closed - which is what
-     *   stops a model reporting a plausible stat nobody configured.
-     * - KNOWN, BUT NOT IN THE SCENE sits beside the state because it is state.
-     * - The collections' fields come before the example, so they read as part of what is
-     *   known. Without them a new item arrived with only the field the example showed.
-     */
     return {
         playerName: getCurrentPersonaName(),
         state: describeCurrentState(state, trackerSettings) || '(empty)',
@@ -138,14 +131,10 @@ function readerValues(state, messageText, trackerSettings, leadUp = [], { strang
         // Whatever else has asked to be told to the reader - see registerExtractionNotes.
         notes: [describeNpcTemplates(), describeExtractionNotes(state, messageText),
             state?.locations?.enabled ? buildLocationReaderNotes(state, messageText, leadUp) : ''].filter(Boolean).join('\n'),
-        locationReminder: state?.locations?.enabled ? 'Before returning JSON, check the latest message for a named setting containing the player or an established move. If one is established, include the top-level "locations" object with established places and currentRef. An opened door or invitation alone does not establish arrival. Omit "locations" when no place fact changed.' : '',
-        quantityReminder: (trackerSettings.collections || []).some(collection => collection.trackQuantity === true)
-            ? 'For any counted item consumed or lost, use collections.<ID>.remove with the exact identifier and quantity spent. Never use update to change an item quantity.' : '',
+        locationReminder: state?.locations?.enabled
+            ? 'For an established setting or arrival, put "locations" beside "global", "player", and "characters". Set "locations.current" to the place name. Put new place records in "locations.places".' : '',
         poolRecovery: describePoolRecovery(state, trackerSettings),
         injuryConsequence: describeInjuryConsequence(trackerSettings),
-        xpReminder: progressionXpName(trackerSettings, state)
-            || (trackerSettings.npcTemplates || []).some(template => template.progression?.enabled)
-            ? 'Before returning JSON, award XP only for a concrete accomplishment by its recipient. Small progress counts only when the recipient actively takes a meaningful step toward a goal. A change in a health or energy stat, or in a condition, alone does not justify XP. Passive healing, routine rest, receiving care, an accidental fall, hearing an unverified rumor, and ordinary conversation alone earn no XP.' : '',
         ...strangerValues(strangers),
         collections: describeCollections(trackerSettings),
         collectionExample: buildDeltaExample(trackerSettings),
@@ -211,8 +200,7 @@ export function buildNewNpcExample(trackerSettings = {}) {
     const template = npcTemplates()[0];
     const stats = Object.fromEntries((template ? npcStatsFor({ npcTemplateId: template.id }, trackerSettings) : trackerSettings.npcStats || [])
         .filter(stat => stat?.name)
-        .map(stat => [stat.name, describeReaderStats({ npcStats: [stat] }, { initializeNpc: true })
-            .replace(`- NPC.${stat.name}: `, '')]));
+        .map(stat => [stat.name, '<initial reading>']));
     return JSON.stringify({
         global: {},
         player: {},
@@ -241,10 +229,13 @@ function buildChangedExample(state, trackerSettings) {
         .find(c => c?.id && (collectionAppliesTo(c, target, target === 'npc' ? npc || {} : undefined)));
     const collectionChange = (col, verb) => {
         if (!col) return undefined;
-        const primary = (col.fields || []).find(f => f.isPrimary)?.name || 'name';
+        const primaryDef = (col.fields || []).find(f => f.isPrimary);
+        const primary = primaryDef?.name || 'name';
+        const identifier = primaryDef?.type === 'number' ? 1 : primaryDef?.type === 'boolean' ? true : '<item identifier>';
+        const quantity = collectionQuantityField(col);
         return { [col.id]: verb === 'add'
-            ? { add: [{ [primary]: '<item gained>' }] }
-            : { remove: ['<item lost>'] } };
+            ? { add: [{ [primary]: identifier, ...(quantity ? { [quantity.name]: 1 } : {}) }] }
+            : { remove: [quantity ? { [primary]: identifier, [quantity.name]: 1 } : identifier] } };
     };
     const player = {};
     if (playerStat) player.deltas = { [playerStat]: playerStat.toLowerCase() === xpName?.toLowerCase() ? 1 : -1 };

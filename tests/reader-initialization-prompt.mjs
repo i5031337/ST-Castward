@@ -5,7 +5,9 @@ import { describeReaderStats } from '../src/tracker/stat-prompt-definitions.js';
 import { promptText } from '../src/prompts/prompt-texts.js';
 import { progressionFields } from '../src/tracker/progression-fields.js';
 import { numericDeltaNames, progressionXpName } from '../src/tracker/extractor/status-extractor-deltas.js';
+import { collectionQuantityField } from '../src/core/collection-fields.js';
 import { collectionAppliesTo } from '../src/core/collection-targets.js';
+import { isPoolStat } from '../src/tracker/numeric-stat-bounds.js';
 import { SYSTEM_PROMPT } from '../src/core/constants-prompts.js';
 import { defaultPromptText, PROMPT_TEXTS } from '../src/prompts/prompt-texts.js';
 
@@ -19,12 +21,12 @@ function builder(templates, context = { chat: [] }, personaName = 'Alex', descri
         'describeCurrentState', 'describeAbsentButNamed', 'describeLimits', 'describeNumericDeltas',
         'progressionXpName', 'describeNpcTemplates', 'strangerValues', 'describeCollections',
         'buildDeltaExample', 'numericDeltaNames', 'isReaderStat', 'getCurrentPersonaName', 'getContext',
-        'progressionFields', 'collectionAppliesTo',
+        'progressionFields', 'collectionAppliesTo', 'collectionQuantityField', 'isPoolStat',
         `${source}\nreturn { buildNewNpcExample, buildUserPrompt, collectLeadUp };`)(
         () => templates, (_actor, settings) => settings.npcStats || [], describeReaderStats, promptText,
         descriptions.state || empty, empty, empty, descriptions.numericDeltas || empty,
-        progressionXpName, empty, () => ({}), descriptions.collections || empty, empty, numericDeltaNames,
-        stat => !stat.locked, () => personaName, () => context, progressionFields, collectionAppliesTo);
+        progressionXpName, empty, () => ({}), descriptions.collections || (settings => settings.collections?.length ? 'Configured collections' : ''), empty, numericDeltaNames,
+        stat => !stat.locked, () => personaName, () => context, progressionFields, collectionAppliesTo, collectionQuantityField, isPoolStat);
 }
 
 test('reader initialization includes locked field purposes, ranges and text choices', () => {
@@ -34,13 +36,13 @@ test('reader initialization includes locked field purposes, ranges and text choi
     ] };
     const { buildNewNpcExample, buildUserPrompt } = builder([{ id: 'npc' }]);
     const example = JSON.parse(buildNewNpcExample(settings)).characters[0];
-    assert.match(example.stats.Rank, /Combat ability.*initialize once.*min: 1; max: 10/);
-    assert.match(example.stats.Species, /choose: Human, Elf.*locked afterward/);
+    assert.equal(example.stats.Rank, '<initial reading>');
+    assert.equal(example.stats.Species, '<initial reading>');
     assert.equal(example.npcTemplateId, undefined);
     const prompt = buildUserPrompt({ characters: [] }, 'Mira enters.', settings);
-    assert.match(prompt, /### NPC INITIALIZATION FIELDS/);
-    assert.match(prompt, /NPC.Rank: number; Combat ability.*min: 1; max: 10/);
-    assert.match(prompt, /never report deltas for them/);
+    assert.match(prompt, /NPC initialization fields/);
+    assert.match(prompt, /NPC.Rank: number\. Combat ability\. Minimum: 1\. Maximum: 10\./);
+    assert.match(prompt, /filled fields outside the editable list provide context/);
 });
 
 test('battle reader permits prose-derived damage and records demonstrated abilities for existing NPCs', () => {
@@ -62,27 +64,33 @@ test('battle reader permits prose-derived damage and records demonstrated abilit
         collections: () => '- "moves" (Moves) for NPCs. Fields: Name [identifies the item]',
     }).buildUserPrompt(state, message, settings);
     assert.ok(prompt.includes(message));
-    assert.match(prompt, /Missing numbers do not mean an established effect should be ignored/);
-    assert.match(prompt, /estimate a conservative amount using the field's current scale/);
+    assert.match(prompt, /effect is clear but its amount is unstated/);
+    assert.match(prompt, /Use the field's current scale for estimates/);
     assert.match(prompt, /"characters\[\]\.deltas"/);
-    assert.match(prompt, /actual use establishes knowledge even when the outcome fails; add a missing entry when demonstrated/);
+    assert.match(prompt, /Add missing abilities or knowledge when demonstrated, including during a failed action/);
     assert.match(prompt, /Reusable entries stay held after use/);
-    assert.match(prompt, /Apply only effects supported by what actually happened/);
-    assert.match(prompt, /Maintain one entry per identifier/);
-    assert.match(prompt, /Preserve established pool maxima and filled locked stats/);
-    assert.match(prompt, /when estimating an amount, briefly identify.*estimated/);
+    assert.match(prompt, /interpret resolved events/);
+    assert.match(prompt, /Keep one entry per identifier/);
+    assert.match(prompt, /For a pool, report the change to its current amount/);
+    assert.match(prompt, /Label estimated amounts and NPC initial estimates/);
 });
 
 test('system and inline prompts share general inference and ability discovery guidance', () => {
-    assert.match(SYSTEM_PROMPT, /narrator need not state field names, numbers/);
-    assert.match(SYSTEM_PROMPT, /estimate a conservative amount/);
-    assert.match(SYSTEM_PROMPT, /add it to the applicable configured collection if missing/);
-    assert.match(SYSTEM_PROMPT, /Never remove a reusable entry merely because it was used/);
+    assert.match(SYSTEM_PROMPT, /Report resolved events/);
+    assert.match(SYSTEM_PROMPT, /Use earlier messages as context/);
+    assert.match(SYSTEM_PROMPT, /Follow the output format in the request/);
+    assert.match(SYSTEM_PROMPT, /Use configured fields and exact names/);
     const inline = promptText('storyBlock', { status: '{}', rules: '', schemas: 'Configured ability collection' });
-    assert.match(inline, /explicit field names and numbers are unnecessary/);
-    assert.match(inline, /Plans, requests, and unresolved attempts do not establish their intended outcomes/);
-    assert.match(inline, /actual use establishes knowledge even when the outcome fails/);
+    assert.match(inline, /Estimate conservatively when an effect is clear but its amount is unstated/);
+    assert.match(inline, /Track resolved story events/);
+    assert.match(inline, /Add missing abilities or knowledge when demonstrated, including during a failed action/);
     assert.match(inline, /Reusable entries stay held after use/);
+    for (const text of [defaultPromptText('reader'), inline]) {
+        for (const path of ['global', 'globalDeltas', 'player.stats', 'player.deltas', 'characters[].stats', 'characters[].deltas']) {
+            assert.ok(text.includes(`"${path}"`), path);
+        }
+        assert.doesNotMatch(text, /level-up code|capacity growth|growth capacity limit|calculates remaining/);
+    }
     for (const text of [SYSTEM_PROMPT, defaultPromptText('reader'), defaultPromptText('storyBlock')]) {
         assert.doesNotMatch(text, /pok[eé]mon|Mudkip|Poochyena|Water Gun|Tackle/i);
     }
@@ -96,11 +104,11 @@ test('tracker prompts use configured fields without assuming an active stat or m
     for (const text of [SYSTEM_PROMPT, reader, inline, defaultPromptText('scanSystem')]) {
         assert.doesNotMatch(text, /\bhealth\b|\bhp\b|\bmana\b|\bcondition\b|\binjur(?:y|ies)\b|\breputation\b|\brelationship\b|public-standing|\bHealthy\b/i);
     }
-    assert.match(reader, /Use only configured stats and collections/);
-    assert.match(reader, /Follow configured persistence and reset rules/);
+    assert.match(reader, /Use configured field purposes/);
+    assert.match(reader, /Apply configured persistence and reset rules/);
     assert.doesNotMatch(reader, /### EXPERIENCE|WHEN A COLLECTION CHANGES/);
     assert.doesNotMatch(inline, /Experience:|### COLLECTIONS/);
-    assert.match(SYSTEM_PROMPT, /When progression is enabled for an owner/);
+    assert.match(SYSTEM_PROMPT, /return a JSON tracker update/);
     assert.match(defaultPromptText('scanSystem'), /Follow each collection's configured purpose and rules/);
     assert.doesNotMatch(defaultPromptText('scanSystem'), /An abstract fact is not a skill/);
 });
@@ -109,8 +117,7 @@ test('built-in model prompts do not assume dice mechanics', () => {
     for (const text of [SYSTEM_PROMPT, ...PROMPT_TEXTS.map(entry => entry.text)]) {
         assert.doesNotMatch(text, /\bdice\b|\broll(?:s|ed)?\b|\bd\d+\b|saving throw|skill check/i);
     }
-    assert.match(SYSTEM_PROMPT, /Apply an announced cost when the action actually incurs it/);
-    assert.match(SYSTEM_PROMPT, /A plan or request alone does not establish payment/);
+    assert.match(defaultPromptText('reader'), /Apply costs when incurred/);
 });
 
 test('multiple templates retain the selection ID in the initialization example', () => {
@@ -128,7 +135,7 @@ test('reader identifies the active player and labels history with player names',
     const earlier = collectLeadUp(3, 3);
     assert.deepEqual(earlier, ['[Player (Alex)] I enter.', '[Narrator] Mira greets Alex.', '[Player (Alex)] Hello.']);
     const prompt = buildUserPrompt({ characters: [] }, 'Mira smiles.', {}, earlier);
-    assert.match(prompt, /Alex is the player-controlled character\. References to Alex belong under player\./);
+    assert.match(prompt, /Alex is the player-controlled character\. Put their changes under "player"\./);
     assert.match(prompt, /\[Player \(Alex\)\] I enter\./);
     const renamed = builder([], { chat: [] }, 'Rhea');
     assert.match(renamed.buildUserPrompt({ characters: [] }, 'Hello.', {}), /Rhea is the player-controlled character/);
@@ -144,14 +151,14 @@ test('NPC example awards positive XP and excludes the automatic Level field', ()
     ] };
     const state = { characters: [{ name: 'Mira', npcTemplateId: 'fighter', stats: { Rank: '2', Experience: '20/100' } }] };
     const prompt = builder([template]).buildUserPrompt(state, 'Mira wins.', settings);
-    const example = JSON.parse(prompt.split('Changed-reply shape (include only changes supported by the latest message):\n')[1].split('\n')[0]);
+    const example = JSON.parse(prompt.split('Changed-reply example (illustrative changes):\n')[1].split('\n')[0]);
     assert.deepEqual(example.characters[0].deltas, { Experience: 1 });
-    assert.match(prompt, /Absolute readings under "stats" and "global" are JSON strings/);
-    assert.match(prompt, /Numeric changes under "deltas" and "globalDeltas" are JSON numbers/);
-    assert.match(prompt, /### NEW NPC REPLY EXAMPLE/);
-    assert.match(prompt, /hearing an unverified rumor, and ordinary conversation alone earn no XP/);
-    assert.match(prompt, /A change in a health or energy stat, or in a condition, alone does not justify XP/);
-    assert.match(promptText('storyBlock', { status: '{}', rules: '', xpProgression: 'on' }), /hearing an unverified rumor, and ordinary conversation alone do not earn XP/);
+    assert.match(prompt, /Player: "player\.stats"/);
+    assert.match(prompt, /World: "globalDeltas"/);
+    assert.match(prompt, /New NPC example/);
+    assert.match(prompt, /rumours, and routine conversation leave XP unchanged/);
+    assert.match(prompt, /once per concrete accomplishment/);
+    assert.match(promptText('storyBlock', { status: '{}', rules: '', xpProgression: 'on' }), /rumours, and routine conversation leave XP unchanged/);
     assert.doesNotMatch(prompt, /NPC INITIALIZATION TEMPLATE|a plain number stays a plain number/);
 });
 
@@ -164,7 +171,7 @@ test('new NPC example does not seed unsupported collection entries', () => {
     const prompt = builder([]).buildUserPrompt({ characters: [] }, 'Mira enters without any gear.', {
         collections: [{ id: 'gear', target: 'npc', fields: [{ name: 'code', isPrimary: true }] }],
     });
-    assert.match(prompt, /never copy guidance text or invent a generic starter item/);
+    assert.match(prompt, /Use established possessions for a new NPC's starting items/);
 });
 
 test('recovery guidance covers every live player and NPC pool except progression counters', () => {
@@ -185,12 +192,12 @@ test('recovery guidance covers every live player and NPC pool except progression
     for (const excluded of ['Player.XP 90/100', 'Mira.Experience 20/100', 'Player.Armor', 'Player.Locked Pool']) {
         assert.ok(!prompt.includes(excluded), excluded);
     }
-    assert.match(prompt, /do not automatically refill every pool or other characters/);
-    assert.match(prompt, /full night of sound sleep followed by waking refreshed/);
-    assert.match(prompt, /XP and Level are never recovery pools/);
+    assert.match(prompt, /Match recovery to the affected owner and pools/);
+    assert.match(prompt, /Sound sleep followed by waking refreshed/);
+    assert.match(prompt, /Use a smaller gain for partial recovery/);
     const unrelated = builder([]).buildUserPrompt({ player: { stats: { Focus: '2' } }, characters: [] },
         'Alex rests.', { playerStats: [{ name: 'Focus', type: 'number' }] });
-    assert.doesNotMatch(unrelated, /full night of sound sleep/);
+    assert.doesNotMatch(unrelated, /Sound sleep followed by waking refreshed/);
 });
 
 test('renamed XP thresholds are not mistaken for restorative pools', () => {
@@ -210,9 +217,9 @@ test('configured health pools keep narrated injury from becoming only a text con
     const settings = { playerStats: [{ name: 'Health', type: 'bar', purpose: 'Remaining bodily health' }] };
     const prompt = builder([]).buildUserPrompt({ player: { stats: { Health: '10/10' } }, characters: [] },
         'Alex falls and bruises a shoulder.', settings);
-    assert.match(prompt, /decrease Player\.Health by an estimated amount appropriate to the injury/);
-    assert.match(prompt, /If wound care or healing measurably improves the player, increase Player\.Health/);
-    assert.match(prompt, /A text condition change alone does not account for either health effect/);
+    assert.match(prompt, /Report bodily injury as a decrease in player\.deltas\.Health/);
+    assert.match(prompt, /Report effective wound care or healing as an increase in that field/);
+    assert.match(prompt, /Include any text condition change separately/);
 });
 
 test('current state includes filled locked readings as strings while omitting retired fields', () => {
@@ -228,4 +235,54 @@ test('current state includes filled locked readings as strings while omitting re
         Power: 5, Health: '8/10', Retired: 3,
     } }] }, settings));
     assert.deepEqual(current.characters[0].stats, { Power: '5', Health: '8/10' });
+});
+
+
+test('reader groups definitions and state before evidence, with examples after the output contract', () => {
+    const settings = { npcStats: [{ name: 'HP', type: 'number', defaultValue: '5/5' }] };
+    const prompt = builder([], { chat: [] }, 'Alex', { state: () => '{}' }).buildUserPrompt(
+        { characters: [] }, 'Mira arrives.', settings, ['Earlier context.']);
+    const sections = ['### EVIDENCE RULES', '### CONFIGURED FIELDS', '### CURRENT STATE',
+        '### EARLIER MESSAGES', '### LATEST MESSAGE', '### OUTPUT FORMAT', 'No-change example:', 'New NPC example'];
+    const positions = sections.map(section => prompt.indexOf(section));
+    assert.ok(positions.every(index => index >= 0));
+    assert.deepEqual(positions, [...positions].sort((a, b) => a - b));
+    assert.doesNotMatch(prompt, /level-up code|capacity growth|growth capacity limit|threshold stays fixed/);
+});
+
+test('changed reply uses the configured counted removal key and typed identifier', () => {
+    const settings = { npcStats: [], collections: [{ id: 'gear', targets: ['npc'], trackQuantity: true,
+        fields: [{ name: 'code', type: 'number', isPrimary: true }, { name: 'qty', type: 'number' }] }] };
+    const prompt = builder([]).buildUserPrompt({ characters: [{ name: 'Mira' }] }, 'Mira spends an item.', settings);
+    const example = JSON.parse(prompt.split('Changed-reply example (illustrative changes):\n')[1].split('\n')[0]);
+    assert.deepEqual(example.characters[0].collections.gear.remove, [{ code: 1, qty: 1 }]);
+});
+
+test('inline example uses numeric deltas and typed counted collection removals', () => {
+    const inlineSource = readFileSync(new URL('../src/tracker/status-scene-prompt.js', import.meta.url), 'utf8')
+        .replace(/^import\s+[\s\S]*?\s+from\s+['"][^'"]+['"];\s*/gm, '')
+        .replaceAll('export function ', 'function ');
+    const settings = { playerStats: [{ name: 'HP', type: 'number' }], npcStats: [], collections: [
+        { id: 'gear', targets: ['npc'], trackQuantity: true, fields: [
+            { name: 'code', type: 'number', isPrimary: true }, { name: 'count', type: 'number' },
+        ] },
+    ] };
+    const deps = { committedState: { player: { stats: { HP: '5/10' } }, characters: [{ name: 'Mira' }] } };
+    new Function('getSettings', 'isReaderStat', 'progressionFields', 'collectionAppliesTo',
+        'collectionQuantityField', 'promptText', `${inlineSource}\nreturn bind;`)(
+        () => ({ statusTracker: settings }), stat => !stat.locked, progressionFields,
+        collectionAppliesTo, collectionQuantityField, promptText)(deps);
+    const example = JSON.parse(deps.getStatusExample().match(/<status_update>(.*)<\/status_update>/)[1]);
+    assert.deepEqual(example.global, {});
+    assert.deepEqual(example.player, { deltas: { HP: -1 } });
+    assert.deepEqual(example.characters[0].collections.gear.remove, [{ code: 1, count: 1 }]);
+});
+
+
+test('injury guidance recognizes current numeric pools and respects reader permissions', () => {
+    const prompt = stat => builder([]).buildUserPrompt({ player: { stats: { Health: '10/10' } }, characters: [] },
+        'Alex is injured.', { playerStats: [{ name: 'Health', ...stat }] });
+    assert.match(prompt({ type: 'number', defaultValue: '10/10' }), /Report bodily injury as a decrease in player\.deltas\.Health/);
+    assert.doesNotMatch(prompt({ type: 'number', defaultValue: '10' }), /Report bodily injury as a decrease/);
+    assert.doesNotMatch(prompt({ type: 'number', defaultValue: '10/10', locked: true }), /Report bodily injury as a decrease/);
 });

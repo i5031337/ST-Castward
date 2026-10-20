@@ -7,26 +7,26 @@ const enabled = () => setLocationsEnabled({}, true);
 const options = () => { let id = 0; return { provenance: { messageId: 3, hash: 'original' },
     makeId: () => `p${++id}` }; };
 const discovery = { places: [
-    { ref: 'inn', name: 'Lantern', description: 'An inn in Town.', parentRef: 'town' },
-    { ref: 'town', name: 'Town', description: 'A town.' },
-], currentRef: 'inn' };
+    { name: 'Lantern', description: 'An inn in Town.', parent: 'Town' },
+    { name: 'Town', description: 'A town.' },
+], current: 'Lantern' };
 
 test('location discovery requires opt-in but accepts proposals without citations', () => {
     assert.equal(buildLocationProposals({}, discovery, options()).rows.length, 0);
     const result = buildLocationProposals(enabled(), { places: [
-        { ref: 'x', name: 'Lantern' },
-    ], currentRef: 'x' }, options());
+        { name: 'Lantern' },
+    ], current: 'Lantern' }, options());
     assert.deepEqual(result.rows.map(row => row.kind), ['location-create', 'location-current']);
     assert.deepEqual(result.warnings, []);
     assert.ok(result.rows.every(row => !Object.hasOwn(row, 'note')));
 });
 
-test('a current marker needs a known or proposed place reference', () => {
+test('a current marker needs a known or proposed place name', () => {
     const result = buildLocationProposals(enabled(), { places: [
-        { ref: 'office', name: 'Penelope\'s Office' },
-    ], currentRef: 'missing' }, options());
+        { name: 'Penelope\'s Office' },
+    ], current: 'missing' }, options());
     assert.deepEqual(result.rows.map(row => row.kind), ['location-create']);
-    assert.match(result.warnings[0], /reference does not exist/);
+    assert.match(result.warnings[0], /name is unknown or ambiguous/);
 });
 
 test('new parent dependencies and current place apply in any review order', () => {
@@ -42,26 +42,30 @@ test('new parent dependencies and current place apply in any review order', () =
     assert.deepEqual(state.locations.records, {});
 });
 
-test('case drift in a unique place reference preserves proposed containment and movement', () => {
+test('case drift in a unique place name preserves proposed containment and movement', () => {
     const state = enabled();
     const { rows, warnings } = buildLocationProposals(state, { places: [
-        { ref: 'inn', name: 'Lantern', parentRef: 'TOWN' },
-        { ref: 'town', name: 'Town' },
-    ], currentRef: 'INN' }, options());
+        { name: 'Lantern', parent: 'TOWN' },
+        { name: 'Town' },
+    ], current: 'LANTERN' }, options());
     assert.deepEqual(warnings, []);
     const result = applyLocationReview(state, rows, rows);
     assert.equal(result.state.locations.records.p1.parentId, 'p2');
     assert.equal(result.state.locations.currentId, 'p1');
 });
 
-test('ambiguous case-only references never choose a parent', () => {
-    let state = editLocation(enabled(), { name: 'North Town' }, { makeId: () => 'Ab' });
-    state = editLocation(state, { name: 'South Town' }, { makeId: () => 'aB' });
+test('ambiguous imported aliases leave parent and current identity unresolved', () => {
+    const state = enabled();
+    state.locations.records = {
+        north: { name: 'North Town', aliases: ['Town'] },
+        south: { name: 'South Town', aliases: ['town'] },
+    };
     const { rows, warnings } = buildLocationProposals(state, { places: [
-        { ref: 'inn', name: 'Lantern', parentRef: 'AB' },
-    ] }, options());
+        { name: 'Lantern', parent: 'TOWN' },
+    ], current: 'Town' }, options());
     assert.equal(rows[0].location.record.parentId, '');
-    assert.ok(warnings.some(warning => /unknown parent/.test(warning)));
+    assert.equal(rows.some(row => row.kind === 'location-current'), false);
+    assert.ok(warnings.length);
 });
 
 test('rejecting a parent or a new current target cannot create dangling links', () => {
@@ -91,7 +95,7 @@ test('reviews trust stored payloads, accept description edits and reject stale s
 test('updates preserve omitted fields and fail safely after manual edits', () => {
     let state = editLocation(enabled(), { name: 'Lantern', aliases: ['Inn'], description: 'An inn.', lorebook: 'World', loreEntryId: 4 }, { makeId: () => 'inn' });
     const { rows } = buildLocationProposals(state, { places: [
-        { ref: 'inn', description: 'An inn with a burned roof.' },
+        { name: 'Lantern', description: 'An inn with a burned roof.' },
     ] }, options());
     const applied = applyLocationReview(state, rows, rows);
     assert.equal(applied.state.locations.records.inn.description, 'An inn with a burned roof.');
@@ -105,7 +109,7 @@ test('null optional parent from a reader preserves existing containment', () => 
     let state = editLocation(enabled(), { name: 'Town' }, { makeId: () => 'town' });
     state = editLocation(state, { name: 'Lantern', parentId: 'town', description: 'An inn.' }, { makeId: () => 'inn' });
     const { rows, warnings } = buildLocationProposals(state, { places: [
-        { ref: 'inn', description: 'An inn with a burned roof.', parentRef: null },
+        { name: 'Lantern', description: 'An inn with a burned roof.', parent: null },
     ] }, options());
     assert.deepEqual(warnings, []);
     assert.equal(rows.length, 1);
@@ -114,39 +118,38 @@ test('null optional parent from a reader preserves existing containment', () => 
     assert.equal(result.state.locations.records.inn.description, 'An inn with a burned roof.');
 });
 
-test('unknown parent reference does not discard a proposed place or invent containment', () => {
+test('unknown parent name does not discard a proposed place or invent containment', () => {
     const state = enabled();
     const { rows, warnings } = buildLocationProposals(state, { places: [
-        { ref: 'mill', name: 'Old Mill', parentRef: 'not-a-known-id' },
-    ], currentRef: 'mill' }, options());
+        { name: 'Old Mill', parent: 'not-a-known-id' },
+    ], current: 'Old Mill' }, options());
     assert.deepEqual(rows.map(row => row.kind), ['location-create', 'location-current']);
     assert.equal(rows[0].location.record.parentId, '');
     assert.ok(warnings.some(warning => /unknown parent/.test(warning)));
 });
 
-test('rejected duplicate parent proposal cannot strand a new proposed place', () => {
+test('known names reuse the stored identity for containment and current place', () => {
     const state = editLocation(enabled(), { name: 'Moonbeam Café' }, { makeId: () => 'home' });
     const { rows, warnings } = buildLocationProposals(state, { places: [
-        { ref: 'glass', name: 'Glasshouse', parentRef: 'cafe' },
-        { ref: 'cafe', name: 'Moonbeam Café' },
-    ], currentRef: 'glass' }, options());
+        { name: 'Glasshouse', parent: 'Moonbeam Café' },
+        { name: 'Moonbeam Café' },
+    ], current: 'Glasshouse' }, options());
     assert.deepEqual(rows.map(row => row.kind), ['location-create', 'location-current']);
-    assert.equal(rows[0].location.record.parentId, '');
-    assert.ok(warnings.some(warning => /already belongs/.test(warning)));
-    assert.ok(warnings.some(warning => /unknown parent/.test(warning)));
+    assert.equal(rows[0].location.record.parentId, 'home');
+    assert.deepEqual(warnings, []);
 });
 
 test('legacy citation fields are ignored without blocking a place proposal', () => {
     const { rows } = buildLocationProposals(enabled(), { places: [
-        { ref: 'mill', name: 'Old Mill', evidence: 'A paraphrase' },
-    ], currentRef: 'mill', currentEvidence: 'An unrelated quote' }, options());
+        { name: 'Old Mill', evidence: 'A paraphrase' },
+    ], current: 'Old Mill', currentEvidence: 'An unrelated quote' }, options());
     assert.equal(rows.length, 2);
     assert.ok(rows.every(row => !Object.hasOwn(row, 'note')));
 });
 
 test('current-place proposals cannot overwrite a later manual scene change', () => {
     let state = editLocation(enabled(), { name: 'Lantern' }, { makeId: () => 'inn' });
-    const { rows } = buildLocationProposals(state, { currentRef: 'inn' }, options());
+    const { rows } = buildLocationProposals(state, { current: 'Lantern' }, options());
     state = editLocation(state, { name: 'Town' }, { makeId: () => 'town' });
     state = setCurrentLocation(state, 'town');
     assert.equal(applyLocationReview(state, rows, rows).appliedRows.length, 0);
@@ -155,7 +158,7 @@ test('current-place proposals cannot overwrite a later manual scene change', () 
 test('clearing current place requires an explicit empty reference', () => {
     const state = setCurrentLocation(editLocation(enabled(), { name: 'Lantern' }, { makeId: () => 'inn' }), 'inn');
     assert.equal(buildLocationProposals(state, {}, options()).rows.length, 0);
-    const { rows } = buildLocationProposals(state, { currentRef: '' }, options());
+    const { rows } = buildLocationProposals(state, { current: '' }, options());
     const result = applyLocationReview(state, rows, rows);
     assert.equal(result.appliedRows.length, 1);
     assert.equal(result.state.locations.currentId, '');
@@ -163,28 +166,28 @@ test('clearing current place requires an explicit empty reference', () => {
 
 test('cyclic and ambiguous reader discoveries are held out of the store', () => {
     const cycle = buildLocationProposals(enabled(), { places: [
-        { ref: 'a', name: 'A', parentRef: 'b' },
-        { ref: 'b', name: 'B', parentRef: 'a' },
+        { name: 'A', parent: 'b' },
+        { name: 'B', parent: 'a' },
     ] }, options());
     assert.equal(cycle.rows.length, 0);
     assert.ok(cycle.warnings.length);
     const duplicate = buildLocationProposals(enabled(), { places: [
-        { ref: 'a', name: 'Inn' },
-        { ref: 'b', name: 'Other', aliases: ['inn'] },
+        { name: 'Inn' },
+        { name: 'Other', aliases: ['inn'] },
     ] }, options());
     assert.equal(duplicate.rows.length, 1);
 });
 
-test('malformed supplied fields cannot erase saved fields, and repeated refs are never resolved arbitrarily', () => {
+test('malformed supplied fields cannot erase saved fields, and repeated names are never resolved arbitrarily', () => {
     const state = editLocation(enabled(), { name: 'Lantern', aliases: ['Inn'], description: 'A familiar inn.' }, { makeId: () => 'inn' });
-    for (const patch of [{ aliases: null }, { aliases: 'Other' }, { description: null }, { parentRef: 3 }]) {
-        const result = buildLocationProposals(state, { places: [{ ref: 'inn', ...patch }] }, options());
+    for (const patch of [{ aliases: null }, { aliases: 'Other' }, { description: null }, { parent: 3 }]) {
+        const result = buildLocationProposals(state, { places: [{ name: 'Lantern', ...patch }] }, options());
         assert.equal(result.rows.length, 0);
         assert.ok(result.warnings.length);
     }
     const result = buildLocationProposals(state, { places: [
-        { ref: 'inn', name: 'First guess' },
-        { ref: 'inn', name: 'Second guess' },
+        { name: 'Lantern', description: 'First guess' },
+        { name: 'Lantern', description: 'Second guess' },
     ] }, options());
     assert.equal(result.rows.length, 0);
     assert.equal(state.locations.records.inn.name, 'Lantern');
@@ -193,13 +196,13 @@ test('malformed supplied fields cannot erase saved fields, and repeated refs are
 test('allocated stable IDs cannot overwrite existing places or collide across discoveries', () => {
     const state = editLocation(enabled(), { name: 'Existing' }, { makeId: () => 'p1' });
     const result = buildLocationProposals(state, { places: [
-        { ref: 'new', name: 'Different' },
+        { name: 'Different' },
     ] }, options());
     assert.equal(result.rows.length, 0);
     assert.ok(result.warnings.some(warning => /collision/.test(warning)));
     const duplicates = buildLocationProposals(enabled(), { places: [
-        { ref: 'a', name: 'One' },
-        { ref: 'b', name: 'Two' },
+        { name: 'One' },
+        { name: 'Two' },
     ] }, { ...options(), makeId: () => 'same' });
     assert.equal(duplicates.rows.length, 1);
     assert.ok(duplicates.warnings.some(warning => /collision/.test(warning)));
@@ -228,13 +231,13 @@ test('serialized pending rows keep trusted identity and prevent repeated applica
 });
 
 test('reader place proposals are bounded and never truncate a replacement description', () => {
-    const input = { places: Array.from({ length: 45 }, (_, i) => ({ ref: `r${i}`, name: `Place ${i}` })) };
+    const input = { places: Array.from({ length: 45 }, (_, i) => ({ name: `Place ${i}` })) };
     const result = buildLocationProposals(enabled(), input, options());
     assert.equal(result.rows.length, 40);
     assert.ok(result.warnings.some(warning => /first 40/.test(warning)));
-    const tooLong = buildLocationProposals(enabled(), { places: [{ ref: 'x', name: 'Place', description: 'x'.repeat(4001) }] }, options());
+    const tooLong = buildLocationProposals(enabled(), { places: [{ name: 'Place', description: 'x'.repeat(4001) }] }, options());
     assert.equal(tooLong.rows.length, 0);
-    const pending = buildLocationProposals(enabled(), { places: [{ ref: 'x', name: 'Place' }] }, options()).rows;
+    const pending = buildLocationProposals(enabled(), { places: [{ name: 'Place' }] }, options()).rows;
     const edited = applyLocationReview(enabled(), pending, pending.map(row => ({ ...row, after: 'x'.repeat(4001) })));
     assert.equal(edited.appliedRows.length, 0);
     assert.deepEqual(edited.state.locations.records, {});
@@ -248,4 +251,31 @@ test('disabling places preserves pending selections without applying them', () =
     assert.equal(result.remainingRows.length, 3);
     assert.ok(result.warnings.some(warning => /disabled/.test(warning)));
     assert.deepEqual(result.state.locations.records, {});
+});
+
+test('known aliases update and select the existing place without renaming it', () => {
+    let state = editLocation(enabled(), { name: 'The Lantern', aliases: ['Lantern Inn'],
+        description: 'A familiar inn.', lorebook: 'Places', loreEntryId: 8 }, { makeId: () => 'opaque-stored-id' });
+    const { rows, warnings } = buildLocationProposals(state, { places: [
+        { name: 'LANTERN INN', description: 'A familiar inn with a repaired roof.' },
+    ], current: 'Lantern Inn' }, options());
+    assert.deepEqual(warnings, []);
+    assert.deepEqual(rows.map(row => row.kind), ['location-update', 'location-current']);
+    assert.ok(rows.every(row => row.location.id === 'opaque-stored-id'));
+    state = applyLocationReview(state, rows, rows).state;
+    assert.equal(state.locations.currentId, 'opaque-stored-id');
+    assert.equal(state.locations.records['opaque-stored-id'].name, 'The Lantern');
+    assert.equal(state.locations.records['opaque-stored-id'].loreEntryId, 8);
+});
+
+test('remembering another place preserves the current scene', () => {
+    const state = setCurrentLocation(editLocation(enabled(), { name: 'Moonbeam Café' },
+        { makeId: () => 'cafe-id' }), 'cafe-id');
+    const { rows } = buildLocationProposals(state, { places: [
+        { name: 'Glasshouse', description: 'A conservatory with a glass roof.' },
+    ] }, options());
+    assert.deepEqual(rows.map(row => row.kind), ['location-create']);
+    const applied = applyLocationReview(state, rows, rows).state;
+    assert.equal(applied.locations.currentId, 'cafe-id');
+    assert.ok(Object.values(applied.locations.records).some(place => place.name === 'Glasshouse'));
 });

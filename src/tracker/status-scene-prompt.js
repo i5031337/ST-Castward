@@ -68,36 +68,42 @@ function getStatusExample() {
     const state = deps.committedState || deps.loadStateFromMetadata();
     const first = (list) => (list || []).map(s => s?.name).filter(Boolean)[0];
 
-    const player = {};
-    const playerProgression = progressionFields(settings, { isPlayer: true });
-    const playerStat = first(settings.playerStats.filter(stat => isReaderStat(stat)
-        && (!playerProgression.enabled || stat.name !== playerProgression.levelName)));
-    if (playerProgression.enabled && playerStat === playerProgression.xpName) player.deltas = { [playerStat]: 1 };
-    else if (playerStat) player.stats = { [playerStat]: '<new value>' };
+    const statExample = (definitions, values, progression) => {
+        const stat = (definitions || []).find(def => def?.name && isReaderStat(def)
+            && (!progression.enabled || def.name !== progression.levelName));
+        if (!stat) return {};
+        if (progression.enabled && stat.name === progression.xpName) return { deltas: { [stat.name]: 1 } };
+        const numeric = ['number', 'bar'].includes(stat.type);
+        return numeric && String(values?.[stat.name] ?? '').trim()
+            ? { deltas: { [stat.name]: -1 } } : { stats: { [stat.name]: '<new value>' } };
+    };
+    const player = statExample(settings.playerStats, state.player?.stats,
+        progressionFields(settings, { isPlayer: true }));
     const sampleCollection = (target, verb) => {
         const col = (settings.collections || []).find(c => c?.id
             && (collectionAppliesTo(c, target, target === 'npc' ? state?.characters?.[0] || {} : undefined)));
         if (!col) return undefined;
-        const primary = (col.fields || []).find(f => f.isPrimary)?.name || 'name';
-        const item = { [primary]: '<item name>' };
+        const primaryDef = (col.fields || []).find(f => f.isPrimary);
+        const primary = primaryDef?.name || 'name';
+        const identifier = primaryDef?.type === 'number' ? 1 : primaryDef?.type === 'boolean' ? true : '<item identifier>';
+        const item = { [primary]: identifier };
         for (const field of col.fields || []) {
             if (field.name !== primary && field.type === 'number') item[field.name] = 1;
         }
-        return { [col.id]: verb === 'add' ? { add: [item] } : { remove: ['<item lost>'] } };
+        const quantity = collectionQuantityField(col);
+        return { [col.id]: verb === 'add' ? { add: [item] }
+            : { remove: [quantity ? { [primary]: identifier, [quantity.name]: 1 } : identifier] } };
     };
     const playerCollection = sampleCollection('player', 'add');
     if (playerCollection) player.collections = playerCollection;
 
-    const character = { name: first(state?.characters) || '<someone present>' };
-    const npcProgression = progressionFields(settings, { actor: state?.characters?.[0] });
-    const npcStat = first(settings.npcStats.filter(stat => isReaderStat(stat)
-        && (!npcProgression.enabled || stat.name !== npcProgression.levelName)));
-    if (npcProgression.enabled && npcStat === npcProgression.xpName) character.deltas = { [npcStat]: 1 };
-    else if (npcStat) character.stats = { [npcStat]: '<new value>' };
+    const npc = state?.characters?.[0];
+    const character = { name: first(state?.characters) || '<someone present>',
+        ...statExample(settings.npcStats, npc?.stats, progressionFields(settings, { actor: npc })) };
     const npcCollection = sampleCollection('npc', 'remove');
     if (npcCollection) character.collections = npcCollection;
 
-    return promptText('storyExample', { update: JSON.stringify({ player, characters: [character] }) });
+    return promptText('storyExample', { update: JSON.stringify({ global: {}, player, characters: [character] }) });
 }
 
 /**

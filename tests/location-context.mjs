@@ -15,15 +15,17 @@ const json = context => JSON.parse(context.slice(context.indexOf('{')));
 test('reader recognizes an established opening scene without requiring travel', () => {
     const current = { locations: { enabled: true, currentId: '', records: {} } };
     const notes = buildLocationReaderNotes(current, 'You sit inside the Copper Lantern tavern.');
-    assert.match(notes, /opening scene/);
-    assert.match(notes, /establishes the current place without any travel/);
-    assert.match(notes, /set currentRef to the same ref/);
-    assert.match(notes, /"sceneMarker":\{"lastConfirmedRef":null\}/);
+    assert.match(notes, /opening setting/);
+    assert.match(notes, /### PLACES\nNote when the current scene’s location changes\./);
+    assert.match(notes, /Set "locations.current" to the opening setting or the place reached/);
+    assert.match(notes, /Record newly established places and details in "locations.places"/);
+    assert.match(notes, /"current":"<place>"/);
+    assert.match(notes, /"current":"","places":\[\]/);
     assert.doesNotMatch(notes, /"lastConfirmedCurrentRef"/);
-    assert.match(notes, /top-level "locations" object/);
-    assert.match(notes, /"characters":\[\],"locations":\{"places":/);
-    assert.match(notes, /Mentioning a place, remembering it, planning travel/);
-    assert.match(notes, /opening a door, inviting the player inside/);
+    assert.match(notes, /Put "locations" beside "global", "player", and "characters"/);
+    assert.match(notes, /"places":\[\{"name":/);
+    assert.match(notes, /Plans, rumours, invitations, and mentions/);
+    assert.match(notes, /until established/);
     assert.doesNotMatch(notes, /currentEvidence|"evidence"|exact quote/i);
 });
 
@@ -78,14 +80,14 @@ test('reader directory preserves identities with selected full descriptions and 
     current.locations.records.inn.description = 'x'.repeat(4000);
     for (let i = 0; i < 100; i++) current.locations.records[`p${i}`] = record(`p${i}`, `Place ${i}`);
     const notes = buildLocationReaderNotes(current, 'We enter the Old Ruins.');
-    const directory = json(notes.slice(notes.indexOf('Directory JSON')));
-    assert.equal(directory.places[0].ref, 'inn');
+    const directory = json(notes.slice(notes.indexOf('Known places:')));
+    assert.equal(directory.places[0].name, 'Rusty Lantern');
     assert.equal(directory.places[0].description.length, 4000);
     assert.ok(directory.places.length <= 80);
     assert.match(notes, /directory is partial/);
-    assert.match(notes, /explicit departure with no known destination/);
+    assert.match(notes, /explicit departure with unknown destination/);
     assert.ok(notes.length < 27000);
-    assert.ok(!directory.places.find(place => place.ref === 'other')?.description);
+    assert.ok(!directory.places.find(place => place.name === 'Unmentioned Cave')?.description);
 });
 
 test('narrator context remains bounded under large saved records', () => {
@@ -99,7 +101,7 @@ test('narrator context remains bounded under large saved records', () => {
 
 test('schema allows uncited place discoveries and field omission for updates', () => {
     const schema = locationExtractionSchema();
-    assert.deepEqual(schema.properties.places.items.required, ['ref']);
+    assert.deepEqual(schema.properties.places.items.required, ['name']);
     assert.equal(schema.required, undefined);
     assert.equal(schema.properties.places.items.properties.evidence, undefined);
     assert.equal(schema.properties.currentEvidence, undefined);
@@ -155,4 +157,23 @@ test('reader schema integration opts in without making locations mandatory', () 
     assert.equal(disabled.properties.locations, undefined);
     assert.deepEqual(enabled.properties.locations, locationExtractionSchema());
     assert.ok(!enabled.required.includes('locations'));
+});
+
+test('reader directory and schema keep stored IDs behind place names', () => {
+    const current = state();
+    const notes = buildLocationReaderNotes(current, 'We stay at the Lantern.');
+    const directory = json(notes.slice(notes.indexOf('Known places:')));
+    assert.equal(directory.current, 'Rusty Lantern');
+    assert.equal(directory.places[0].parent, 'Ashford');
+    assert.deepEqual(directory.places[0].aliases, ['the Lantern']);
+    for (const place of directory.places) {
+        assert.equal(place.ref, undefined);
+        assert.equal(place.id, undefined);
+        assert.equal(place.parentRef, undefined);
+    }
+    const schema = locationExtractionSchema();
+    assert.deepEqual(Object.keys(schema.properties), ['places', 'current']);
+    assert.deepEqual(schema.properties.places.items.required, ['name']);
+    assert.doesNotMatch(notes, /UUID|temporary ref|parentRef|currentRef|lastConfirmedRef|Brackenport|Blue Heron/);
+    assert.match(notes, /Replace placeholders with established story facts/);
 });

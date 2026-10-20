@@ -37,7 +37,7 @@ export function proposedNpcTemplate(actor, proposal, system = activeNpcSystem())
 }
 export function describeNpcTemplates(system = activeNpcSystem(), tracker = settingsProvider()?.statusTracker) {
     if (!Array.isArray(system?.npcTemplates)) return '';
-    if (!npcTemplates(system).length) return 'No NPC templates configured; omit npcTemplateId. Use fields assigned to all NPCs.';
+    if (!npcTemplates(system).length) return 'Use fields assigned to all NPCs.';
     if (npcTemplates(system).length === 1) {
         const template = npcTemplates(system)[0];
         const stats = npcStatsFor({ npcTemplateId: template.id }, tracker, system).map(stat => stat.name);
@@ -47,6 +47,6 @@ export function describeNpcTemplates(system = activeNpcSystem(), tracker = setti
         const stats = npcStatsFor({ npcTemplateId: template.id }, tracker, system).map(stat => stat.name);
         return `- ${template.id} (${template.name}): ${template.description || 'No assignment guidance.'} Stats: ${stats.join(', ') || '(none)'}`;
     });
-    return 'For each unassigned NPC, return npcTemplateId from this list when the story identifies their type; omit it if uncertain. Keep existing assignments. Use only their template’s stats.\n'
+    return 'Choose npcTemplateId for each unassigned NPC whose type is clear. Use the list below. Keep existing assignments. Use the fields listed for that type.\n'
         + lines.join('\n');
 }

@@ -218,14 +218,10 @@ function describeNpcStatFields(trackerSettings) {
             if (choices.length) details.push(`choose one of ${choices.join(', ')}`);
             else if (isNumericStat(stat)) {
                 if (stat.min !== undefined && String(stat.min).trim() !== '') details.push(`minimum ${stat.min}`);
-                const max = resolveMaxValue(stat);
-                if (max) details.push(`starting maximum ${max}`);
+                if (!isPoolStat(stat) && String(stat.maxStatValue ?? '').trim()) details.push(`maximum ${stat.maxStatValue}`);
             }
             if (String(stat.defaultValue ?? '').trim()) details.push(`default ${stat.defaultValue}`);
-            if (stat.locked) {
-                details.push('reader may initialize once; later reader changes are blocked');
-            }
-            return `- ${stat.name}: ${details.join('; ')}`;
+            return `- ${stat.name}: ${details.map(part => /[.!?]$/.test(part) ? part : `${part}.`).join(' ')}`;
         })
         .join('\n');
 }

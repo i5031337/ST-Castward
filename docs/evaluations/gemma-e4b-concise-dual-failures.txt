@@ -1,0 +1,2228 @@
+GEMMA TRACKER FAILURES — COMPLETE PROMPTS
+============================================================================
+9 failed trials; 14 failed checks; 9 critical checks across 7 trials.
+Each case includes the complete system message, complete rendered user message, and full original response.
+Requests: model, messages, max_tokens=2400, stream=false. No structured-output schema was sent.
+Server defaults: temperature=1, top_k=64, top_p≈0.95.
+
+COMPLETE READER TEMPLATE (BEFORE SUBSTITUTION)
+----------------------------------------------------------------------------
+Report changes from the latest message and the complete present NPC cast.
+{{#playerName}}
+{{playerName}} is the player-controlled character. Put their changes under "player".
+{{/playerName}}
+
+### EVIDENCE RULES
+Use configured field purposes, rules, established costs, and earlier context to interpret resolved events. Apply costs when incurred and use explicit amounts when given. For a clear effect with an unstated amount, estimate a conservative change on the field's current scale. Apply configured persistence and reset rules.
+Initialize each arriving NPC's blank configured stats with plausible individual values. Filled locked stats remain reference data. Physical collection entries require established possession or acquisition by their owner; scene props remain environmental. Other entries follow the collection purpose; demonstrated abilities and knowledge qualify even when the action fails. Reusable entries stay held after use.
+Pool readings are current/maximum. Initialize a blank NPC pool with an individual capacity; a bare initial number means current/current. For established pools, report current-value changes as deltas. Capacity growth belongs to the level-up code.
+{{#xpProgression}}
+
+### EXPERIENCE
+For owners with enabled progression, report earned XP as a positive delta in their configured XP field, once per concrete accomplishment. Meaningful active progress toward a goal qualifies. Recovery, receiving care, accidents, unverified information, and routine conversation leave XP unchanged. Initialize a blank NPC Level once; subsequent Level changes and stat growth belong to the level-up code.
+{{/xpProgression}}
+{{#poolRecovery}}
+
+### RECOVERY
+{{poolRecovery}}
+{{/poolRecovery}}
+{{#injuryConsequence}}
+{{injuryConsequence}}
+{{/injuryConsequence}}
+
+### CONFIGURED FIELDS
+{{#limits}}
+Editable stats:
+{{limits}}
+{{/limits}}
+{{#npcFields}}
+NPC initialization fields (fill blanks, including locked fields):
+{{npcFields}}
+{{/npcFields}}
+{{#collections}}
+
+### COLLECTION DEFINITIONS
+{{collections}}
+Use each quoted collection ID and exact field spelling. The configured primary field identifies an entry and uses its declared type.
+{{/collections}}
+{{notes}}
+
+### CURRENT STATE
+{{state}}
+{{#offstage}}
+
+### KNOWN OFFSTAGE CHARACTERS
+{{offstage}}
+Include an arriving NPC in the present cast. For an established change to a known NPC who remains absent, include their changes with "offstage": true. Mentions alone leave presence unchanged.
+{{/offstage}}
+{{#numericDeltas}}
+
+### ELIGIBLE NUMERIC DELTAS
+{{numericDeltas}}
+{{/numericDeltas}}
+{{#strangers}}
+
+### STRANGERS
+Cardless speakers: {{strangers}}. Assign each a portrait kind from {{strangerKinds}}, or "", under "strangers".
+{{/strangers}}
+{{#earlier}}
+
+### EARLIER MESSAGES (already reflected in state)
+{{earlier}}
+{{/earlier}}
+
+### LATEST MESSAGE
+{{message}}
+
+### OUTPUT CONTRACT
+Return raw JSON with "global", "player", and "characters", plus requested optional keys. Include changed fields and blank NPC initializations; omit unchanged readings. Profiles and memories are reference data.
+"characters" is an array of objects with exact NPC "name" values: the complete present cast, plus evidenced known offstage updates marked "offstage": true. Player changes belong under "player". An empty cast uses [].
+For existing numeric readings, use JSON-number changes in "globalDeltas", "player.deltas", or "characters[].deltas". Use positive deltas for gains and negative deltas for losses. Use one delta per field. For text and blank numeric fields, use JSON-string readings in "global" or the owner's "stats": "8", "8/10", or a configured text value.
+{{#collections}}
+Collection changes go under the owner's "collections", keyed by collection ID:
+- "add": entry objects for acquisitions, including demonstrated abilities; counted quantities are amounts gained (default 1).
+- "remove": identifiers for uncounted losses; counted losses use objects with the primary field and quantity spent (default 1), or "all": true.
+- "update": objects with the primary field and changed non-quantity fields.
+For transfers, remove from the giver and add to the recipient. Include the primary field in each add, update, and counted remove object. Include supported item details using declared field types. Keep one entry per identifier; the extension accumulates gains and calculates remaining quantities.
+{{/collections}}
+{{#reasons}}
+Put "why" first. Key reasons by exact configured field: "<world stat>", "Player.<stat>", "<NPC name>.<stat>", or owner and collection ID. Cite the latest event or quote; label estimated amounts and NPC initial estimates.
+{{/reasons}}
+{{#strangers}}
+Stranger example: { {{strangerExample}} }.
+{{/strangers}}
+{{#minimalReply}}
+
+No-change example:
+{{minimalReply}}
+{{/minimalReply}}
+{{#changedReply}}
+
+Changed-reply example (illustrative changes):
+{{changedReply}}
+{{/changedReply}}
+{{#newNpcReply}}
+
+New NPC example (replace placeholders with initial readings using the field definitions):
+{{newNpcReply}}
+{{/newNpcReply}}
+{{#collectionExample}}
+
+Independent collection examples (replace illustrative values with supported typed details):
+{{collectionExample}}
+{{/collectionExample}}
+
+Final check: valid JSON, complete cast, supported changes, numeric delta types, and fixed pool maxima.
+{{#collections}}
+Account for consumed items with remove and quantities spent.
+{{/collections}}
+{{#xpProgression}}
+Tie each positive XP delta to its recipient's concrete accomplishment.
+{{/xpProgression}}
+{{#locationReminder}}
+{{locationReminder}}
+{{/locationReminder}}
+
+CASE 1: Earned XP was assigned to the world instead of Alex
+============================================================================
+Scenario: fantasy-battle | Suite: tracker | Repeat: 1
+Endpoint: http://127.0.0.1:8080/v1
+Type: Output scope / ownership
+Critical failed checks: 0
+
+STARTING CONTEXT
+Alex starts at 90/100 XP and Level 1. The latest message explicitly awards Alex 20 XP.
+
+EXPECTED
+Report player.deltas.XP = 20. The pre-rollover reading becomes 110/100; progression then yields Level 2 and 10/100 XP.
+
+ACTUAL
+The reply put XP: 20 under globalDeltas. There is no configured world XP field, so the award was ignored and Alex stayed at 90/100 XP.
+
+FAILED CHECKS
+- playerValue XP 110/100
+
+REQUEST SECTION ORDER
+1. system message
+2. user message: task/player identity; EVIDENCE RULES; EXPERIENCE; CONFIGURED FIELDS; COLLECTION DEFINITIONS; PLACES; CURRENT STATE; ELIGIBLE NUMERIC DELTAS; LATEST MESSAGE; OUTPUT CONTRACT
+
+FULL MESSAGE 1: SYSTEM
+----------------------------------------------------------------------------
+Read the latest roleplay message and return raw tracker JSON: global, player, and characters, plus requested optional keys.
+Use configured fields and exact names. Apply resolved events from the latest message; earlier effects are already reflected in state.
+Follow field purposes and established costs. Use explicit amounts when given; estimate conservative amounts for clear effects described in prose.
+Existing numeric changes are JSON-number deltas: positive for gains, negative for losses. Text and blank numeric readings are JSON strings under stats or global. Use one representation per field.
+Initialize blank NPC stats with plausible individual values. Filled locked fields remain reference data. Established pool maxima remain fixed; subsequent capacity growth belongs to level-up code.
+Enabled progression receives positive earned XP deltas for concrete accomplishments by the recipient. Subsequent Level changes and growth belong to code.
+Collections use add for acquisitions by the owner, remove for consumption or loss, and update for other fields. Counted add/remove quantities mean amounts gained/spent. Reusable abilities stay held after use.
+characters is an array of NPC objects with exact names: the complete present cast plus evidenced known offstage updates. Player changes belong under player.
+
+FULL MESSAGE 2: USER
+----------------------------------------------------------------------------
+Report changes from the latest message and the complete present NPC cast.
+Alex is the player-controlled character. Put their changes under "player".
+
+### EVIDENCE RULES
+Use configured field purposes, rules, established costs, and earlier context to interpret resolved events. Apply costs when incurred and use explicit amounts when given. For a clear effect with an unstated amount, estimate a conservative change on the field's current scale. Apply configured persistence and reset rules.
+Initialize each arriving NPC's blank configured stats with plausible individual values. Filled locked stats remain reference data. Physical collection entries require established possession or acquisition by their owner; scene props remain environmental. Other entries follow the collection purpose; demonstrated abilities and knowledge qualify even when the action fails. Reusable entries stay held after use.
+Pool readings are current/maximum. Initialize a blank NPC pool with an individual capacity; a bare initial number means current/current. For established pools, report current-value changes as deltas. Capacity growth belongs to the level-up code.
+
+### EXPERIENCE
+For owners with enabled progression, report earned XP as a positive delta in their configured XP field, once per concrete accomplishment. Meaningful active progress toward a goal qualifies. Recovery, receiving care, accidents, unverified information, and routine conversation leave XP unchanged. Initialize a blank NPC Level once; subsequent Level changes and stat growth belong to the level-up code.
+Bodily injury reduces Player.HP; effective wound care or healing increases it. Estimate an appropriate change alongside any text condition update. Partial healing leaves room for further recovery.
+
+### CONFIGURED FIELDS
+Editable stats:
+- World.Time: text; The time of day or moment in the story.
+- World.Quest: text; The objective or lead the characters are currently pursuing.
+- Player.HP: pool (current/maximum); Physical well-being. Wounds lower current HP; healing restores it. Maximum HP reflects lasting resilience.
+- Player.Mana: pool (current/maximum); Magical energy. Casting spells spends current Mana; rest or magical recovery restores it. Maximum Mana reflects lasting magical capacity.
+- Player.Armor: number; Protection from worn gear, natural hide, or magic. Higher values suggest that a blow is less threatening.
+- Player.Strength: number; Physical power used to lift, grapple, break, and strike with force. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- Player.Dexterity: number; Agility, balance, quick reactions, and precise movement. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- Player.Constitution: number; Endurance against exhaustion, illness, harsh conditions, and prolonged effort. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- Player.Intelligence: number; Memory, learned knowledge, investigation, and deliberate reasoning. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- Player.Wisdom: number; Awareness, intuition, judgment, and attention to subtle details. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- Player.Charisma: number; Presence and the ability to persuade, inspire, or unsettle others. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- Player.Condition: text; Describe injuries, ailments, and other temporary effects in plain words.
+- Player.Currency: number; Money held by this character; change it when the story establishes a gain or expense.
+- Player.XP: experience (positive earned delta for enabled progression); Experience earned through meaningful challenges, discoveries, and growth in the story.
+- NPC.HP: pool (current/maximum); Physical well-being. Wounds lower current HP; healing restores it. Maximum HP reflects lasting resilience.
+- NPC.Mana: pool (current/maximum); Magical energy. Casting spells spends current Mana; rest or magical recovery restores it. Maximum Mana reflects lasting magical capacity.
+- NPC.Armor: number; Protection from worn gear, natural hide, or magic. Higher values suggest that a blow is less threatening.
+- NPC.Strength: number; Physical power used to lift, grapple, break, and strike with force. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- NPC.Dexterity: number; Agility, balance, quick reactions, and precise movement. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- NPC.Constitution: number; Endurance against exhaustion, illness, harsh conditions, and prolonged effort. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- NPC.Intelligence: number; Memory, learned knowledge, investigation, and deliberate reasoning. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- NPC.Wisdom: number; Awareness, intuition, judgment, and attention to subtle details. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- NPC.Charisma: number; Presence and the ability to persuade, inspire, or unsettle others. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- NPC.Condition: text; Describe injuries, ailments, and other temporary effects in plain words.
+- NPC.Currency: number; Money held by this character; change it when the story establishes a gain or expense.
+- NPC.XP: experience (positive earned delta for enabled progression); Experience earned through meaningful challenges, discoveries, and growth in the story.
+NPC initialization fields (fill blanks, including locked fields):
+- NPC.HP: pool (current/maximum); Physical well-being. Wounds lower current HP; healing restores it. Maximum HP reflects lasting resilience.; default: 12/12; min: 0
+- NPC.Mana: pool (current/maximum); Magical energy. Casting spells spends current Mana; rest or magical recovery restores it. Maximum Mana reflects lasting magical capacity.; default: 10/10; min: 0
+- NPC.Armor: number; Protection from worn gear, natural hide, or magic. Higher values suggest that a blow is less threatening.; default: 10; min: 0
+- NPC.Strength: number; Physical power used to lift, grapple, break, and strike with force. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.; default: 10; min: 0
+- NPC.Dexterity: number; Agility, balance, quick reactions, and precise movement. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.; default: 10; min: 0
+- NPC.Constitution: number; Endurance against exhaustion, illness, harsh conditions, and prolonged effort. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.; default: 10; min: 0
+- NPC.Intelligence: number; Memory, learned knowledge, investigation, and deliberate reasoning. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.; default: 10; min: 0
+- NPC.Wisdom: number; Awareness, intuition, judgment, and attention to subtle details. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.; default: 10; min: 0
+- NPC.Charisma: number; Presence and the ability to persuade, inspire, or unsettle others. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.; default: 10; min: 0
+- NPC.Condition: text; Describe injuries, ailments, and other temporary effects in plain words.; default: Healthy
+- NPC.Currency: number; Money held by this character; change it when the story establishes a gain or expense.; default: 0; min: 0
+- NPC.XP: experience (positive earned delta for enabled progression); Experience earned through meaningful challenges, discoveries, and growth in the story.; default: 0/100; min: 0; XP threshold: 100
+- NPC.Level: number; A broad measure of how much this character has grown through experience.; initialize once while blank; locked afterward; default: 1; min: 1
+
+### COLLECTION DEFINITIONS
+- "equipment" for player or Character NPCs (npcTemplateId: character) - Carried gear; change holdings only when the story establishes a transfer. Fields: name [identifies the item], quantity (number) [minimum 0], description [write it when adding; kept in the library afterwards] Quantity enabled: quantity reports amounts gained in add and spent in remove; all: true removes the whole entry. update changes other fields.
+- "abilities" (Abilities and Spells) for player or Character NPCs (npcTemplateId: character) - Known abilities, spells, or techniques and any limits established by the story. Fields: name [identifies the item], kind, rank, uses - Optional. Leave blank when the ability has no stated use limit., effect [write it when adding; kept in the library afterwards]
+Use each quoted collection ID and exact field spelling. The configured primary field identifies an entry and uses its declared type.
+NPC fields: HP, Mana, Armor, Strength, Dexterity, Constitution, Intelligence, Wisdom, Charisma, Condition, Currency, XP, Level. NPC guidance: People, beasts, companions, and foes share the same stats.
+
+### PLACES
+Report established place changes as a top-level sibling of "global", "player", and "characters": {"global":{},"player":{},"characters":[],"locations":{"places":[{"name":"<parent place>"},{"name":"<place>","parent":"<parent place>","description":"<complete established description>","aliases":["<alternate name>"]}],"current":"<place>"}}. Replace placeholders with established story facts. Identify places by name or a known alias. Include changed details; descriptions replace the previous description and preserve established facts. Parent names express containment; include newly discovered parents in places. Set current to the player’s established opening setting or arrival. Use "" for an explicit departure with unknown destination; omission preserves the current place or parent. Plans, rumours, invitations, and mentions remain context until established. Known places: {"current":"Rusty Lantern","places":[{"name":"Rusty Lantern"}]}
+
+### CURRENT STATE
+{"global":{"Time":"","Quest":""},"player":{"stats":{"HP":"12/12","Mana":"10/10","Armor":"10","Strength":"10","Dexterity":"10","Constitution":"10","Intelligence":"10","Wisdom":"10","Charisma":"10","Condition":"Healthy","Currency":"0","XP":"90/100","Level":"1"},"collections":{"equipment":[],"abilities":[]}},"characters":[{"name":"Mira","npcTemplateId":"character","stats":{"HP":"12/12","Mana":"10/10","Armor":"10","Strength":"10","Dexterity":"10","Constitution":"10","Intelligence":"10","Wisdom":"10","Charisma":"10","Condition":"Healthy","Currency":"0","XP":"0/100","Level":"1"},"collections":{"equipment":[],"abilities":[]}}]}
+
+### ELIGIBLE NUMERIC DELTAS
+Player: HP, Mana, Armor, Strength, Dexterity, Constitution, Intelligence, Wisdom, Charisma, Currency, XP
+Mira: HP, Mana, Armor, Strength, Dexterity, Constitution, Intelligence, Wisdom, Charisma, Currency, XP
+
+### LATEST MESSAGE
+Inside the Rusty Lantern, the trapped cellar door snaps against Alex, dealing 3 HP of damage. Alex frees the trapped courier and earns 20 XP. Mira remains beside Alex, unharmed. The rescue is complete; Alex picks up two red healing potions, each a small glass bottle that restores health. No one travels anywhere.
+
+### OUTPUT CONTRACT
+Return raw JSON with "global", "player", and "characters", plus requested optional keys. Include changed fields and blank NPC initializations; omit unchanged readings. Profiles and memories are reference data.
+"characters" is an array of objects with exact NPC "name" values: the complete present cast, plus evidenced known offstage updates marked "offstage": true. Player changes belong under "player". An empty cast uses [].
+For existing numeric readings, use JSON-number changes in "globalDeltas", "player.deltas", or "characters[].deltas". Use positive deltas for gains and negative deltas for losses. Use one delta per field. For text and blank numeric fields, use JSON-string readings in "global" or the owner's "stats": "8", "8/10", or a configured text value.
+Collection changes go under the owner's "collections", keyed by collection ID:
+- "add": entry objects for acquisitions, including demonstrated abilities; counted quantities are amounts gained (default 1).
+- "remove": identifiers for uncounted losses; counted losses use objects with the primary field and quantity spent (default 1), or "all": true.
+- "update": objects with the primary field and changed non-quantity fields.
+For transfers, remove from the giver and add to the recipient. Include the primary field in each add, update, and counted remove object. Include supported item details using declared field types. Keep one entry per identifier; the extension accumulates gains and calculates remaining quantities.
+
+No-change example:
+{"global":{},"player":{},"characters":[{"name":"Mira"}]}
+
+Changed-reply example (illustrative changes):
+{"global":{},"player":{"deltas":{"HP":-1},"collections":{"equipment":{"add":[{"name":"<item identifier>","quantity":1}]}}},"characters":[{"name":"Mira","deltas":{"HP":-1},"collections":{"equipment":{"remove":[{"name":"<item identifier>","quantity":1}]}}}]}
+
+New NPC example (replace placeholders with initial readings using the field definitions):
+{
+  "global": {},
+  "player": {},
+  "characters": [
+    {
+      "name": "<exact NPC name from the story>",
+      "stats": {
+        "HP": "<initial reading>",
+        "Mana": "<initial reading>",
+        "Armor": "<initial reading>",
+        "Strength": "<initial reading>",
+        "Dexterity": "<initial reading>",
+        "Constitution": "<initial reading>",
+        "Intelligence": "<initial reading>",
+        "Wisdom": "<initial reading>",
+        "Charisma": "<initial reading>",
+        "Condition": "<initial reading>",
+        "Currency": "<initial reading>",
+        "XP": "<initial reading>",
+        "Level": "<initial reading>"
+      }
+    }
+  ]
+}
+
+Independent collection examples (replace illustrative values with supported typed details):
+Acquired item:
+{
+  "equipment": {
+    "add": [
+      {
+        "name": "<exact primary field value>",
+        "quantity": 1,
+        "description": "<supported item detail>"
+      }
+    ]
+  }
+}
+
+Lost item:
+{
+  "equipment": {
+    "remove": [
+      {
+        "name": "<exact primary field value>",
+        "quantity": 1
+      }
+    ]
+  }
+}
+
+Whole stack lost:
+{
+  "equipment": {
+    "remove": [
+      {
+        "name": "<exact primary field value>",
+        "all": true
+      }
+    ]
+  }
+}
+
+Changed item:
+{
+  "equipment": {
+    "update": [
+      {
+        "name": "<exact primary field value>",
+        "description": "<new value>"
+      }
+    ]
+  }
+}
+
+Final check: valid JSON, complete cast, supported changes, numeric delta types, and fixed pool maxima.
+Account for consumed items with remove and quantities spent.
+Tie each positive XP delta to its recipient's concrete accomplishment.
+For an established setting or arrival, include top-level "locations" beside "global", "player", and "characters": set "current" to the place name and add new "places".
+
+FULL ORIGINAL MODEL RESPONSE
+----------------------------------------------------------------------------
+```json
+{
+  "global": {},
+  "player": {
+    "deltas": {
+      "HP": -3
+    },
+    "collections": {
+      "equipment": {
+        "add": [
+          {
+            "name": "red healing potion",
+            "quantity": 2,
+            "description": "a small glass bottle that restores health"
+          }
+        ]
+      }
+    }
+  },
+  "characters": [
+    {
+      "name": "Mira",
+      "stats": {
+        "HP": "12/12",
+        "Mana": "10/10",
+        "Armor": 10,
+        "Strength": 10,
+        "Dexterity": 10,
+        "Constitution": 10,
+        "Intelligence": 10,
+        "Wisdom": 10,
+        "Charisma": 10,
+        "Condition": "Healthy",
+        "Currency": 0,
+        "XP": "0/100",
+        "Level": 1
+      }
+    }
+  ],
+  "globalDeltas": {
+    "XP": 20
+  }
+}
+```
+
+SOURCES
+gemma-e4b-concise-dual-tracker-prompts.json
+gemma-e4b-concise-dual-tracker-results.json
+
+CASE 2: Location output was nested inside global
+============================================================================
+Scenario: fantasy-travel | Suite: tracker | Repeat: 1
+Endpoint: http://127.0.0.1:8080/v1
+Type: Output nesting
+Critical failed checks: 2
+
+STARTING CONTEXT
+The confirmed current place is the Rusty Lantern. Alex and Mira explicitly arrive inside the Old Mill.
+
+EXPECTED
+Put locations beside global, player, and characters, with an Old Mill entry and current: "Old Mill".
+
+ACTUAL
+The reply put locations inside global. The Old Mill was not proposed as a place and the current marker stayed at the Rusty Lantern. Healing and potion consumption passed.
+
+FAILED CHECKS
+- placeCreated Old Mill [critical]
+- currentPlace Old Mill [critical]
+
+REQUEST SECTION ORDER
+1. system message
+2. user message: task/player identity; EVIDENCE RULES; EXPERIENCE; RECOVERY; CONFIGURED FIELDS; COLLECTION DEFINITIONS; PLACES; CURRENT STATE; ELIGIBLE NUMERIC DELTAS; LATEST MESSAGE; OUTPUT CONTRACT
+
+FULL MESSAGE 1: SYSTEM
+----------------------------------------------------------------------------
+Read the latest roleplay message and return raw tracker JSON: global, player, and characters, plus requested optional keys.
+Use configured fields and exact names. Apply resolved events from the latest message; earlier effects are already reflected in state.
+Follow field purposes and established costs. Use explicit amounts when given; estimate conservative amounts for clear effects described in prose.
+Existing numeric changes are JSON-number deltas: positive for gains, negative for losses. Text and blank numeric readings are JSON strings under stats or global. Use one representation per field.
+Initialize blank NPC stats with plausible individual values. Filled locked fields remain reference data. Established pool maxima remain fixed; subsequent capacity growth belongs to level-up code.
+Enabled progression receives positive earned XP deltas for concrete accomplishments by the recipient. Subsequent Level changes and growth belong to code.
+Collections use add for acquisitions by the owner, remove for consumption or loss, and update for other fields. Counted add/remove quantities mean amounts gained/spent. Reusable abilities stay held after use.
+characters is an array of NPC objects with exact names: the complete present cast plus evidenced known offstage updates. Player changes belong under player.
+
+FULL MESSAGE 2: USER
+----------------------------------------------------------------------------
+Report changes from the latest message and the complete present NPC cast.
+Alex is the player-controlled character. Put their changes under "player".
+
+### EVIDENCE RULES
+Use configured field purposes, rules, established costs, and earlier context to interpret resolved events. Apply costs when incurred and use explicit amounts when given. For a clear effect with an unstated amount, estimate a conservative change on the field's current scale. Apply configured persistence and reset rules.
+Initialize each arriving NPC's blank configured stats with plausible individual values. Filled locked stats remain reference data. Physical collection entries require established possession or acquisition by their owner; scene props remain environmental. Other entries follow the collection purpose; demonstrated abilities and knowledge qualify even when the action fails. Reusable entries stay held after use.
+Pool readings are current/maximum. Initialize a blank NPC pool with an individual capacity; a bare initial number means current/current. For established pools, report current-value changes as deltas. Capacity growth belongs to the level-up code.
+
+### EXPERIENCE
+For owners with enabled progression, report earned XP as a positive delta in their configured XP field, once per concrete accomplishment. Meaningful active progress toward a goal qualifies. Recovery, receiving care, accidents, unverified information, and routine conversation leave XP unchanged. Initialize a blank NPC Level once; subsequent Level changes and stat growth belong to the level-up code.
+
+### RECOVERY
+Complete recovery refills each affected pool to its existing maximum. A full night of sound sleep followed by waking refreshed, effective healing, or recharging can establish full recovery when configured rules permit. Match recovery to the affected owner and pools. Partial recovery warrants a smaller gain. Missing amounts: Player.HP 7/12 needs +5 to reach capacity.
+Bodily injury reduces Player.HP; effective wound care or healing increases it. Estimate an appropriate change alongside any text condition update. Partial healing leaves room for further recovery.
+
+### CONFIGURED FIELDS
+Editable stats:
+- World.Time: text; The time of day or moment in the story.
+- World.Quest: text; The objective or lead the characters are currently pursuing.
+- Player.HP: pool (current/maximum); Physical well-being. Wounds lower current HP; healing restores it. Maximum HP reflects lasting resilience.
+- Player.Mana: pool (current/maximum); Magical energy. Casting spells spends current Mana; rest or magical recovery restores it. Maximum Mana reflects lasting magical capacity.
+- Player.Armor: number; Protection from worn gear, natural hide, or magic. Higher values suggest that a blow is less threatening.
+- Player.Strength: number; Physical power used to lift, grapple, break, and strike with force. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- Player.Dexterity: number; Agility, balance, quick reactions, and precise movement. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- Player.Constitution: number; Endurance against exhaustion, illness, harsh conditions, and prolonged effort. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- Player.Intelligence: number; Memory, learned knowledge, investigation, and deliberate reasoning. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- Player.Wisdom: number; Awareness, intuition, judgment, and attention to subtle details. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- Player.Charisma: number; Presence and the ability to persuade, inspire, or unsettle others. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- Player.Condition: text; Describe injuries, ailments, and other temporary effects in plain words.
+- Player.Currency: number; Money held by this character; change it when the story establishes a gain or expense.
+- Player.XP: experience (positive earned delta for enabled progression); Experience earned through meaningful challenges, discoveries, and growth in the story.
+- NPC.HP: pool (current/maximum); Physical well-being. Wounds lower current HP; healing restores it. Maximum HP reflects lasting resilience.
+- NPC.Mana: pool (current/maximum); Magical energy. Casting spells spends current Mana; rest or magical recovery restores it. Maximum Mana reflects lasting magical capacity.
+- NPC.Armor: number; Protection from worn gear, natural hide, or magic. Higher values suggest that a blow is less threatening.
+- NPC.Strength: number; Physical power used to lift, grapple, break, and strike with force. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- NPC.Dexterity: number; Agility, balance, quick reactions, and precise movement. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- NPC.Constitution: number; Endurance against exhaustion, illness, harsh conditions, and prolonged effort. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- NPC.Intelligence: number; Memory, learned knowledge, investigation, and deliberate reasoning. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- NPC.Wisdom: number; Awareness, intuition, judgment, and attention to subtle details. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- NPC.Charisma: number; Presence and the ability to persuade, inspire, or unsettle others. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- NPC.Condition: text; Describe injuries, ailments, and other temporary effects in plain words.
+- NPC.Currency: number; Money held by this character; change it when the story establishes a gain or expense.
+- NPC.XP: experience (positive earned delta for enabled progression); Experience earned through meaningful challenges, discoveries, and growth in the story.
+NPC initialization fields (fill blanks, including locked fields):
+- NPC.HP: pool (current/maximum); Physical well-being. Wounds lower current HP; healing restores it. Maximum HP reflects lasting resilience.; default: 12/12; min: 0
+- NPC.Mana: pool (current/maximum); Magical energy. Casting spells spends current Mana; rest or magical recovery restores it. Maximum Mana reflects lasting magical capacity.; default: 10/10; min: 0
+- NPC.Armor: number; Protection from worn gear, natural hide, or magic. Higher values suggest that a blow is less threatening.; default: 10; min: 0
+- NPC.Strength: number; Physical power used to lift, grapple, break, and strike with force. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.; default: 10; min: 0
+- NPC.Dexterity: number; Agility, balance, quick reactions, and precise movement. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.; default: 10; min: 0
+- NPC.Constitution: number; Endurance against exhaustion, illness, harsh conditions, and prolonged effort. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.; default: 10; min: 0
+- NPC.Intelligence: number; Memory, learned knowledge, investigation, and deliberate reasoning. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.; default: 10; min: 0
+- NPC.Wisdom: number; Awareness, intuition, judgment, and attention to subtle details. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.; default: 10; min: 0
+- NPC.Charisma: number; Presence and the ability to persuade, inspire, or unsettle others. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.; default: 10; min: 0
+- NPC.Condition: text; Describe injuries, ailments, and other temporary effects in plain words.; default: Healthy
+- NPC.Currency: number; Money held by this character; change it when the story establishes a gain or expense.; default: 0; min: 0
+- NPC.XP: experience (positive earned delta for enabled progression); Experience earned through meaningful challenges, discoveries, and growth in the story.; default: 0/100; min: 0; XP threshold: 100
+- NPC.Level: number; A broad measure of how much this character has grown through experience.; initialize once while blank; locked afterward; default: 1; min: 1
+
+### COLLECTION DEFINITIONS
+- "equipment" for player or Character NPCs (npcTemplateId: character) - Carried gear; change holdings only when the story establishes a transfer. Fields: name [identifies the item], quantity (number) [minimum 0], description [write it when adding; kept in the library afterwards] Quantity enabled: quantity reports amounts gained in add and spent in remove; all: true removes the whole entry. update changes other fields.
+- "abilities" (Abilities and Spells) for player or Character NPCs (npcTemplateId: character) - Known abilities, spells, or techniques and any limits established by the story. Fields: name [identifies the item], kind, rank, uses - Optional. Leave blank when the ability has no stated use limit., effect [write it when adding; kept in the library afterwards]
+Use each quoted collection ID and exact field spelling. The configured primary field identifies an entry and uses its declared type.
+NPC fields: HP, Mana, Armor, Strength, Dexterity, Constitution, Intelligence, Wisdom, Charisma, Condition, Currency, XP, Level. NPC guidance: People, beasts, companions, and foes share the same stats.
+
+### PLACES
+Report established place changes as a top-level sibling of "global", "player", and "characters": {"global":{},"player":{},"characters":[],"locations":{"places":[{"name":"<parent place>"},{"name":"<place>","parent":"<parent place>","description":"<complete established description>","aliases":["<alternate name>"]}],"current":"<place>"}}. Replace placeholders with established story facts. Identify places by name or a known alias. Include changed details; descriptions replace the previous description and preserve established facts. Parent names express containment; include newly discovered parents in places. Set current to the player’s established opening setting or arrival. Use "" for an explicit departure with unknown destination; omission preserves the current place or parent. Plans, rumours, invitations, and mentions remain context until established. Known places: {"current":"Rusty Lantern","places":[{"name":"Rusty Lantern"}]}
+
+### CURRENT STATE
+{"global":{"Time":"","Quest":""},"player":{"stats":{"HP":"7/12","Mana":"10/10","Armor":"10","Strength":"10","Dexterity":"10","Constitution":"10","Intelligence":"10","Wisdom":"10","Charisma":"10","Condition":"Healthy","Currency":"0","XP":"0/100","Level":"1"},"collections":{"equipment":[{"name":"red healing potion","quantity":3}],"abilities":[]}},"characters":[{"name":"Mira","npcTemplateId":"character","stats":{"HP":"12/12","Mana":"10/10","Armor":"10","Strength":"10","Dexterity":"10","Constitution":"10","Intelligence":"10","Wisdom":"10","Charisma":"10","Condition":"Healthy","Currency":"0","XP":"0/100","Level":"1"},"collections":{"equipment":[],"abilities":[]}}]}
+
+### ELIGIBLE NUMERIC DELTAS
+Player: HP, Mana, Armor, Strength, Dexterity, Constitution, Intelligence, Wisdom, Charisma, Currency, XP
+Mira: HP, Mana, Armor, Strength, Dexterity, Constitution, Intelligence, Wisdom, Charisma, Currency, XP
+
+### LATEST MESSAGE
+Alex leaves the Rusty Lantern with Mira and arrives inside the Old Mill. Broken wooden gears cover the dusty floor. Both stand in the mill now. Alex drinks one of the three red healing potions in the pack; the draught restores 2 HP. The other two bottles remain in the pack.
+
+### OUTPUT CONTRACT
+Return raw JSON with "global", "player", and "characters", plus requested optional keys. Include changed fields and blank NPC initializations; omit unchanged readings. Profiles and memories are reference data.
+"characters" is an array of objects with exact NPC "name" values: the complete present cast, plus evidenced known offstage updates marked "offstage": true. Player changes belong under "player". An empty cast uses [].
+For existing numeric readings, use JSON-number changes in "globalDeltas", "player.deltas", or "characters[].deltas". Use positive deltas for gains and negative deltas for losses. Use one delta per field. For text and blank numeric fields, use JSON-string readings in "global" or the owner's "stats": "8", "8/10", or a configured text value.
+Collection changes go under the owner's "collections", keyed by collection ID:
+- "add": entry objects for acquisitions, including demonstrated abilities; counted quantities are amounts gained (default 1).
+- "remove": identifiers for uncounted losses; counted losses use objects with the primary field and quantity spent (default 1), or "all": true.
+- "update": objects with the primary field and changed non-quantity fields.
+For transfers, remove from the giver and add to the recipient. Include the primary field in each add, update, and counted remove object. Include supported item details using declared field types. Keep one entry per identifier; the extension accumulates gains and calculates remaining quantities.
+
+No-change example:
+{"global":{},"player":{},"characters":[{"name":"Mira"}]}
+
+Changed-reply example (illustrative changes):
+{"global":{},"player":{"deltas":{"HP":-1},"collections":{"equipment":{"add":[{"name":"<item identifier>","quantity":1}]}}},"characters":[{"name":"Mira","deltas":{"HP":-1},"collections":{"equipment":{"remove":[{"name":"<item identifier>","quantity":1}]}}}]}
+
+New NPC example (replace placeholders with initial readings using the field definitions):
+{
+  "global": {},
+  "player": {},
+  "characters": [
+    {
+      "name": "<exact NPC name from the story>",
+      "stats": {
+        "HP": "<initial reading>",
+        "Mana": "<initial reading>",
+        "Armor": "<initial reading>",
+        "Strength": "<initial reading>",
+        "Dexterity": "<initial reading>",
+        "Constitution": "<initial reading>",
+        "Intelligence": "<initial reading>",
+        "Wisdom": "<initial reading>",
+        "Charisma": "<initial reading>",
+        "Condition": "<initial reading>",
+        "Currency": "<initial reading>",
+        "XP": "<initial reading>",
+        "Level": "<initial reading>"
+      }
+    }
+  ]
+}
+
+Independent collection examples (replace illustrative values with supported typed details):
+Acquired item:
+{
+  "equipment": {
+    "add": [
+      {
+        "name": "<exact primary field value>",
+        "quantity": 1,
+        "description": "<supported item detail>"
+      }
+    ]
+  }
+}
+
+Lost item:
+{
+  "equipment": {
+    "remove": [
+      {
+        "name": "<exact primary field value>",
+        "quantity": 1
+      }
+    ]
+  }
+}
+
+Whole stack lost:
+{
+  "equipment": {
+    "remove": [
+      {
+        "name": "<exact primary field value>",
+        "all": true
+      }
+    ]
+  }
+}
+
+Changed item:
+{
+  "equipment": {
+    "update": [
+      {
+        "name": "<exact primary field value>",
+        "description": "<new value>"
+      }
+    ]
+  }
+}
+
+Final check: valid JSON, complete cast, supported changes, numeric delta types, and fixed pool maxima.
+Account for consumed items with remove and quantities spent.
+Tie each positive XP delta to its recipient's concrete accomplishment.
+For an established setting or arrival, include top-level "locations" beside "global", "player", and "characters": set "current" to the place name and add new "places".
+
+FULL ORIGINAL MODEL RESPONSE
+----------------------------------------------------------------------------
+```json
+{
+  "global": {
+    "Time": "",
+    "Quest": "",
+    "locations": {
+      "places": [
+        {
+          "name": "Rusty Lantern"
+        },
+        {
+          "name": "Old Mill",
+          "description": "Broken wooden gears cover the dusty floor."
+        }
+      ],
+      "current": "Old Mill"
+    }
+  },
+  "player": {
+    "stats": {
+      "HP": "9/12"
+    },
+    "collections": {
+      "equipment": {
+        "remove": [
+          {
+            "name": "red healing potion",
+            "quantity": 1
+          }
+        ]
+      }
+    },
+    "deltas": {
+      "HP": 2
+    }
+  },
+  "characters": [
+    {
+      "name": "Mira",
+      "stats": {
+        "HP": "12/12",
+        "Mana": "10/10",
+        "Armor": 10,
+        "Strength": 10,
+        "Dexterity": 10,
+        "Constitution": 10,
+        "Intelligence": 10,
+        "Wisdom": 10,
+        "Charisma": 10,
+        "Condition": "Healthy",
+        "Currency": 0,
+        "XP": "0/100",
+        "Level": 1
+      },
+      "collections": {
+        "equipment": [],
+        "abilities": []
+      }
+    }
+  ]
+}
+```
+
+SOURCES
+gemma-e4b-concise-dual-tracker-prompts.json
+gemma-e4b-concise-dual-tracker-results.json
+
+CASE 3: The current-place name did not match the place just created
+============================================================================
+Scenario: dating-opening | Suite: tracker | Repeat: 2
+Endpoint: http://127.0.0.1:9931/v1
+Type: Name consistency
+Critical failed checks: 1
+
+STARTING CONTEXT
+No current place is confirmed yet. The message establishes Alex inside Moonbeam Café.
+
+EXPECTED
+Create Moonbeam Café and set locations.current to the same name.
+
+ACTUAL
+The place was named "Moonbeam Café", but current was "MoonbeamCafé" without the space. The place cards were proposed; name resolution rejected the current marker.
+
+FAILED CHECKS
+- currentPlace Moonbeam Café [critical]
+
+REQUEST SECTION ORDER
+1. system message
+2. user message: task/player identity; EVIDENCE RULES; CONFIGURED FIELDS; COLLECTION DEFINITIONS; PLACES; CURRENT STATE; ELIGIBLE NUMERIC DELTAS; LATEST MESSAGE; OUTPUT CONTRACT
+
+FULL MESSAGE 1: SYSTEM
+----------------------------------------------------------------------------
+Read the latest roleplay message and return raw tracker JSON: global, player, and characters, plus requested optional keys.
+Use configured fields and exact names. Apply resolved events from the latest message; earlier effects are already reflected in state.
+Follow field purposes and established costs. Use explicit amounts when given; estimate conservative amounts for clear effects described in prose.
+Existing numeric changes are JSON-number deltas: positive for gains, negative for losses. Text and blank numeric readings are JSON strings under stats or global. Use one representation per field.
+Initialize blank NPC stats with plausible individual values. Filled locked fields remain reference data. Established pool maxima remain fixed; subsequent capacity growth belongs to level-up code.
+Enabled progression receives positive earned XP deltas for concrete accomplishments by the recipient. Subsequent Level changes and growth belong to code.
+Collections use add for acquisitions by the owner, remove for consumption or loss, and update for other fields. Counted add/remove quantities mean amounts gained/spent. Reusable abilities stay held after use.
+characters is an array of NPC objects with exact names: the complete present cast plus evidenced known offstage updates. Player changes belong under player.
+
+FULL MESSAGE 2: USER
+----------------------------------------------------------------------------
+Report changes from the latest message and the complete present NPC cast.
+Alex is the player-controlled character. Put their changes under "player".
+
+### EVIDENCE RULES
+Use configured field purposes, rules, established costs, and earlier context to interpret resolved events. Apply costs when incurred and use explicit amounts when given. For a clear effect with an unstated amount, estimate a conservative change on the field's current scale. Apply configured persistence and reset rules.
+Initialize each arriving NPC's blank configured stats with plausible individual values. Filled locked stats remain reference data. Physical collection entries require established possession or acquisition by their owner; scene props remain environmental. Other entries follow the collection purpose; demonstrated abilities and knowledge qualify even when the action fails. Reusable entries stay held after use.
+Pool readings are current/maximum. Initialize a blank NPC pool with an individual capacity; a bare initial number means current/current. For established pools, report current-value changes as deltas. Capacity growth belongs to the level-up code.
+
+### CONFIGURED FIELDS
+Editable stats:
+- World.Day and Time: text; Current day and time.
+- World.Occasion: text; Current event or planned date.
+- Player.Social Energy: pool (current/maximum); Current energy for social activity.
+- Player.Mood: text; Current emotional state.
+- NPC.Mood: text; Current emotional state.
+- NPC.Affection: number; Warmth toward the player, based on established interactions.
+- NPC.Trust: number; Trust earned through actions in the story.
+- NPC.Comfort: number; How comfortable this character currently feels around the player.
+- NPC.Relationship: text; Current relationship in words; change only when events support it.
+NPC initialization fields (fill blanks, including locked fields):
+- NPC.Mood: text; Current emotional state.; default: Neutral
+- NPC.Affection: number; Warmth toward the player, based on established interactions.; default: 0; min: 0; max: 100
+- NPC.Trust: number; Trust earned through actions in the story.; default: 0; min: 0; max: 100
+- NPC.Comfort: number; How comfortable this character currently feels around the player.; default: 0; min: 0; max: 100
+- NPC.Relationship: text; Current relationship in words; change only when events support it.
+
+### COLLECTION DEFINITIONS
+- "clothing" for player or Character NPCs (npcTemplateId: character) - Garments currently being worn. Preserve their color and details until the story changes the outfit; remove garments when taken off. Fields: name [identifies the item], slot, color, details [write it when adding; kept in the library afterwards]
+- "items" for player or Character NPCs (npcTemplateId: character) - Carried belongings, gifts, keepsakes, and useful objects. Change holdings only when the story establishes a transfer. Fields: name [identifies the item], quantity (number) [minimum 0], description [write it when adding; kept in the library afterwards] Quantity enabled: quantity reports amounts gained in add and spent in remove; all: true removes the whole entry. update changes other fields.
+Use each quoted collection ID and exact field spelling. The configured primary field identifies an entry and uses its declared type.
+NPC fields: Mood, Affection, Trust, Comfort, Relationship. NPC guidance: Every recurring person shares the same relationship fields.
+
+### PLACES
+Report established place changes as a top-level sibling of "global", "player", and "characters": {"global":{},"player":{},"characters":[],"locations":{"places":[{"name":"<parent place>"},{"name":"<place>","parent":"<parent place>","description":"<complete established description>","aliases":["<alternate name>"]}],"current":"<place>"}}. Replace placeholders with established story facts. Identify places by name or a known alias. Include changed details; descriptions replace the previous description and preserve established facts. Parent names express containment; include newly discovered parents in places. Set current to the player’s established opening setting or arrival. Use "" for an explicit departure with unknown destination; omission preserves the current place or parent. Plans, rumours, invitations, and mentions remain context until established. Known places: {"current":"","places":[]}
+
+### CURRENT STATE
+{"global":{"Day and Time":"","Occasion":""},"player":{"stats":{"Social Energy":"10/10","Mood":"Neutral"},"collections":{"clothing":[],"items":[]}},"characters":[]}
+
+### ELIGIBLE NUMERIC DELTAS
+Player: Social Energy
+
+### LATEST MESSAGE
+You sit inside Moonbeam Café in the Riverside district. Blue tile lines the counter and rain taps its tall windows. June, a human university student, sits across from you. "Nice to finally meet you, Alex," she says. It is Saturday afternoon.
+
+### OUTPUT CONTRACT
+Return raw JSON with "global", "player", and "characters", plus requested optional keys. Include changed fields and blank NPC initializations; omit unchanged readings. Profiles and memories are reference data.
+"characters" is an array of objects with exact NPC "name" values: the complete present cast, plus evidenced known offstage updates marked "offstage": true. Player changes belong under "player". An empty cast uses [].
+For existing numeric readings, use JSON-number changes in "globalDeltas", "player.deltas", or "characters[].deltas". Use positive deltas for gains and negative deltas for losses. Use one delta per field. For text and blank numeric fields, use JSON-string readings in "global" or the owner's "stats": "8", "8/10", or a configured text value.
+Collection changes go under the owner's "collections", keyed by collection ID:
+- "add": entry objects for acquisitions, including demonstrated abilities; counted quantities are amounts gained (default 1).
+- "remove": identifiers for uncounted losses; counted losses use objects with the primary field and quantity spent (default 1), or "all": true.
+- "update": objects with the primary field and changed non-quantity fields.
+For transfers, remove from the giver and add to the recipient. Include the primary field in each add, update, and counted remove object. Include supported item details using declared field types. Keep one entry per identifier; the extension accumulates gains and calculates remaining quantities.
+
+No-change example:
+{"global":{},"player":{},"characters":[]}
+
+Changed-reply example (illustrative changes):
+{"global":{},"player":{"deltas":{"Social Energy":-1},"collections":{"clothing":{"add":[{"name":"<item identifier>"}]}}},"characters":[]}
+
+New NPC example (replace placeholders with initial readings using the field definitions):
+{
+  "global": {},
+  "player": {},
+  "characters": [
+    {
+      "name": "<exact NPC name from the story>",
+      "stats": {
+        "Mood": "<initial reading>",
+        "Affection": "<initial reading>",
+        "Trust": "<initial reading>",
+        "Comfort": "<initial reading>",
+        "Relationship": "<initial reading>"
+      }
+    }
+  ]
+}
+
+Independent collection examples (replace illustrative values with supported typed details):
+Acquired item:
+{
+  "clothing": {
+    "add": [
+      {
+        "name": "<exact primary field value>",
+        "slot": "<supported item detail>",
+        "color": "<supported item detail>",
+        "details": "<supported item detail>"
+      }
+    ]
+  }
+}
+
+Lost item:
+{
+  "clothing": {
+    "remove": [
+      "<exact primary field value>"
+    ]
+  }
+}
+
+Changed item:
+{
+  "clothing": {
+    "update": [
+      {
+        "name": "<exact primary field value>",
+        "slot": "<new value>"
+      }
+    ]
+  }
+}
+
+Final check: valid JSON, complete cast, supported changes, numeric delta types, and fixed pool maxima.
+Account for consumed items with remove and quantities spent.
+For an established setting or arrival, include top-level "locations" beside "global", "player", and "characters": set "current" to the place name and add new "places".
+
+FULL ORIGINAL MODEL RESPONSE
+----------------------------------------------------------------------------
+```json
+{
+  "global": {
+    "Day and Time": "Saturday afternoon",
+    "Occasion": "Meeting June"
+  },
+  "player": {},
+  "locations": {
+    "places": [
+      {
+        "name": "Riverside district"
+      },
+      {
+        "name": "Moonbeam Café",
+        "parent": "Riverside district",
+        "description": "A café with blue tile lines on the counter and tall windows.",
+        "aliases": []
+      }
+    ],
+    "current": "MoonbeamCafé"
+  },
+  "characters": [
+    {
+      "name": "June",
+      "stats": {
+        "Mood": "Polite",
+        "Affection": 0,
+        "Trust": 0,
+        "Comfort": 0,
+        "Relationship": "Acquaintance"
+      }
+    }
+  ]
+}
+```
+
+SOURCES
+gemma-e4b-concise-dual-tracker-prompts.json
+gemma-e4b-concise-dual-tracker-results.json
+
+CASE 4: Mira was omitted from an otherwise correct no-change reply
+============================================================================
+Scenario: fantasy-holdout-cost | Suite: tracker | Repeat: 2
+Endpoint: http://127.0.0.1:9931/v1
+Type: Cast completeness
+Critical failed checks: 0
+
+STARTING CONTEXT
+Mira is already in the scene. Earlier context announces a possible 2 HP spell cost, but Alex explicitly does not cast it.
+
+EXPECTED
+Keep stats and inventory unchanged, and include {"name":"Mira"} in characters.
+
+ACTUAL
+The reply returned characters: []. It correctly left HP, XP, and inventory unchanged, but omitted the present NPC.
+
+FAILED CHECKS
+- npcPresent Mira
+
+REQUEST SECTION ORDER
+1. system message
+2. user message: task/player identity; EVIDENCE RULES; EXPERIENCE; CONFIGURED FIELDS; COLLECTION DEFINITIONS; PLACES; CURRENT STATE; ELIGIBLE NUMERIC DELTAS; EARLIER MESSAGES (already reflected in state); LATEST MESSAGE; OUTPUT CONTRACT
+
+FULL MESSAGE 1: SYSTEM
+----------------------------------------------------------------------------
+Read the latest roleplay message and return raw tracker JSON: global, player, and characters, plus requested optional keys.
+Use configured fields and exact names. Apply resolved events from the latest message; earlier effects are already reflected in state.
+Follow field purposes and established costs. Use explicit amounts when given; estimate conservative amounts for clear effects described in prose.
+Existing numeric changes are JSON-number deltas: positive for gains, negative for losses. Text and blank numeric readings are JSON strings under stats or global. Use one representation per field.
+Initialize blank NPC stats with plausible individual values. Filled locked fields remain reference data. Established pool maxima remain fixed; subsequent capacity growth belongs to level-up code.
+Enabled progression receives positive earned XP deltas for concrete accomplishments by the recipient. Subsequent Level changes and growth belong to code.
+Collections use add for acquisitions by the owner, remove for consumption or loss, and update for other fields. Counted add/remove quantities mean amounts gained/spent. Reusable abilities stay held after use.
+characters is an array of NPC objects with exact names: the complete present cast plus evidenced known offstage updates. Player changes belong under player.
+
+FULL MESSAGE 2: USER
+----------------------------------------------------------------------------
+Report changes from the latest message and the complete present NPC cast.
+Alex is the player-controlled character. Put their changes under "player".
+
+### EVIDENCE RULES
+Use configured field purposes, rules, established costs, and earlier context to interpret resolved events. Apply costs when incurred and use explicit amounts when given. For a clear effect with an unstated amount, estimate a conservative change on the field's current scale. Apply configured persistence and reset rules.
+Initialize each arriving NPC's blank configured stats with plausible individual values. Filled locked stats remain reference data. Physical collection entries require established possession or acquisition by their owner; scene props remain environmental. Other entries follow the collection purpose; demonstrated abilities and knowledge qualify even when the action fails. Reusable entries stay held after use.
+Pool readings are current/maximum. Initialize a blank NPC pool with an individual capacity; a bare initial number means current/current. For established pools, report current-value changes as deltas. Capacity growth belongs to the level-up code.
+
+### EXPERIENCE
+For owners with enabled progression, report earned XP as a positive delta in their configured XP field, once per concrete accomplishment. Meaningful active progress toward a goal qualifies. Recovery, receiving care, accidents, unverified information, and routine conversation leave XP unchanged. Initialize a blank NPC Level once; subsequent Level changes and stat growth belong to the level-up code.
+Bodily injury reduces Player.HP; effective wound care or healing increases it. Estimate an appropriate change alongside any text condition update. Partial healing leaves room for further recovery.
+
+### CONFIGURED FIELDS
+Editable stats:
+- World.Time: text; The time of day or moment in the story.
+- World.Quest: text; The objective or lead the characters are currently pursuing.
+- Player.HP: pool (current/maximum); Physical well-being. Wounds lower current HP; healing restores it. Maximum HP reflects lasting resilience.
+- Player.Mana: pool (current/maximum); Magical energy. Casting spells spends current Mana; rest or magical recovery restores it. Maximum Mana reflects lasting magical capacity.
+- Player.Armor: number; Protection from worn gear, natural hide, or magic. Higher values suggest that a blow is less threatening.
+- Player.Strength: number; Physical power used to lift, grapple, break, and strike with force. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- Player.Dexterity: number; Agility, balance, quick reactions, and precise movement. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- Player.Constitution: number; Endurance against exhaustion, illness, harsh conditions, and prolonged effort. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- Player.Intelligence: number; Memory, learned knowledge, investigation, and deliberate reasoning. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- Player.Wisdom: number; Awareness, intuition, judgment, and attention to subtle details. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- Player.Charisma: number; Presence and the ability to persuade, inspire, or unsettle others. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- Player.Condition: text; Describe injuries, ailments, and other temporary effects in plain words.
+- Player.Currency: number; Money held by this character; change it when the story establishes a gain or expense.
+- Player.XP: experience (positive earned delta for enabled progression); Experience earned through meaningful challenges, discoveries, and growth in the story.
+- NPC.HP: pool (current/maximum); Physical well-being. Wounds lower current HP; healing restores it. Maximum HP reflects lasting resilience.
+- NPC.Mana: pool (current/maximum); Magical energy. Casting spells spends current Mana; rest or magical recovery restores it. Maximum Mana reflects lasting magical capacity.
+- NPC.Armor: number; Protection from worn gear, natural hide, or magic. Higher values suggest that a blow is less threatening.
+- NPC.Strength: number; Physical power used to lift, grapple, break, and strike with force. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- NPC.Dexterity: number; Agility, balance, quick reactions, and precise movement. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- NPC.Constitution: number; Endurance against exhaustion, illness, harsh conditions, and prolonged effort. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- NPC.Intelligence: number; Memory, learned knowledge, investigation, and deliberate reasoning. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- NPC.Wisdom: number; Awareness, intuition, judgment, and attention to subtle details. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- NPC.Charisma: number; Presence and the ability to persuade, inspire, or unsettle others. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- NPC.Condition: text; Describe injuries, ailments, and other temporary effects in plain words.
+- NPC.Currency: number; Money held by this character; change it when the story establishes a gain or expense.
+- NPC.XP: experience (positive earned delta for enabled progression); Experience earned through meaningful challenges, discoveries, and growth in the story.
+NPC initialization fields (fill blanks, including locked fields):
+- NPC.HP: pool (current/maximum); Physical well-being. Wounds lower current HP; healing restores it. Maximum HP reflects lasting resilience.; default: 12/12; min: 0
+- NPC.Mana: pool (current/maximum); Magical energy. Casting spells spends current Mana; rest or magical recovery restores it. Maximum Mana reflects lasting magical capacity.; default: 10/10; min: 0
+- NPC.Armor: number; Protection from worn gear, natural hide, or magic. Higher values suggest that a blow is less threatening.; default: 10; min: 0
+- NPC.Strength: number; Physical power used to lift, grapple, break, and strike with force. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.; default: 10; min: 0
+- NPC.Dexterity: number; Agility, balance, quick reactions, and precise movement. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.; default: 10; min: 0
+- NPC.Constitution: number; Endurance against exhaustion, illness, harsh conditions, and prolonged effort. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.; default: 10; min: 0
+- NPC.Intelligence: number; Memory, learned knowledge, investigation, and deliberate reasoning. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.; default: 10; min: 0
+- NPC.Wisdom: number; Awareness, intuition, judgment, and attention to subtle details. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.; default: 10; min: 0
+- NPC.Charisma: number; Presence and the ability to persuade, inspire, or unsettle others. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.; default: 10; min: 0
+- NPC.Condition: text; Describe injuries, ailments, and other temporary effects in plain words.; default: Healthy
+- NPC.Currency: number; Money held by this character; change it when the story establishes a gain or expense.; default: 0; min: 0
+- NPC.XP: experience (positive earned delta for enabled progression); Experience earned through meaningful challenges, discoveries, and growth in the story.; default: 0/100; min: 0; XP threshold: 100
+- NPC.Level: number; A broad measure of how much this character has grown through experience.; initialize once while blank; locked afterward; default: 1; min: 1
+
+### COLLECTION DEFINITIONS
+- "equipment" for player or Character NPCs (npcTemplateId: character) - Carried gear; change holdings only when the story establishes a transfer. Fields: name [identifies the item], quantity (number) [minimum 0], description [write it when adding; kept in the library afterwards] Quantity enabled: quantity reports amounts gained in add and spent in remove; all: true removes the whole entry. update changes other fields.
+- "abilities" (Abilities and Spells) for player or Character NPCs (npcTemplateId: character) - Known abilities, spells, or techniques and any limits established by the story. Fields: name [identifies the item], kind, rank, uses - Optional. Leave blank when the ability has no stated use limit., effect [write it when adding; kept in the library afterwards]
+Use each quoted collection ID and exact field spelling. The configured primary field identifies an entry and uses its declared type.
+NPC fields: HP, Mana, Armor, Strength, Dexterity, Constitution, Intelligence, Wisdom, Charisma, Condition, Currency, XP, Level. NPC guidance: People, beasts, companions, and foes share the same stats.
+
+### PLACES
+Report established place changes as a top-level sibling of "global", "player", and "characters": {"global":{},"player":{},"characters":[],"locations":{"places":[{"name":"<parent place>"},{"name":"<place>","parent":"<parent place>","description":"<complete established description>","aliases":["<alternate name>"]}],"current":"<place>"}}. Replace placeholders with established story facts. Identify places by name or a known alias. Include changed details; descriptions replace the previous description and preserve established facts. Parent names express containment; include newly discovered parents in places. Set current to the player’s established opening setting or arrival. Use "" for an explicit departure with unknown destination; omission preserves the current place or parent. Plans, rumours, invitations, and mentions remain context until established. Known places: {"current":"Rusty Lantern","places":[{"name":"Rusty Lantern"}]}
+
+### CURRENT STATE
+{"global":{"Time":"","Quest":""},"player":{"stats":{"HP":"12/12","Mana":"10/10","Armor":"10","Strength":"10","Dexterity":"10","Constitution":"10","Intelligence":"10","Wisdom":"10","Charisma":"10","Condition":"Healthy","Currency":"0","XP":"0/100","Level":"1"},"collections":{"equipment":[],"abilities":[]}},"characters":[{"name":"Mira","npcTemplateId":"character","stats":{"HP":"12/12","Mana":"10/10","Armor":"10","Strength":"10","Dexterity":"10","Constitution":"10","Intelligence":"10","Wisdom":"10","Charisma":"10","Condition":"Healthy","Currency":"0","XP":"0/100","Level":"1"},"collections":{"equipment":[],"abilities":[]}}]}
+
+### ELIGIBLE NUMERIC DELTAS
+Player: HP, Mana, Armor, Strength, Dexterity, Constitution, Intelligence, Wisdom, Charisma, Currency, XP
+Mira: HP, Mana, Armor, Strength, Dexterity, Constitution, Intelligence, Wisdom, Charisma, Currency, XP
+
+### EARLIER MESSAGES (already reflected in state)
+[Narrator] If Alex casts Spark, it will drain 2 HP. Alex has not cast it yet.
+
+### LATEST MESSAGE
+Alex stays at the Rusty Lantern table beside Mira. "I might cast Spark later, but not now," Alex says. Mira mentions a silver key she saw yesterday, but neither of them obtains it. They rest quietly.
+
+### OUTPUT CONTRACT
+Return raw JSON with "global", "player", and "characters", plus requested optional keys. Include changed fields and blank NPC initializations; omit unchanged readings. Profiles and memories are reference data.
+"characters" is an array of objects with exact NPC "name" values: the complete present cast, plus evidenced known offstage updates marked "offstage": true. Player changes belong under "player". An empty cast uses [].
+For existing numeric readings, use JSON-number changes in "globalDeltas", "player.deltas", or "characters[].deltas". Use positive deltas for gains and negative deltas for losses. Use one delta per field. For text and blank numeric fields, use JSON-string readings in "global" or the owner's "stats": "8", "8/10", or a configured text value.
+Collection changes go under the owner's "collections", keyed by collection ID:
+- "add": entry objects for acquisitions, including demonstrated abilities; counted quantities are amounts gained (default 1).
+- "remove": identifiers for uncounted losses; counted losses use objects with the primary field and quantity spent (default 1), or "all": true.
+- "update": objects with the primary field and changed non-quantity fields.
+For transfers, remove from the giver and add to the recipient. Include the primary field in each add, update, and counted remove object. Include supported item details using declared field types. Keep one entry per identifier; the extension accumulates gains and calculates remaining quantities.
+
+No-change example:
+{"global":{},"player":{},"characters":[{"name":"Mira"}]}
+
+Changed-reply example (illustrative changes):
+{"global":{},"player":{"deltas":{"HP":-1},"collections":{"equipment":{"add":[{"name":"<item identifier>","quantity":1}]}}},"characters":[{"name":"Mira","deltas":{"HP":-1},"collections":{"equipment":{"remove":[{"name":"<item identifier>","quantity":1}]}}}]}
+
+New NPC example (replace placeholders with initial readings using the field definitions):
+{
+  "global": {},
+  "player": {},
+  "characters": [
+    {
+      "name": "<exact NPC name from the story>",
+      "stats": {
+        "HP": "<initial reading>",
+        "Mana": "<initial reading>",
+        "Armor": "<initial reading>",
+        "Strength": "<initial reading>",
+        "Dexterity": "<initial reading>",
+        "Constitution": "<initial reading>",
+        "Intelligence": "<initial reading>",
+        "Wisdom": "<initial reading>",
+        "Charisma": "<initial reading>",
+        "Condition": "<initial reading>",
+        "Currency": "<initial reading>",
+        "XP": "<initial reading>",
+        "Level": "<initial reading>"
+      }
+    }
+  ]
+}
+
+Independent collection examples (replace illustrative values with supported typed details):
+Acquired item:
+{
+  "equipment": {
+    "add": [
+      {
+        "name": "<exact primary field value>",
+        "quantity": 1,
+        "description": "<supported item detail>"
+      }
+    ]
+  }
+}
+
+Lost item:
+{
+  "equipment": {
+    "remove": [
+      {
+        "name": "<exact primary field value>",
+        "quantity": 1
+      }
+    ]
+  }
+}
+
+Whole stack lost:
+{
+  "equipment": {
+    "remove": [
+      {
+        "name": "<exact primary field value>",
+        "all": true
+      }
+    ]
+  }
+}
+
+Changed item:
+{
+  "equipment": {
+    "update": [
+      {
+        "name": "<exact primary field value>",
+        "description": "<new value>"
+      }
+    ]
+  }
+}
+
+Final check: valid JSON, complete cast, supported changes, numeric delta types, and fixed pool maxima.
+Account for consumed items with remove and quantities spent.
+Tie each positive XP delta to its recipient's concrete accomplishment.
+For an established setting or arrival, include top-level "locations" beside "global", "player", and "characters": set "current" to the place name and add new "places".
+
+FULL ORIGINAL MODEL RESPONSE
+----------------------------------------------------------------------------
+{"global":{},"player":{},"characters":[]}
+
+SOURCES
+gemma-e4b-concise-dual-tracker-prompts.json
+gemma-e4b-concise-dual-tracker-results.json
+
+CASE 5: A missing brace made the entire reply invalid JSON
+============================================================================
+Scenario: dating-holdout-drink | Suite: tracker | Repeat: 1
+Endpoint: http://127.0.0.1:8080/v1
+Type: JSON syntax
+Critical failed checks: 1
+
+STARTING CONTEXT
+Alex has four mint candies and 6/10 Social Energy. June is present.
+
+EXPECTED
+Remove two candies, report Social Energy +1 (7/10), and list June in characters.
+
+ACTUAL
+The reply contained those intended changes but omitted the closing brace for player before characters. JSON parsing failed, so the evaluator could not apply any of it. The other failed checks are downstream effects of this one syntax error.
+
+FAILED CHECKS
+- validJsonAndNotTruncated [critical]
+- itemRemove items mint candy 2
+- playerValue Social Energy 7/10
+- npcPresent June
+
+REQUEST SECTION ORDER
+1. system message
+2. user message: task/player identity; EVIDENCE RULES; RECOVERY; CONFIGURED FIELDS; COLLECTION DEFINITIONS; PLACES; CURRENT STATE; ELIGIBLE NUMERIC DELTAS; LATEST MESSAGE; OUTPUT CONTRACT
+
+FULL MESSAGE 1: SYSTEM
+----------------------------------------------------------------------------
+Read the latest roleplay message and return raw tracker JSON: global, player, and characters, plus requested optional keys.
+Use configured fields and exact names. Apply resolved events from the latest message; earlier effects are already reflected in state.
+Follow field purposes and established costs. Use explicit amounts when given; estimate conservative amounts for clear effects described in prose.
+Existing numeric changes are JSON-number deltas: positive for gains, negative for losses. Text and blank numeric readings are JSON strings under stats or global. Use one representation per field.
+Initialize blank NPC stats with plausible individual values. Filled locked fields remain reference data. Established pool maxima remain fixed; subsequent capacity growth belongs to level-up code.
+Enabled progression receives positive earned XP deltas for concrete accomplishments by the recipient. Subsequent Level changes and growth belong to code.
+Collections use add for acquisitions by the owner, remove for consumption or loss, and update for other fields. Counted add/remove quantities mean amounts gained/spent. Reusable abilities stay held after use.
+characters is an array of NPC objects with exact names: the complete present cast plus evidenced known offstage updates. Player changes belong under player.
+
+FULL MESSAGE 2: USER
+----------------------------------------------------------------------------
+Report changes from the latest message and the complete present NPC cast.
+Alex is the player-controlled character. Put their changes under "player".
+
+### EVIDENCE RULES
+Use configured field purposes, rules, established costs, and earlier context to interpret resolved events. Apply costs when incurred and use explicit amounts when given. For a clear effect with an unstated amount, estimate a conservative change on the field's current scale. Apply configured persistence and reset rules.
+Initialize each arriving NPC's blank configured stats with plausible individual values. Filled locked stats remain reference data. Physical collection entries require established possession or acquisition by their owner; scene props remain environmental. Other entries follow the collection purpose; demonstrated abilities and knowledge qualify even when the action fails. Reusable entries stay held after use.
+Pool readings are current/maximum. Initialize a blank NPC pool with an individual capacity; a bare initial number means current/current. For established pools, report current-value changes as deltas. Capacity growth belongs to the level-up code.
+
+### RECOVERY
+Complete recovery refills each affected pool to its existing maximum. A full night of sound sleep followed by waking refreshed, effective healing, or recharging can establish full recovery when configured rules permit. Match recovery to the affected owner and pools. Partial recovery warrants a smaller gain. Missing amounts: Player.Social Energy 6/10 needs +4 to reach capacity.
+
+### CONFIGURED FIELDS
+Editable stats:
+- World.Day and Time: text; Current day and time.
+- World.Occasion: text; Current event or planned date.
+- Player.Social Energy: pool (current/maximum); Current energy for social activity.
+- Player.Mood: text; Current emotional state.
+- NPC.Mood: text; Current emotional state.
+- NPC.Affection: number; Warmth toward the player, based on established interactions.
+- NPC.Trust: number; Trust earned through actions in the story.
+- NPC.Comfort: number; How comfortable this character currently feels around the player.
+- NPC.Relationship: text; Current relationship in words; change only when events support it.
+NPC initialization fields (fill blanks, including locked fields):
+- NPC.Mood: text; Current emotional state.; default: Neutral
+- NPC.Affection: number; Warmth toward the player, based on established interactions.; default: 0; min: 0; max: 100
+- NPC.Trust: number; Trust earned through actions in the story.; default: 0; min: 0; max: 100
+- NPC.Comfort: number; How comfortable this character currently feels around the player.; default: 0; min: 0; max: 100
+- NPC.Relationship: text; Current relationship in words; change only when events support it.
+
+### COLLECTION DEFINITIONS
+- "clothing" for player or Character NPCs (npcTemplateId: character) - Garments currently being worn. Preserve their color and details until the story changes the outfit; remove garments when taken off. Fields: name [identifies the item], slot, color, details [write it when adding; kept in the library afterwards]
+- "items" for player or Character NPCs (npcTemplateId: character) - Carried belongings, gifts, keepsakes, and useful objects. Change holdings only when the story establishes a transfer. Fields: name [identifies the item], quantity (number) [minimum 0], description [write it when adding; kept in the library afterwards] Quantity enabled: quantity reports amounts gained in add and spent in remove; all: true removes the whole entry. update changes other fields.
+Use each quoted collection ID and exact field spelling. The configured primary field identifies an entry and uses its declared type.
+NPC fields: Mood, Affection, Trust, Comfort, Relationship. NPC guidance: Every recurring person shares the same relationship fields.
+
+### PLACES
+Report established place changes as a top-level sibling of "global", "player", and "characters": {"global":{},"player":{},"characters":[],"locations":{"places":[{"name":"<parent place>"},{"name":"<place>","parent":"<parent place>","description":"<complete established description>","aliases":["<alternate name>"]}],"current":"<place>"}}. Replace placeholders with established story facts. Identify places by name or a known alias. Include changed details; descriptions replace the previous description and preserve established facts. Parent names express containment; include newly discovered parents in places. Set current to the player’s established opening setting or arrival. Use "" for an explicit departure with unknown destination; omission preserves the current place or parent. Plans, rumours, invitations, and mentions remain context until established. Known places: {"current":"Moonbeam Café","places":[{"name":"Moonbeam Café"}]}
+
+### CURRENT STATE
+{"global":{"Day and Time":"","Occasion":""},"player":{"stats":{"Social Energy":"6/10","Mood":"Neutral"},"collections":{"clothing":[],"items":[{"name":"mint candy","quantity":4}]}},"characters":[{"name":"June","npcTemplateId":"character","stats":{"Mood":"Neutral","Affection":"15","Trust":"10","Comfort":"20","Relationship":"Friends"},"collections":{"clothing":[],"items":[]}}]}
+
+### ELIGIBLE NUMERIC DELTAS
+Player: Social Energy
+June: Affection, Trust, Comfort
+
+### LATEST MESSAGE
+Alex remains at Moonbeam Café with June and eats two of the four mint candies from the bag, leaving two. June quietly reads her own book; nothing about their relationship changes. After a quiet rest, Alex recovers 1 Social Energy.
+
+### OUTPUT CONTRACT
+Return raw JSON with "global", "player", and "characters", plus requested optional keys. Include changed fields and blank NPC initializations; omit unchanged readings. Profiles and memories are reference data.
+"characters" is an array of objects with exact NPC "name" values: the complete present cast, plus evidenced known offstage updates marked "offstage": true. Player changes belong under "player". An empty cast uses [].
+For existing numeric readings, use JSON-number changes in "globalDeltas", "player.deltas", or "characters[].deltas". Use positive deltas for gains and negative deltas for losses. Use one delta per field. For text and blank numeric fields, use JSON-string readings in "global" or the owner's "stats": "8", "8/10", or a configured text value.
+Collection changes go under the owner's "collections", keyed by collection ID:
+- "add": entry objects for acquisitions, including demonstrated abilities; counted quantities are amounts gained (default 1).
+- "remove": identifiers for uncounted losses; counted losses use objects with the primary field and quantity spent (default 1), or "all": true.
+- "update": objects with the primary field and changed non-quantity fields.
+For transfers, remove from the giver and add to the recipient. Include the primary field in each add, update, and counted remove object. Include supported item details using declared field types. Keep one entry per identifier; the extension accumulates gains and calculates remaining quantities.
+
+No-change example:
+{"global":{},"player":{},"characters":[{"name":"June"}]}
+
+Changed-reply example (illustrative changes):
+{"global":{},"player":{"deltas":{"Social Energy":-1},"collections":{"clothing":{"add":[{"name":"<item identifier>"}]}}},"characters":[{"name":"June","deltas":{"Affection":-1},"collections":{"clothing":{"remove":["<item identifier>"]}}}]}
+
+New NPC example (replace placeholders with initial readings using the field definitions):
+{
+  "global": {},
+  "player": {},
+  "characters": [
+    {
+      "name": "<exact NPC name from the story>",
+      "stats": {
+        "Mood": "<initial reading>",
+        "Affection": "<initial reading>",
+        "Trust": "<initial reading>",
+        "Comfort": "<initial reading>",
+        "Relationship": "<initial reading>"
+      }
+    }
+  ]
+}
+
+Independent collection examples (replace illustrative values with supported typed details):
+Acquired item:
+{
+  "clothing": {
+    "add": [
+      {
+        "name": "<exact primary field value>",
+        "slot": "<supported item detail>",
+        "color": "<supported item detail>",
+        "details": "<supported item detail>"
+      }
+    ]
+  }
+}
+
+Lost item:
+{
+  "clothing": {
+    "remove": [
+      "<exact primary field value>"
+    ]
+  }
+}
+
+Changed item:
+{
+  "clothing": {
+    "update": [
+      {
+        "name": "<exact primary field value>",
+        "slot": "<new value>"
+      }
+    ]
+  }
+}
+
+Final check: valid JSON, complete cast, supported changes, numeric delta types, and fixed pool maxima.
+Account for consumed items with remove and quantities spent.
+For an established setting or arrival, include top-level "locations" beside "global", "player", and "characters": set "current" to the place name and add new "places".
+
+FULL ORIGINAL MODEL RESPONSE
+----------------------------------------------------------------------------
+```json
+{"global":{},"player":{"deltas":{"Social Energy":1},"collections":{"items":{"remove":[{"name":"mint candy","quantity":2}]}},"characters":[{"name":"June"}]}
+```
+
+SOURCES
+gemma-e4b-concise-dual-tracker-prompts.json
+gemma-e4b-concise-dual-tracker-results.json
+
+CASE 6: The reply added a coat and invented its details
+============================================================================
+Scenario: dating-restful-night | Suite: natural | Repeat: 2
+Endpoint: http://127.0.0.1:9931/v1
+Type: Collection inference
+Critical failed checks: 1
+
+STARTING CONTEXT
+Alex starts with Social Energy 2/10 and empty tracked collections. The story mentions putting away a coat, then sleeping and waking refreshed.
+
+EXPECTED
+Restore Social Energy to 10/10. Under this benchmark’s inventory criterion, leave collections unchanged.
+
+ACTUAL
+Recovery passed, but the reply added a Coat with Charcoal color and "Heavy padded winter coat" details. Those details are absent from the story. The benchmark also counts the clothing addition itself as a failure; this is distinct from the valid mention that Alex already has a coat.
+
+FAILED CHECKS
+- noInventoryChanges [critical]
+
+REQUEST SECTION ORDER
+1. system message
+2. user message: task/player identity; EVIDENCE RULES; RECOVERY; CONFIGURED FIELDS; COLLECTION DEFINITIONS; PLACES; CURRENT STATE; ELIGIBLE NUMERIC DELTAS; LATEST MESSAGE; OUTPUT CONTRACT
+
+FULL MESSAGE 1: SYSTEM
+----------------------------------------------------------------------------
+Read the latest roleplay message and return raw tracker JSON: global, player, and characters, plus requested optional keys.
+Use configured fields and exact names. Apply resolved events from the latest message; earlier effects are already reflected in state.
+Follow field purposes and established costs. Use explicit amounts when given; estimate conservative amounts for clear effects described in prose.
+Existing numeric changes are JSON-number deltas: positive for gains, negative for losses. Text and blank numeric readings are JSON strings under stats or global. Use one representation per field.
+Initialize blank NPC stats with plausible individual values. Filled locked fields remain reference data. Established pool maxima remain fixed; subsequent capacity growth belongs to level-up code.
+Enabled progression receives positive earned XP deltas for concrete accomplishments by the recipient. Subsequent Level changes and growth belong to code.
+Collections use add for acquisitions by the owner, remove for consumption or loss, and update for other fields. Counted add/remove quantities mean amounts gained/spent. Reusable abilities stay held after use.
+characters is an array of NPC objects with exact names: the complete present cast plus evidenced known offstage updates. Player changes belong under player.
+
+FULL MESSAGE 2: USER
+----------------------------------------------------------------------------
+Report changes from the latest message and the complete present NPC cast.
+Alex is the player-controlled character. Put their changes under "player".
+
+### EVIDENCE RULES
+Use configured field purposes, rules, established costs, and earlier context to interpret resolved events. Apply costs when incurred and use explicit amounts when given. For a clear effect with an unstated amount, estimate a conservative change on the field's current scale. Apply configured persistence and reset rules.
+Initialize each arriving NPC's blank configured stats with plausible individual values. Filled locked stats remain reference data. Physical collection entries require established possession or acquisition by their owner; scene props remain environmental. Other entries follow the collection purpose; demonstrated abilities and knowledge qualify even when the action fails. Reusable entries stay held after use.
+Pool readings are current/maximum. Initialize a blank NPC pool with an individual capacity; a bare initial number means current/current. For established pools, report current-value changes as deltas. Capacity growth belongs to the level-up code.
+
+### RECOVERY
+Complete recovery refills each affected pool to its existing maximum. A full night of sound sleep followed by waking refreshed, effective healing, or recharging can establish full recovery when configured rules permit. Match recovery to the affected owner and pools. Partial recovery warrants a smaller gain. Missing amounts: Player.Social Energy 2/10 needs +8 to reach capacity.
+
+### CONFIGURED FIELDS
+Editable stats:
+- World.Day and Time: text; Current day and time.
+- World.Occasion: text; Current event or planned date.
+- Player.Social Energy: pool (current/maximum); Current energy for social activity.
+- Player.Mood: text; Current emotional state.
+- NPC.Mood: text; Current emotional state.
+- NPC.Affection: number; Warmth toward the player, based on established interactions.
+- NPC.Trust: number; Trust earned through actions in the story.
+- NPC.Comfort: number; How comfortable this character currently feels around the player.
+- NPC.Relationship: text; Current relationship in words; change only when events support it.
+NPC initialization fields (fill blanks, including locked fields):
+- NPC.Mood: text; Current emotional state.; default: Neutral
+- NPC.Affection: number; Warmth toward the player, based on established interactions.; default: 0; min: 0; max: 100
+- NPC.Trust: number; Trust earned through actions in the story.; default: 0; min: 0; max: 100
+- NPC.Comfort: number; How comfortable this character currently feels around the player.; default: 0; min: 0; max: 100
+- NPC.Relationship: text; Current relationship in words; change only when events support it.
+
+### COLLECTION DEFINITIONS
+- "clothing" for player or Character NPCs (npcTemplateId: character) - Garments currently being worn. Preserve their color and details until the story changes the outfit; remove garments when taken off. Fields: name [identifies the item], slot, color, details [write it when adding; kept in the library afterwards]
+- "items" for player or Character NPCs (npcTemplateId: character) - Carried belongings, gifts, keepsakes, and useful objects. Change holdings only when the story establishes a transfer. Fields: name [identifies the item], quantity (number) [minimum 0], description [write it when adding; kept in the library afterwards] Quantity enabled: quantity reports amounts gained in add and spent in remove; all: true removes the whole entry. update changes other fields.
+Use each quoted collection ID and exact field spelling. The configured primary field identifies an entry and uses its declared type.
+NPC fields: Mood, Affection, Trust, Comfort, Relationship. NPC guidance: Every recurring person shares the same relationship fields.
+
+### PLACES
+Report established place changes as a top-level sibling of "global", "player", and "characters": {"global":{},"player":{},"characters":[],"locations":{"places":[{"name":"<parent place>"},{"name":"<place>","parent":"<parent place>","description":"<complete established description>","aliases":["<alternate name>"]}],"current":"<place>"}}. Replace placeholders with established story facts. Identify places by name or a known alias. Include changed details; descriptions replace the previous description and preserve established facts. Parent names express containment; include newly discovered parents in places. Set current to the player’s established opening setting or arrival. Use "" for an explicit departure with unknown destination; omission preserves the current place or parent. Plans, rumours, invitations, and mentions remain context until established. Known places: {"current":"Alex’s apartment","places":[{"name":"Alex’s apartment"}]}
+
+### CURRENT STATE
+{"global":{"Day and Time":"","Occasion":""},"player":{"stats":{"Social Energy":"2/10","Mood":"Neutral"},"collections":{"clothing":[],"items":[]}},"characters":[]}
+
+### ELIGIBLE NUMERIC DELTAS
+Player: Social Energy
+
+### LATEST MESSAGE
+Alex comes home feeling wrung out after the long evening. The apartment is quiet, and the familiar routine of putting away a coat and making tea helps the noise of the day fade. Alex goes to bed early, falls asleep easily, and sleeps soundly without interruption.
+
+Morning light comes through the curtains. Alex wakes refreshed, clear-headed, and ready to enjoy being around people again. After breakfast and a leisurely shower, Alex lingers over another cup of tea at home, looking forward to seeing June later.
+
+### OUTPUT CONTRACT
+Return raw JSON with "global", "player", and "characters", plus requested optional keys. Include changed fields and blank NPC initializations; omit unchanged readings. Profiles and memories are reference data.
+"characters" is an array of objects with exact NPC "name" values: the complete present cast, plus evidenced known offstage updates marked "offstage": true. Player changes belong under "player". An empty cast uses [].
+For existing numeric readings, use JSON-number changes in "globalDeltas", "player.deltas", or "characters[].deltas". Use positive deltas for gains and negative deltas for losses. Use one delta per field. For text and blank numeric fields, use JSON-string readings in "global" or the owner's "stats": "8", "8/10", or a configured text value.
+Collection changes go under the owner's "collections", keyed by collection ID:
+- "add": entry objects for acquisitions, including demonstrated abilities; counted quantities are amounts gained (default 1).
+- "remove": identifiers for uncounted losses; counted losses use objects with the primary field and quantity spent (default 1), or "all": true.
+- "update": objects with the primary field and changed non-quantity fields.
+For transfers, remove from the giver and add to the recipient. Include the primary field in each add, update, and counted remove object. Include supported item details using declared field types. Keep one entry per identifier; the extension accumulates gains and calculates remaining quantities.
+
+No-change example:
+{"global":{},"player":{},"characters":[]}
+
+Changed-reply example (illustrative changes):
+{"global":{},"player":{"deltas":{"Social Energy":-1},"collections":{"clothing":{"add":[{"name":"<item identifier>"}]}}},"characters":[]}
+
+New NPC example (replace placeholders with initial readings using the field definitions):
+{
+  "global": {},
+  "player": {},
+  "characters": [
+    {
+      "name": "<exact NPC name from the story>",
+      "stats": {
+        "Mood": "<initial reading>",
+        "Affection": "<initial reading>",
+        "Trust": "<initial reading>",
+        "Comfort": "<initial reading>",
+        "Relationship": "<initial reading>"
+      }
+    }
+  ]
+}
+
+Independent collection examples (replace illustrative values with supported typed details):
+Acquired item:
+{
+  "clothing": {
+    "add": [
+      {
+        "name": "<exact primary field value>",
+        "slot": "<supported item detail>",
+        "color": "<supported item detail>",
+        "details": "<supported item detail>"
+      }
+    ]
+  }
+}
+
+Lost item:
+{
+  "clothing": {
+    "remove": [
+      "<exact primary field value>"
+    ]
+  }
+}
+
+Changed item:
+{
+  "clothing": {
+    "update": [
+      {
+        "name": "<exact primary field value>",
+        "slot": "<new value>"
+      }
+    ]
+  }
+}
+
+Final check: valid JSON, complete cast, supported changes, numeric delta types, and fixed pool maxima.
+Account for consumed items with remove and quantities spent.
+For an established setting or arrival, include top-level "locations" beside "global", "player", and "characters": set "current" to the place name and add new "places".
+
+FULL ORIGINAL MODEL RESPONSE
+----------------------------------------------------------------------------
+```json
+{
+  "global": {
+    "Day and Time": "Morning",
+    "Occasion": "Rest and Recovery"
+  },
+  "player": {
+    "stats": {
+      "Mood": "Refreshed"
+    },
+    "deltas": {
+      "Social Energy": 8
+    },
+    "collections": {
+      "clothing": {
+        "add": [
+          {
+            "name": "Coat",
+            "slot": "outerwear",
+            "color": "Charcoal",
+            "details": "Heavy padded winter coat"
+          }
+        ]
+      }
+    }
+  },
+  "locations": {
+    "places": [
+      {
+        "name": "Alex’s apartment",
+        "description": "Alex's personal sanctuary, quiet and familiar."
+      }
+    ],
+    "current": "Alex’s apartment"
+  },
+  "characters": []
+}
+```
+
+SOURCES
+gemma-e4b-concise-dual-natural-prompts.json
+gemma-e4b-concise-dual-natural-results.json
+
+CASE 7: Wound descriptions changed, but neither health pool improved
+============================================================================
+Scenario: fantasy-partial-healing | Suite: natural | Repeat: 2
+Endpoint: http://127.0.0.1:9931/v1
+Type: Narrated numeric effects
+Critical failed checks: 2
+
+STARTING CONTEXT
+Alex starts at HP 3/12 and Mira at HP 4/12. Both treat their wounds; bleeding stops and movement improves, while wounds remain tender.
+
+EXPECTED
+Apply a conservative positive HP change to both owners, keeping each below 12/12. The benchmark checks direction and partial recovery, not one prescribed amount.
+
+ACTUAL
+The reply updated only the text Condition fields. Alex remained at 3/12 and Mira at 4/12. Both HP-increase checks failed.
+
+FAILED CHECKS
+- playerIncreased HP [critical]
+- npcAppliedIncreased Mira HP [critical]
+
+REQUEST SECTION ORDER
+1. system message
+2. user message: task/player identity; EVIDENCE RULES; EXPERIENCE; RECOVERY; CONFIGURED FIELDS; COLLECTION DEFINITIONS; PLACES; CURRENT STATE; ELIGIBLE NUMERIC DELTAS; LATEST MESSAGE; OUTPUT CONTRACT
+
+FULL MESSAGE 1: SYSTEM
+----------------------------------------------------------------------------
+Read the latest roleplay message and return raw tracker JSON: global, player, and characters, plus requested optional keys.
+Use configured fields and exact names. Apply resolved events from the latest message; earlier effects are already reflected in state.
+Follow field purposes and established costs. Use explicit amounts when given; estimate conservative amounts for clear effects described in prose.
+Existing numeric changes are JSON-number deltas: positive for gains, negative for losses. Text and blank numeric readings are JSON strings under stats or global. Use one representation per field.
+Initialize blank NPC stats with plausible individual values. Filled locked fields remain reference data. Established pool maxima remain fixed; subsequent capacity growth belongs to level-up code.
+Enabled progression receives positive earned XP deltas for concrete accomplishments by the recipient. Subsequent Level changes and growth belong to code.
+Collections use add for acquisitions by the owner, remove for consumption or loss, and update for other fields. Counted add/remove quantities mean amounts gained/spent. Reusable abilities stay held after use.
+characters is an array of NPC objects with exact names: the complete present cast plus evidenced known offstage updates. Player changes belong under player.
+
+FULL MESSAGE 2: USER
+----------------------------------------------------------------------------
+Report changes from the latest message and the complete present NPC cast.
+Alex is the player-controlled character. Put their changes under "player".
+
+### EVIDENCE RULES
+Use configured field purposes, rules, established costs, and earlier context to interpret resolved events. Apply costs when incurred and use explicit amounts when given. For a clear effect with an unstated amount, estimate a conservative change on the field's current scale. Apply configured persistence and reset rules.
+Initialize each arriving NPC's blank configured stats with plausible individual values. Filled locked stats remain reference data. Physical collection entries require established possession or acquisition by their owner; scene props remain environmental. Other entries follow the collection purpose; demonstrated abilities and knowledge qualify even when the action fails. Reusable entries stay held after use.
+Pool readings are current/maximum. Initialize a blank NPC pool with an individual capacity; a bare initial number means current/current. For established pools, report current-value changes as deltas. Capacity growth belongs to the level-up code.
+
+### EXPERIENCE
+For owners with enabled progression, report earned XP as a positive delta in their configured XP field, once per concrete accomplishment. Meaningful active progress toward a goal qualifies. Recovery, receiving care, accidents, unverified information, and routine conversation leave XP unchanged. Initialize a blank NPC Level once; subsequent Level changes and stat growth belong to the level-up code.
+
+### RECOVERY
+Complete recovery refills each affected pool to its existing maximum. A full night of sound sleep followed by waking refreshed, effective healing, or recharging can establish full recovery when configured rules permit. Match recovery to the affected owner and pools. Partial recovery warrants a smaller gain. Missing amounts: Player.HP 3/12 needs +9 to reach capacity. Mira.HP 4/12 needs +8 to reach capacity.
+Bodily injury reduces Player.HP; effective wound care or healing increases it. Estimate an appropriate change alongside any text condition update. Partial healing leaves room for further recovery.
+
+### CONFIGURED FIELDS
+Editable stats:
+- World.Time: text; The time of day or moment in the story.
+- World.Quest: text; The objective or lead the characters are currently pursuing.
+- Player.HP: pool (current/maximum); Physical well-being. Wounds lower current HP; healing restores it. Maximum HP reflects lasting resilience.
+- Player.Mana: pool (current/maximum); Magical energy. Casting spells spends current Mana; rest or magical recovery restores it. Maximum Mana reflects lasting magical capacity.
+- Player.Armor: number; Protection from worn gear, natural hide, or magic. Higher values suggest that a blow is less threatening.
+- Player.Strength: number; Physical power used to lift, grapple, break, and strike with force. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- Player.Dexterity: number; Agility, balance, quick reactions, and precise movement. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- Player.Constitution: number; Endurance against exhaustion, illness, harsh conditions, and prolonged effort. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- Player.Intelligence: number; Memory, learned knowledge, investigation, and deliberate reasoning. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- Player.Wisdom: number; Awareness, intuition, judgment, and attention to subtle details. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- Player.Charisma: number; Presence and the ability to persuade, inspire, or unsettle others. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- Player.Condition: text; Describe injuries, ailments, and other temporary effects in plain words.
+- Player.Currency: number; Money held by this character; change it when the story establishes a gain or expense.
+- Player.XP: experience (positive earned delta for enabled progression); Experience earned through meaningful challenges, discoveries, and growth in the story.
+- NPC.HP: pool (current/maximum); Physical well-being. Wounds lower current HP; healing restores it. Maximum HP reflects lasting resilience.
+- NPC.Mana: pool (current/maximum); Magical energy. Casting spells spends current Mana; rest or magical recovery restores it. Maximum Mana reflects lasting magical capacity.
+- NPC.Armor: number; Protection from worn gear, natural hide, or magic. Higher values suggest that a blow is less threatening.
+- NPC.Strength: number; Physical power used to lift, grapple, break, and strike with force. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- NPC.Dexterity: number; Agility, balance, quick reactions, and precise movement. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- NPC.Constitution: number; Endurance against exhaustion, illness, harsh conditions, and prolonged effort. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- NPC.Intelligence: number; Memory, learned knowledge, investigation, and deliberate reasoning. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- NPC.Wisdom: number; Awareness, intuition, judgment, and attention to subtle details. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- NPC.Charisma: number; Presence and the ability to persuade, inspire, or unsettle others. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- NPC.Condition: text; Describe injuries, ailments, and other temporary effects in plain words.
+- NPC.Currency: number; Money held by this character; change it when the story establishes a gain or expense.
+- NPC.XP: experience (positive earned delta for enabled progression); Experience earned through meaningful challenges, discoveries, and growth in the story.
+NPC initialization fields (fill blanks, including locked fields):
+- NPC.HP: pool (current/maximum); Physical well-being. Wounds lower current HP; healing restores it. Maximum HP reflects lasting resilience.; default: 12/12; min: 0
+- NPC.Mana: pool (current/maximum); Magical energy. Casting spells spends current Mana; rest or magical recovery restores it. Maximum Mana reflects lasting magical capacity.; default: 10/10; min: 0
+- NPC.Armor: number; Protection from worn gear, natural hide, or magic. Higher values suggest that a blow is less threatening.; default: 10; min: 0
+- NPC.Strength: number; Physical power used to lift, grapple, break, and strike with force. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.; default: 10; min: 0
+- NPC.Dexterity: number; Agility, balance, quick reactions, and precise movement. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.; default: 10; min: 0
+- NPC.Constitution: number; Endurance against exhaustion, illness, harsh conditions, and prolonged effort. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.; default: 10; min: 0
+- NPC.Intelligence: number; Memory, learned knowledge, investigation, and deliberate reasoning. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.; default: 10; min: 0
+- NPC.Wisdom: number; Awareness, intuition, judgment, and attention to subtle details. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.; default: 10; min: 0
+- NPC.Charisma: number; Presence and the ability to persuade, inspire, or unsettle others. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.; default: 10; min: 0
+- NPC.Condition: text; Describe injuries, ailments, and other temporary effects in plain words.; default: Healthy
+- NPC.Currency: number; Money held by this character; change it when the story establishes a gain or expense.; default: 0; min: 0
+- NPC.XP: experience (positive earned delta for enabled progression); Experience earned through meaningful challenges, discoveries, and growth in the story.; default: 0/100; min: 0; XP threshold: 100
+- NPC.Level: number; A broad measure of how much this character has grown through experience.; initialize once while blank; locked afterward; default: 1; min: 1
+
+### COLLECTION DEFINITIONS
+- "equipment" for player or Character NPCs (npcTemplateId: character) - Carried gear; change holdings only when the story establishes a transfer. Fields: name [identifies the item], quantity (number) [minimum 0], description [write it when adding; kept in the library afterwards] Quantity enabled: quantity reports amounts gained in add and spent in remove; all: true removes the whole entry. update changes other fields.
+- "abilities" (Abilities and Spells) for player or Character NPCs (npcTemplateId: character) - Known abilities, spells, or techniques and any limits established by the story. Fields: name [identifies the item], kind, rank, uses - Optional. Leave blank when the ability has no stated use limit., effect [write it when adding; kept in the library afterwards]
+Use each quoted collection ID and exact field spelling. The configured primary field identifies an entry and uses its declared type.
+NPC fields: HP, Mana, Armor, Strength, Dexterity, Constitution, Intelligence, Wisdom, Charisma, Condition, Currency, XP, Level. NPC guidance: People, beasts, companions, and foes share the same stats.
+
+### PLACES
+Report established place changes as a top-level sibling of "global", "player", and "characters": {"global":{},"player":{},"characters":[],"locations":{"places":[{"name":"<parent place>"},{"name":"<place>","parent":"<parent place>","description":"<complete established description>","aliases":["<alternate name>"]}],"current":"<place>"}}. Replace placeholders with established story facts. Identify places by name or a known alias. Include changed details; descriptions replace the previous description and preserve established facts. Parent names express containment; include newly discovered parents in places. Set current to the player’s established opening setting or arrival. Use "" for an explicit departure with unknown destination; omission preserves the current place or parent. Plans, rumours, invitations, and mentions remain context until established. Known places: {"current":"Rusty Lantern","places":[{"name":"Rusty Lantern"}]}
+
+### CURRENT STATE
+{"global":{"Time":"","Quest":""},"player":{"stats":{"HP":"3/12","Mana":"10/10","Armor":"10","Strength":"10","Dexterity":"10","Constitution":"10","Intelligence":"10","Wisdom":"10","Charisma":"10","Condition":"Healthy","Currency":"0","XP":"0/100","Level":"1"},"collections":{"equipment":[],"abilities":[]}},"characters":[{"name":"Mira","npcTemplateId":"character","stats":{"HP":"4/12","Mana":"10/10","Armor":"10","Strength":"10","Dexterity":"10","Constitution":"10","Intelligence":"10","Wisdom":"10","Charisma":"10","Condition":"Healthy","Currency":"0","XP":"0/100","Level":"1"},"collections":{"equipment":[],"abilities":[]}}]}
+
+### ELIGIBLE NUMERIC DELTAS
+Player: HP, Mana, Armor, Strength, Dexterity, Constitution, Intelligence, Wisdom, Charisma, Currency, XP
+Mira: HP, Mana, Armor, Strength, Dexterity, Constitution, Intelligence, Wisdom, Charisma, Currency, XP
+
+### LATEST MESSAGE
+After the road skirmish, Alex and Mira sit together in the Rusty Lantern's quiet back room. Mira washes the grit from Alex's arm and ties a clean bandage around the shallow cut. Alex steadies a lamp while Mira tends the scrape across her own ribs. They pause whenever the work stings, grateful to be someplace warm.
+
+Later, the bleeding has stopped and both can move more comfortably. Alex can use the arm again, and Mira's breathing comes easier, but their wounds remain tender and neither feels ready for another fight. They stay at the table, talking softly while the rain continues outside.
+
+### OUTPUT CONTRACT
+Return raw JSON with "global", "player", and "characters", plus requested optional keys. Include changed fields and blank NPC initializations; omit unchanged readings. Profiles and memories are reference data.
+"characters" is an array of objects with exact NPC "name" values: the complete present cast, plus evidenced known offstage updates marked "offstage": true. Player changes belong under "player". An empty cast uses [].
+For existing numeric readings, use JSON-number changes in "globalDeltas", "player.deltas", or "characters[].deltas". Use positive deltas for gains and negative deltas for losses. Use one delta per field. For text and blank numeric fields, use JSON-string readings in "global" or the owner's "stats": "8", "8/10", or a configured text value.
+Collection changes go under the owner's "collections", keyed by collection ID:
+- "add": entry objects for acquisitions, including demonstrated abilities; counted quantities are amounts gained (default 1).
+- "remove": identifiers for uncounted losses; counted losses use objects with the primary field and quantity spent (default 1), or "all": true.
+- "update": objects with the primary field and changed non-quantity fields.
+For transfers, remove from the giver and add to the recipient. Include the primary field in each add, update, and counted remove object. Include supported item details using declared field types. Keep one entry per identifier; the extension accumulates gains and calculates remaining quantities.
+
+No-change example:
+{"global":{},"player":{},"characters":[{"name":"Mira"}]}
+
+Changed-reply example (illustrative changes):
+{"global":{},"player":{"deltas":{"HP":-1},"collections":{"equipment":{"add":[{"name":"<item identifier>","quantity":1}]}}},"characters":[{"name":"Mira","deltas":{"HP":-1},"collections":{"equipment":{"remove":[{"name":"<item identifier>","quantity":1}]}}}]}
+
+New NPC example (replace placeholders with initial readings using the field definitions):
+{
+  "global": {},
+  "player": {},
+  "characters": [
+    {
+      "name": "<exact NPC name from the story>",
+      "stats": {
+        "HP": "<initial reading>",
+        "Mana": "<initial reading>",
+        "Armor": "<initial reading>",
+        "Strength": "<initial reading>",
+        "Dexterity": "<initial reading>",
+        "Constitution": "<initial reading>",
+        "Intelligence": "<initial reading>",
+        "Wisdom": "<initial reading>",
+        "Charisma": "<initial reading>",
+        "Condition": "<initial reading>",
+        "Currency": "<initial reading>",
+        "XP": "<initial reading>",
+        "Level": "<initial reading>"
+      }
+    }
+  ]
+}
+
+Independent collection examples (replace illustrative values with supported typed details):
+Acquired item:
+{
+  "equipment": {
+    "add": [
+      {
+        "name": "<exact primary field value>",
+        "quantity": 1,
+        "description": "<supported item detail>"
+      }
+    ]
+  }
+}
+
+Lost item:
+{
+  "equipment": {
+    "remove": [
+      {
+        "name": "<exact primary field value>",
+        "quantity": 1
+      }
+    ]
+  }
+}
+
+Whole stack lost:
+{
+  "equipment": {
+    "remove": [
+      {
+        "name": "<exact primary field value>",
+        "all": true
+      }
+    ]
+  }
+}
+
+Changed item:
+{
+  "equipment": {
+    "update": [
+      {
+        "name": "<exact primary field value>",
+        "description": "<new value>"
+      }
+    ]
+  }
+}
+
+Final check: valid JSON, complete cast, supported changes, numeric delta types, and fixed pool maxima.
+Account for consumed items with remove and quantities spent.
+Tie each positive XP delta to its recipient's concrete accomplishment.
+For an established setting or arrival, include top-level "locations" beside "global", "player", and "characters": set "current" to the place name and add new "places".
+
+FULL ORIGINAL MODEL RESPONSE
+----------------------------------------------------------------------------
+```json
+{
+  "global": {},
+  "player": {
+    "stats": {
+      "Condition": "Shallow cut on arm, currently bandaged"
+    }
+  },
+  "characters": [
+    {
+      "name": "Mira",
+      "stats": {
+        "Condition": "Scrape across ribs"
+      }
+    }
+  ],
+  "locations": {
+    "places": [
+      {
+        "name": "Rusty Lantern"
+      },
+      {
+        "name": "back room",
+        "parent": "Rusty Lantern",
+        "description": "A quiet, warm back room of the Rusty Lantern where Alex and Mira are resting and treating wounds."
+      }
+    ],
+    "current": "back room"
+  }
+}
+```
+
+SOURCES
+gemma-e4b-concise-dual-natural-prompts.json
+gemma-e4b-concise-dual-natural-results.json
+
+CASE 8: The inn and town were created without their containment link
+============================================================================
+Scenario: fantasy-parent-mixed | Suite: places | Repeat: 1
+Endpoint: http://127.0.0.1:8080/v1
+Type: Structured relationship omission
+Critical failed checks: 1
+
+STARTING CONTEXT
+Alex and Mira pass through Brackenport and enter the Blue Heron Inn, a tavern among the town’s houses.
+
+EXPECTED
+Create both places, set the inn’s parent to Brackenport, and mark the inn current.
+
+ACTUAL
+Both place cards and the correct current marker were proposed. The inn’s description mentions Brackenport, but the structured parent field was omitted, so the inn was proposed as a root place.
+
+FAILED CHECKS
+- placeParent Blue Heron Inn Brackenport [critical]
+
+REQUEST SECTION ORDER
+1. system message
+2. user message: task/player identity; EVIDENCE RULES; EXPERIENCE; CONFIGURED FIELDS; COLLECTION DEFINITIONS; PLACES; CURRENT STATE; ELIGIBLE NUMERIC DELTAS; LATEST MESSAGE; OUTPUT CONTRACT
+
+FULL MESSAGE 1: SYSTEM
+----------------------------------------------------------------------------
+Read the latest roleplay message and return raw tracker JSON: global, player, and characters, plus requested optional keys.
+Use configured fields and exact names. Apply resolved events from the latest message; earlier effects are already reflected in state.
+Follow field purposes and established costs. Use explicit amounts when given; estimate conservative amounts for clear effects described in prose.
+Existing numeric changes are JSON-number deltas: positive for gains, negative for losses. Text and blank numeric readings are JSON strings under stats or global. Use one representation per field.
+Initialize blank NPC stats with plausible individual values. Filled locked fields remain reference data. Established pool maxima remain fixed; subsequent capacity growth belongs to level-up code.
+Enabled progression receives positive earned XP deltas for concrete accomplishments by the recipient. Subsequent Level changes and growth belong to code.
+Collections use add for acquisitions by the owner, remove for consumption or loss, and update for other fields. Counted add/remove quantities mean amounts gained/spent. Reusable abilities stay held after use.
+characters is an array of NPC objects with exact names: the complete present cast plus evidenced known offstage updates. Player changes belong under player.
+
+FULL MESSAGE 2: USER
+----------------------------------------------------------------------------
+Report changes from the latest message and the complete present NPC cast.
+Alex is the player-controlled character. Put their changes under "player".
+
+### EVIDENCE RULES
+Use configured field purposes, rules, established costs, and earlier context to interpret resolved events. Apply costs when incurred and use explicit amounts when given. For a clear effect with an unstated amount, estimate a conservative change on the field's current scale. Apply configured persistence and reset rules.
+Initialize each arriving NPC's blank configured stats with plausible individual values. Filled locked stats remain reference data. Physical collection entries require established possession or acquisition by their owner; scene props remain environmental. Other entries follow the collection purpose; demonstrated abilities and knowledge qualify even when the action fails. Reusable entries stay held after use.
+Pool readings are current/maximum. Initialize a blank NPC pool with an individual capacity; a bare initial number means current/current. For established pools, report current-value changes as deltas. Capacity growth belongs to the level-up code.
+
+### EXPERIENCE
+For owners with enabled progression, report earned XP as a positive delta in their configured XP field, once per concrete accomplishment. Meaningful active progress toward a goal qualifies. Recovery, receiving care, accidents, unverified information, and routine conversation leave XP unchanged. Initialize a blank NPC Level once; subsequent Level changes and stat growth belong to the level-up code.
+Bodily injury reduces Player.HP; effective wound care or healing increases it. Estimate an appropriate change alongside any text condition update. Partial healing leaves room for further recovery.
+
+### CONFIGURED FIELDS
+Editable stats:
+- World.Time: text; The time of day or moment in the story.
+- World.Quest: text; The objective or lead the characters are currently pursuing.
+- Player.HP: pool (current/maximum); Physical well-being. Wounds lower current HP; healing restores it. Maximum HP reflects lasting resilience.
+- Player.Mana: pool (current/maximum); Magical energy. Casting spells spends current Mana; rest or magical recovery restores it. Maximum Mana reflects lasting magical capacity.
+- Player.Armor: number; Protection from worn gear, natural hide, or magic. Higher values suggest that a blow is less threatening.
+- Player.Strength: number; Physical power used to lift, grapple, break, and strike with force. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- Player.Dexterity: number; Agility, balance, quick reactions, and precise movement. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- Player.Constitution: number; Endurance against exhaustion, illness, harsh conditions, and prolonged effort. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- Player.Intelligence: number; Memory, learned knowledge, investigation, and deliberate reasoning. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- Player.Wisdom: number; Awareness, intuition, judgment, and attention to subtle details. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- Player.Charisma: number; Presence and the ability to persuade, inspire, or unsettle others. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- Player.Condition: text; Describe injuries, ailments, and other temporary effects in plain words.
+- Player.Currency: number; Money held by this character; change it when the story establishes a gain or expense.
+- Player.XP: experience (positive earned delta for enabled progression); Experience earned through meaningful challenges, discoveries, and growth in the story.
+- NPC.HP: pool (current/maximum); Physical well-being. Wounds lower current HP; healing restores it. Maximum HP reflects lasting resilience.
+- NPC.Mana: pool (current/maximum); Magical energy. Casting spells spends current Mana; rest or magical recovery restores it. Maximum Mana reflects lasting magical capacity.
+- NPC.Armor: number; Protection from worn gear, natural hide, or magic. Higher values suggest that a blow is less threatening.
+- NPC.Strength: number; Physical power used to lift, grapple, break, and strike with force. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- NPC.Dexterity: number; Agility, balance, quick reactions, and precise movement. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- NPC.Constitution: number; Endurance against exhaustion, illness, harsh conditions, and prolonged effort. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- NPC.Intelligence: number; Memory, learned knowledge, investigation, and deliberate reasoning. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- NPC.Wisdom: number; Awareness, intuition, judgment, and attention to subtle details. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- NPC.Charisma: number; Presence and the ability to persuade, inspire, or unsettle others. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- NPC.Condition: text; Describe injuries, ailments, and other temporary effects in plain words.
+- NPC.Currency: number; Money held by this character; change it when the story establishes a gain or expense.
+- NPC.XP: experience (positive earned delta for enabled progression); Experience earned through meaningful challenges, discoveries, and growth in the story.
+NPC initialization fields (fill blanks, including locked fields):
+- NPC.HP: pool (current/maximum); Physical well-being. Wounds lower current HP; healing restores it. Maximum HP reflects lasting resilience.; default: 12/12; min: 0
+- NPC.Mana: pool (current/maximum); Magical energy. Casting spells spends current Mana; rest or magical recovery restores it. Maximum Mana reflects lasting magical capacity.; default: 10/10; min: 0
+- NPC.Armor: number; Protection from worn gear, natural hide, or magic. Higher values suggest that a blow is less threatening.; default: 10; min: 0
+- NPC.Strength: number; Physical power used to lift, grapple, break, and strike with force. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.; default: 10; min: 0
+- NPC.Dexterity: number; Agility, balance, quick reactions, and precise movement. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.; default: 10; min: 0
+- NPC.Constitution: number; Endurance against exhaustion, illness, harsh conditions, and prolonged effort. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.; default: 10; min: 0
+- NPC.Intelligence: number; Memory, learned knowledge, investigation, and deliberate reasoning. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.; default: 10; min: 0
+- NPC.Wisdom: number; Awareness, intuition, judgment, and attention to subtle details. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.; default: 10; min: 0
+- NPC.Charisma: number; Presence and the ability to persuade, inspire, or unsettle others. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.; default: 10; min: 0
+- NPC.Condition: text; Describe injuries, ailments, and other temporary effects in plain words.; default: Healthy
+- NPC.Currency: number; Money held by this character; change it when the story establishes a gain or expense.; default: 0; min: 0
+- NPC.XP: experience (positive earned delta for enabled progression); Experience earned through meaningful challenges, discoveries, and growth in the story.; default: 0/100; min: 0; XP threshold: 100
+- NPC.Level: number; A broad measure of how much this character has grown through experience.; initialize once while blank; locked afterward; default: 1; min: 1
+
+### COLLECTION DEFINITIONS
+- "equipment" for player or Character NPCs (npcTemplateId: character) - Carried gear; change holdings only when the story establishes a transfer. Fields: name [identifies the item], quantity (number) [minimum 0], description [write it when adding; kept in the library afterwards] Quantity enabled: quantity reports amounts gained in add and spent in remove; all: true removes the whole entry. update changes other fields.
+- "abilities" (Abilities and Spells) for player or Character NPCs (npcTemplateId: character) - Known abilities, spells, or techniques and any limits established by the story. Fields: name [identifies the item], kind, rank, uses - Optional. Leave blank when the ability has no stated use limit., effect [write it when adding; kept in the library afterwards]
+Use each quoted collection ID and exact field spelling. The configured primary field identifies an entry and uses its declared type.
+NPC fields: HP, Mana, Armor, Strength, Dexterity, Constitution, Intelligence, Wisdom, Charisma, Condition, Currency, XP, Level. NPC guidance: People, beasts, companions, and foes share the same stats.
+
+### PLACES
+Report established place changes as a top-level sibling of "global", "player", and "characters": {"global":{},"player":{},"characters":[],"locations":{"places":[{"name":"<parent place>"},{"name":"<place>","parent":"<parent place>","description":"<complete established description>","aliases":["<alternate name>"]}],"current":"<place>"}}. Replace placeholders with established story facts. Identify places by name or a known alias. Include changed details; descriptions replace the previous description and preserve established facts. Parent names express containment; include newly discovered parents in places. Set current to the player’s established opening setting or arrival. Use "" for an explicit departure with unknown destination; omission preserves the current place or parent. Plans, rumours, invitations, and mentions remain context until established. Known places: {"current":"Rusty Lantern","places":[{"name":"Rusty Lantern"}]}
+
+### CURRENT STATE
+{"global":{"Time":"","Quest":""},"player":{"stats":{"HP":"12/12","Mana":"10/10","Armor":"10","Strength":"10","Dexterity":"10","Constitution":"10","Intelligence":"10","Wisdom":"10","Charisma":"10","Condition":"Healthy","Currency":"0","XP":"0/100","Level":"1"},"collections":{"equipment":[],"abilities":[]}},"characters":[{"name":"Mira","npcTemplateId":"character","stats":{"HP":"12/12","Mana":"10/10","Armor":"10","Strength":"10","Dexterity":"10","Constitution":"10","Intelligence":"10","Wisdom":"10","Charisma":"10","Condition":"Healthy","Currency":"0","XP":"0/100","Level":"1"},"collections":{"equipment":[],"abilities":[]}}]}
+
+### ELIGIBLE NUMERIC DELTAS
+Player: HP, Mana, Armor, Strength, Dexterity, Constitution, Intelligence, Wisdom, Charisma, Currency, XP
+Mira: HP, Mana, Armor, Strength, Dexterity, Constitution, Intelligence, Wisdom, Charisma, Currency, XP
+
+### LATEST MESSAGE
+The Rusty Lantern fades behind Alex and Mira as they follow the coastal road. At dusk they pass through Brackenport's town gate, with salt-streaked houses crowding the lanes.
+
+They duck into the Blue Heron Inn, a tavern among Brackenport's houses. Alex slips on the wet entry step and scrapes an arm badly enough to bleed. The innkeeper presses a brass key into Alex's hand for a room upstairs; Alex keeps the key. Mira stays beside Alex inside the inn.
+
+### OUTPUT CONTRACT
+Return raw JSON with "global", "player", and "characters", plus requested optional keys. Include changed fields and blank NPC initializations; omit unchanged readings. Profiles and memories are reference data.
+"characters" is an array of objects with exact NPC "name" values: the complete present cast, plus evidenced known offstage updates marked "offstage": true. Player changes belong under "player". An empty cast uses [].
+For existing numeric readings, use JSON-number changes in "globalDeltas", "player.deltas", or "characters[].deltas". Use positive deltas for gains and negative deltas for losses. Use one delta per field. For text and blank numeric fields, use JSON-string readings in "global" or the owner's "stats": "8", "8/10", or a configured text value.
+Collection changes go under the owner's "collections", keyed by collection ID:
+- "add": entry objects for acquisitions, including demonstrated abilities; counted quantities are amounts gained (default 1).
+- "remove": identifiers for uncounted losses; counted losses use objects with the primary field and quantity spent (default 1), or "all": true.
+- "update": objects with the primary field and changed non-quantity fields.
+For transfers, remove from the giver and add to the recipient. Include the primary field in each add, update, and counted remove object. Include supported item details using declared field types. Keep one entry per identifier; the extension accumulates gains and calculates remaining quantities.
+
+No-change example:
+{"global":{},"player":{},"characters":[{"name":"Mira"}]}
+
+Changed-reply example (illustrative changes):
+{"global":{},"player":{"deltas":{"HP":-1},"collections":{"equipment":{"add":[{"name":"<item identifier>","quantity":1}]}}},"characters":[{"name":"Mira","deltas":{"HP":-1},"collections":{"equipment":{"remove":[{"name":"<item identifier>","quantity":1}]}}}]}
+
+New NPC example (replace placeholders with initial readings using the field definitions):
+{
+  "global": {},
+  "player": {},
+  "characters": [
+    {
+      "name": "<exact NPC name from the story>",
+      "stats": {
+        "HP": "<initial reading>",
+        "Mana": "<initial reading>",
+        "Armor": "<initial reading>",
+        "Strength": "<initial reading>",
+        "Dexterity": "<initial reading>",
+        "Constitution": "<initial reading>",
+        "Intelligence": "<initial reading>",
+        "Wisdom": "<initial reading>",
+        "Charisma": "<initial reading>",
+        "Condition": "<initial reading>",
+        "Currency": "<initial reading>",
+        "XP": "<initial reading>",
+        "Level": "<initial reading>"
+      }
+    }
+  ]
+}
+
+Independent collection examples (replace illustrative values with supported typed details):
+Acquired item:
+{
+  "equipment": {
+    "add": [
+      {
+        "name": "<exact primary field value>",
+        "quantity": 1,
+        "description": "<supported item detail>"
+      }
+    ]
+  }
+}
+
+Lost item:
+{
+  "equipment": {
+    "remove": [
+      {
+        "name": "<exact primary field value>",
+        "quantity": 1
+      }
+    ]
+  }
+}
+
+Whole stack lost:
+{
+  "equipment": {
+    "remove": [
+      {
+        "name": "<exact primary field value>",
+        "all": true
+      }
+    ]
+  }
+}
+
+Changed item:
+{
+  "equipment": {
+    "update": [
+      {
+        "name": "<exact primary field value>",
+        "description": "<new value>"
+      }
+    ]
+  }
+}
+
+Final check: valid JSON, complete cast, supported changes, numeric delta types, and fixed pool maxima.
+Account for consumed items with remove and quantities spent.
+Tie each positive XP delta to its recipient's concrete accomplishment.
+For an established setting or arrival, include top-level "locations" beside "global", "player", and "characters": set "current" to the place name and add new "places".
+
+FULL ORIGINAL MODEL RESPONSE
+----------------------------------------------------------------------------
+```json
+{
+  "global": {
+    "Time": "Dusk",
+    "Quest": ""
+  },
+  "player": {
+    "deltas": {
+      "HP": -2
+    },
+    "stats": {
+      "Condition": "Scraped arm, bleeding"
+    },
+    "collections": {
+      "equipment": {
+        "add": [
+          {
+            "name": "brass key",
+            "quantity": 1,
+            "description": "Innkeeper's key for an upstairs room"
+          }
+        ]
+      }
+    }
+  },
+  "characters": [
+    {
+      "name": "Mira",
+      "stats": {
+        "HP": "12/12",
+        "Mana": "10/10",
+        "Armor": "10",
+        "Strength": "10",
+        "Dexterity": "10",
+        "Constitution": "10",
+        "Intelligence": "10",
+        "Wisdom": "10",
+        "Charisma": "10",
+        "Condition": "Healthy",
+        "Currency": "0",
+        "XP": "0/100",
+        "Level": "1"
+      },
+      "collections": {
+        "equipment": [],
+        "abilities": []
+      }
+    },
+    {
+      "name": "Innkeeper",
+      "stats": {
+        "HP": "12/12",
+        "Mana": "10/10",
+        "Armor": "10",
+        "Strength": "10",
+        "Dexterity": "10",
+        "Constitution": "10",
+        "Intelligence": "10",
+        "Wisdom": "10",
+        "Charisma": "10",
+        "Condition": "Healthy",
+        "Currency": "0",
+        "XP": "0/100",
+        "Level": "1"
+      },
+      "collections": {
+        "equipment": [],
+        "abilities": []
+      }
+    }
+  ],
+  "locations": {
+    "current": "Blue Heron Inn",
+    "places": [
+      {
+        "name": "Brackenport",
+        "description": "A coastal town with salt-streaked houses crowding the lanes.",
+        "aliases": [
+          "Brack"
+        ]
+      },
+      {
+        "name": "Blue Heron Inn",
+        "description": "A tavern among Brackenport's houses."
+      }
+    ]
+  }
+}
+```
+
+SOURCES
+gemma-e4b-concise-dual-places-prompts.json
+gemma-e4b-concise-dual-places-results.json
+
+CASE 9: A gift used update instead of a counted removal
+============================================================================
+Scenario: dating-root-mixed | Suite: places | Repeat: 2
+Endpoint: http://127.0.0.1:9931/v1
+Type: Collection operation
+Critical failed checks: 1
+
+STARTING CONTEXT
+Alex holds two sunflowers. The story gives one to June, who keeps it.
+
+EXPECTED
+Remove one sunflower from Alex and add one to June. Alex should retain one.
+
+ACTUAL
+June received one flower, but Alex’s collection used update with quantity: 1. Quantity changes in update are ignored; Alex retained two. The missing removal is the failed check.
+
+FAILED CHECKS
+- itemRemove items sunflower 1 [critical]
+
+REQUEST SECTION ORDER
+1. system message
+2. user message: task/player identity; EVIDENCE RULES; CONFIGURED FIELDS; COLLECTION DEFINITIONS; PLACES; CURRENT STATE; ELIGIBLE NUMERIC DELTAS; LATEST MESSAGE; OUTPUT CONTRACT
+
+FULL MESSAGE 1: SYSTEM
+----------------------------------------------------------------------------
+Read the latest roleplay message and return raw tracker JSON: global, player, and characters, plus requested optional keys.
+Use configured fields and exact names. Apply resolved events from the latest message; earlier effects are already reflected in state.
+Follow field purposes and established costs. Use explicit amounts when given; estimate conservative amounts for clear effects described in prose.
+Existing numeric changes are JSON-number deltas: positive for gains, negative for losses. Text and blank numeric readings are JSON strings under stats or global. Use one representation per field.
+Initialize blank NPC stats with plausible individual values. Filled locked fields remain reference data. Established pool maxima remain fixed; subsequent capacity growth belongs to level-up code.
+Enabled progression receives positive earned XP deltas for concrete accomplishments by the recipient. Subsequent Level changes and growth belong to code.
+Collections use add for acquisitions by the owner, remove for consumption or loss, and update for other fields. Counted add/remove quantities mean amounts gained/spent. Reusable abilities stay held after use.
+characters is an array of NPC objects with exact names: the complete present cast plus evidenced known offstage updates. Player changes belong under player.
+
+FULL MESSAGE 2: USER
+----------------------------------------------------------------------------
+Report changes from the latest message and the complete present NPC cast.
+Alex is the player-controlled character. Put their changes under "player".
+
+### EVIDENCE RULES
+Use configured field purposes, rules, established costs, and earlier context to interpret resolved events. Apply costs when incurred and use explicit amounts when given. For a clear effect with an unstated amount, estimate a conservative change on the field's current scale. Apply configured persistence and reset rules.
+Initialize each arriving NPC's blank configured stats with plausible individual values. Filled locked stats remain reference data. Physical collection entries require established possession or acquisition by their owner; scene props remain environmental. Other entries follow the collection purpose; demonstrated abilities and knowledge qualify even when the action fails. Reusable entries stay held after use.
+Pool readings are current/maximum. Initialize a blank NPC pool with an individual capacity; a bare initial number means current/current. For established pools, report current-value changes as deltas. Capacity growth belongs to the level-up code.
+
+### CONFIGURED FIELDS
+Editable stats:
+- World.Day and Time: text; Current day and time.
+- World.Occasion: text; Current event or planned date.
+- Player.Social Energy: pool (current/maximum); Current energy for social activity.
+- Player.Mood: text; Current emotional state.
+- NPC.Mood: text; Current emotional state.
+- NPC.Affection: number; Warmth toward the player, based on established interactions.
+- NPC.Trust: number; Trust earned through actions in the story.
+- NPC.Comfort: number; How comfortable this character currently feels around the player.
+- NPC.Relationship: text; Current relationship in words; change only when events support it.
+NPC initialization fields (fill blanks, including locked fields):
+- NPC.Mood: text; Current emotional state.; default: Neutral
+- NPC.Affection: number; Warmth toward the player, based on established interactions.; default: 0; min: 0; max: 100
+- NPC.Trust: number; Trust earned through actions in the story.; default: 0; min: 0; max: 100
+- NPC.Comfort: number; How comfortable this character currently feels around the player.; default: 0; min: 0; max: 100
+- NPC.Relationship: text; Current relationship in words; change only when events support it.
+
+### COLLECTION DEFINITIONS
+- "clothing" for player or Character NPCs (npcTemplateId: character) - Garments currently being worn. Preserve their color and details until the story changes the outfit; remove garments when taken off. Fields: name [identifies the item], slot, color, details [write it when adding; kept in the library afterwards]
+- "items" for player or Character NPCs (npcTemplateId: character) - Carried belongings, gifts, keepsakes, and useful objects. Change holdings only when the story establishes a transfer. Fields: name [identifies the item], quantity (number) [minimum 0], description [write it when adding; kept in the library afterwards] Quantity enabled: quantity reports amounts gained in add and spent in remove; all: true removes the whole entry. update changes other fields.
+Use each quoted collection ID and exact field spelling. The configured primary field identifies an entry and uses its declared type.
+NPC fields: Mood, Affection, Trust, Comfort, Relationship. NPC guidance: Every recurring person shares the same relationship fields.
+
+### PLACES
+Report established place changes as a top-level sibling of "global", "player", and "characters": {"global":{},"player":{},"characters":[],"locations":{"places":[{"name":"<parent place>"},{"name":"<place>","parent":"<parent place>","description":"<complete established description>","aliases":["<alternate name>"]}],"current":"<place>"}}. Replace placeholders with established story facts. Identify places by name or a known alias. Include changed details; descriptions replace the previous description and preserve established facts. Parent names express containment; include newly discovered parents in places. Set current to the player’s established opening setting or arrival. Use "" for an explicit departure with unknown destination; omission preserves the current place or parent. Plans, rumours, invitations, and mentions remain context until established. Known places: {"current":"Moonbeam Café","places":[{"name":"Moonbeam Café"}]}
+
+### CURRENT STATE
+{"global":{"Day and Time":"","Occasion":""},"player":{"stats":{"Social Energy":"10/10","Mood":"Neutral"},"collections":{"clothing":[],"items":[{"name":"sunflower","quantity":2}]}},"characters":[{"name":"June","npcTemplateId":"character","stats":{"Mood":"Neutral","Affection":"15","Trust":"10","Comfort":"20","Relationship":"Friends"},"collections":{"clothing":[],"items":[]}}]}
+
+### ELIGIBLE NUMERIC DELTAS
+Player: Social Energy
+June: Affection, Trust, Comfort
+
+### LATEST MESSAGE
+Alex and June leave Moonbeam Café in the rain. Across town, the Marigold Theater glows beneath its old marquee, and they hurry through the doors before the performance begins.
+
+Inside the theater, Alex gives June one of the two sunflowers from the bag. June keeps the flower and smiles, feeling closer to Alex. After a long, draining evening, Alex is worn out but stays beside June among the red velvet seats as the house lights dim.
+
+### OUTPUT CONTRACT
+Return raw JSON with "global", "player", and "characters", plus requested optional keys. Include changed fields and blank NPC initializations; omit unchanged readings. Profiles and memories are reference data.
+"characters" is an array of objects with exact NPC "name" values: the complete present cast, plus evidenced known offstage updates marked "offstage": true. Player changes belong under "player". An empty cast uses [].
+For existing numeric readings, use JSON-number changes in "globalDeltas", "player.deltas", or "characters[].deltas". Use positive deltas for gains and negative deltas for losses. Use one delta per field. For text and blank numeric fields, use JSON-string readings in "global" or the owner's "stats": "8", "8/10", or a configured text value.
+Collection changes go under the owner's "collections", keyed by collection ID:
+- "add": entry objects for acquisitions, including demonstrated abilities; counted quantities are amounts gained (default 1).
+- "remove": identifiers for uncounted losses; counted losses use objects with the primary field and quantity spent (default 1), or "all": true.
+- "update": objects with the primary field and changed non-quantity fields.
+For transfers, remove from the giver and add to the recipient. Include the primary field in each add, update, and counted remove object. Include supported item details using declared field types. Keep one entry per identifier; the extension accumulates gains and calculates remaining quantities.
+
+No-change example:
+{"global":{},"player":{},"characters":[{"name":"June"}]}
+
+Changed-reply example (illustrative changes):
+{"global":{},"player":{"deltas":{"Social Energy":-1},"collections":{"clothing":{"add":[{"name":"<item identifier>"}]}}},"characters":[{"name":"June","deltas":{"Affection":-1},"collections":{"clothing":{"remove":["<item identifier>"]}}}]}
+
+New NPC example (replace placeholders with initial readings using the field definitions):
+{
+  "global": {},
+  "player": {},
+  "characters": [
+    {
+      "name": "<exact NPC name from the story>",
+      "stats": {
+        "Mood": "<initial reading>",
+        "Affection": "<initial reading>",
+        "Trust": "<initial reading>",
+        "Comfort": "<initial reading>",
+        "Relationship": "<initial reading>"
+      }
+    }
+  ]
+}
+
+Independent collection examples (replace illustrative values with supported typed details):
+Acquired item:
+{
+  "clothing": {
+    "add": [
+      {
+        "name": "<exact primary field value>",
+        "slot": "<supported item detail>",
+        "color": "<supported item detail>",
+        "details": "<supported item detail>"
+      }
+    ]
+  }
+}
+
+Lost item:
+{
+  "clothing": {
+    "remove": [
+      "<exact primary field value>"
+    ]
+  }
+}
+
+Changed item:
+{
+  "clothing": {
+    "update": [
+      {
+        "name": "<exact primary field value>",
+        "slot": "<new value>"
+      }
+    ]
+  }
+}
+
+Final check: valid JSON, complete cast, supported changes, numeric delta types, and fixed pool maxima.
+Account for consumed items with remove and quantities spent.
+For an established setting or arrival, include top-level "locations" beside "global", "player", and "characters": set "current" to the place name and add new "places".
+
+FULL ORIGINAL MODEL RESPONSE
+----------------------------------------------------------------------------
+```json
+{
+  "global": {
+    "Occasion": "Attending a Performance"
+  },
+  "player": {
+    "stats": {
+      "Mood": "Worn out",
+      "Social Energy": "7/10"
+    },
+    "collections": {
+      "items": {
+        "update": [
+          {
+            "name": "sunflower",
+            "quantity": 1
+          }
+        ]
+      }
+    }
+  },
+  "characters": [
+    {
+      "name": "June",
+      "stats": {
+        "Mood": "Content",
+        "Affection": 20,
+        "Trust": 12,
+        "Comfort": 23
+      },
+      "collections": {
+        "items": {
+          "add": [
+            {
+              "name": "sunflower",
+              "quantity": 1
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "locations": {
+    "current": "Marigold Theater",
+    "places": [
+      {
+        "name": "Moonbeam Café"
+      },
+      {
+        "name": "Marigold Theater",
+        "description": "A glowing theater beneath its old marquee, where performances take place.",
+        "aliases": []
+      }
+    ]
+  }
+}
+```
+
+SOURCES
+gemma-e4b-concise-dual-places-prompts.json
+gemma-e4b-concise-dual-places-results.json

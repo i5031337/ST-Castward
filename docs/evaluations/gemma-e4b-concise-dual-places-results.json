@@ -1,0 +1,1869 @@
+{
+  "startedAt": "2026-10-20T15:21:28.677Z",
+  "label": "concise-dual-places",
+  "criteria": {
+    "validJsonAndNotTruncated": 1,
+    "overallRequiredCheckRate": 1,
+    "perSystemRequiredCheckRate": 1,
+    "criticalFailuresAllowed": 0,
+    "suite": "location-tree-mixed"
+  },
+  "sourceHashes": {
+    "src/core/builtin-systems.js": "dde9bd0d0ff4fab8b6e5392969d962a97c3c28934dbd7cb843c223a8c4bbc864",
+    "src/core/settings-tracker-defaults.js": "3beb026157e41638c7b7cdf0c5f5268c425f4f8dc0f7d126d426f5caf289b035",
+    "src/core/constants-prompts.js": "e5b4c847d5050bf357b8eae281a12b8234822c9921689cc5fb08796adc0d108d",
+    "src/prompts/prompt-texts-reader.js": "250da1a4731dc8eb7f21b1046eaac87742109c7dd3b437f3ccfd312556397055",
+    "src/tracker/extractor/status-extractor-prompt.js": "ff77963c9425bf5be14b1a8891d281e8b757c703a9b21da331f1bedd26e03030",
+    "src/tracker/extractor/status-extractor-prompt-state.js": "36d6b4ef49fbe6792602b60ce9d162b184591ceb11f52a9de459d00f0f37f948",
+    "src/tracker/extractor/status-extractor-schema.js": "c296d5606d4fd3ca7466cd6c55f37e56c2bbd8a3bba7dfa8be43e346e8d4faa4",
+    "src/tracker/stat-prompt-definitions.js": "58e11c4669c995fc739f2e9db16f51810783881e530a50e0b2835a101550df4e",
+    "src/core/npc-templates.js": "8411c6fc6158acf8acfe93d313b57ce61c6cd776f9b8b4c2c485d96206aeb217",
+    "src/core/collection-fields.js": "5b6ad8ffc0d5374e317aa1798164842f1eae08da2ce73ec5067383df30258d6e",
+    "src/locations/location-context.js": "86e6aea1a7b3af12564bd791c62c53e4588e5fff93479df5326828d95b804032",
+    "src/locations/location-proposals.js": "0270e412d3fd2841dbed89a682107820f0e1a66543f096ee3ec8cfd032503e71",
+    "src/tracker/status-stat-values.js": "7b1de4e964ab34f8d30d4b29b77999a669bfdeae11e738819bdb5b6e48c8d82d",
+    "src/tracker/status-collection-updates.js": "36788c1112211883b5617823f4be2fc0aa30a876ff6e21eaf130193e3584a3f7",
+    "src/tracker/status-update-constraints.js": "e3f63de6675b36bf2200c81f739acd1883696c5ccc550d8c221907802c0f11e0",
+    "src/tracker/status-update-parser.js": "c1894cd0836b093c93c64139daebf0f51e3cec846fbf92bb7920d3c838927405",
+    "src/tracker/status-apply-update.js": "8eedf95a4ea7fc33e8c535c87ead072dd8884078f73691d2a0f9736a49c1fee7",
+    "src/tracker/progression.js": "53b41aaa840971d98c0d66bbef3b0e750126fcf8855a428301fa4711a9ef2855",
+    "src/tracker/numeric-stat-bounds.js": "3575f4b00efa2035a0c39a5b0e7235f2f44c8df2e977d160d151ff5eaf23edce",
+    "tests/eval-gemma-tracker.js": "19f0a37733dd39ea0cc56305b5040b47465c0db257fbdd261bc7e918ae184da3",
+    "tests/fixtures/gemma-request-batches.mjs": "fede71a833bcd1102857a26249122911d339afed85538fb8aa59f442635fc4bf",
+    "tests/fixtures/gemma-location-check.mjs": "76af4660b73c614ed33f560a7c234e72bf1c310741ce0905ecd1fac910f03dfc",
+    "tests/fixtures/tracker-pool-audit.mjs": "7155e88f600db726f88d34140170f9e5668896f0c8efb932b67a562e0f780c87"
+  },
+  "endpoint": "http://127.0.0.1:8080/v1",
+  "model": "/mnt/D/backup_models/gemma-4-E4B-it-qat-UD-Q4_K_XL.gguf",
+  "server": {
+    "endpoint": "http://127.0.0.1:8080/v1",
+    "model": "/mnt/D/backup_models/gemma-4-E4B-it-qat-UD-Q4_K_XL.gguf",
+    "build": "b11669-620d2225c",
+    "defaults": {
+      "params": {
+        "seed": 4294967295,
+        "temperature": 1,
+        "dynatemp_range": 0,
+        "dynatemp_exponent": 1,
+        "top_k": 64,
+        "top_p": 0.949999988079071,
+        "min_p": 0,
+        "top_n_sigma": -1,
+        "xtc_probability": 0,
+        "xtc_threshold": 0.10000000149011612,
+        "typical_p": 1,
+        "repeat_last_n": 64,
+        "repeat_penalty": 1,
+        "presence_penalty": 0,
+        "frequency_penalty": 0,
+        "dry_multiplier": 0,
+        "dry_base": 1.75,
+        "dry_allowed_length": 2,
+        "dry_penalty_last_n": 64,
+        "mirostat": 0,
+        "mirostat_tau": 5,
+        "mirostat_eta": 0.10000000149011612,
+        "adaptive_target": -1,
+        "adaptive_decay": 0.8999999761581421,
+        "max_tokens": -1,
+        "n_predict": -1,
+        "n_keep": 0,
+        "n_discard": 0,
+        "ignore_eos": false,
+        "stream": false,
+        "n_probs": 0,
+        "min_keep": 0,
+        "chat_format": "Content-only",
+        "reasoning_format": "none",
+        "reasoning_in_content": false,
+        "generation_prompt": "",
+        "samplers": [
+          "penalties",
+          "dry",
+          "top_n_sigma",
+          "top_k",
+          "typ_p",
+          "top_p",
+          "min_p",
+          "xtc",
+          "temperature"
+        ],
+        "speculative.types": "none",
+        "timings_per_token": false,
+        "post_sampling_probs": false,
+        "backend_sampling": false,
+        "lora": []
+      },
+      "n_ctx": 65536
+    },
+    "modelPath": "/mnt/D/backup_models/gemma-4-E4B-it-qat-UD-Q4_K_XL.gguf",
+    "slots": 4
+  },
+  "repeats": 2,
+  "trials": [
+    {
+      "id": "fantasy-parent-mixed",
+      "system": "fantasy",
+      "holdout": false,
+      "repeat": 0,
+      "endpoint": "http://127.0.0.1:8080/v1",
+      "elapsedMs": 16850,
+      "requestError": null,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 1417,
+        "prompt_tokens": 3798,
+        "total_tokens": 5215,
+        "prompt_tokens_details": {
+          "cached_tokens": 246
+        }
+      },
+      "content": "```json\n{\n  \"global\": {\n    \"Time\": \"Dusk\",\n    \"Quest\": \"\"\n  },\n  \"player\": {\n    \"deltas\": {\n      \"HP\": -2\n    },\n    \"stats\": {\n      \"Condition\": \"Scraped arm, bleeding\"\n    },\n    \"collections\": {\n      \"equipment\": {\n        \"add\": [\n          {\n            \"name\": \"brass key\",\n            \"quantity\": 1,\n            \"description\": \"Innkeeper's key for an upstairs room\"\n          }\n        ]\n      }\n    }\n  },\n  \"characters\": [\n    {\n      \"name\": \"Mira\",\n      \"stats\": {\n        \"HP\": \"12/12\",\n        \"Mana\": \"10/10\",\n        \"Armor\": \"10\",\n        \"Strength\": \"10\",\n        \"Dexterity\": \"10\",\n        \"Constitution\": \"10\",\n        \"Intelligence\": \"10\",\n        \"Wisdom\": \"10\",\n        \"Charisma\": \"10\",\n        \"Condition\": \"Healthy\",\n        \"Currency\": \"0\",\n        \"XP\": \"0/100\",\n        \"Level\": \"1\"\n      },\n      \"collections\": {\n        \"equipment\": [],\n        \"abilities\": []\n      }\n    },\n    {\n      \"name\": \"Innkeeper\",\n      \"stats\": {\n        \"HP\": \"12/12\",\n        \"Mana\": \"10/10\",\n        \"Armor\": \"10\",\n        \"Strength\": \"10\",\n        \"Dexterity\": \"10\",\n        \"Constitution\": \"10\",\n        \"Intelligence\": \"10\",\n        \"Wisdom\": \"10\",\n        \"Charisma\": \"10\",\n        \"Condition\": \"Healthy\",\n        \"Currency\": \"0\",\n        \"XP\": \"0/100\",\n        \"Level\": \"1\"\n      },\n      \"collections\": {\n        \"equipment\": [],\n        \"abilities\": []\n      }\n    }\n  ],\n  \"locations\": {\n    \"current\": \"Blue Heron Inn\",\n    \"places\": [\n      {\n        \"name\": \"Brackenport\",\n        \"description\": \"A coastal town with salt-streaked houses crowding the lanes.\",\n        \"aliases\": [\n          \"Brack\"\n        ]\n      },\n      {\n        \"name\": \"Blue Heron Inn\",\n        \"description\": \"A tavern among Brackenport's houses.\"\n      }\n    ]\n  }\n}\n```",
+      "parsed": {
+        "global": {
+          "Time": "Dusk",
+          "Quest": ""
+        },
+        "player": {
+          "deltas": {
+            "HP": -2
+          },
+          "stats": {
+            "Condition": "Scraped arm, bleeding"
+          },
+          "collections": {
+            "equipment": {
+              "add": [
+                {
+                  "name": "brass key",
+                  "quantity": 1,
+                  "description": "Innkeeper's key for an upstairs room"
+                }
+              ]
+            }
+          }
+        },
+        "characters": [
+          {
+            "name": "Mira",
+            "stats": {
+              "HP": "12/12",
+              "Mana": "10/10",
+              "Armor": "10",
+              "Strength": "10",
+              "Dexterity": "10",
+              "Constitution": "10",
+              "Intelligence": "10",
+              "Wisdom": "10",
+              "Charisma": "10",
+              "Condition": "Healthy",
+              "Currency": "0",
+              "XP": "0/100",
+              "Level": "1"
+            },
+            "collections": {
+              "equipment": [],
+              "abilities": []
+            }
+          },
+          {
+            "name": "Innkeeper",
+            "stats": {
+              "HP": "12/12",
+              "Mana": "10/10",
+              "Armor": "10",
+              "Strength": "10",
+              "Dexterity": "10",
+              "Constitution": "10",
+              "Intelligence": "10",
+              "Wisdom": "10",
+              "Charisma": "10",
+              "Condition": "Healthy",
+              "Currency": "0",
+              "XP": "0/100",
+              "Level": "1"
+            },
+            "collections": {
+              "equipment": [],
+              "abilities": []
+            }
+          }
+        ],
+        "locations": {
+          "current": "Blue Heron Inn",
+          "places": [
+            {
+              "name": "Brackenport",
+              "description": "A coastal town with salt-streaked houses crowding the lanes.",
+              "aliases": [
+                "Brack"
+              ]
+            },
+            {
+              "name": "Blue Heron Inn",
+              "description": "A tavern among Brackenport's houses."
+            }
+          ]
+        }
+      },
+      "normalized": {
+        "update": {
+          "global": {
+            "Time": "Dusk",
+            "Quest": ""
+          },
+          "player": {
+            "stats": {
+              "Condition": "Scraped arm, bleeding",
+              "HP": "10/12"
+            },
+            "collections": {
+              "equipment": {
+                "add": [
+                  {
+                    "name": "brass key",
+                    "quantity": 1,
+                    "description": "Innkeeper's key for an upstairs room"
+                  }
+                ]
+              }
+            }
+          },
+          "characters": [
+            {
+              "name": "Mira",
+              "stats": {
+                "HP": "12/12",
+                "Mana": "10/10",
+                "Armor": "10",
+                "Strength": "10",
+                "Dexterity": "10",
+                "Constitution": "10",
+                "Intelligence": "10",
+                "Wisdom": "10",
+                "Charisma": "10",
+                "Condition": "Healthy",
+                "Currency": "0"
+              },
+              "collections": {
+                "equipment": [],
+                "abilities": []
+              }
+            },
+            {
+              "name": "Innkeeper",
+              "stats": {
+                "HP": "12/12",
+                "Mana": "10/10",
+                "Armor": "10",
+                "Strength": "10",
+                "Dexterity": "10",
+                "Constitution": "10",
+                "Intelligence": "10",
+                "Wisdom": "10",
+                "Charisma": "10",
+                "Condition": "Healthy",
+                "Currency": "0",
+                "XP": "0/100",
+                "Level": "1"
+              },
+              "collections": {
+                "equipment": [],
+                "abilities": []
+              }
+            }
+          ],
+          "locations": {
+            "current": "Blue Heron Inn",
+            "places": [
+              {
+                "name": "Brackenport",
+                "description": "A coastal town with salt-streaked houses crowding the lanes.",
+                "aliases": [
+                  "Brack"
+                ]
+              },
+              {
+                "name": "Blue Heron Inn",
+                "description": "A tavern among Brackenport's houses."
+              }
+            ]
+          }
+        },
+        "effective": {
+          "global": {
+            "Time": "Dusk",
+            "Quest": ""
+          },
+          "player": {
+            "stats": {
+              "HP": "10/12",
+              "Mana": "10/10",
+              "Armor": "10",
+              "Strength": "10",
+              "Dexterity": "10",
+              "Constitution": "10",
+              "Intelligence": "10",
+              "Wisdom": "10",
+              "Charisma": "10",
+              "Condition": "Scraped arm, bleeding",
+              "Currency": "0",
+              "XP": "0/100",
+              "Level": "1"
+            },
+            "collections": {
+              "equipment": [
+                {
+                  "name": "brass key",
+                  "quantity": 1,
+                  "description": "Innkeeper's key for an upstairs room"
+                }
+              ],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "Mira",
+              "npcTemplateId": "character",
+              "stats": {
+                "HP": "12/12",
+                "Mana": "10/10",
+                "Armor": "10",
+                "Strength": "10",
+                "Dexterity": "10",
+                "Constitution": "10",
+                "Intelligence": "10",
+                "Wisdom": "10",
+                "Charisma": "10",
+                "Condition": "Healthy",
+                "Currency": "0",
+                "XP": "0/100",
+                "Level": "1"
+              },
+              "collections": {
+                "equipment": [],
+                "abilities": []
+              }
+            }
+          ],
+          "locations": {
+            "enabled": true,
+            "currentId": "home",
+            "records": {
+              "home": {
+                "id": "home",
+                "name": "Rusty Lantern",
+                "description": "",
+                "aliases": [],
+                "parentId": ""
+              }
+            }
+          },
+          "timestamp": 1792509712258
+        },
+        "progression": null,
+        "holdings": {
+          "player": {
+            "stats": {
+              "HP": "12/12",
+              "Mana": "10/10",
+              "Armor": "10",
+              "Strength": "10",
+              "Dexterity": "10",
+              "Constitution": "10",
+              "Intelligence": "10",
+              "Wisdom": "10",
+              "Charisma": "10",
+              "Condition": "Healthy",
+              "Currency": "0",
+              "XP": "0/100",
+              "Level": "1"
+            },
+            "collections": {
+              "equipment": [
+                {
+                  "name": "brass key",
+                  "quantity": 1,
+                  "description": "Innkeeper's key for an upstairs room"
+                }
+              ],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "Mira",
+              "npcTemplateId": "character",
+              "stats": {
+                "HP": "12/12",
+                "Mana": "10/10",
+                "Armor": "10",
+                "Strength": "10",
+                "Dexterity": "10",
+                "Constitution": "10",
+                "Intelligence": "10",
+                "Wisdom": "10",
+                "Charisma": "10",
+                "Condition": "Healthy",
+                "Currency": "0",
+                "XP": "0/100",
+                "Level": "1"
+              },
+              "collections": {
+                "equipment": [],
+                "abilities": []
+              }
+            },
+            {
+              "name": "Innkeeper",
+              "npcTemplateId": "character",
+              "collections": {
+                "equipment": [],
+                "abilities": []
+              }
+            }
+          ]
+        },
+        "warnings": [
+          "Mira · XP: \"0/100\" skipped: earned XP must be reported as a positive delta.",
+          "Mira · Level: \"1\" skipped: Level is managed by XP progression.",
+          "Innkeeper · HP: skipped: the NPC is offstage and has no saved card.",
+          "Innkeeper · Mana: skipped: the NPC is offstage and has no saved card.",
+          "Innkeeper · Armor: skipped: the NPC is offstage and has no saved card.",
+          "Innkeeper · Strength: skipped: the NPC is offstage and has no saved card.",
+          "Innkeeper · Dexterity: skipped: the NPC is offstage and has no saved card.",
+          "Innkeeper · Constitution: skipped: the NPC is offstage and has no saved card.",
+          "Innkeeper · Intelligence: skipped: the NPC is offstage and has no saved card.",
+          "Innkeeper · Wisdom: skipped: the NPC is offstage and has no saved card.",
+          "Innkeeper · Charisma: skipped: the NPC is offstage and has no saved card.",
+          "Innkeeper · Condition: skipped: the NPC is offstage and has no saved card.",
+          "Innkeeper · Currency: skipped: the NPC is offstage and has no saved card.",
+          "Innkeeper · XP: skipped: the NPC is offstage and has no saved card.",
+          "Innkeeper · Level: skipped: the NPC is offstage and has no saved card."
+        ],
+        "places": [
+          {
+            "id": "place-1df21379-311c-457d-a258-072e1a584367",
+            "kind": "location-create",
+            "scope": "location",
+            "actor": "Brackenport",
+            "label": "New place",
+            "before": "",
+            "after": "A coastal town with salt-streaked houses crowding the lanes.",
+            "risk": "risky",
+            "location": {
+              "id": "place-62eed49e-266c-40ab-955d-e9a72ca5cbb5",
+              "record": {
+                "id": "place-62eed49e-266c-40ab-955d-e9a72ca5cbb5",
+                "name": "Brackenport",
+                "aliases": [
+                  "Brack"
+                ],
+                "description": "A coastal town with salt-streaked houses crowding the lanes.",
+                "parentId": "",
+                "lorebook": "",
+                "loreEntryId": null
+              },
+              "before": null,
+              "provenance": {
+                "messageId": 1
+              }
+            }
+          },
+          {
+            "id": "place-d8f2232b-1b9b-4e7d-ac85-0ada605797e3",
+            "kind": "location-create",
+            "scope": "location",
+            "actor": "Blue Heron Inn",
+            "label": "New place",
+            "before": "",
+            "after": "A tavern among Brackenport's houses.",
+            "risk": "risky",
+            "location": {
+              "id": "place-d3eda8de-693d-4c99-a9f6-03be4f007ad5",
+              "record": {
+                "id": "place-d3eda8de-693d-4c99-a9f6-03be4f007ad5",
+                "name": "Blue Heron Inn",
+                "aliases": [],
+                "description": "A tavern among Brackenport's houses.",
+                "parentId": "",
+                "lorebook": "",
+                "loreEntryId": null
+              },
+              "before": null,
+              "provenance": {
+                "messageId": 1
+              }
+            }
+          },
+          {
+            "id": "place-6b1d10c8-9a62-46cf-8ec3-4667a78632da",
+            "kind": "location-current",
+            "scope": "location",
+            "actor": "Blue Heron Inn",
+            "label": "Current place",
+            "before": "Rusty Lantern",
+            "after": "Blue Heron Inn",
+            "risk": "safe",
+            "location": {
+              "id": "place-d3eda8de-693d-4c99-a9f6-03be4f007ad5",
+              "record": {
+                "id": "place-d3eda8de-693d-4c99-a9f6-03be4f007ad5",
+                "name": "Blue Heron Inn",
+                "aliases": [],
+                "description": "A tavern among Brackenport's houses.",
+                "parentId": "",
+                "lorebook": "",
+                "loreEntryId": null
+              },
+              "before": null,
+              "provenance": {
+                "messageId": 1
+              },
+              "currentBefore": "home"
+            }
+          }
+        ]
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "validJsonAndNotTruncated",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "preservedPoolMaxima",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "placeCreated Brackenport",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "placeCreated Blue Heron Inn",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "placeParent Blue Heron Inn Brackenport",
+          "critical": true,
+          "passed": false
+        },
+        {
+          "name": "placeRoot Brackenport",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "currentPlace Blue Heron Inn",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "playerDecreased HP",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "itemAdd equipment brass key 1",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "npcPresent Mira",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "noXp ",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "createdPlaceCount 2",
+          "critical": true,
+          "passed": true
+        }
+      ],
+      "audit": {
+        "placeholderInventory": false,
+        "openingInventedInventory": false,
+        "xpProgression": null
+      }
+    },
+    {
+      "id": "fantasy-parent-mixed",
+      "system": "fantasy",
+      "holdout": false,
+      "repeat": 1,
+      "endpoint": "http://127.0.0.1:9931/v1",
+      "elapsedMs": 12364,
+      "requestError": null,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 904,
+        "prompt_tokens": 3798,
+        "total_tokens": 4702,
+        "prompt_tokens_details": {
+          "cached_tokens": 246
+        }
+      },
+      "content": "```json\n{\n  \"global\": {\n    \"Time\": \"Dusk\"\n  },\n  \"player\": {\n    \"deltas\": {\n      \"HP\": -2\n    },\n    \"stats\": {\n      \"Condition\": \"Scraped arm bleeding\"\n    },\n    \"collections\": {\n      \"equipment\": {\n        \"add\": [\n          {\n            \"name\": \"Brass Key\",\n            \"quantity\": 1,\n            \"description\": \"A key provided by the Blue Heron Innkeeper to the upstairs room.\"\n          }\n        ]\n      }\n    }\n  },\n  \"characters\": [\n    {\n      \"name\": \"Mira\"\n    }\n  ],\n  \"locations\": {\n    \"places\": [\n      {\n        \"name\": \"Rusty Lantern\"\n      },\n      {\n        \"name\": \"Brackenport\",\n        \"description\": \"A coastal town with salt-streaked houses crowding the lanes, accessed via a town gate.\",\n        \"aliases\": []\n      },\n      {\n        \"name\": \"Blue Heron Inn\",\n        \"parent\": \"Brackenport\",\n        \"description\": \"A tavern situated among the houses of Brackenport.\"\n      }\n    ],\n    \"current\": \"Blue Heron Inn\"\n  }\n}\n```",
+      "parsed": {
+        "global": {
+          "Time": "Dusk"
+        },
+        "player": {
+          "deltas": {
+            "HP": -2
+          },
+          "stats": {
+            "Condition": "Scraped arm bleeding"
+          },
+          "collections": {
+            "equipment": {
+              "add": [
+                {
+                  "name": "Brass Key",
+                  "quantity": 1,
+                  "description": "A key provided by the Blue Heron Innkeeper to the upstairs room."
+                }
+              ]
+            }
+          }
+        },
+        "characters": [
+          {
+            "name": "Mira"
+          }
+        ],
+        "locations": {
+          "places": [
+            {
+              "name": "Rusty Lantern"
+            },
+            {
+              "name": "Brackenport",
+              "description": "A coastal town with salt-streaked houses crowding the lanes, accessed via a town gate.",
+              "aliases": []
+            },
+            {
+              "name": "Blue Heron Inn",
+              "parent": "Brackenport",
+              "description": "A tavern situated among the houses of Brackenport."
+            }
+          ],
+          "current": "Blue Heron Inn"
+        }
+      },
+      "normalized": {
+        "update": {
+          "global": {
+            "Time": "Dusk"
+          },
+          "player": {
+            "stats": {
+              "Condition": "Scraped arm bleeding",
+              "HP": "10/12"
+            },
+            "collections": {
+              "equipment": {
+                "add": [
+                  {
+                    "name": "Brass Key",
+                    "quantity": 1,
+                    "description": "A key provided by the Blue Heron Innkeeper to the upstairs room."
+                  }
+                ]
+              }
+            }
+          },
+          "characters": [
+            {
+              "name": "Mira"
+            }
+          ],
+          "locations": {
+            "places": [
+              {
+                "name": "Rusty Lantern"
+              },
+              {
+                "name": "Brackenport",
+                "description": "A coastal town with salt-streaked houses crowding the lanes, accessed via a town gate.",
+                "aliases": []
+              },
+              {
+                "name": "Blue Heron Inn",
+                "parent": "Brackenport",
+                "description": "A tavern situated among the houses of Brackenport."
+              }
+            ],
+            "current": "Blue Heron Inn"
+          }
+        },
+        "effective": {
+          "global": {
+            "Time": "Dusk",
+            "Quest": ""
+          },
+          "player": {
+            "stats": {
+              "HP": "10/12",
+              "Mana": "10/10",
+              "Armor": "10",
+              "Strength": "10",
+              "Dexterity": "10",
+              "Constitution": "10",
+              "Intelligence": "10",
+              "Wisdom": "10",
+              "Charisma": "10",
+              "Condition": "Scraped arm bleeding",
+              "Currency": "0",
+              "XP": "0/100",
+              "Level": "1"
+            },
+            "collections": {
+              "equipment": [
+                {
+                  "name": "Brass Key",
+                  "quantity": 1,
+                  "description": "A key provided by the Blue Heron Innkeeper to the upstairs room."
+                }
+              ],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "Mira",
+              "npcTemplateId": "character",
+              "stats": {
+                "HP": "12/12",
+                "Mana": "10/10",
+                "Armor": "10",
+                "Strength": "10",
+                "Dexterity": "10",
+                "Constitution": "10",
+                "Intelligence": "10",
+                "Wisdom": "10",
+                "Charisma": "10",
+                "Condition": "Healthy",
+                "Currency": "0",
+                "XP": "0/100",
+                "Level": "1"
+              },
+              "collections": {}
+            }
+          ],
+          "locations": {
+            "enabled": true,
+            "currentId": "home",
+            "records": {
+              "home": {
+                "id": "home",
+                "name": "Rusty Lantern",
+                "description": "",
+                "aliases": [],
+                "parentId": ""
+              }
+            }
+          },
+          "timestamp": 1792509712273
+        },
+        "progression": null,
+        "holdings": {
+          "player": {
+            "stats": {
+              "HP": "12/12",
+              "Mana": "10/10",
+              "Armor": "10",
+              "Strength": "10",
+              "Dexterity": "10",
+              "Constitution": "10",
+              "Intelligence": "10",
+              "Wisdom": "10",
+              "Charisma": "10",
+              "Condition": "Healthy",
+              "Currency": "0",
+              "XP": "0/100",
+              "Level": "1"
+            },
+            "collections": {
+              "equipment": [
+                {
+                  "name": "Brass Key",
+                  "quantity": 1,
+                  "description": "A key provided by the Blue Heron Innkeeper to the upstairs room."
+                }
+              ],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "Mira",
+              "npcTemplateId": "character",
+              "stats": {
+                "HP": "12/12",
+                "Mana": "10/10",
+                "Armor": "10",
+                "Strength": "10",
+                "Dexterity": "10",
+                "Constitution": "10",
+                "Intelligence": "10",
+                "Wisdom": "10",
+                "Charisma": "10",
+                "Condition": "Healthy",
+                "Currency": "0",
+                "XP": "0/100",
+                "Level": "1"
+              },
+              "collections": {}
+            }
+          ]
+        },
+        "warnings": [],
+        "places": [
+          {
+            "id": "place-e0a25625-ab6b-45c3-9d27-f9d933f0d3e2",
+            "kind": "location-create",
+            "scope": "location",
+            "actor": "Brackenport",
+            "label": "New place",
+            "before": "",
+            "after": "A coastal town with salt-streaked houses crowding the lanes, accessed via a town gate.",
+            "risk": "risky",
+            "location": {
+              "id": "place-acbdf8c4-8f77-48c7-881b-66bf7e0ae38a",
+              "record": {
+                "id": "place-acbdf8c4-8f77-48c7-881b-66bf7e0ae38a",
+                "name": "Brackenport",
+                "aliases": [],
+                "description": "A coastal town with salt-streaked houses crowding the lanes, accessed via a town gate.",
+                "parentId": "",
+                "lorebook": "",
+                "loreEntryId": null
+              },
+              "before": null,
+              "provenance": {
+                "messageId": 1
+              }
+            }
+          },
+          {
+            "id": "place-be946a1b-668c-4d5d-936d-977205ca32af",
+            "kind": "location-create",
+            "scope": "location",
+            "actor": "Blue Heron Inn",
+            "label": "New place",
+            "before": "",
+            "after": "A tavern situated among the houses of Brackenport.",
+            "risk": "risky",
+            "location": {
+              "id": "place-1498fb8e-a730-4228-81a9-9cb7f95a8d57",
+              "record": {
+                "id": "place-1498fb8e-a730-4228-81a9-9cb7f95a8d57",
+                "name": "Blue Heron Inn",
+                "aliases": [],
+                "description": "A tavern situated among the houses of Brackenport.",
+                "parentId": "place-acbdf8c4-8f77-48c7-881b-66bf7e0ae38a",
+                "lorebook": "",
+                "loreEntryId": null
+              },
+              "before": null,
+              "provenance": {
+                "messageId": 1
+              }
+            }
+          },
+          {
+            "id": "place-7c3431b7-e51c-40d8-b2ad-82c6bfe8f620",
+            "kind": "location-current",
+            "scope": "location",
+            "actor": "Blue Heron Inn",
+            "label": "Current place",
+            "before": "Rusty Lantern",
+            "after": "Blue Heron Inn",
+            "risk": "safe",
+            "location": {
+              "id": "place-1498fb8e-a730-4228-81a9-9cb7f95a8d57",
+              "record": {
+                "id": "place-1498fb8e-a730-4228-81a9-9cb7f95a8d57",
+                "name": "Blue Heron Inn",
+                "aliases": [],
+                "description": "A tavern situated among the houses of Brackenport.",
+                "parentId": "place-acbdf8c4-8f77-48c7-881b-66bf7e0ae38a",
+                "lorebook": "",
+                "loreEntryId": null
+              },
+              "before": null,
+              "provenance": {
+                "messageId": 1
+              },
+              "currentBefore": "home"
+            }
+          }
+        ]
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "validJsonAndNotTruncated",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "preservedPoolMaxima",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "placeCreated Brackenport",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "placeCreated Blue Heron Inn",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "placeParent Blue Heron Inn Brackenport",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "placeRoot Brackenport",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "currentPlace Blue Heron Inn",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "playerDecreased HP",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "itemAdd equipment brass key 1",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "npcPresent Mira",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "noXp ",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "createdPlaceCount 2",
+          "critical": true,
+          "passed": true
+        }
+      ],
+      "audit": {
+        "placeholderInventory": false,
+        "openingInventedInventory": false,
+        "xpProgression": null
+      }
+    },
+    {
+      "id": "dating-root-mixed",
+      "system": "dating",
+      "holdout": false,
+      "repeat": 0,
+      "endpoint": "http://127.0.0.1:8080/v1",
+      "elapsedMs": 16587,
+      "requestError": null,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 1390,
+        "prompt_tokens": 2180,
+        "total_tokens": 3570,
+        "prompt_tokens_details": {
+          "cached_tokens": 246
+        }
+      },
+      "content": "```json\n{\n  \"global\": {\n    \"Day and Time\": \"Evening\",\n    \"Occasion\": \"Performance at Marigold Theater\"\n  },\n  \"player\": {\n    \"deltas\": {\n      \"Social Energy\": -3\n    },\n    \"stats\": {\n      \"Mood\": \"Exhausted\"\n    },\n    \"collections\": {\n      \"items\": {\n        \"remove\": [\n          {\n            \"name\": \"sunflower\",\n            \"quantity\": 1\n          }\n        ]\n      }\n    }\n  },\n  \"characters\": [\n    {\n      \"name\": \"June\",\n      \"deltas\": {\n        \"Affection\": 5,\n        \"Trust\": 2,\n        \"Comfort\": 2\n      },\n      \"collections\": {\n        \"items\": {\n          \"add\": [\n            {\n              \"name\": \"sunflower\",\n              \"quantity\": 1\n            }\n          ]\n        }\n      }\n    }\n  ],\n  \"locations\": {\n    \"places\": [\n      {\n        \"name\": \"Moonbeam Café\"\n      },\n      {\n        \"name\": \"Marigold Theater\",\n        \"description\": \"A glowing theater beneath its old marquee, hosting a performance.\"\n      }\n    ],\n    \"current\": \"Marigold Theater\"\n  }\n}\n```",
+      "parsed": {
+        "global": {
+          "Day and Time": "Evening",
+          "Occasion": "Performance at Marigold Theater"
+        },
+        "player": {
+          "deltas": {
+            "Social Energy": -3
+          },
+          "stats": {
+            "Mood": "Exhausted"
+          },
+          "collections": {
+            "items": {
+              "remove": [
+                {
+                  "name": "sunflower",
+                  "quantity": 1
+                }
+              ]
+            }
+          }
+        },
+        "characters": [
+          {
+            "name": "June",
+            "deltas": {
+              "Affection": 5,
+              "Trust": 2,
+              "Comfort": 2
+            },
+            "collections": {
+              "items": {
+                "add": [
+                  {
+                    "name": "sunflower",
+                    "quantity": 1
+                  }
+                ]
+              }
+            }
+          }
+        ],
+        "locations": {
+          "places": [
+            {
+              "name": "Moonbeam Café"
+            },
+            {
+              "name": "Marigold Theater",
+              "description": "A glowing theater beneath its old marquee, hosting a performance."
+            }
+          ],
+          "current": "Marigold Theater"
+        }
+      },
+      "normalized": {
+        "update": {
+          "global": {
+            "Day and Time": "Evening",
+            "Occasion": "Performance at Marigold Theater"
+          },
+          "player": {
+            "stats": {
+              "Mood": "Exhausted",
+              "Social Energy": "7/10"
+            },
+            "collections": {
+              "items": {
+                "remove": [
+                  {
+                    "name": "sunflower",
+                    "quantity": 1
+                  }
+                ]
+              }
+            }
+          },
+          "characters": [
+            {
+              "name": "June",
+              "collections": {
+                "items": {
+                  "add": [
+                    {
+                      "name": "sunflower",
+                      "quantity": 1
+                    }
+                  ]
+                }
+              },
+              "Affection": "20",
+              "Trust": "12",
+              "Comfort": "22"
+            }
+          ],
+          "locations": {
+            "places": [
+              {
+                "name": "Moonbeam Café"
+              },
+              {
+                "name": "Marigold Theater",
+                "description": "A glowing theater beneath its old marquee, hosting a performance."
+              }
+            ],
+            "current": "Marigold Theater"
+          }
+        },
+        "effective": {
+          "global": {
+            "Day and Time": "Evening",
+            "Occasion": "Performance at Marigold Theater"
+          },
+          "player": {
+            "stats": {
+              "Social Energy": "7/10",
+              "Mood": "Exhausted"
+            },
+            "collections": {
+              "items": [
+                {
+                  "name": "sunflower",
+                  "quantity": 1
+                }
+              ],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "June",
+              "npcTemplateId": "character",
+              "stats": {
+                "Mood": "Neutral",
+                "Affection": "20",
+                "Trust": "12",
+                "Comfort": "22",
+                "Relationship": "Friends"
+              },
+              "collections": {
+                "items": [
+                  {
+                    "name": "sunflower",
+                    "quantity": 1,
+                    "description": ""
+                  }
+                ]
+              }
+            }
+          ],
+          "locations": {
+            "enabled": true,
+            "currentId": "home",
+            "records": {
+              "home": {
+                "id": "home",
+                "name": "Moonbeam Café",
+                "description": "",
+                "aliases": [],
+                "parentId": ""
+              }
+            }
+          },
+          "timestamp": 1792509712279
+        },
+        "progression": null,
+        "holdings": {
+          "player": {
+            "stats": {
+              "Social Energy": "10/10",
+              "Mood": "Neutral"
+            },
+            "collections": {
+              "items": [
+                {
+                  "name": "sunflower",
+                  "quantity": 1
+                }
+              ],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "June",
+              "npcTemplateId": "character",
+              "stats": {
+                "Mood": "Neutral",
+                "Affection": "15",
+                "Trust": "10",
+                "Comfort": "20",
+                "Relationship": "Friends"
+              },
+              "collections": {
+                "items": [
+                  {
+                    "name": "sunflower",
+                    "quantity": 1,
+                    "description": ""
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "warnings": [],
+        "places": [
+          {
+            "id": "place-a8e9ef84-0f97-4c2d-bd8d-37da47c7e4c0",
+            "kind": "location-create",
+            "scope": "location",
+            "actor": "Marigold Theater",
+            "label": "New place",
+            "before": "",
+            "after": "A glowing theater beneath its old marquee, hosting a performance.",
+            "risk": "risky",
+            "location": {
+              "id": "place-5845f902-758f-487d-92fe-91a68d8c1303",
+              "record": {
+                "id": "place-5845f902-758f-487d-92fe-91a68d8c1303",
+                "name": "Marigold Theater",
+                "aliases": [],
+                "description": "A glowing theater beneath its old marquee, hosting a performance.",
+                "parentId": "",
+                "lorebook": "",
+                "loreEntryId": null
+              },
+              "before": null,
+              "provenance": {
+                "messageId": 1
+              }
+            }
+          },
+          {
+            "id": "place-42fa4240-688e-47f9-b154-512dd9e135a8",
+            "kind": "location-current",
+            "scope": "location",
+            "actor": "Marigold Theater",
+            "label": "Current place",
+            "before": "Moonbeam Café",
+            "after": "Marigold Theater",
+            "risk": "safe",
+            "location": {
+              "id": "place-5845f902-758f-487d-92fe-91a68d8c1303",
+              "record": {
+                "id": "place-5845f902-758f-487d-92fe-91a68d8c1303",
+                "name": "Marigold Theater",
+                "aliases": [],
+                "description": "A glowing theater beneath its old marquee, hosting a performance.",
+                "parentId": "",
+                "lorebook": "",
+                "loreEntryId": null
+              },
+              "before": null,
+              "provenance": {
+                "messageId": 1
+              },
+              "currentBefore": "home"
+            }
+          }
+        ]
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "validJsonAndNotTruncated",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "preservedPoolMaxima",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "placeCreated Marigold Theater",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "placeRoot Marigold Theater",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "currentPlace Marigold Theater",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "itemRemove items sunflower 1",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "npcItemAdd June items sunflower 1",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "npcIncreased June Affection",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "playerDecreased Social Energy",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "npcPresent June",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "createdPlaceCount 1",
+          "critical": true,
+          "passed": true
+        }
+      ],
+      "audit": {
+        "placeholderInventory": false,
+        "openingInventedInventory": false,
+        "xpProgression": null
+      }
+    },
+    {
+      "id": "dating-root-mixed",
+      "system": "dating",
+      "holdout": false,
+      "repeat": 1,
+      "endpoint": "http://127.0.0.1:9931/v1",
+      "elapsedMs": 23493,
+      "requestError": null,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 1998,
+        "prompt_tokens": 2180,
+        "total_tokens": 4178,
+        "prompt_tokens_details": {
+          "cached_tokens": 246
+        }
+      },
+      "content": "```json\n{\n  \"global\": {\n    \"Occasion\": \"Attending a Performance\"\n  },\n  \"player\": {\n    \"stats\": {\n      \"Mood\": \"Worn out\",\n      \"Social Energy\": \"7/10\"\n    },\n    \"collections\": {\n      \"items\": {\n        \"update\": [\n          {\n            \"name\": \"sunflower\",\n            \"quantity\": 1\n          }\n        ]\n      }\n    }\n  },\n  \"characters\": [\n    {\n      \"name\": \"June\",\n      \"stats\": {\n        \"Mood\": \"Content\",\n        \"Affection\": 20,\n        \"Trust\": 12,\n        \"Comfort\": 23\n      },\n      \"collections\": {\n        \"items\": {\n          \"add\": [\n            {\n              \"name\": \"sunflower\",\n              \"quantity\": 1\n            }\n          ]\n        }\n      }\n    }\n  ],\n  \"locations\": {\n    \"current\": \"Marigold Theater\",\n    \"places\": [\n      {\n        \"name\": \"Moonbeam Café\"\n      },\n      {\n        \"name\": \"Marigold Theater\",\n        \"description\": \"A glowing theater beneath its old marquee, where performances take place.\",\n        \"aliases\": []\n      }\n    ]\n  }\n}\n```",
+      "parsed": {
+        "global": {
+          "Occasion": "Attending a Performance"
+        },
+        "player": {
+          "stats": {
+            "Mood": "Worn out",
+            "Social Energy": "7/10"
+          },
+          "collections": {
+            "items": {
+              "update": [
+                {
+                  "name": "sunflower",
+                  "quantity": 1
+                }
+              ]
+            }
+          }
+        },
+        "characters": [
+          {
+            "name": "June",
+            "stats": {
+              "Mood": "Content",
+              "Affection": 20,
+              "Trust": 12,
+              "Comfort": 23
+            },
+            "collections": {
+              "items": {
+                "add": [
+                  {
+                    "name": "sunflower",
+                    "quantity": 1
+                  }
+                ]
+              }
+            }
+          }
+        ],
+        "locations": {
+          "current": "Marigold Theater",
+          "places": [
+            {
+              "name": "Moonbeam Café"
+            },
+            {
+              "name": "Marigold Theater",
+              "description": "A glowing theater beneath its old marquee, where performances take place.",
+              "aliases": []
+            }
+          ]
+        }
+      },
+      "normalized": {
+        "update": {
+          "global": {
+            "Occasion": "Attending a Performance"
+          },
+          "player": {
+            "stats": {
+              "Mood": "Worn out",
+              "Social Energy": "7/10"
+            },
+            "collections": {
+              "items": {
+                "update": [
+                  {
+                    "name": "sunflower",
+                    "quantity": 1
+                  }
+                ]
+              }
+            }
+          },
+          "characters": [
+            {
+              "name": "June",
+              "stats": {
+                "Mood": "Content",
+                "Affection": "20",
+                "Trust": "12",
+                "Comfort": "23"
+              },
+              "collections": {
+                "items": {
+                  "add": [
+                    {
+                      "name": "sunflower",
+                      "quantity": 1
+                    }
+                  ]
+                }
+              }
+            }
+          ],
+          "locations": {
+            "current": "Marigold Theater",
+            "places": [
+              {
+                "name": "Moonbeam Café"
+              },
+              {
+                "name": "Marigold Theater",
+                "description": "A glowing theater beneath its old marquee, where performances take place.",
+                "aliases": []
+              }
+            ]
+          }
+        },
+        "effective": {
+          "global": {
+            "Day and Time": "",
+            "Occasion": "Attending a Performance"
+          },
+          "player": {
+            "stats": {
+              "Social Energy": "7/10",
+              "Mood": "Worn out"
+            },
+            "collections": {
+              "items": [
+                {
+                  "name": "sunflower",
+                  "quantity": 2,
+                  "description": ""
+                }
+              ],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "June",
+              "npcTemplateId": "character",
+              "stats": {
+                "Mood": "Content",
+                "Affection": "20",
+                "Trust": "12",
+                "Comfort": "23",
+                "Relationship": "Friends"
+              },
+              "collections": {
+                "items": [
+                  {
+                    "name": "sunflower",
+                    "quantity": 1,
+                    "description": ""
+                  }
+                ]
+              }
+            }
+          ],
+          "locations": {
+            "enabled": true,
+            "currentId": "home",
+            "records": {
+              "home": {
+                "id": "home",
+                "name": "Moonbeam Café",
+                "description": "",
+                "aliases": [],
+                "parentId": ""
+              }
+            }
+          },
+          "timestamp": 1792509712284
+        },
+        "progression": null,
+        "holdings": {
+          "player": {
+            "stats": {
+              "Social Energy": "10/10",
+              "Mood": "Neutral"
+            },
+            "collections": {
+              "items": [
+                {
+                  "name": "sunflower",
+                  "quantity": 2,
+                  "description": ""
+                }
+              ],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "June",
+              "npcTemplateId": "character",
+              "stats": {
+                "Mood": "Neutral",
+                "Affection": "15",
+                "Trust": "10",
+                "Comfort": "20",
+                "Relationship": "Friends"
+              },
+              "collections": {
+                "items": [
+                  {
+                    "name": "sunflower",
+                    "quantity": 1,
+                    "description": ""
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "warnings": [],
+        "places": [
+          {
+            "id": "place-a89bedca-7ebd-4f4e-ab80-c6f48f94d8a7",
+            "kind": "location-create",
+            "scope": "location",
+            "actor": "Marigold Theater",
+            "label": "New place",
+            "before": "",
+            "after": "A glowing theater beneath its old marquee, where performances take place.",
+            "risk": "risky",
+            "location": {
+              "id": "place-b2493552-d3b4-4911-aeaa-deacd039d71c",
+              "record": {
+                "id": "place-b2493552-d3b4-4911-aeaa-deacd039d71c",
+                "name": "Marigold Theater",
+                "aliases": [],
+                "description": "A glowing theater beneath its old marquee, where performances take place.",
+                "parentId": "",
+                "lorebook": "",
+                "loreEntryId": null
+              },
+              "before": null,
+              "provenance": {
+                "messageId": 1
+              }
+            }
+          },
+          {
+            "id": "place-7c9441e7-d8fd-442d-a3bb-2dd81e92b2fb",
+            "kind": "location-current",
+            "scope": "location",
+            "actor": "Marigold Theater",
+            "label": "Current place",
+            "before": "Moonbeam Café",
+            "after": "Marigold Theater",
+            "risk": "safe",
+            "location": {
+              "id": "place-b2493552-d3b4-4911-aeaa-deacd039d71c",
+              "record": {
+                "id": "place-b2493552-d3b4-4911-aeaa-deacd039d71c",
+                "name": "Marigold Theater",
+                "aliases": [],
+                "description": "A glowing theater beneath its old marquee, where performances take place.",
+                "parentId": "",
+                "lorebook": "",
+                "loreEntryId": null
+              },
+              "before": null,
+              "provenance": {
+                "messageId": 1
+              },
+              "currentBefore": "home"
+            }
+          }
+        ]
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "validJsonAndNotTruncated",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "preservedPoolMaxima",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "placeCreated Marigold Theater",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "placeRoot Marigold Theater",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "currentPlace Marigold Theater",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "itemRemove items sunflower 1",
+          "critical": true,
+          "passed": false
+        },
+        {
+          "name": "npcItemAdd June items sunflower 1",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "npcIncreased June Affection",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "playerDecreased Social Energy",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "npcPresent June",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "createdPlaceCount 1",
+          "critical": true,
+          "passed": true
+        }
+      ],
+      "audit": {
+        "placeholderInventory": false,
+        "openingInventedInventory": false,
+        "xpProgression": null
+      }
+    }
+  ],
+  "servers": [
+    {
+      "endpoint": "http://127.0.0.1:8080/v1",
+      "model": "/mnt/D/backup_models/gemma-4-E4B-it-qat-UD-Q4_K_XL.gguf",
+      "build": "b11669-620d2225c",
+      "defaults": {
+        "params": {
+          "seed": 4294967295,
+          "temperature": 1,
+          "dynatemp_range": 0,
+          "dynatemp_exponent": 1,
+          "top_k": 64,
+          "top_p": 0.949999988079071,
+          "min_p": 0,
+          "top_n_sigma": -1,
+          "xtc_probability": 0,
+          "xtc_threshold": 0.10000000149011612,
+          "typical_p": 1,
+          "repeat_last_n": 64,
+          "repeat_penalty": 1,
+          "presence_penalty": 0,
+          "frequency_penalty": 0,
+          "dry_multiplier": 0,
+          "dry_base": 1.75,
+          "dry_allowed_length": 2,
+          "dry_penalty_last_n": 64,
+          "mirostat": 0,
+          "mirostat_tau": 5,
+          "mirostat_eta": 0.10000000149011612,
+          "adaptive_target": -1,
+          "adaptive_decay": 0.8999999761581421,
+          "max_tokens": -1,
+          "n_predict": -1,
+          "n_keep": 0,
+          "n_discard": 0,
+          "ignore_eos": false,
+          "stream": false,
+          "n_probs": 0,
+          "min_keep": 0,
+          "chat_format": "Content-only",
+          "reasoning_format": "none",
+          "reasoning_in_content": false,
+          "generation_prompt": "",
+          "samplers": [
+            "penalties",
+            "dry",
+            "top_n_sigma",
+            "top_k",
+            "typ_p",
+            "top_p",
+            "min_p",
+            "xtc",
+            "temperature"
+          ],
+          "speculative.types": "none",
+          "timings_per_token": false,
+          "post_sampling_probs": false,
+          "backend_sampling": false,
+          "lora": []
+        },
+        "n_ctx": 65536
+      },
+      "modelPath": "/mnt/D/backup_models/gemma-4-E4B-it-qat-UD-Q4_K_XL.gguf",
+      "slots": 4
+    },
+    {
+      "endpoint": "http://127.0.0.1:9931/v1",
+      "model": "/mnt/D/backup_models/gemma-4-E4B-it-qat-UD-Q4_K_XL.gguf",
+      "build": "b11669-620d2225c",
+      "defaults": {
+        "params": {
+          "seed": 4294967295,
+          "temperature": 1,
+          "dynatemp_range": 0,
+          "dynatemp_exponent": 1,
+          "top_k": 64,
+          "top_p": 0.949999988079071,
+          "min_p": 0,
+          "top_n_sigma": -1,
+          "xtc_probability": 0,
+          "xtc_threshold": 0.10000000149011612,
+          "typical_p": 1,
+          "repeat_last_n": 64,
+          "repeat_penalty": 1,
+          "presence_penalty": 0,
+          "frequency_penalty": 0,
+          "dry_multiplier": 0,
+          "dry_base": 1.75,
+          "dry_allowed_length": 2,
+          "dry_penalty_last_n": 64,
+          "mirostat": 0,
+          "mirostat_tau": 5,
+          "mirostat_eta": 0.10000000149011612,
+          "adaptive_target": -1,
+          "adaptive_decay": 0.8999999761581421,
+          "max_tokens": -1,
+          "n_predict": -1,
+          "n_keep": 0,
+          "n_discard": 0,
+          "ignore_eos": false,
+          "stream": false,
+          "n_probs": 0,
+          "min_keep": 0,
+          "chat_format": "Content-only",
+          "reasoning_format": "none",
+          "reasoning_in_content": false,
+          "generation_prompt": "",
+          "samplers": [
+            "penalties",
+            "dry",
+            "top_n_sigma",
+            "top_k",
+            "typ_p",
+            "top_p",
+            "min_p",
+            "xtc",
+            "temperature"
+          ],
+          "speculative.types": "none",
+          "timings_per_token": false,
+          "post_sampling_probs": false,
+          "backend_sampling": false,
+          "lora": []
+        },
+        "n_ctx": 65536
+      },
+      "modelPath": "/mnt/D/backup_models/gemma-4-E4B-it-qat-UD-Q4_K_XL.gguf",
+      "slots": 4
+    }
+  ],
+  "concurrencyPerEndpoint": 4,
+  "summary": {
+    "checks": 46,
+    "passed": 44,
+    "rate": 0.9565217391304348,
+    "criticalFailures": [
+      "fantasy-parent-mixed #1: placeParent Blue Heron Inn Brackenport",
+      "dating-root-mixed #2: itemRemove items sunflower 1"
+    ],
+    "systems": {
+      "fantasy": 0.9583333333333334,
+      "dating": 0.9545454545454546
+    },
+    "perSystemCounts": {
+      "fantasy": {
+        "checks": 24,
+        "passed": 23,
+        "rate": 0.9583333333333334
+      },
+      "dating": {
+        "checks": 22,
+        "passed": 21,
+        "rate": 0.9545454545454546
+      }
+    },
+    "splits": {
+      "main": {
+        "checks": 46,
+        "passed": 44,
+        "rate": 0.9565217391304348
+      },
+      "originalHoldout": {
+        "checks": 0,
+        "passed": 0,
+        "rate": null
+      }
+    },
+    "auditFailures": [],
+    "endpoints": {
+      "http://127.0.0.1:8080/v1": {
+        "trials": 2,
+        "checks": 23,
+        "passed": 22,
+        "criticalFailures": 1
+      },
+      "http://127.0.0.1:9931/v1": {
+        "trials": 2,
+        "checks": 23,
+        "passed": 22,
+        "criticalFailures": 1
+      }
+    },
+    "acceptable": false
+  }
+}

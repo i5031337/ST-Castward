@@ -1,0 +1,877 @@
+{
+  "startedAt": "2026-10-20T20:23:18.330Z",
+  "label": "place-action-quantity-places",
+  "criteria": {
+    "validJsonAndNotTruncated": 1,
+    "overallRequiredCheckRate": 1,
+    "perSystemRequiredCheckRate": 1,
+    "criticalFailuresAllowed": 0,
+    "suite": "location-tree-mixed"
+  },
+  "sourceHashes": {
+    "src/core/builtin-systems.js": "dde9bd0d0ff4fab8b6e5392969d962a97c3c28934dbd7cb843c223a8c4bbc864",
+    "src/core/settings-tracker-defaults.js": "3beb026157e41638c7b7cdf0c5f5268c425f4f8dc0f7d126d426f5caf289b035",
+    "src/core/constants-prompts.js": "6719401c9c93a0f26a78c30da4699e0968fbc708d5bca7a66d98d28662fa2b45",
+    "src/prompts/prompt-texts-reader.js": "135e9d79a4767d797a7b6ff1c1fe7a00d5ebf57a60a0c8bd00ba93615eda297a",
+    "src/tracker/extractor/status-extractor-prompt.js": "a27504a4648dd8a9920f8e1da302365f10b54ac3513e6030cbd3711078c89666",
+    "src/tracker/extractor/status-extractor-prompt-state.js": "de71916a4460001bfa05bdcb2bbc5415b1e9eed5783924e5071ab473326c27cb",
+    "src/tracker/extractor/status-extractor-schema.js": "1bbc20855cee21427359ef2f3ece9df3a35a28226a5dec965aeef82f2dcd401a",
+    "src/tracker/stat-prompt-definitions.js": "bacaf313462c645d944853ad399e1948fe79389553b61fcc4774611b1a5a4100",
+    "src/core/npc-templates.js": "83265aa2c57e33e1252443d4e11a14c1d3e40e2d9084d3ec46b3935bdf6e5e0f",
+    "src/core/collection-fields.js": "5b6ad8ffc0d5374e317aa1798164842f1eae08da2ce73ec5067383df30258d6e",
+    "src/locations/location-context.js": "b70928d668bf8e887d7d2b6d789878f8ef77423c748626b7289fda9a71edac8c",
+    "src/locations/location-proposals.js": "0270e412d3fd2841dbed89a682107820f0e1a66543f096ee3ec8cfd032503e71",
+    "src/tracker/status-stat-values.js": "290792240ce3838875015a52469f2da8cb82d504d2bab3caaf4510d0a326532d",
+    "src/tracker/status-collection-updates.js": "3675efbdd1de2a3a8fb96af100ccd23be5cef09c951ea00e9c3a156309f134e1",
+    "src/tracker/status-update-constraints.js": "e3f63de6675b36bf2200c81f739acd1883696c5ccc550d8c221907802c0f11e0",
+    "src/tracker/status-update-parser.js": "c1894cd0836b093c93c64139daebf0f51e3cec846fbf92bb7920d3c838927405",
+    "src/tracker/status-apply-update.js": "8eedf95a4ea7fc33e8c535c87ead072dd8884078f73691d2a0f9736a49c1fee7",
+    "src/tracker/progression.js": "53b41aaa840971d98c0d66bbef3b0e750126fcf8855a428301fa4711a9ef2855",
+    "src/tracker/numeric-stat-bounds.js": "3575f4b00efa2035a0c39a5b0e7235f2f44c8df2e977d160d151ff5eaf23edce",
+    "tests/eval-gemma-tracker.js": "19f0a37733dd39ea0cc56305b5040b47465c0db257fbdd261bc7e918ae184da3",
+    "tests/fixtures/gemma-request-batches.mjs": "fede71a833bcd1102857a26249122911d339afed85538fb8aa59f442635fc4bf",
+    "tests/fixtures/gemma-location-check.mjs": "76af4660b73c614ed33f560a7c234e72bf1c310741ce0905ecd1fac910f03dfc",
+    "tests/fixtures/tracker-pool-audit.mjs": "7155e88f600db726f88d34140170f9e5668896f0c8efb932b67a562e0f780c87"
+  },
+  "endpoint": "http://127.0.0.1:9931/v1",
+  "model": "/mnt/D/backup_models/gemma-4-E4B-it-qat-UD-Q4_K_XL.gguf",
+  "server": {
+    "endpoint": "http://127.0.0.1:9931/v1",
+    "model": "/mnt/D/backup_models/gemma-4-E4B-it-qat-UD-Q4_K_XL.gguf",
+    "build": "b11669-620d2225c",
+    "defaults": {
+      "params": {
+        "seed": 4294967295,
+        "temperature": 1,
+        "dynatemp_range": 0,
+        "dynatemp_exponent": 1,
+        "top_k": 64,
+        "top_p": 0.949999988079071,
+        "min_p": 0,
+        "top_n_sigma": -1,
+        "xtc_probability": 0,
+        "xtc_threshold": 0.10000000149011612,
+        "typical_p": 1,
+        "repeat_last_n": 64,
+        "repeat_penalty": 1,
+        "presence_penalty": 0,
+        "frequency_penalty": 0,
+        "dry_multiplier": 0,
+        "dry_base": 1.75,
+        "dry_allowed_length": 2,
+        "dry_penalty_last_n": 64,
+        "mirostat": 0,
+        "mirostat_tau": 5,
+        "mirostat_eta": 0.10000000149011612,
+        "adaptive_target": -1,
+        "adaptive_decay": 0.8999999761581421,
+        "max_tokens": -1,
+        "n_predict": -1,
+        "n_keep": 0,
+        "n_discard": 0,
+        "ignore_eos": false,
+        "stream": false,
+        "n_probs": 0,
+        "min_keep": 0,
+        "chat_format": "Content-only",
+        "reasoning_format": "none",
+        "reasoning_in_content": false,
+        "generation_prompt": "",
+        "samplers": [
+          "penalties",
+          "dry",
+          "top_n_sigma",
+          "top_k",
+          "typ_p",
+          "top_p",
+          "min_p",
+          "xtc",
+          "temperature"
+        ],
+        "speculative.types": "none",
+        "timings_per_token": false,
+        "post_sampling_probs": false,
+        "backend_sampling": false,
+        "lora": []
+      },
+      "n_ctx": 65536
+    },
+    "modelPath": "/mnt/D/backup_models/gemma-4-E4B-it-qat-UD-Q4_K_XL.gguf",
+    "slots": 4
+  },
+  "repeats": 2,
+  "trials": [
+    {
+      "id": "dating-root-mixed",
+      "system": "dating",
+      "holdout": false,
+      "repeat": 0,
+      "endpoint": "http://127.0.0.1:9931/v1",
+      "elapsedMs": 15058,
+      "requestError": null,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 1328,
+        "prompt_tokens": 2094,
+        "total_tokens": 3422,
+        "prompt_tokens_details": {
+          "cached_tokens": 76
+        }
+      },
+      "content": "```json\n{\n  \"global\": {\n    \"Occasion\": \"Attending a performance at Marigold Theater\"\n  },\n  \"player\": {\n    \"stats\": {\n      \"Social Energy\": \"4/10\",\n      \"Mood\": \"Exhausted\"\n    },\n    \"collections\": {\n      \"items\": {\n        \"update\": [\n          {\n            \"name\": \"sunflower\",\n            \"quantity\": 1\n          }\n        ]\n      }\n    }\n  },\n  \"characters\": [\n    {\n      \"name\": \"June\",\n      \"stats\": {\n        \"Affection\": 20,\n        \"Trust\": 12,\n        \"Mood\": \"Happy\",\n        \"Comfort\": \"20\",\n        \"Relationship\": \"Friends\"\n      },\n      \"collections\": {\n        \"items\": {\n          \"add\": [\n            {\n              \"name\": \"sunflower\",\n              \"quantity\": 1,\n              \"description\": \"Gift from Alex\"\n            }\n          ]\n        }\n      }\n    }\n  ],\n  \"locations\": {\n    \"current\": \"Marigold Theater\",\n    \"places\": [\n      {\n        \"name\": \"Moonbeam Café\"\n      },\n      {\n        \"name\": \"Marigold Theater\",\n        \"description\": \"An old theater with a glowing marquee and red velvet seats, hosting a performance.\"\n      }\n    ]\n  },\n  \"globalDeltas\": {},\n  \"playerDeltas\": {\n    \"Social Energy\": -6\n  },\n  \"characters\": [\n    {\n      \"name\": \"June\",\n      \"deltas\": {\n        \"Affection\": 5,\n        \"Trust\": 2\n      }\n    }\n  ]\n}\n```",
+      "parsed": {
+        "global": {
+          "Occasion": "Attending a performance at Marigold Theater"
+        },
+        "player": {
+          "stats": {
+            "Social Energy": "4/10",
+            "Mood": "Exhausted"
+          },
+          "collections": {
+            "items": {
+              "update": [
+                {
+                  "name": "sunflower",
+                  "quantity": 1
+                }
+              ]
+            }
+          }
+        },
+        "characters": [
+          {
+            "name": "June",
+            "deltas": {
+              "Affection": 5,
+              "Trust": 2
+            }
+          }
+        ],
+        "locations": {
+          "current": "Marigold Theater",
+          "places": [
+            {
+              "name": "Moonbeam Café"
+            },
+            {
+              "name": "Marigold Theater",
+              "description": "An old theater with a glowing marquee and red velvet seats, hosting a performance."
+            }
+          ]
+        },
+        "globalDeltas": {},
+        "playerDeltas": {
+          "Social Energy": -6
+        }
+      },
+      "normalized": {
+        "update": {
+          "global": {
+            "Occasion": "Attending a performance at Marigold Theater"
+          },
+          "player": {
+            "stats": {
+              "Social Energy": "4/10",
+              "Mood": "Exhausted"
+            },
+            "collections": {
+              "items": {
+                "update": [
+                  {
+                    "name": "sunflower",
+                    "quantity": 1
+                  }
+                ]
+              }
+            }
+          },
+          "characters": [
+            {
+              "name": "June",
+              "Affection": "20",
+              "Trust": "12"
+            }
+          ],
+          "locations": {
+            "current": "Marigold Theater",
+            "places": [
+              {
+                "name": "Moonbeam Café"
+              },
+              {
+                "name": "Marigold Theater",
+                "description": "An old theater with a glowing marquee and red velvet seats, hosting a performance."
+              }
+            ]
+          },
+          "playerDeltas": {
+            "Social Energy": -6
+          }
+        },
+        "effective": {
+          "global": {
+            "Day and Time": "",
+            "Occasion": "Attending a performance at Marigold Theater"
+          },
+          "player": {
+            "stats": {
+              "Social Energy": "4/10",
+              "Mood": "Exhausted"
+            },
+            "collections": {
+              "items": [
+                {
+                  "name": "sunflower",
+                  "quantity": 1,
+                  "description": ""
+                }
+              ],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "June",
+              "npcTemplateId": "character",
+              "stats": {
+                "Mood": "Neutral",
+                "Affection": "20",
+                "Trust": "12",
+                "Comfort": "20",
+                "Relationship": "Friends"
+              },
+              "collections": {}
+            }
+          ],
+          "locations": {
+            "enabled": true,
+            "currentId": "home",
+            "records": {
+              "home": {
+                "id": "home",
+                "name": "Moonbeam Café",
+                "description": "",
+                "aliases": [],
+                "parentId": ""
+              }
+            }
+          },
+          "timestamp": 1792527813468
+        },
+        "progression": null,
+        "holdings": {
+          "player": {
+            "stats": {
+              "Social Energy": "10/10",
+              "Mood": "Neutral"
+            },
+            "collections": {
+              "items": [
+                {
+                  "name": "sunflower",
+                  "quantity": 1,
+                  "description": ""
+                }
+              ],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "June",
+              "npcTemplateId": "character",
+              "stats": {
+                "Mood": "Neutral",
+                "Affection": "15",
+                "Trust": "10",
+                "Comfort": "20",
+                "Relationship": "Friends"
+              },
+              "collections": {}
+            }
+          ]
+        },
+        "warnings": [],
+        "places": [
+          {
+            "id": "place-0295b134-4593-4767-8145-1df05dceae2b",
+            "kind": "location-create",
+            "scope": "location",
+            "actor": "Marigold Theater",
+            "label": "New place",
+            "before": "",
+            "after": "An old theater with a glowing marquee and red velvet seats, hosting a performance.",
+            "risk": "risky",
+            "location": {
+              "id": "place-3f0ccbb1-7d0d-4310-9a8c-6132a5c1c7f4",
+              "record": {
+                "id": "place-3f0ccbb1-7d0d-4310-9a8c-6132a5c1c7f4",
+                "name": "Marigold Theater",
+                "aliases": [],
+                "description": "An old theater with a glowing marquee and red velvet seats, hosting a performance.",
+                "parentId": "",
+                "lorebook": "",
+                "loreEntryId": null
+              },
+              "before": null,
+              "provenance": {
+                "messageId": 1
+              }
+            }
+          },
+          {
+            "id": "place-2937db4e-4d8d-4c61-9c65-ae1d2ce64937",
+            "kind": "location-current",
+            "scope": "location",
+            "actor": "Marigold Theater",
+            "label": "Current place",
+            "before": "Moonbeam Café",
+            "after": "Marigold Theater",
+            "risk": "safe",
+            "location": {
+              "id": "place-3f0ccbb1-7d0d-4310-9a8c-6132a5c1c7f4",
+              "record": {
+                "id": "place-3f0ccbb1-7d0d-4310-9a8c-6132a5c1c7f4",
+                "name": "Marigold Theater",
+                "aliases": [],
+                "description": "An old theater with a glowing marquee and red velvet seats, hosting a performance.",
+                "parentId": "",
+                "lorebook": "",
+                "loreEntryId": null
+              },
+              "before": null,
+              "provenance": {
+                "messageId": 1
+              },
+              "currentBefore": "home"
+            }
+          }
+        ]
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "validJsonAndNotTruncated",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "preservedPoolMaxima",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "placeCreated Marigold Theater",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "placeRoot Marigold Theater",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "currentPlace Marigold Theater",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "itemRemove items sunflower 1",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "npcItemAdd June items sunflower 1",
+          "critical": true,
+          "passed": false
+        },
+        {
+          "name": "npcIncreased June Affection",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "playerDecreased Social Energy",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "npcPresent June",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "createdPlaceCount 1",
+          "critical": true,
+          "passed": true
+        }
+      ],
+      "audit": {
+        "placeholderInventory": false,
+        "openingInventedInventory": false,
+        "xpProgression": null
+      }
+    },
+    {
+      "id": "dating-root-mixed",
+      "system": "dating",
+      "holdout": false,
+      "repeat": 1,
+      "endpoint": "http://127.0.0.1:9931/v1",
+      "elapsedMs": 14568,
+      "requestError": null,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 1279,
+        "prompt_tokens": 2094,
+        "total_tokens": 3373,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        }
+      },
+      "content": "```json\n{\n  \"global\": {\n    \"Occasion\": \"Evening Performance at Marigold Theater\"\n  },\n  \"player\": {\n    \"stats\": {\n      \"Social Energy\": \"7/10\",\n      \"Mood\": \"Exhausted\"\n    },\n    \"collections\": {\n      \"items\": {\n        \"update\": [\n          {\n            \"name\": \"sunflower\",\n            \"quantity\": 1\n          }\n        ]\n      }\n    }\n  },\n  \"characters\": [\n    {\n      \"name\": \"June\",\n      \"stats\": {\n        \"Mood\": \"Pleased\",\n        \"Affection\": 18\n      },\n      \"collections\": {\n        \"items\": {\n          \"add\": [\n            {\n              \"name\": \"sunflower\",\n              \"quantity\": 1\n            }\n          ]\n        }\n      }\n    }\n  ],\n  \"locations\": {\n    \"current\": \"Marigold Theater\",\n    \"places\": [\n      {\n        \"name\": \"Moonbeam Café\"\n      },\n      {\n        \"name\": \"Marigold Theater\",\n        \"description\": \"An old marquee theater currently hosting a performance.\"\n      }\n    ]\n  }\n}\n```",
+      "parsed": {
+        "global": {
+          "Occasion": "Evening Performance at Marigold Theater"
+        },
+        "player": {
+          "stats": {
+            "Social Energy": "7/10",
+            "Mood": "Exhausted"
+          },
+          "collections": {
+            "items": {
+              "update": [
+                {
+                  "name": "sunflower",
+                  "quantity": 1
+                }
+              ]
+            }
+          }
+        },
+        "characters": [
+          {
+            "name": "June",
+            "stats": {
+              "Mood": "Pleased",
+              "Affection": 18
+            },
+            "collections": {
+              "items": {
+                "add": [
+                  {
+                    "name": "sunflower",
+                    "quantity": 1
+                  }
+                ]
+              }
+            }
+          }
+        ],
+        "locations": {
+          "current": "Marigold Theater",
+          "places": [
+            {
+              "name": "Moonbeam Café"
+            },
+            {
+              "name": "Marigold Theater",
+              "description": "An old marquee theater currently hosting a performance."
+            }
+          ]
+        }
+      },
+      "normalized": {
+        "update": {
+          "global": {
+            "Occasion": "Evening Performance at Marigold Theater"
+          },
+          "player": {
+            "stats": {
+              "Social Energy": "7/10",
+              "Mood": "Exhausted"
+            },
+            "collections": {
+              "items": {
+                "update": [
+                  {
+                    "name": "sunflower",
+                    "quantity": 1
+                  }
+                ]
+              }
+            }
+          },
+          "characters": [
+            {
+              "name": "June",
+              "stats": {
+                "Mood": "Pleased",
+                "Affection": "18"
+              },
+              "collections": {
+                "items": {
+                  "add": [
+                    {
+                      "name": "sunflower",
+                      "quantity": 1
+                    }
+                  ]
+                }
+              }
+            }
+          ],
+          "locations": {
+            "current": "Marigold Theater",
+            "places": [
+              {
+                "name": "Moonbeam Café"
+              },
+              {
+                "name": "Marigold Theater",
+                "description": "An old marquee theater currently hosting a performance."
+              }
+            ]
+          }
+        },
+        "effective": {
+          "global": {
+            "Day and Time": "",
+            "Occasion": "Evening Performance at Marigold Theater"
+          },
+          "player": {
+            "stats": {
+              "Social Energy": "7/10",
+              "Mood": "Exhausted"
+            },
+            "collections": {
+              "items": [
+                {
+                  "name": "sunflower",
+                  "quantity": 1,
+                  "description": ""
+                }
+              ],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "June",
+              "npcTemplateId": "character",
+              "stats": {
+                "Mood": "Pleased",
+                "Affection": "18",
+                "Trust": "10",
+                "Comfort": "20",
+                "Relationship": "Friends"
+              },
+              "collections": {
+                "items": [
+                  {
+                    "name": "sunflower",
+                    "quantity": 1,
+                    "description": ""
+                  }
+                ]
+              }
+            }
+          ],
+          "locations": {
+            "enabled": true,
+            "currentId": "home",
+            "records": {
+              "home": {
+                "id": "home",
+                "name": "Moonbeam Café",
+                "description": "",
+                "aliases": [],
+                "parentId": ""
+              }
+            }
+          },
+          "timestamp": 1792527813484
+        },
+        "progression": null,
+        "holdings": {
+          "player": {
+            "stats": {
+              "Social Energy": "10/10",
+              "Mood": "Neutral"
+            },
+            "collections": {
+              "items": [
+                {
+                  "name": "sunflower",
+                  "quantity": 1,
+                  "description": ""
+                }
+              ],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "June",
+              "npcTemplateId": "character",
+              "stats": {
+                "Mood": "Neutral",
+                "Affection": "15",
+                "Trust": "10",
+                "Comfort": "20",
+                "Relationship": "Friends"
+              },
+              "collections": {
+                "items": [
+                  {
+                    "name": "sunflower",
+                    "quantity": 1,
+                    "description": ""
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "warnings": [],
+        "places": [
+          {
+            "id": "place-47e0680e-edc5-439d-8040-04ed6b07330b",
+            "kind": "location-create",
+            "scope": "location",
+            "actor": "Marigold Theater",
+            "label": "New place",
+            "before": "",
+            "after": "An old marquee theater currently hosting a performance.",
+            "risk": "risky",
+            "location": {
+              "id": "place-ebc213b1-89a2-4089-9ead-9ab53fac7241",
+              "record": {
+                "id": "place-ebc213b1-89a2-4089-9ead-9ab53fac7241",
+                "name": "Marigold Theater",
+                "aliases": [],
+                "description": "An old marquee theater currently hosting a performance.",
+                "parentId": "",
+                "lorebook": "",
+                "loreEntryId": null
+              },
+              "before": null,
+              "provenance": {
+                "messageId": 1
+              }
+            }
+          },
+          {
+            "id": "place-f0ec73a8-5e0e-435b-98fc-78c6722ba721",
+            "kind": "location-current",
+            "scope": "location",
+            "actor": "Marigold Theater",
+            "label": "Current place",
+            "before": "Moonbeam Café",
+            "after": "Marigold Theater",
+            "risk": "safe",
+            "location": {
+              "id": "place-ebc213b1-89a2-4089-9ead-9ab53fac7241",
+              "record": {
+                "id": "place-ebc213b1-89a2-4089-9ead-9ab53fac7241",
+                "name": "Marigold Theater",
+                "aliases": [],
+                "description": "An old marquee theater currently hosting a performance.",
+                "parentId": "",
+                "lorebook": "",
+                "loreEntryId": null
+              },
+              "before": null,
+              "provenance": {
+                "messageId": 1
+              },
+              "currentBefore": "home"
+            }
+          }
+        ]
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "validJsonAndNotTruncated",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "preservedPoolMaxima",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "placeCreated Marigold Theater",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "placeRoot Marigold Theater",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "currentPlace Marigold Theater",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "itemRemove items sunflower 1",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "npcItemAdd June items sunflower 1",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "npcIncreased June Affection",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "playerDecreased Social Energy",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "npcPresent June",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "createdPlaceCount 1",
+          "critical": true,
+          "passed": true
+        }
+      ],
+      "audit": {
+        "placeholderInventory": false,
+        "openingInventedInventory": false,
+        "xpProgression": null
+      }
+    }
+  ],
+  "servers": [
+    {
+      "endpoint": "http://127.0.0.1:9931/v1",
+      "model": "/mnt/D/backup_models/gemma-4-E4B-it-qat-UD-Q4_K_XL.gguf",
+      "build": "b11669-620d2225c",
+      "defaults": {
+        "params": {
+          "seed": 4294967295,
+          "temperature": 1,
+          "dynatemp_range": 0,
+          "dynatemp_exponent": 1,
+          "top_k": 64,
+          "top_p": 0.949999988079071,
+          "min_p": 0,
+          "top_n_sigma": -1,
+          "xtc_probability": 0,
+          "xtc_threshold": 0.10000000149011612,
+          "typical_p": 1,
+          "repeat_last_n": 64,
+          "repeat_penalty": 1,
+          "presence_penalty": 0,
+          "frequency_penalty": 0,
+          "dry_multiplier": 0,
+          "dry_base": 1.75,
+          "dry_allowed_length": 2,
+          "dry_penalty_last_n": 64,
+          "mirostat": 0,
+          "mirostat_tau": 5,
+          "mirostat_eta": 0.10000000149011612,
+          "adaptive_target": -1,
+          "adaptive_decay": 0.8999999761581421,
+          "max_tokens": -1,
+          "n_predict": -1,
+          "n_keep": 0,
+          "n_discard": 0,
+          "ignore_eos": false,
+          "stream": false,
+          "n_probs": 0,
+          "min_keep": 0,
+          "chat_format": "Content-only",
+          "reasoning_format": "none",
+          "reasoning_in_content": false,
+          "generation_prompt": "",
+          "samplers": [
+            "penalties",
+            "dry",
+            "top_n_sigma",
+            "top_k",
+            "typ_p",
+            "top_p",
+            "min_p",
+            "xtc",
+            "temperature"
+          ],
+          "speculative.types": "none",
+          "timings_per_token": false,
+          "post_sampling_probs": false,
+          "backend_sampling": false,
+          "lora": []
+        },
+        "n_ctx": 65536
+      },
+      "modelPath": "/mnt/D/backup_models/gemma-4-E4B-it-qat-UD-Q4_K_XL.gguf",
+      "slots": 4
+    }
+  ],
+  "concurrencyPerEndpoint": 4,
+  "summary": {
+    "checks": 22,
+    "passed": 21,
+    "rate": 0.9545454545454546,
+    "criticalFailures": [
+      "dating-root-mixed #1: npcItemAdd June items sunflower 1"
+    ],
+    "systems": {
+      "fantasy": null,
+      "dating": 0.9545454545454546
+    },
+    "perSystemCounts": {
+      "fantasy": {
+        "checks": 0,
+        "passed": 0,
+        "rate": null
+      },
+      "dating": {
+        "checks": 22,
+        "passed": 21,
+        "rate": 0.9545454545454546
+      }
+    },
+    "splits": {
+      "main": {
+        "checks": 22,
+        "passed": 21,
+        "rate": 0.9545454545454546
+      },
+      "originalHoldout": {
+        "checks": 0,
+        "passed": 0,
+        "rate": null
+      }
+    },
+    "auditFailures": [],
+    "endpoints": {
+      "http://127.0.0.1:9931/v1": {
+        "trials": 2,
+        "checks": 22,
+        "passed": 21,
+        "criticalFailures": 1
+      }
+    },
+    "acceptable": false
+  }
+}

@@ -33,8 +33,8 @@ function fixture({ enabled = true, afterRequest, reviewMode = 'off',
         eventSource: { emit: () => {} },
     }, '{ locationProposalsForReading, partitionLocationRows, resolveLocationRows }');
     const output = { global: { Time: 'dusk' }, player: {}, characters: [], locations: {
-        places: [{ ref: 'new-tavern', name: 'The Lantern', description: 'A tavern.' }],
-        currentRef: 'new-tavern',
+        places: [{ name: 'The Lantern', description: 'A tavern.' }],
+        current: 'The Lantern',
     } };
     const dependencies = {
         getContext: () => context, getSettings: () => settings, getAllCharacters: () => [],

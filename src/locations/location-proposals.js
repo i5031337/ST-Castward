@@ -23,30 +23,35 @@ export function buildLocationProposals(state, input, { provenance, makeId = crea
     const original = readLocationStore(state);
     const rows = [], warnings = [];
     if (!original.enabled || !input || typeof input !== 'object') return { rows, warnings };
-    const refs = new Map(Object.keys(original.records).map(id => [id, id]));
-    const resolveRef = value => {
-        const ref = text(value);
-        if (refs.has(ref)) return ref;
-        const matches = [...refs.keys()].filter(candidate => candidate.toLowerCase() === ref.toLowerCase());
-        return matches.length === 1 ? matches[0] : ref;
+    const nameKey = value => text(value).normalize('NFKC').toLowerCase();
+    const refs = new Map();
+    const register = (name, id) => {
+        const key = nameKey(name);
+        if (key) refs.set(key, refs.has(key) && refs.get(key) !== id ? null : id);
     };
+    for (const record of Object.values(original.records)) {
+        for (const name of [record.name, ...record.aliases]) register(name, record.id);
+    }
     const candidates = [];
     const submittedPlaces = Array.isArray(input.places) ? input.places : [];
     const places = submittedPlaces.slice(0, 40);
     if (submittedPlaces.length > places.length) warnings.push('Only the first 40 proposed places were considered.');
-    const refCounts = new Map();
+    const counts = new Map();
     for (const place of places) {
-        const ref = text(place?.ref);
-        refCounts.set(ref, (refCounts.get(ref) || 0) + 1);
+        const key = nameKey(place?.name);
+        const identity = refs.get(key) || key;
+        counts.set(identity, (counts.get(identity) || 0) + 1);
     }
+    const allocated = new Set(Object.keys(original.records));
     for (const place of places) {
-        const ref = text(place?.ref);
-        if (!ref || refCounts.get(ref) > 1) {
-            warnings.push('Ignored a place with a missing or repeated reference.'); continue;
+        const ref = nameKey(place?.name);
+        if (!ref || counts.get(refs.get(ref) || ref) > 1 || refs.has(ref) && !refs.get(ref)) {
+            warnings.push('Ignored a place with a missing, repeated, or ambiguous name.'); continue;
         }
         if (!refs.has(ref)) {
             const id = makeId();
-            if ([...refs.values()].includes(id)) { warnings.push(`Ignored ${text(place.name) || ref}: place ID collision.`); continue; }
+            if (allocated.has(id)) { warnings.push(`Ignored ${text(place.name)}: place ID collision.`); continue; }
+            allocated.add(id);
             refs.set(ref, id);
         }
         candidates.push({ ref, place, id: refs.get(ref) });
@@ -59,23 +64,23 @@ export function buildLocationProposals(state, input, { provenance, makeId = crea
         const next = [];
         for (const candidate of waiting) {
             const { ref, place, id } = candidate;
-            const parentRef = resolveRef(place.parentRef);
-            if (parentRef && refs.has(parentRef) && !failedRefs.has(parentRef)
+            const parentRef = nameKey(place.parent);
+            if (parentRef && refs.get(parentRef) && !failedRefs.has(parentRef)
                 && !own(working.locations.records, refs.get(parentRef))) { next.push(candidate); continue; }
             try {
                 // Models commonly use null for an absent optional parent. Treat it as
                 // omitted, while an empty string still explicitly clears a parent.
-                if (own(place, 'parentRef') && place.parentRef !== null && typeof place.parentRef !== 'string') throw new Error('The parent reference must be text.');
-                if (own(place, 'parentRef') && parentRef && (!refs.has(parentRef) || failedRefs.has(parentRef))) {
+                if (own(place, 'parent') && place.parent !== null && typeof place.parent !== 'string') throw new Error('The parent name must be text.');
+                if (own(place, 'parent') && parentRef && (!refs.get(parentRef) || failedRefs.has(parentRef))) {
                     warnings.push(`Ignored the unknown parent for ${text(place.name) || ref}.`);
                 }
                 const before = own(original.records, id) ? original.records[id] : null;
-                const recordInput = { ...(before ? { id } : {}) };
-                for (const field of ['name', 'aliases', 'description']) {
+                const recordInput = before ? { id } : { name: place.name };
+                for (const field of ['aliases', 'description']) {
                     if (own(place, field)) recordInput[field] = place[field];
                 }
-                if (own(place, 'parentRef') && place.parentRef !== null
-                    && (!parentRef || (refs.has(parentRef) && !failedRefs.has(parentRef)))) {
+                if (own(place, 'parent') && place.parent !== null
+                    && (!parentRef || (refs.get(parentRef) && !failedRefs.has(parentRef)))) {
                     recordInput.parentId = refs.get(parentRef) || '';
                 }
                 const updated = editLocation(working, recordInput, { makeId: () => id });
@@ -89,7 +94,7 @@ export function buildLocationProposals(state, input, { provenance, makeId = crea
         if (!progress) { warnings.push('Ignored places with missing or cyclic parent dependencies.'); break; }
         waiting = next;
     }
-    const currentRef = resolveRef(input.currentRef);
+    const currentRef = nameKey(input.current);
     if (currentRef && refs.has(currentRef) && own(working.locations.records, refs.get(currentRef))) {
         const record = working.locations.records[refs.get(currentRef)];
         if (record.id !== original.currentId) {
@@ -97,8 +102,8 @@ export function buildLocationProposals(state, input, { provenance, makeId = crea
                 original.records[record.id] || null, provenance, original.currentId,
                 original.records[original.currentId]?.name));
         }
-    } else if (currentRef) warnings.push('Ignored the current place: its reference does not exist.');
-    else if (own(input, 'currentRef') && input.currentRef === '' && original.currentId) {
+    } else if (currentRef) warnings.push('Ignored the current place: its name is unknown or ambiguous.');
+    else if (own(input, 'current') && input.current === '' && original.currentId) {
         rows.push(rowFor('location-current',
             { id: '', name: 'Unknown' }, null, provenance, original.currentId,
             original.records[original.currentId]?.name));

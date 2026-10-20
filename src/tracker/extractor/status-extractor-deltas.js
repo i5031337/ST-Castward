@@ -43,11 +43,11 @@ export function describeNumericDeltas(state, settings) {
     const lines = [];
     const global = numericDeltaNames(settings.globalStats, state?.global);
     const player = numericDeltaNames(settings.playerStats, state?.player?.stats, progressionFields(settings, { isPlayer: true }));
-    if (global.length) lines.push(`World: ${global.join(', ')}`);
-    if (player.length) lines.push(`Player: ${player.join(', ')}`);
+    if (global.length) lines.push(`globalDeltas: ${global.join(', ')}`);
+    if (player.length) lines.push(`player.deltas: ${player.join(', ')}`);
     for (const actor of state?.characters || []) {
         const actorNames = numericDeltaNames(npcStatsFor(actor, settings), actor.stats, progressionFields(settings, { actor }));
-        if (actorNames.length) lines.push(`${actor.name}: ${actorNames.join(', ')}`);
+        if (actorNames.length) lines.push(`characters[].deltas (name: ${actor.name}): ${actorNames.join(', ')}`);
     }
     return lines.join('\n');
 }

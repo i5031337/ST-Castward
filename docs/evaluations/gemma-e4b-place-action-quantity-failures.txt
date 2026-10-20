@@ -1,0 +1,4428 @@
+Targeted rerun: full frozen prompts and original failed responses. All 24 trials completed.
+
+CASE 1: tracker / fantasy-travel / repetition 1
+
+FAILED CHECKS:
+[
+  {
+    "name": "placeCreated Old Mill",
+    "critical": true,
+    "passed": false
+  },
+  {
+    "name": "currentPlace Old Mill",
+    "critical": true,
+    "passed": false
+  }
+]
+
+SCENARIO:
+{
+  "id": "fantasy-travel",
+  "system": "fantasy",
+  "npc": "Mira",
+  "text": "Alex leaves the Rusty Lantern with Mira and arrives inside the Old Mill. Broken wooden gears cover the dusty floor. Both stand in the mill now. Alex drinks one of the three red healing potions in the pack; the draught restores 2 HP. The other two bottles remain in the pack.",
+  "hp": "7/12",
+  "items": [
+    {
+      "name": "red healing potion",
+      "quantity": 3
+    }
+  ],
+  "checks": [
+    [
+      "placeCreated",
+      "Old Mill",
+      true
+    ],
+    [
+      "currentPlace",
+      "Old Mill",
+      true
+    ],
+    [
+      "playerValue",
+      "HP",
+      "9/12"
+    ],
+    [
+      "itemRemove",
+      "equipment",
+      "red healing potion",
+      1
+    ],
+    [
+      "npcPresent",
+      "Mira"
+    ]
+  ]
+}
+
+INITIAL STATE:
+{
+  "global": {
+    "Time": "",
+    "Quest": ""
+  },
+  "player": {
+    "stats": {
+      "HP": "7/12",
+      "Mana": "10/10",
+      "Armor": "10",
+      "Strength": "10",
+      "Dexterity": "10",
+      "Constitution": "10",
+      "Intelligence": "10",
+      "Wisdom": "10",
+      "Charisma": "10",
+      "Condition": "Healthy",
+      "Currency": "0",
+      "XP": "0/100",
+      "Level": "1"
+    },
+    "collections": {
+      "equipment": [
+        {
+          "name": "red healing potion",
+          "quantity": 3
+        }
+      ],
+      "clothing": []
+    }
+  },
+  "characters": [
+    {
+      "name": "Mira",
+      "npcTemplateId": "character",
+      "stats": {
+        "HP": "12/12",
+        "Mana": "10/10",
+        "Armor": "10",
+        "Strength": "10",
+        "Dexterity": "10",
+        "Constitution": "10",
+        "Intelligence": "10",
+        "Wisdom": "10",
+        "Charisma": "10",
+        "Condition": "Healthy",
+        "Currency": "0",
+        "XP": "0/100",
+        "Level": "1"
+      },
+      "collections": {}
+    }
+  ],
+  "locations": {
+    "enabled": true,
+    "currentId": "home",
+    "records": {
+      "home": {
+        "id": "home",
+        "name": "Rusty Lantern",
+        "description": "",
+        "aliases": [],
+        "parentId": ""
+      }
+    }
+  }
+}
+
+SYSTEM MESSAGE:
+Read the latest roleplay message and return a JSON tracker update.
+Use configured fields and exact names.
+Report resolved events. Use earlier messages as context.
+Use stated amounts. Estimate conservatively when an effect is clear but its amount is unstated.
+List every NPC present after the message.
+Follow the output format in the request.
+
+USER MESSAGE:
+Report changes from the latest message and list the present NPCs.
+Alex is the player-controlled character. Put their changes under "player".
+
+### EVIDENCE RULES
+Use configured field purposes and rules to interpret resolved events.
+Apply costs when incurred.
+Use stated amounts.
+Estimate a conservative amount when an effect is clear but its amount is unstated.
+Use the field's current scale for estimates.
+Apply configured persistence and reset rules.
+Update the listed editable fields.
+Add physical items when the recipient acquires them.
+Use established possessions for a new NPC's starting items.
+Treat scene props as part of the setting.
+Add missing abilities or knowledge when demonstrated, including during a failed action.
+Reusable entries stay held after use.
+
+### EXPERIENCE
+Award XP once per concrete accomplishment by its recipient.
+Meaningful active progress toward a goal qualifies.
+Rest, care, accidents, rumours, and routine conversation leave XP unchanged.
+Report earned XP as a positive delta in the recipient's configured XP field.
+
+### RECOVERY
+For complete recovery, report the full missing amount for each affected pool.
+Sound sleep followed by waking refreshed, effective healing, or recharging can establish complete recovery when field rules permit.
+Match recovery to the affected owner and pools.
+Use a smaller gain for partial recovery.
+Missing amounts:
+Player.HP 7/12 needs +5 to reach capacity.
+Report bodily injury as a decrease in player.deltas.HP.
+Report effective wound care or healing as an increase in that field.
+Include any text condition change separately.
+Estimate a conservative amount for partial healing.
+
+### CONFIGURED FIELDS
+Editable stats:
+- World.Time: text. The time of day or moment in the story.
+- World.Quest: text. The objective or lead the characters are currently pursuing.
+- Player.HP: pool (current/maximum). Physical well-being. Wounds lower current HP; healing restores it. Maximum HP reflects lasting resilience.
+- Player.Mana: pool (current/maximum). Magical energy. Casting spells spends current Mana; rest or magical recovery restores it. Maximum Mana reflects lasting magical capacity.
+- Player.Armor: number. Protection from worn gear, natural hide, or magic. Higher values suggest that a blow is less threatening.
+- Player.Strength: number. Physical power used to lift, grapple, break, and strike with force. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- Player.Dexterity: number. Agility, balance, quick reactions, and precise movement. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- Player.Constitution: number. Endurance against exhaustion, illness, harsh conditions, and prolonged effort. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- Player.Intelligence: number. Memory, learned knowledge, investigation, and deliberate reasoning. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- Player.Wisdom: number. Awareness, intuition, judgment, and attention to subtle details. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- Player.Charisma: number. Presence and the ability to persuade, inspire, or unsettle others. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- Player.Condition: text. Describe injuries, ailments, and other temporary effects in plain words.
+- Player.Currency: number. Money held by this character; change it when the story establishes a gain or expense.
+- Player.XP: earned experience. Experience earned through meaningful challenges, discoveries, and growth in the story.
+- NPC.HP: pool (current/maximum). Physical well-being. Wounds lower current HP; healing restores it. Maximum HP reflects lasting resilience.
+- NPC.Mana: pool (current/maximum). Magical energy. Casting spells spends current Mana; rest or magical recovery restores it. Maximum Mana reflects lasting magical capacity.
+- NPC.Armor: number. Protection from worn gear, natural hide, or magic. Higher values suggest that a blow is less threatening.
+- NPC.Strength: number. Physical power used to lift, grapple, break, and strike with force. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- NPC.Dexterity: number. Agility, balance, quick reactions, and precise movement. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- NPC.Constitution: number. Endurance against exhaustion, illness, harsh conditions, and prolonged effort. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- NPC.Intelligence: number. Memory, learned knowledge, investigation, and deliberate reasoning. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- NPC.Wisdom: number. Awareness, intuition, judgment, and attention to subtle details. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- NPC.Charisma: number. Presence and the ability to persuade, inspire, or unsettle others. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- NPC.Condition: text. Describe injuries, ailments, and other temporary effects in plain words.
+- NPC.Currency: number. Money held by this character; change it when the story establishes a gain or expense.
+- NPC.XP: earned experience. Experience earned through meaningful challenges, discoveries, and growth in the story.
+
+### NPC INITIALIZATION
+Fill blank fields from this list when an NPC enters the scene.
+Use plausible individual values when the story provides no detail.
+Write initial pool readings as "current/maximum" with an individual capacity.
+NPC initialization fields:
+- NPC.HP: pool (current/maximum). Physical well-being. Wounds lower current HP; healing restores it. Maximum HP reflects lasting resilience. Default: 12/12. Minimum: 0.
+- NPC.Mana: pool (current/maximum). Magical energy. Casting spells spends current Mana; rest or magical recovery restores it. Maximum Mana reflects lasting magical capacity. Default: 10/10. Minimum: 0.
+- NPC.Armor: number. Protection from worn gear, natural hide, or magic. Higher values suggest that a blow is less threatening. Default: 10. Minimum: 0.
+- NPC.Strength: number. Physical power used to lift, grapple, break, and strike with force. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change. Default: 10. Minimum: 0.
+- NPC.Dexterity: number. Agility, balance, quick reactions, and precise movement. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change. Default: 10. Minimum: 0.
+- NPC.Constitution: number. Endurance against exhaustion, illness, harsh conditions, and prolonged effort. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change. Default: 10. Minimum: 0.
+- NPC.Intelligence: number. Memory, learned knowledge, investigation, and deliberate reasoning. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change. Default: 10. Minimum: 0.
+- NPC.Wisdom: number. Awareness, intuition, judgment, and attention to subtle details. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change. Default: 10. Minimum: 0.
+- NPC.Charisma: number. Presence and the ability to persuade, inspire, or unsettle others. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change. Default: 10. Minimum: 0.
+- NPC.Condition: text. Describe injuries, ailments, and other temporary effects in plain words. Default: Healthy.
+- NPC.Currency: number. Money held by this character; change it when the story establishes a gain or expense. Default: 0. Minimum: 0.
+- NPC.XP: earned experience. Experience earned through meaningful challenges, discoveries, and growth in the story. Default: 0/100. Minimum: 0.
+- NPC.Level: number. A broad measure of how much this character has grown through experience. Default: 1. Minimum: 1.
+
+### COLLECTION DEFINITIONS
+- "equipment" for player or Character NPCs (npcTemplateId: character) - Carried gear; change holdings only when the story establishes a transfer. Fields: name [identifies the item], quantity (number) [minimum 0], description [include when adding] Quantity field: quantity.
+- "abilities" (Abilities and Spells) for player or Character NPCs (npcTemplateId: character) - Known abilities, spells, or techniques and any limits established by the story. Fields: name [identifies the item], kind, rank, uses - Optional. Leave blank when the ability has no stated use limit., effect [include when adding]
+Use the quoted collection ID as the key.
+Use exact field names and declared types.
+The configured primary field identifies each entry.
+NPC fields: HP, Mana, Armor, Strength, Dexterity, Constitution, Intelligence, Wisdom, Charisma, Condition, Currency, XP, Level. NPC guidance: People, beasts, companions, and foes share the same stats.
+
+### PLACES
+Note when the current scene’s location changes.
+Set "locations.current" to the opening setting or the place reached.
+Record newly established places and details in "locations.places".
+Put "locations" beside "global", "player", and "characters".
+{"global":{},"player":{},"characters":[],"locations":{"places":[{"name":"<parent place>"},{"name":"<place>","parent":"<parent place>","description":"<complete established description>","aliases":["<alternate name>"]}],"current":"<place>"}}
+Replace placeholders with established story facts.
+Identify places by name or a known alias.
+Include changed details.
+Write a complete description that preserves established facts.
+Use "parent" for the containing place.
+Include newly discovered parents in "places".
+Use "" for an explicit departure with unknown destination.
+Omit unchanged "current" and "parent" fields.
+Plans, rumours, invitations, and mentions remain context until established.
+Known places: {"current":"Rusty Lantern","places":[{"name":"Rusty Lantern"}]}
+
+### CURRENT STATE
+{"global":{"Time":"","Quest":""},"player":{"stats":{"HP":"7/12","Mana":"10/10","Armor":"10","Strength":"10","Dexterity":"10","Constitution":"10","Intelligence":"10","Wisdom":"10","Charisma":"10","Condition":"Healthy","Currency":"0","XP":"0/100","Level":"1"},"collections":{"equipment":[{"name":"red healing potion","quantity":3}],"abilities":[]}},"characters":[{"name":"Mira","npcTemplateId":"character","stats":{"HP":"12/12","Mana":"10/10","Armor":"10","Strength":"10","Dexterity":"10","Constitution":"10","Intelligence":"10","Wisdom":"10","Charisma":"10","Condition":"Healthy","Currency":"0","XP":"0/100","Level":"1"},"collections":{"equipment":[],"abilities":[]}}]}
+Profiles and filled fields outside the editable list provide context.
+
+### ELIGIBLE NUMERIC DELTAS
+player.deltas: HP, Mana, Armor, Strength, Dexterity, Constitution, Intelligence, Wisdom, Charisma, Currency, XP
+characters[].deltas (name: Mira): HP, Mana, Armor, Strength, Dexterity, Constitution, Intelligence, Wisdom, Charisma, Currency, XP
+
+### LATEST MESSAGE
+Alex leaves the Rusty Lantern with Mira and arrives inside the Old Mill. Broken wooden gears cover the dusty floor. Both stand in the mill now. Alex drinks one of the three red healing potions in the pack; the draught restores 2 HP. The other two bottles remain in the pack.
+
+### OUTPUT FORMAT
+Return raw JSON with "global", "player", and "characters".
+Include changed fields and blank NPC initializations.
+Use exact configured names.
+
+Put text values and initial numeric readings in these objects as JSON strings:
+- World: "global".
+- Player: "player.stats".
+- NPC: "characters[].stats".
+String readings include "8", "8/10", and configured text values.
+
+Put changes to existing numeric values in these objects as JSON numbers:
+- World: "globalDeltas".
+- Player: "player.deltas".
+- NPC: "characters[].deltas".
+Use positive numbers for gains and negative numbers for losses.
+For a pool, report the change to its current amount.
+Use one representation per field.
+
+"characters" is an array of objects.
+Each object has the NPC's exact "name".
+List every present NPC, including those with no changes.
+Known absent NPC updates also go in this array with "offstage": true.
+Player changes go under "player".
+Use "characters": [] when the present cast and offstage updates are both empty.
+
+Put collection changes under "player.collections" or "characters[].collections".
+Key each collection by its configured ID.
+Use "add" for acquisitions.
+Use "remove" for consumption or loss.
+Use "update" for changes to other item fields.
+Include the primary field in each add, update, and counted remove object.
+For uncounted removals, supply identifiers.
+For counted gains or losses, use the configured quantity field for the amount gained or spent.
+The default amount is 1.
+Use "all": true to remove a whole stack.
+For transfers, remove from the giver and add to the recipient.
+Include supported item details using their declared types.
+Keep one entry per identifier.
+
+No-change example:
+{"global":{},"player":{},"characters":[{"name":"Mira"}]}
+
+Changed-reply example (illustrative changes):
+{"global":{},"player":{"deltas":{"HP":-1},"collections":{"equipment":{"add":[{"name":"<item identifier>","quantity":1}]}}},"characters":[{"name":"Mira","deltas":{"HP":-1},"collections":{"equipment":{"remove":[{"name":"<item identifier>","quantity":1}]}}}]}
+
+New NPC example (replace placeholders with initial readings using the field definitions):
+{
+  "global": {},
+  "player": {},
+  "characters": [
+    {
+      "name": "<exact NPC name from the story>",
+      "stats": {
+        "HP": "<initial reading>",
+        "Mana": "<initial reading>",
+        "Armor": "<initial reading>",
+        "Strength": "<initial reading>",
+        "Dexterity": "<initial reading>",
+        "Constitution": "<initial reading>",
+        "Intelligence": "<initial reading>",
+        "Wisdom": "<initial reading>",
+        "Charisma": "<initial reading>",
+        "Condition": "<initial reading>",
+        "Currency": "<initial reading>",
+        "XP": "<initial reading>",
+        "Level": "<initial reading>"
+      }
+    }
+  ]
+}
+
+Independent collection examples (replace illustrative values with supported typed details):
+Acquired item:
+{
+  "equipment": {
+    "add": [
+      {
+        "name": "<exact primary field value>",
+        "quantity": 1,
+        "description": "<supported item detail>"
+      }
+    ]
+  }
+}
+
+Lost item:
+{
+  "equipment": {
+    "remove": [
+      {
+        "name": "<exact primary field value>",
+        "quantity": 1
+      }
+    ]
+  }
+}
+
+Whole stack lost:
+{
+  "equipment": {
+    "remove": [
+      {
+        "name": "<exact primary field value>",
+        "all": true
+      }
+    ]
+  }
+}
+
+Changed item:
+{
+  "equipment": {
+    "update": [
+      {
+        "name": "<exact primary field value>",
+        "description": "<new value>"
+      }
+    ]
+  }
+}
+
+Check the JSON structure, present cast, field names, and evidence for each change.
+For an established setting or arrival, put "locations" beside "global", "player", and "characters". Set "locations.current" to the place name. Put new place records in "locations.places".
+
+ORIGINAL RESPONSE:
+```json
+{
+  "global": {
+    "locations": {
+      "current": "Old Mill",
+      "places": [
+        {
+          "name": "Rusty Lantern"
+        },
+        {
+          "name": "Old Mill",
+          "description": "The Old Mill. Broken wooden gears cover the dusty floor.",
+          "parent": "global"
+        }
+      ]
+    }
+  },
+  "player": {
+    "stats": {
+      "HP": "9/12"
+    },
+    "deltas": {
+      "HP": 2
+    },
+    "collections": {
+      "equipment": {
+        "remove": [
+          {
+            "name": "red healing potion",
+            "quantity": 1
+          }
+        ]
+      }
+    }
+  },
+  "characters": [
+    {
+      "name": "Mira",
+      "stats": {
+        "HP": "12/12",
+        "Mana": "10/10",
+        "Armor": "10",
+        "Strength": "10",
+        "Dexterity": "10",
+        "Constitution": "10",
+        "Intelligence": "10",
+        "Wisdom": "10",
+        "Charisma": "10",
+        "Condition": "Healthy",
+        "Currency": "0",
+        "XP": "0/100",
+        "Level": "1"
+      }
+    }
+  ]
+}
+```
+
+NORMALIZED RESULT:
+{
+  "update": {
+    "global": {
+      "locations": {
+        "current": "Old Mill",
+        "places": [
+          {
+            "name": "Rusty Lantern"
+          },
+          {
+            "name": "Old Mill",
+            "description": "The Old Mill. Broken wooden gears cover the dusty floor.",
+            "parent": "global"
+          }
+        ]
+      }
+    },
+    "player": {
+      "stats": {
+        "HP": "9/12"
+      },
+      "collections": {
+        "equipment": {
+          "remove": [
+            {
+              "name": "red healing potion",
+              "quantity": 1
+            }
+          ]
+        }
+      }
+    },
+    "characters": [
+      {
+        "name": "Mira",
+        "stats": {
+          "HP": "12/12",
+          "Mana": "10/10",
+          "Armor": "10",
+          "Strength": "10",
+          "Dexterity": "10",
+          "Constitution": "10",
+          "Intelligence": "10",
+          "Wisdom": "10",
+          "Charisma": "10",
+          "Condition": "Healthy",
+          "Currency": "0"
+        }
+      }
+    ]
+  },
+  "effective": {
+    "global": {
+      "Time": "",
+      "Quest": ""
+    },
+    "player": {
+      "stats": {
+        "HP": "9/12",
+        "Mana": "10/10",
+        "Armor": "10",
+        "Strength": "10",
+        "Dexterity": "10",
+        "Constitution": "10",
+        "Intelligence": "10",
+        "Wisdom": "10",
+        "Charisma": "10",
+        "Condition": "Healthy",
+        "Currency": "0",
+        "XP": "0/100",
+        "Level": "1"
+      },
+      "collections": {
+        "equipment": [
+          {
+            "name": "red healing potion",
+            "quantity": 2
+          }
+        ],
+        "clothing": []
+      },
+      "name": "Alex"
+    },
+    "characters": [
+      {
+        "name": "Mira",
+        "npcTemplateId": "character",
+        "stats": {
+          "HP": "12/12",
+          "Mana": "10/10",
+          "Armor": "10",
+          "Strength": "10",
+          "Dexterity": "10",
+          "Constitution": "10",
+          "Intelligence": "10",
+          "Wisdom": "10",
+          "Charisma": "10",
+          "Condition": "Healthy",
+          "Currency": "0",
+          "XP": "0/100",
+          "Level": "1"
+        },
+        "collections": {}
+      }
+    ],
+    "locations": {
+      "enabled": true,
+      "currentId": "home",
+      "records": {
+        "home": {
+          "id": "home",
+          "name": "Rusty Lantern",
+          "description": "",
+          "aliases": [],
+          "parentId": ""
+        }
+      }
+    },
+    "timestamp": 1792525250819
+  },
+  "progression": null,
+  "holdings": {
+    "player": {
+      "stats": {
+        "HP": "7/12",
+        "Mana": "10/10",
+        "Armor": "10",
+        "Strength": "10",
+        "Dexterity": "10",
+        "Constitution": "10",
+        "Intelligence": "10",
+        "Wisdom": "10",
+        "Charisma": "10",
+        "Condition": "Healthy",
+        "Currency": "0",
+        "XP": "0/100",
+        "Level": "1"
+      },
+      "collections": {
+        "equipment": [
+          {
+            "name": "red healing potion",
+            "quantity": 2
+          }
+        ],
+        "clothing": []
+      },
+      "name": "Alex"
+    },
+    "characters": [
+      {
+        "name": "Mira",
+        "npcTemplateId": "character",
+        "stats": {
+          "HP": "12/12",
+          "Mana": "10/10",
+          "Armor": "10",
+          "Strength": "10",
+          "Dexterity": "10",
+          "Constitution": "10",
+          "Intelligence": "10",
+          "Wisdom": "10",
+          "Charisma": "10",
+          "Condition": "Healthy",
+          "Currency": "0",
+          "XP": "0/100",
+          "Level": "1"
+        },
+        "collections": {}
+      }
+    ]
+  },
+  "warnings": [
+    "Player · HP delta \"2\" skipped: the reply also provided an absolute value.",
+    "Mira · XP: \"0/100\" skipped: earned XP must be reported as a positive delta.",
+    "Mira · Level: \"1\" skipped: Level is managed by XP progression.",
+    "World · locations: skipped: no configured stat matches this name."
+  ],
+  "places": []
+}
+
+CASE 2: tracker / dating-opening / repetition 1
+
+FAILED CHECKS:
+[
+  {
+    "name": "placeCreated Moonbeam Café",
+    "critical": true,
+    "passed": false
+  },
+  {
+    "name": "currentPlace Moonbeam Café",
+    "critical": true,
+    "passed": false
+  }
+]
+
+SCENARIO:
+{
+  "id": "dating-opening",
+  "system": "dating",
+  "opening": true,
+  "text": "You sit inside Moonbeam Café in the Riverside district. Blue tile lines the counter and rain taps its tall windows. June, a human university student, sits across from you. \"Nice to finally meet you, Alex,\" she says. It is Saturday afternoon.",
+  "checks": [
+    [
+      "placeCreated",
+      "Moonbeam Café",
+      true
+    ],
+    [
+      "currentPlace",
+      "Moonbeam Café",
+      true
+    ],
+    [
+      "npcPresent",
+      "June"
+    ],
+    [
+      "noInventoryChanges",
+      true
+    ]
+  ]
+}
+
+INITIAL STATE:
+{
+  "global": {
+    "Day and Time": "",
+    "Occasion": ""
+  },
+  "player": {
+    "stats": {
+      "Social Energy": "10/10",
+      "Mood": "Neutral"
+    },
+    "collections": {
+      "items": [],
+      "clothing": []
+    }
+  },
+  "characters": [],
+  "locations": {
+    "enabled": true,
+    "currentId": "",
+    "records": {}
+  }
+}
+
+SYSTEM MESSAGE:
+Read the latest roleplay message and return a JSON tracker update.
+Use configured fields and exact names.
+Report resolved events. Use earlier messages as context.
+Use stated amounts. Estimate conservatively when an effect is clear but its amount is unstated.
+List every NPC present after the message.
+Follow the output format in the request.
+
+USER MESSAGE:
+Report changes from the latest message and list the present NPCs.
+Alex is the player-controlled character. Put their changes under "player".
+
+### EVIDENCE RULES
+Use configured field purposes and rules to interpret resolved events.
+Apply costs when incurred.
+Use stated amounts.
+Estimate a conservative amount when an effect is clear but its amount is unstated.
+Use the field's current scale for estimates.
+Apply configured persistence and reset rules.
+Update the listed editable fields.
+Add physical items when the recipient acquires them.
+Use established possessions for a new NPC's starting items.
+Treat scene props as part of the setting.
+Add missing abilities or knowledge when demonstrated, including during a failed action.
+Reusable entries stay held after use.
+
+### CONFIGURED FIELDS
+Editable stats:
+- World.Day and Time: text. Current day and time.
+- World.Occasion: text. Current event or planned date.
+- Player.Social Energy: pool (current/maximum). Current energy for social activity.
+- Player.Mood: text. Current emotional state.
+- NPC.Mood: text. Current emotional state.
+- NPC.Affection: number. Warmth toward the player, based on established interactions.
+- NPC.Trust: number. Trust earned through actions in the story.
+- NPC.Comfort: number. How comfortable this character currently feels around the player.
+- NPC.Relationship: text. Current relationship in words; change only when events support it.
+
+### NPC INITIALIZATION
+Fill blank fields from this list when an NPC enters the scene.
+Use plausible individual values when the story provides no detail.
+Write initial pool readings as "current/maximum" with an individual capacity.
+NPC initialization fields:
+- NPC.Mood: text. Current emotional state. Default: Neutral.
+- NPC.Affection: number. Warmth toward the player, based on established interactions. Default: 0. Minimum: 0. Maximum: 100.
+- NPC.Trust: number. Trust earned through actions in the story. Default: 0. Minimum: 0. Maximum: 100.
+- NPC.Comfort: number. How comfortable this character currently feels around the player. Default: 0. Minimum: 0. Maximum: 100.
+- NPC.Relationship: text. Current relationship in words; change only when events support it.
+
+### COLLECTION DEFINITIONS
+- "clothing" for player or Character NPCs (npcTemplateId: character) - Garments currently being worn. Preserve their color and details until the story changes the outfit; remove garments when taken off. Fields: name [identifies the item], slot, color, details [include when adding]
+- "items" for player or Character NPCs (npcTemplateId: character) - Carried belongings, gifts, keepsakes, and useful objects. Change holdings only when the story establishes a transfer. Fields: name [identifies the item], quantity (number) [minimum 0], description [include when adding] Quantity field: quantity.
+Use the quoted collection ID as the key.
+Use exact field names and declared types.
+The configured primary field identifies each entry.
+NPC fields: Mood, Affection, Trust, Comfort, Relationship. NPC guidance: Every recurring person shares the same relationship fields.
+
+### PLACES
+Note when the current scene’s location changes.
+Set "locations.current" to the opening setting or the place reached.
+Record newly established places and details in "locations.places".
+Put "locations" beside "global", "player", and "characters".
+{"global":{},"player":{},"characters":[],"locations":{"places":[{"name":"<parent place>"},{"name":"<place>","parent":"<parent place>","description":"<complete established description>","aliases":["<alternate name>"]}],"current":"<place>"}}
+Replace placeholders with established story facts.
+Identify places by name or a known alias.
+Include changed details.
+Write a complete description that preserves established facts.
+Use "parent" for the containing place.
+Include newly discovered parents in "places".
+Use "" for an explicit departure with unknown destination.
+Omit unchanged "current" and "parent" fields.
+Plans, rumours, invitations, and mentions remain context until established.
+Known places: {"current":"","places":[]}
+
+### CURRENT STATE
+{"global":{"Day and Time":"","Occasion":""},"player":{"stats":{"Social Energy":"10/10","Mood":"Neutral"},"collections":{"clothing":[],"items":[]}},"characters":[]}
+Profiles and filled fields outside the editable list provide context.
+
+### ELIGIBLE NUMERIC DELTAS
+player.deltas: Social Energy
+
+### LATEST MESSAGE
+You sit inside Moonbeam Café in the Riverside district. Blue tile lines the counter and rain taps its tall windows. June, a human university student, sits across from you. "Nice to finally meet you, Alex," she says. It is Saturday afternoon.
+
+### OUTPUT FORMAT
+Return raw JSON with "global", "player", and "characters".
+Include changed fields and blank NPC initializations.
+Use exact configured names.
+
+Put text values and initial numeric readings in these objects as JSON strings:
+- World: "global".
+- Player: "player.stats".
+- NPC: "characters[].stats".
+String readings include "8", "8/10", and configured text values.
+
+Put changes to existing numeric values in these objects as JSON numbers:
+- World: "globalDeltas".
+- Player: "player.deltas".
+- NPC: "characters[].deltas".
+Use positive numbers for gains and negative numbers for losses.
+For a pool, report the change to its current amount.
+Use one representation per field.
+
+"characters" is an array of objects.
+Each object has the NPC's exact "name".
+List every present NPC, including those with no changes.
+Known absent NPC updates also go in this array with "offstage": true.
+Player changes go under "player".
+Use "characters": [] when the present cast and offstage updates are both empty.
+
+Put collection changes under "player.collections" or "characters[].collections".
+Key each collection by its configured ID.
+Use "add" for acquisitions.
+Use "remove" for consumption or loss.
+Use "update" for changes to other item fields.
+Include the primary field in each add, update, and counted remove object.
+For uncounted removals, supply identifiers.
+For counted gains or losses, use the configured quantity field for the amount gained or spent.
+The default amount is 1.
+Use "all": true to remove a whole stack.
+For transfers, remove from the giver and add to the recipient.
+Include supported item details using their declared types.
+Keep one entry per identifier.
+
+No-change example:
+{"global":{},"player":{},"characters":[]}
+
+Changed-reply example (illustrative changes):
+{"global":{},"player":{"deltas":{"Social Energy":-1},"collections":{"clothing":{"add":[{"name":"<item identifier>"}]}}},"characters":[]}
+
+New NPC example (replace placeholders with initial readings using the field definitions):
+{
+  "global": {},
+  "player": {},
+  "characters": [
+    {
+      "name": "<exact NPC name from the story>",
+      "stats": {
+        "Mood": "<initial reading>",
+        "Affection": "<initial reading>",
+        "Trust": "<initial reading>",
+        "Comfort": "<initial reading>",
+        "Relationship": "<initial reading>"
+      }
+    }
+  ]
+}
+
+Independent collection examples (replace illustrative values with supported typed details):
+Acquired item:
+{
+  "clothing": {
+    "add": [
+      {
+        "name": "<exact primary field value>",
+        "slot": "<supported item detail>",
+        "color": "<supported item detail>",
+        "details": "<supported item detail>"
+      }
+    ]
+  }
+}
+
+Lost item:
+{
+  "clothing": {
+    "remove": [
+      "<exact primary field value>"
+    ]
+  }
+}
+
+Changed item:
+{
+  "clothing": {
+    "update": [
+      {
+        "name": "<exact primary field value>",
+        "slot": "<new value>"
+      }
+    ]
+  }
+}
+
+Check the JSON structure, present cast, field names, and evidence for each change.
+For an established setting or arrival, put "locations" beside "global", "player", and "characters". Set "locations.current" to the place name. Put new place records in "locations.places".
+
+ORIGINAL RESPONSE:
+```json
+{
+  "global": {
+    "Day and Time": "Saturday afternoon",
+    "Occasion": "Meeting June at Moonbeam Café",
+    "locations": {
+      "places": [
+        {
+          "name": "Moonbeam Café",
+          "description": "Blue tile lines the counter and rain taps its tall windows."
+        },
+        {
+          "name": "Riverside district"
+        }
+      ],
+      "current": "Moonbeam Café"
+    }
+  },
+  "player": {
+    "stats": {
+      "Social Energy": "10/10",
+      "Mood": "Neutral"
+    },
+    "collections": {
+      "clothing": [],
+      "items": []
+    }
+  },
+  "characters": [
+    {
+      "name": "June",
+      "stats": {
+        "Mood": "Neutral",
+        "Affection": 0,
+        "Trust": 0,
+        "Comfort": 0,
+        "Relationship": "Newly met"
+      }
+    }
+  ]
+}
+```
+
+NORMALIZED RESULT:
+{
+  "update": {
+    "global": {
+      "Day and Time": "Saturday afternoon",
+      "Occasion": "Meeting June at Moonbeam Café",
+      "locations": {
+        "places": [
+          {
+            "name": "Moonbeam Café",
+            "description": "Blue tile lines the counter and rain taps its tall windows."
+          },
+          {
+            "name": "Riverside district"
+          }
+        ],
+        "current": "Moonbeam Café"
+      }
+    },
+    "player": {
+      "stats": {
+        "Social Energy": "10/10",
+        "Mood": "Neutral"
+      },
+      "collections": {
+        "clothing": [],
+        "items": []
+      }
+    },
+    "characters": [
+      {
+        "name": "June",
+        "stats": {
+          "Mood": "Neutral",
+          "Affection": "0/100",
+          "Trust": "0/100",
+          "Comfort": "0/100",
+          "Relationship": "Newly met"
+        }
+      }
+    ]
+  },
+  "effective": {
+    "global": {
+      "Day and Time": "Saturday afternoon",
+      "Occasion": "Meeting June at Moonbeam Café"
+    },
+    "player": {
+      "stats": {
+        "Social Energy": "10/10",
+        "Mood": "Neutral"
+      },
+      "collections": {
+        "items": [],
+        "clothing": []
+      },
+      "name": "Alex"
+    },
+    "characters": [],
+    "locations": {
+      "enabled": true,
+      "currentId": "",
+      "records": {}
+    },
+    "timestamp": 1792525250840
+  },
+  "progression": null,
+  "holdings": {
+    "player": {
+      "stats": {
+        "Social Energy": "10/10",
+        "Mood": "Neutral"
+      },
+      "collections": {
+        "items": [],
+        "clothing": []
+      },
+      "name": "Alex"
+    },
+    "characters": [
+      {
+        "name": "June",
+        "npcTemplateId": "character",
+        "collections": {}
+      }
+    ]
+  },
+  "warnings": [
+    "World · locations: skipped: no configured stat matches this name.",
+    "June · Mood: skipped: the NPC is offstage and has no saved card.",
+    "June · Affection: skipped: the NPC is offstage and has no saved card.",
+    "June · Trust: skipped: the NPC is offstage and has no saved card.",
+    "June · Comfort: skipped: the NPC is offstage and has no saved card.",
+    "June · Relationship: skipped: the NPC is offstage and has no saved card."
+  ],
+  "places": []
+}
+
+CASE 3: tracker / dating-opening / repetition 2
+
+FAILED CHECKS:
+[
+  {
+    "name": "placeCreated Moonbeam Café",
+    "critical": true,
+    "passed": false
+  },
+  {
+    "name": "currentPlace Moonbeam Café",
+    "critical": true,
+    "passed": false
+  }
+]
+
+SCENARIO:
+{
+  "id": "dating-opening",
+  "system": "dating",
+  "opening": true,
+  "text": "You sit inside Moonbeam Café in the Riverside district. Blue tile lines the counter and rain taps its tall windows. June, a human university student, sits across from you. \"Nice to finally meet you, Alex,\" she says. It is Saturday afternoon.",
+  "checks": [
+    [
+      "placeCreated",
+      "Moonbeam Café",
+      true
+    ],
+    [
+      "currentPlace",
+      "Moonbeam Café",
+      true
+    ],
+    [
+      "npcPresent",
+      "June"
+    ],
+    [
+      "noInventoryChanges",
+      true
+    ]
+  ]
+}
+
+INITIAL STATE:
+{
+  "global": {
+    "Day and Time": "",
+    "Occasion": ""
+  },
+  "player": {
+    "stats": {
+      "Social Energy": "10/10",
+      "Mood": "Neutral"
+    },
+    "collections": {
+      "items": [],
+      "clothing": []
+    }
+  },
+  "characters": [],
+  "locations": {
+    "enabled": true,
+    "currentId": "",
+    "records": {}
+  }
+}
+
+SYSTEM MESSAGE:
+Read the latest roleplay message and return a JSON tracker update.
+Use configured fields and exact names.
+Report resolved events. Use earlier messages as context.
+Use stated amounts. Estimate conservatively when an effect is clear but its amount is unstated.
+List every NPC present after the message.
+Follow the output format in the request.
+
+USER MESSAGE:
+Report changes from the latest message and list the present NPCs.
+Alex is the player-controlled character. Put their changes under "player".
+
+### EVIDENCE RULES
+Use configured field purposes and rules to interpret resolved events.
+Apply costs when incurred.
+Use stated amounts.
+Estimate a conservative amount when an effect is clear but its amount is unstated.
+Use the field's current scale for estimates.
+Apply configured persistence and reset rules.
+Update the listed editable fields.
+Add physical items when the recipient acquires them.
+Use established possessions for a new NPC's starting items.
+Treat scene props as part of the setting.
+Add missing abilities or knowledge when demonstrated, including during a failed action.
+Reusable entries stay held after use.
+
+### CONFIGURED FIELDS
+Editable stats:
+- World.Day and Time: text. Current day and time.
+- World.Occasion: text. Current event or planned date.
+- Player.Social Energy: pool (current/maximum). Current energy for social activity.
+- Player.Mood: text. Current emotional state.
+- NPC.Mood: text. Current emotional state.
+- NPC.Affection: number. Warmth toward the player, based on established interactions.
+- NPC.Trust: number. Trust earned through actions in the story.
+- NPC.Comfort: number. How comfortable this character currently feels around the player.
+- NPC.Relationship: text. Current relationship in words; change only when events support it.
+
+### NPC INITIALIZATION
+Fill blank fields from this list when an NPC enters the scene.
+Use plausible individual values when the story provides no detail.
+Write initial pool readings as "current/maximum" with an individual capacity.
+NPC initialization fields:
+- NPC.Mood: text. Current emotional state. Default: Neutral.
+- NPC.Affection: number. Warmth toward the player, based on established interactions. Default: 0. Minimum: 0. Maximum: 100.
+- NPC.Trust: number. Trust earned through actions in the story. Default: 0. Minimum: 0. Maximum: 100.
+- NPC.Comfort: number. How comfortable this character currently feels around the player. Default: 0. Minimum: 0. Maximum: 100.
+- NPC.Relationship: text. Current relationship in words; change only when events support it.
+
+### COLLECTION DEFINITIONS
+- "clothing" for player or Character NPCs (npcTemplateId: character) - Garments currently being worn. Preserve their color and details until the story changes the outfit; remove garments when taken off. Fields: name [identifies the item], slot, color, details [include when adding]
+- "items" for player or Character NPCs (npcTemplateId: character) - Carried belongings, gifts, keepsakes, and useful objects. Change holdings only when the story establishes a transfer. Fields: name [identifies the item], quantity (number) [minimum 0], description [include when adding] Quantity field: quantity.
+Use the quoted collection ID as the key.
+Use exact field names and declared types.
+The configured primary field identifies each entry.
+NPC fields: Mood, Affection, Trust, Comfort, Relationship. NPC guidance: Every recurring person shares the same relationship fields.
+
+### PLACES
+Note when the current scene’s location changes.
+Set "locations.current" to the opening setting or the place reached.
+Record newly established places and details in "locations.places".
+Put "locations" beside "global", "player", and "characters".
+{"global":{},"player":{},"characters":[],"locations":{"places":[{"name":"<parent place>"},{"name":"<place>","parent":"<parent place>","description":"<complete established description>","aliases":["<alternate name>"]}],"current":"<place>"}}
+Replace placeholders with established story facts.
+Identify places by name or a known alias.
+Include changed details.
+Write a complete description that preserves established facts.
+Use "parent" for the containing place.
+Include newly discovered parents in "places".
+Use "" for an explicit departure with unknown destination.
+Omit unchanged "current" and "parent" fields.
+Plans, rumours, invitations, and mentions remain context until established.
+Known places: {"current":"","places":[]}
+
+### CURRENT STATE
+{"global":{"Day and Time":"","Occasion":""},"player":{"stats":{"Social Energy":"10/10","Mood":"Neutral"},"collections":{"clothing":[],"items":[]}},"characters":[]}
+Profiles and filled fields outside the editable list provide context.
+
+### ELIGIBLE NUMERIC DELTAS
+player.deltas: Social Energy
+
+### LATEST MESSAGE
+You sit inside Moonbeam Café in the Riverside district. Blue tile lines the counter and rain taps its tall windows. June, a human university student, sits across from you. "Nice to finally meet you, Alex," she says. It is Saturday afternoon.
+
+### OUTPUT FORMAT
+Return raw JSON with "global", "player", and "characters".
+Include changed fields and blank NPC initializations.
+Use exact configured names.
+
+Put text values and initial numeric readings in these objects as JSON strings:
+- World: "global".
+- Player: "player.stats".
+- NPC: "characters[].stats".
+String readings include "8", "8/10", and configured text values.
+
+Put changes to existing numeric values in these objects as JSON numbers:
+- World: "globalDeltas".
+- Player: "player.deltas".
+- NPC: "characters[].deltas".
+Use positive numbers for gains and negative numbers for losses.
+For a pool, report the change to its current amount.
+Use one representation per field.
+
+"characters" is an array of objects.
+Each object has the NPC's exact "name".
+List every present NPC, including those with no changes.
+Known absent NPC updates also go in this array with "offstage": true.
+Player changes go under "player".
+Use "characters": [] when the present cast and offstage updates are both empty.
+
+Put collection changes under "player.collections" or "characters[].collections".
+Key each collection by its configured ID.
+Use "add" for acquisitions.
+Use "remove" for consumption or loss.
+Use "update" for changes to other item fields.
+Include the primary field in each add, update, and counted remove object.
+For uncounted removals, supply identifiers.
+For counted gains or losses, use the configured quantity field for the amount gained or spent.
+The default amount is 1.
+Use "all": true to remove a whole stack.
+For transfers, remove from the giver and add to the recipient.
+Include supported item details using their declared types.
+Keep one entry per identifier.
+
+No-change example:
+{"global":{},"player":{},"characters":[]}
+
+Changed-reply example (illustrative changes):
+{"global":{},"player":{"deltas":{"Social Energy":-1},"collections":{"clothing":{"add":[{"name":"<item identifier>"}]}}},"characters":[]}
+
+New NPC example (replace placeholders with initial readings using the field definitions):
+{
+  "global": {},
+  "player": {},
+  "characters": [
+    {
+      "name": "<exact NPC name from the story>",
+      "stats": {
+        "Mood": "<initial reading>",
+        "Affection": "<initial reading>",
+        "Trust": "<initial reading>",
+        "Comfort": "<initial reading>",
+        "Relationship": "<initial reading>"
+      }
+    }
+  ]
+}
+
+Independent collection examples (replace illustrative values with supported typed details):
+Acquired item:
+{
+  "clothing": {
+    "add": [
+      {
+        "name": "<exact primary field value>",
+        "slot": "<supported item detail>",
+        "color": "<supported item detail>",
+        "details": "<supported item detail>"
+      }
+    ]
+  }
+}
+
+Lost item:
+{
+  "clothing": {
+    "remove": [
+      "<exact primary field value>"
+    ]
+  }
+}
+
+Changed item:
+{
+  "clothing": {
+    "update": [
+      {
+        "name": "<exact primary field value>",
+        "slot": "<new value>"
+      }
+    ]
+  }
+}
+
+Check the JSON structure, present cast, field names, and evidence for each change.
+For an established setting or arrival, put "locations" beside "global", "player", and "characters". Set "locations.current" to the place name. Put new place records in "locations.places".
+
+ORIGINAL RESPONSE:
+```json
+{
+  "global": {
+    "Day and Time": "Saturday afternoon",
+    "Occasion": "Meeting June at Moonbeam Café",
+    "locations": {
+      "current": "Moonbeam Café",
+      "places": [
+        {
+          "name": "Moonbeam Café",
+          "description": "A café in the Riverside district, featuring blue tile counters and tall windows currently being lashed by rain."
+        }
+      ]
+    }
+  },
+  "player": {
+    "stats": {
+      "Social Energy": "10/10",
+      "Mood": "Neutral"
+    },
+    "collections": {
+      "clothing": [],
+      "items": []
+    }
+  },
+  "characters": [
+    {
+      "name": "June",
+      "stats": {
+        "Mood": "Neutral",
+        "Affection": "0",
+        "Trust": "0",
+        "Comfort": "0",
+        "Relationship": "Acquaintance"
+      }
+    }
+  ]
+}
+```
+
+NORMALIZED RESULT:
+{
+  "update": {
+    "global": {
+      "Day and Time": "Saturday afternoon",
+      "Occasion": "Meeting June at Moonbeam Café",
+      "locations": {
+        "current": "Moonbeam Café",
+        "places": [
+          {
+            "name": "Moonbeam Café",
+            "description": "A café in the Riverside district, featuring blue tile counters and tall windows currently being lashed by rain."
+          }
+        ]
+      }
+    },
+    "player": {
+      "stats": {
+        "Social Energy": "10/10",
+        "Mood": "Neutral"
+      },
+      "collections": {
+        "clothing": [],
+        "items": []
+      }
+    },
+    "characters": [
+      {
+        "name": "June",
+        "stats": {
+          "Mood": "Neutral",
+          "Affection": "0/100",
+          "Trust": "0/100",
+          "Comfort": "0/100",
+          "Relationship": "Acquaintance"
+        }
+      }
+    ]
+  },
+  "effective": {
+    "global": {
+      "Day and Time": "Saturday afternoon",
+      "Occasion": "Meeting June at Moonbeam Café"
+    },
+    "player": {
+      "stats": {
+        "Social Energy": "10/10",
+        "Mood": "Neutral"
+      },
+      "collections": {
+        "items": [],
+        "clothing": []
+      },
+      "name": "Alex"
+    },
+    "characters": [],
+    "locations": {
+      "enabled": true,
+      "currentId": "",
+      "records": {}
+    },
+    "timestamp": 1792525250844
+  },
+  "progression": null,
+  "holdings": {
+    "player": {
+      "stats": {
+        "Social Energy": "10/10",
+        "Mood": "Neutral"
+      },
+      "collections": {
+        "items": [],
+        "clothing": []
+      },
+      "name": "Alex"
+    },
+    "characters": [
+      {
+        "name": "June",
+        "npcTemplateId": "character",
+        "collections": {}
+      }
+    ]
+  },
+  "warnings": [
+    "World · locations: skipped: no configured stat matches this name.",
+    "June · Mood: skipped: the NPC is offstage and has no saved card.",
+    "June · Affection: skipped: the NPC is offstage and has no saved card.",
+    "June · Trust: skipped: the NPC is offstage and has no saved card.",
+    "June · Comfort: skipped: the NPC is offstage and has no saved card.",
+    "June · Relationship: skipped: the NPC is offstage and has no saved card."
+  ],
+  "places": []
+}
+
+CASE 4: tracker / dating-travel / repetition 1
+
+FAILED CHECKS:
+[
+  {
+    "name": "placeCreated Glasshouse",
+    "critical": true,
+    "passed": false
+  },
+  {
+    "name": "currentPlace Glasshouse",
+    "critical": true,
+    "passed": false
+  }
+]
+
+SCENARIO:
+{
+  "id": "dating-travel",
+  "system": "dating",
+  "npc": "June",
+  "text": "Alex and June leave Moonbeam Café and arrive inside the Glasshouse conservatory. Ferns surround a stone fountain beneath the glass roof. June stays beside Alex. Alex slips off the blue wool scarf and puts it in the bag, keeping the white shirt on. They have not agreed to become partners.",
+  "clothing": [
+    {
+      "name": "blue wool scarf",
+      "color": "blue",
+      "slot": "scarf"
+    },
+    {
+      "name": "white shirt",
+      "color": "white",
+      "slot": "shirt"
+    }
+  ],
+  "checks": [
+    [
+      "placeCreated",
+      "Glasshouse",
+      true
+    ],
+    [
+      "currentPlace",
+      "Glasshouse",
+      true
+    ],
+    [
+      "itemRemove",
+      "clothing",
+      "blue wool scarf"
+    ],
+    [
+      "notRemoved",
+      "clothing",
+      "white shirt",
+      true
+    ],
+    [
+      "relationshipUnchanged",
+      "June",
+      true
+    ]
+  ]
+}
+
+INITIAL STATE:
+{
+  "global": {
+    "Day and Time": "",
+    "Occasion": ""
+  },
+  "player": {
+    "stats": {
+      "Social Energy": "10/10",
+      "Mood": "Neutral"
+    },
+    "collections": {
+      "items": [],
+      "clothing": [
+        {
+          "name": "blue wool scarf",
+          "color": "blue",
+          "slot": "scarf"
+        },
+        {
+          "name": "white shirt",
+          "color": "white",
+          "slot": "shirt"
+        }
+      ]
+    }
+  },
+  "characters": [
+    {
+      "name": "June",
+      "npcTemplateId": "character",
+      "stats": {
+        "Mood": "Neutral",
+        "Affection": "15",
+        "Trust": "10",
+        "Comfort": "20",
+        "Relationship": "Friends"
+      },
+      "collections": {}
+    }
+  ],
+  "locations": {
+    "enabled": true,
+    "currentId": "home",
+    "records": {
+      "home": {
+        "id": "home",
+        "name": "Moonbeam Café",
+        "description": "",
+        "aliases": [],
+        "parentId": ""
+      }
+    }
+  }
+}
+
+SYSTEM MESSAGE:
+Read the latest roleplay message and return a JSON tracker update.
+Use configured fields and exact names.
+Report resolved events. Use earlier messages as context.
+Use stated amounts. Estimate conservatively when an effect is clear but its amount is unstated.
+List every NPC present after the message.
+Follow the output format in the request.
+
+USER MESSAGE:
+Report changes from the latest message and list the present NPCs.
+Alex is the player-controlled character. Put their changes under "player".
+
+### EVIDENCE RULES
+Use configured field purposes and rules to interpret resolved events.
+Apply costs when incurred.
+Use stated amounts.
+Estimate a conservative amount when an effect is clear but its amount is unstated.
+Use the field's current scale for estimates.
+Apply configured persistence and reset rules.
+Update the listed editable fields.
+Add physical items when the recipient acquires them.
+Use established possessions for a new NPC's starting items.
+Treat scene props as part of the setting.
+Add missing abilities or knowledge when demonstrated, including during a failed action.
+Reusable entries stay held after use.
+
+### CONFIGURED FIELDS
+Editable stats:
+- World.Day and Time: text. Current day and time.
+- World.Occasion: text. Current event or planned date.
+- Player.Social Energy: pool (current/maximum). Current energy for social activity.
+- Player.Mood: text. Current emotional state.
+- NPC.Mood: text. Current emotional state.
+- NPC.Affection: number. Warmth toward the player, based on established interactions.
+- NPC.Trust: number. Trust earned through actions in the story.
+- NPC.Comfort: number. How comfortable this character currently feels around the player.
+- NPC.Relationship: text. Current relationship in words; change only when events support it.
+
+### NPC INITIALIZATION
+Fill blank fields from this list when an NPC enters the scene.
+Use plausible individual values when the story provides no detail.
+Write initial pool readings as "current/maximum" with an individual capacity.
+NPC initialization fields:
+- NPC.Mood: text. Current emotional state. Default: Neutral.
+- NPC.Affection: number. Warmth toward the player, based on established interactions. Default: 0. Minimum: 0. Maximum: 100.
+- NPC.Trust: number. Trust earned through actions in the story. Default: 0. Minimum: 0. Maximum: 100.
+- NPC.Comfort: number. How comfortable this character currently feels around the player. Default: 0. Minimum: 0. Maximum: 100.
+- NPC.Relationship: text. Current relationship in words; change only when events support it.
+
+### COLLECTION DEFINITIONS
+- "clothing" for player or Character NPCs (npcTemplateId: character) - Garments currently being worn. Preserve their color and details until the story changes the outfit; remove garments when taken off. Fields: name [identifies the item], slot, color, details [include when adding]
+- "items" for player or Character NPCs (npcTemplateId: character) - Carried belongings, gifts, keepsakes, and useful objects. Change holdings only when the story establishes a transfer. Fields: name [identifies the item], quantity (number) [minimum 0], description [include when adding] Quantity field: quantity.
+Use the quoted collection ID as the key.
+Use exact field names and declared types.
+The configured primary field identifies each entry.
+NPC fields: Mood, Affection, Trust, Comfort, Relationship. NPC guidance: Every recurring person shares the same relationship fields.
+
+### PLACES
+Note when the current scene’s location changes.
+Set "locations.current" to the opening setting or the place reached.
+Record newly established places and details in "locations.places".
+Put "locations" beside "global", "player", and "characters".
+{"global":{},"player":{},"characters":[],"locations":{"places":[{"name":"<parent place>"},{"name":"<place>","parent":"<parent place>","description":"<complete established description>","aliases":["<alternate name>"]}],"current":"<place>"}}
+Replace placeholders with established story facts.
+Identify places by name or a known alias.
+Include changed details.
+Write a complete description that preserves established facts.
+Use "parent" for the containing place.
+Include newly discovered parents in "places".
+Use "" for an explicit departure with unknown destination.
+Omit unchanged "current" and "parent" fields.
+Plans, rumours, invitations, and mentions remain context until established.
+Known places: {"current":"Moonbeam Café","places":[{"name":"Moonbeam Café"}]}
+
+### CURRENT STATE
+{"global":{"Day and Time":"","Occasion":""},"player":{"stats":{"Social Energy":"10/10","Mood":"Neutral"},"collections":{"clothing":[{"name":"blue wool scarf","slot":"scarf","color":"blue"},{"name":"white shirt","slot":"shirt","color":"white"}],"items":[]}},"characters":[{"name":"June","npcTemplateId":"character","stats":{"Mood":"Neutral","Affection":"15","Trust":"10","Comfort":"20","Relationship":"Friends"},"collections":{"clothing":[],"items":[]}}]}
+Profiles and filled fields outside the editable list provide context.
+
+### ELIGIBLE NUMERIC DELTAS
+player.deltas: Social Energy
+characters[].deltas (name: June): Affection, Trust, Comfort
+
+### LATEST MESSAGE
+Alex and June leave Moonbeam Café and arrive inside the Glasshouse conservatory. Ferns surround a stone fountain beneath the glass roof. June stays beside Alex. Alex slips off the blue wool scarf and puts it in the bag, keeping the white shirt on. They have not agreed to become partners.
+
+### OUTPUT FORMAT
+Return raw JSON with "global", "player", and "characters".
+Include changed fields and blank NPC initializations.
+Use exact configured names.
+
+Put text values and initial numeric readings in these objects as JSON strings:
+- World: "global".
+- Player: "player.stats".
+- NPC: "characters[].stats".
+String readings include "8", "8/10", and configured text values.
+
+Put changes to existing numeric values in these objects as JSON numbers:
+- World: "globalDeltas".
+- Player: "player.deltas".
+- NPC: "characters[].deltas".
+Use positive numbers for gains and negative numbers for losses.
+For a pool, report the change to its current amount.
+Use one representation per field.
+
+"characters" is an array of objects.
+Each object has the NPC's exact "name".
+List every present NPC, including those with no changes.
+Known absent NPC updates also go in this array with "offstage": true.
+Player changes go under "player".
+Use "characters": [] when the present cast and offstage updates are both empty.
+
+Put collection changes under "player.collections" or "characters[].collections".
+Key each collection by its configured ID.
+Use "add" for acquisitions.
+Use "remove" for consumption or loss.
+Use "update" for changes to other item fields.
+Include the primary field in each add, update, and counted remove object.
+For uncounted removals, supply identifiers.
+For counted gains or losses, use the configured quantity field for the amount gained or spent.
+The default amount is 1.
+Use "all": true to remove a whole stack.
+For transfers, remove from the giver and add to the recipient.
+Include supported item details using their declared types.
+Keep one entry per identifier.
+
+No-change example:
+{"global":{},"player":{},"characters":[{"name":"June"}]}
+
+Changed-reply example (illustrative changes):
+{"global":{},"player":{"deltas":{"Social Energy":-1},"collections":{"clothing":{"add":[{"name":"<item identifier>"}]}}},"characters":[{"name":"June","deltas":{"Affection":-1},"collections":{"clothing":{"remove":["<item identifier>"]}}}]}
+
+New NPC example (replace placeholders with initial readings using the field definitions):
+{
+  "global": {},
+  "player": {},
+  "characters": [
+    {
+      "name": "<exact NPC name from the story>",
+      "stats": {
+        "Mood": "<initial reading>",
+        "Affection": "<initial reading>",
+        "Trust": "<initial reading>",
+        "Comfort": "<initial reading>",
+        "Relationship": "<initial reading>"
+      }
+    }
+  ]
+}
+
+Independent collection examples (replace illustrative values with supported typed details):
+Acquired item:
+{
+  "clothing": {
+    "add": [
+      {
+        "name": "<exact primary field value>",
+        "slot": "<supported item detail>",
+        "color": "<supported item detail>",
+        "details": "<supported item detail>"
+      }
+    ]
+  }
+}
+
+Lost item:
+{
+  "clothing": {
+    "remove": [
+      "<exact primary field value>"
+    ]
+  }
+}
+
+Changed item:
+{
+  "clothing": {
+    "update": [
+      {
+        "name": "<exact primary field value>",
+        "slot": "<new value>"
+      }
+    ]
+  }
+}
+
+Check the JSON structure, present cast, field names, and evidence for each change.
+For an established setting or arrival, put "locations" beside "global", "player", and "characters". Set "locations.current" to the place name. Put new place records in "locations.places".
+
+ORIGINAL RESPONSE:
+```json
+{
+  "global": {
+    "locations": {
+      "current": "Glasshouse conservatory",
+      "places": [
+        {
+          "name": "Moonbeam Café"
+        },
+        {
+          "name": "Glasshouse conservatory",
+          "description": "Fern[s] surround a stone fountain beneath the glass roof."
+        }
+      ]
+    }
+  },
+  "player": {
+    "collections": {
+      "clothing": {
+        "remove": [
+          "blue wool scarf"
+        ]
+      }
+    }
+  },
+  "characters": [
+    {
+      "name": "June",
+      "stats": {
+        "Mood": "Neutral",
+        "Affection": 15,
+        "Trust": 10,
+        "Comfort": 20,
+        "Relationship": "Friends"
+      }
+    }
+  ]
+}
+```
+
+NORMALIZED RESULT:
+{
+  "update": {
+    "global": {
+      "locations": {
+        "current": "Glasshouse conservatory",
+        "places": [
+          {
+            "name": "Moonbeam Café"
+          },
+          {
+            "name": "Glasshouse conservatory",
+            "description": "Fern[s] surround a stone fountain beneath the glass roof."
+          }
+        ]
+      }
+    },
+    "player": {
+      "collections": {
+        "clothing": {
+          "remove": [
+            "blue wool scarf"
+          ]
+        }
+      }
+    },
+    "characters": [
+      {
+        "name": "June",
+        "stats": {
+          "Mood": "Neutral",
+          "Affection": "15",
+          "Trust": "10",
+          "Comfort": "20",
+          "Relationship": "Friends"
+        }
+      }
+    ]
+  },
+  "effective": {
+    "global": {
+      "Day and Time": "",
+      "Occasion": ""
+    },
+    "player": {
+      "stats": {
+        "Social Energy": "10/10",
+        "Mood": "Neutral"
+      },
+      "collections": {
+        "items": [],
+        "clothing": [
+          {
+            "name": "white shirt",
+            "color": "white",
+            "slot": "shirt"
+          }
+        ]
+      },
+      "name": "Alex"
+    },
+    "characters": [
+      {
+        "name": "June",
+        "npcTemplateId": "character",
+        "stats": {
+          "Mood": "Neutral",
+          "Affection": "15",
+          "Trust": "10",
+          "Comfort": "20",
+          "Relationship": "Friends"
+        },
+        "collections": {}
+      }
+    ],
+    "locations": {
+      "enabled": true,
+      "currentId": "home",
+      "records": {
+        "home": {
+          "id": "home",
+          "name": "Moonbeam Café",
+          "description": "",
+          "aliases": [],
+          "parentId": ""
+        }
+      }
+    },
+    "timestamp": 1792525267235
+  },
+  "progression": null,
+  "holdings": {
+    "player": {
+      "stats": {
+        "Social Energy": "10/10",
+        "Mood": "Neutral"
+      },
+      "collections": {
+        "items": [],
+        "clothing": [
+          {
+            "name": "white shirt",
+            "color": "white",
+            "slot": "shirt"
+          }
+        ]
+      },
+      "name": "Alex"
+    },
+    "characters": [
+      {
+        "name": "June",
+        "npcTemplateId": "character",
+        "stats": {
+          "Mood": "Neutral",
+          "Affection": "15",
+          "Trust": "10",
+          "Comfort": "20",
+          "Relationship": "Friends"
+        },
+        "collections": {}
+      }
+    ]
+  },
+  "warnings": [
+    "World · locations: skipped: no configured stat matches this name."
+  ],
+  "places": []
+}
+
+CASE 5: tracker / dating-travel / repetition 2
+
+FAILED CHECKS:
+[
+  {
+    "name": "placeCreated Glasshouse",
+    "critical": true,
+    "passed": false
+  },
+  {
+    "name": "currentPlace Glasshouse",
+    "critical": true,
+    "passed": false
+  }
+]
+
+SCENARIO:
+{
+  "id": "dating-travel",
+  "system": "dating",
+  "npc": "June",
+  "text": "Alex and June leave Moonbeam Café and arrive inside the Glasshouse conservatory. Ferns surround a stone fountain beneath the glass roof. June stays beside Alex. Alex slips off the blue wool scarf and puts it in the bag, keeping the white shirt on. They have not agreed to become partners.",
+  "clothing": [
+    {
+      "name": "blue wool scarf",
+      "color": "blue",
+      "slot": "scarf"
+    },
+    {
+      "name": "white shirt",
+      "color": "white",
+      "slot": "shirt"
+    }
+  ],
+  "checks": [
+    [
+      "placeCreated",
+      "Glasshouse",
+      true
+    ],
+    [
+      "currentPlace",
+      "Glasshouse",
+      true
+    ],
+    [
+      "itemRemove",
+      "clothing",
+      "blue wool scarf"
+    ],
+    [
+      "notRemoved",
+      "clothing",
+      "white shirt",
+      true
+    ],
+    [
+      "relationshipUnchanged",
+      "June",
+      true
+    ]
+  ]
+}
+
+INITIAL STATE:
+{
+  "global": {
+    "Day and Time": "",
+    "Occasion": ""
+  },
+  "player": {
+    "stats": {
+      "Social Energy": "10/10",
+      "Mood": "Neutral"
+    },
+    "collections": {
+      "items": [],
+      "clothing": [
+        {
+          "name": "blue wool scarf",
+          "color": "blue",
+          "slot": "scarf"
+        },
+        {
+          "name": "white shirt",
+          "color": "white",
+          "slot": "shirt"
+        }
+      ]
+    }
+  },
+  "characters": [
+    {
+      "name": "June",
+      "npcTemplateId": "character",
+      "stats": {
+        "Mood": "Neutral",
+        "Affection": "15",
+        "Trust": "10",
+        "Comfort": "20",
+        "Relationship": "Friends"
+      },
+      "collections": {}
+    }
+  ],
+  "locations": {
+    "enabled": true,
+    "currentId": "home",
+    "records": {
+      "home": {
+        "id": "home",
+        "name": "Moonbeam Café",
+        "description": "",
+        "aliases": [],
+        "parentId": ""
+      }
+    }
+  }
+}
+
+SYSTEM MESSAGE:
+Read the latest roleplay message and return a JSON tracker update.
+Use configured fields and exact names.
+Report resolved events. Use earlier messages as context.
+Use stated amounts. Estimate conservatively when an effect is clear but its amount is unstated.
+List every NPC present after the message.
+Follow the output format in the request.
+
+USER MESSAGE:
+Report changes from the latest message and list the present NPCs.
+Alex is the player-controlled character. Put their changes under "player".
+
+### EVIDENCE RULES
+Use configured field purposes and rules to interpret resolved events.
+Apply costs when incurred.
+Use stated amounts.
+Estimate a conservative amount when an effect is clear but its amount is unstated.
+Use the field's current scale for estimates.
+Apply configured persistence and reset rules.
+Update the listed editable fields.
+Add physical items when the recipient acquires them.
+Use established possessions for a new NPC's starting items.
+Treat scene props as part of the setting.
+Add missing abilities or knowledge when demonstrated, including during a failed action.
+Reusable entries stay held after use.
+
+### CONFIGURED FIELDS
+Editable stats:
+- World.Day and Time: text. Current day and time.
+- World.Occasion: text. Current event or planned date.
+- Player.Social Energy: pool (current/maximum). Current energy for social activity.
+- Player.Mood: text. Current emotional state.
+- NPC.Mood: text. Current emotional state.
+- NPC.Affection: number. Warmth toward the player, based on established interactions.
+- NPC.Trust: number. Trust earned through actions in the story.
+- NPC.Comfort: number. How comfortable this character currently feels around the player.
+- NPC.Relationship: text. Current relationship in words; change only when events support it.
+
+### NPC INITIALIZATION
+Fill blank fields from this list when an NPC enters the scene.
+Use plausible individual values when the story provides no detail.
+Write initial pool readings as "current/maximum" with an individual capacity.
+NPC initialization fields:
+- NPC.Mood: text. Current emotional state. Default: Neutral.
+- NPC.Affection: number. Warmth toward the player, based on established interactions. Default: 0. Minimum: 0. Maximum: 100.
+- NPC.Trust: number. Trust earned through actions in the story. Default: 0. Minimum: 0. Maximum: 100.
+- NPC.Comfort: number. How comfortable this character currently feels around the player. Default: 0. Minimum: 0. Maximum: 100.
+- NPC.Relationship: text. Current relationship in words; change only when events support it.
+
+### COLLECTION DEFINITIONS
+- "clothing" for player or Character NPCs (npcTemplateId: character) - Garments currently being worn. Preserve their color and details until the story changes the outfit; remove garments when taken off. Fields: name [identifies the item], slot, color, details [include when adding]
+- "items" for player or Character NPCs (npcTemplateId: character) - Carried belongings, gifts, keepsakes, and useful objects. Change holdings only when the story establishes a transfer. Fields: name [identifies the item], quantity (number) [minimum 0], description [include when adding] Quantity field: quantity.
+Use the quoted collection ID as the key.
+Use exact field names and declared types.
+The configured primary field identifies each entry.
+NPC fields: Mood, Affection, Trust, Comfort, Relationship. NPC guidance: Every recurring person shares the same relationship fields.
+
+### PLACES
+Note when the current scene’s location changes.
+Set "locations.current" to the opening setting or the place reached.
+Record newly established places and details in "locations.places".
+Put "locations" beside "global", "player", and "characters".
+{"global":{},"player":{},"characters":[],"locations":{"places":[{"name":"<parent place>"},{"name":"<place>","parent":"<parent place>","description":"<complete established description>","aliases":["<alternate name>"]}],"current":"<place>"}}
+Replace placeholders with established story facts.
+Identify places by name or a known alias.
+Include changed details.
+Write a complete description that preserves established facts.
+Use "parent" for the containing place.
+Include newly discovered parents in "places".
+Use "" for an explicit departure with unknown destination.
+Omit unchanged "current" and "parent" fields.
+Plans, rumours, invitations, and mentions remain context until established.
+Known places: {"current":"Moonbeam Café","places":[{"name":"Moonbeam Café"}]}
+
+### CURRENT STATE
+{"global":{"Day and Time":"","Occasion":""},"player":{"stats":{"Social Energy":"10/10","Mood":"Neutral"},"collections":{"clothing":[{"name":"blue wool scarf","slot":"scarf","color":"blue"},{"name":"white shirt","slot":"shirt","color":"white"}],"items":[]}},"characters":[{"name":"June","npcTemplateId":"character","stats":{"Mood":"Neutral","Affection":"15","Trust":"10","Comfort":"20","Relationship":"Friends"},"collections":{"clothing":[],"items":[]}}]}
+Profiles and filled fields outside the editable list provide context.
+
+### ELIGIBLE NUMERIC DELTAS
+player.deltas: Social Energy
+characters[].deltas (name: June): Affection, Trust, Comfort
+
+### LATEST MESSAGE
+Alex and June leave Moonbeam Café and arrive inside the Glasshouse conservatory. Ferns surround a stone fountain beneath the glass roof. June stays beside Alex. Alex slips off the blue wool scarf and puts it in the bag, keeping the white shirt on. They have not agreed to become partners.
+
+### OUTPUT FORMAT
+Return raw JSON with "global", "player", and "characters".
+Include changed fields and blank NPC initializations.
+Use exact configured names.
+
+Put text values and initial numeric readings in these objects as JSON strings:
+- World: "global".
+- Player: "player.stats".
+- NPC: "characters[].stats".
+String readings include "8", "8/10", and configured text values.
+
+Put changes to existing numeric values in these objects as JSON numbers:
+- World: "globalDeltas".
+- Player: "player.deltas".
+- NPC: "characters[].deltas".
+Use positive numbers for gains and negative numbers for losses.
+For a pool, report the change to its current amount.
+Use one representation per field.
+
+"characters" is an array of objects.
+Each object has the NPC's exact "name".
+List every present NPC, including those with no changes.
+Known absent NPC updates also go in this array with "offstage": true.
+Player changes go under "player".
+Use "characters": [] when the present cast and offstage updates are both empty.
+
+Put collection changes under "player.collections" or "characters[].collections".
+Key each collection by its configured ID.
+Use "add" for acquisitions.
+Use "remove" for consumption or loss.
+Use "update" for changes to other item fields.
+Include the primary field in each add, update, and counted remove object.
+For uncounted removals, supply identifiers.
+For counted gains or losses, use the configured quantity field for the amount gained or spent.
+The default amount is 1.
+Use "all": true to remove a whole stack.
+For transfers, remove from the giver and add to the recipient.
+Include supported item details using their declared types.
+Keep one entry per identifier.
+
+No-change example:
+{"global":{},"player":{},"characters":[{"name":"June"}]}
+
+Changed-reply example (illustrative changes):
+{"global":{},"player":{"deltas":{"Social Energy":-1},"collections":{"clothing":{"add":[{"name":"<item identifier>"}]}}},"characters":[{"name":"June","deltas":{"Affection":-1},"collections":{"clothing":{"remove":["<item identifier>"]}}}]}
+
+New NPC example (replace placeholders with initial readings using the field definitions):
+{
+  "global": {},
+  "player": {},
+  "characters": [
+    {
+      "name": "<exact NPC name from the story>",
+      "stats": {
+        "Mood": "<initial reading>",
+        "Affection": "<initial reading>",
+        "Trust": "<initial reading>",
+        "Comfort": "<initial reading>",
+        "Relationship": "<initial reading>"
+      }
+    }
+  ]
+}
+
+Independent collection examples (replace illustrative values with supported typed details):
+Acquired item:
+{
+  "clothing": {
+    "add": [
+      {
+        "name": "<exact primary field value>",
+        "slot": "<supported item detail>",
+        "color": "<supported item detail>",
+        "details": "<supported item detail>"
+      }
+    ]
+  }
+}
+
+Lost item:
+{
+  "clothing": {
+    "remove": [
+      "<exact primary field value>"
+    ]
+  }
+}
+
+Changed item:
+{
+  "clothing": {
+    "update": [
+      {
+        "name": "<exact primary field value>",
+        "slot": "<new value>"
+      }
+    ]
+  }
+}
+
+Check the JSON structure, present cast, field names, and evidence for each change.
+For an established setting or arrival, put "locations" beside "global", "player", and "characters". Set "locations.current" to the place name. Put new place records in "locations.places".
+
+ORIGINAL RESPONSE:
+```json
+{
+  "global": {
+    "locations": {
+      "current": "Glasshouse conservatory",
+      "places": [
+        {
+          "name": "Moonbeam Café"
+        },
+        {
+          "name": "Glasshouse conservatory",
+          "description": "Ferns surround a stone fountain beneath the glass roof."
+        }
+      ]
+    }
+  },
+  "player": {
+    "collections": {
+      "clothing": {
+        "remove": [
+          "blue wool scarf"
+        ]
+      },
+      "items": {
+        "add": [
+          {
+            "name": "blue wool scarf",
+            "quantity": 1,
+            "description": "Blue wool scarf"
+          }
+        ]
+      }
+    }
+  },
+  "characters": [
+    {
+      "name": "June",
+      "stats": {
+        "Mood": "Neutral",
+        "Affection": 15,
+        "Trust": 10,
+        "Comfort": 20,
+        "Relationship": "Friends"
+      }
+    }
+  ]
+}
+```
+
+NORMALIZED RESULT:
+{
+  "update": {
+    "global": {
+      "locations": {
+        "current": "Glasshouse conservatory",
+        "places": [
+          {
+            "name": "Moonbeam Café"
+          },
+          {
+            "name": "Glasshouse conservatory",
+            "description": "Ferns surround a stone fountain beneath the glass roof."
+          }
+        ]
+      }
+    },
+    "player": {
+      "collections": {
+        "clothing": {
+          "remove": [
+            "blue wool scarf"
+          ]
+        },
+        "items": {
+          "add": [
+            {
+              "name": "blue wool scarf",
+              "quantity": 1,
+              "description": "Blue wool scarf"
+            }
+          ]
+        }
+      }
+    },
+    "characters": [
+      {
+        "name": "June",
+        "stats": {
+          "Mood": "Neutral",
+          "Affection": "15",
+          "Trust": "10",
+          "Comfort": "20",
+          "Relationship": "Friends"
+        }
+      }
+    ]
+  },
+  "effective": {
+    "global": {
+      "Day and Time": "",
+      "Occasion": ""
+    },
+    "player": {
+      "stats": {
+        "Social Energy": "10/10",
+        "Mood": "Neutral"
+      },
+      "collections": {
+        "items": [
+          {
+            "name": "blue wool scarf",
+            "quantity": 1,
+            "description": "Blue wool scarf"
+          }
+        ],
+        "clothing": [
+          {
+            "name": "white shirt",
+            "color": "white",
+            "slot": "shirt"
+          }
+        ]
+      },
+      "name": "Alex"
+    },
+    "characters": [
+      {
+        "name": "June",
+        "npcTemplateId": "character",
+        "stats": {
+          "Mood": "Neutral",
+          "Affection": "15",
+          "Trust": "10",
+          "Comfort": "20",
+          "Relationship": "Friends"
+        },
+        "collections": {}
+      }
+    ],
+    "locations": {
+      "enabled": true,
+      "currentId": "home",
+      "records": {
+        "home": {
+          "id": "home",
+          "name": "Moonbeam Café",
+          "description": "",
+          "aliases": [],
+          "parentId": ""
+        }
+      }
+    },
+    "timestamp": 1792525267239
+  },
+  "progression": null,
+  "holdings": {
+    "player": {
+      "stats": {
+        "Social Energy": "10/10",
+        "Mood": "Neutral"
+      },
+      "collections": {
+        "items": [
+          {
+            "name": "blue wool scarf",
+            "quantity": 1,
+            "description": "Blue wool scarf"
+          }
+        ],
+        "clothing": [
+          {
+            "name": "white shirt",
+            "color": "white",
+            "slot": "shirt"
+          }
+        ]
+      },
+      "name": "Alex"
+    },
+    "characters": [
+      {
+        "name": "June",
+        "npcTemplateId": "character",
+        "stats": {
+          "Mood": "Neutral",
+          "Affection": "15",
+          "Trust": "10",
+          "Comfort": "20",
+          "Relationship": "Friends"
+        },
+        "collections": {}
+      }
+    ]
+  },
+  "warnings": [
+    "World · locations: skipped: no configured stat matches this name."
+  ],
+  "places": []
+}
+
+CASE 6: tracker / dating-holdout-opening / repetition 2
+
+FAILED CHECKS:
+[
+  {
+    "name": "placeCreated Paper Crane",
+    "critical": true,
+    "passed": false
+  },
+  {
+    "name": "currentPlace Paper Crane",
+    "critical": true,
+    "passed": false
+  }
+]
+
+SCENARIO:
+{
+  "id": "dating-holdout-opening",
+  "system": "dating",
+  "holdout": true,
+  "opening": true,
+  "text": "Alex is inside the Paper Crane bookstore on Linden Street. Green reading lamps light shelves of used novels. Sam, a human librarian, stands across the counter. \"Hello, Alex,\" Sam says. It is Monday morning.",
+  "checks": [
+    [
+      "placeCreated",
+      "Paper Crane",
+      true
+    ],
+    [
+      "currentPlace",
+      "Paper Crane",
+      true
+    ],
+    [
+      "npcPresent",
+      "Sam"
+    ],
+    [
+      "noInventoryChanges",
+      true
+    ]
+  ]
+}
+
+INITIAL STATE:
+{
+  "global": {
+    "Day and Time": "",
+    "Occasion": ""
+  },
+  "player": {
+    "stats": {
+      "Social Energy": "10/10",
+      "Mood": "Neutral"
+    },
+    "collections": {
+      "items": [],
+      "clothing": []
+    }
+  },
+  "characters": [],
+  "locations": {
+    "enabled": true,
+    "currentId": "",
+    "records": {}
+  }
+}
+
+SYSTEM MESSAGE:
+Read the latest roleplay message and return a JSON tracker update.
+Use configured fields and exact names.
+Report resolved events. Use earlier messages as context.
+Use stated amounts. Estimate conservatively when an effect is clear but its amount is unstated.
+List every NPC present after the message.
+Follow the output format in the request.
+
+USER MESSAGE:
+Report changes from the latest message and list the present NPCs.
+Alex is the player-controlled character. Put their changes under "player".
+
+### EVIDENCE RULES
+Use configured field purposes and rules to interpret resolved events.
+Apply costs when incurred.
+Use stated amounts.
+Estimate a conservative amount when an effect is clear but its amount is unstated.
+Use the field's current scale for estimates.
+Apply configured persistence and reset rules.
+Update the listed editable fields.
+Add physical items when the recipient acquires them.
+Use established possessions for a new NPC's starting items.
+Treat scene props as part of the setting.
+Add missing abilities or knowledge when demonstrated, including during a failed action.
+Reusable entries stay held after use.
+
+### CONFIGURED FIELDS
+Editable stats:
+- World.Day and Time: text. Current day and time.
+- World.Occasion: text. Current event or planned date.
+- Player.Social Energy: pool (current/maximum). Current energy for social activity.
+- Player.Mood: text. Current emotional state.
+- NPC.Mood: text. Current emotional state.
+- NPC.Affection: number. Warmth toward the player, based on established interactions.
+- NPC.Trust: number. Trust earned through actions in the story.
+- NPC.Comfort: number. How comfortable this character currently feels around the player.
+- NPC.Relationship: text. Current relationship in words; change only when events support it.
+
+### NPC INITIALIZATION
+Fill blank fields from this list when an NPC enters the scene.
+Use plausible individual values when the story provides no detail.
+Write initial pool readings as "current/maximum" with an individual capacity.
+NPC initialization fields:
+- NPC.Mood: text. Current emotional state. Default: Neutral.
+- NPC.Affection: number. Warmth toward the player, based on established interactions. Default: 0. Minimum: 0. Maximum: 100.
+- NPC.Trust: number. Trust earned through actions in the story. Default: 0. Minimum: 0. Maximum: 100.
+- NPC.Comfort: number. How comfortable this character currently feels around the player. Default: 0. Minimum: 0. Maximum: 100.
+- NPC.Relationship: text. Current relationship in words; change only when events support it.
+
+### COLLECTION DEFINITIONS
+- "clothing" for player or Character NPCs (npcTemplateId: character) - Garments currently being worn. Preserve their color and details until the story changes the outfit; remove garments when taken off. Fields: name [identifies the item], slot, color, details [include when adding]
+- "items" for player or Character NPCs (npcTemplateId: character) - Carried belongings, gifts, keepsakes, and useful objects. Change holdings only when the story establishes a transfer. Fields: name [identifies the item], quantity (number) [minimum 0], description [include when adding] Quantity field: quantity.
+Use the quoted collection ID as the key.
+Use exact field names and declared types.
+The configured primary field identifies each entry.
+NPC fields: Mood, Affection, Trust, Comfort, Relationship. NPC guidance: Every recurring person shares the same relationship fields.
+
+### PLACES
+Note when the current scene’s location changes.
+Set "locations.current" to the opening setting or the place reached.
+Record newly established places and details in "locations.places".
+Put "locations" beside "global", "player", and "characters".
+{"global":{},"player":{},"characters":[],"locations":{"places":[{"name":"<parent place>"},{"name":"<place>","parent":"<parent place>","description":"<complete established description>","aliases":["<alternate name>"]}],"current":"<place>"}}
+Replace placeholders with established story facts.
+Identify places by name or a known alias.
+Include changed details.
+Write a complete description that preserves established facts.
+Use "parent" for the containing place.
+Include newly discovered parents in "places".
+Use "" for an explicit departure with unknown destination.
+Omit unchanged "current" and "parent" fields.
+Plans, rumours, invitations, and mentions remain context until established.
+Known places: {"current":"","places":[]}
+
+### CURRENT STATE
+{"global":{"Day and Time":"","Occasion":""},"player":{"stats":{"Social Energy":"10/10","Mood":"Neutral"},"collections":{"clothing":[],"items":[]}},"characters":[]}
+Profiles and filled fields outside the editable list provide context.
+
+### ELIGIBLE NUMERIC DELTAS
+player.deltas: Social Energy
+
+### LATEST MESSAGE
+Alex is inside the Paper Crane bookstore on Linden Street. Green reading lamps light shelves of used novels. Sam, a human librarian, stands across the counter. "Hello, Alex," Sam says. It is Monday morning.
+
+### OUTPUT FORMAT
+Return raw JSON with "global", "player", and "characters".
+Include changed fields and blank NPC initializations.
+Use exact configured names.
+
+Put text values and initial numeric readings in these objects as JSON strings:
+- World: "global".
+- Player: "player.stats".
+- NPC: "characters[].stats".
+String readings include "8", "8/10", and configured text values.
+
+Put changes to existing numeric values in these objects as JSON numbers:
+- World: "globalDeltas".
+- Player: "player.deltas".
+- NPC: "characters[].deltas".
+Use positive numbers for gains and negative numbers for losses.
+For a pool, report the change to its current amount.
+Use one representation per field.
+
+"characters" is an array of objects.
+Each object has the NPC's exact "name".
+List every present NPC, including those with no changes.
+Known absent NPC updates also go in this array with "offstage": true.
+Player changes go under "player".
+Use "characters": [] when the present cast and offstage updates are both empty.
+
+Put collection changes under "player.collections" or "characters[].collections".
+Key each collection by its configured ID.
+Use "add" for acquisitions.
+Use "remove" for consumption or loss.
+Use "update" for changes to other item fields.
+Include the primary field in each add, update, and counted remove object.
+For uncounted removals, supply identifiers.
+For counted gains or losses, use the configured quantity field for the amount gained or spent.
+The default amount is 1.
+Use "all": true to remove a whole stack.
+For transfers, remove from the giver and add to the recipient.
+Include supported item details using their declared types.
+Keep one entry per identifier.
+
+No-change example:
+{"global":{},"player":{},"characters":[]}
+
+Changed-reply example (illustrative changes):
+{"global":{},"player":{"deltas":{"Social Energy":-1},"collections":{"clothing":{"add":[{"name":"<item identifier>"}]}}},"characters":[]}
+
+New NPC example (replace placeholders with initial readings using the field definitions):
+{
+  "global": {},
+  "player": {},
+  "characters": [
+    {
+      "name": "<exact NPC name from the story>",
+      "stats": {
+        "Mood": "<initial reading>",
+        "Affection": "<initial reading>",
+        "Trust": "<initial reading>",
+        "Comfort": "<initial reading>",
+        "Relationship": "<initial reading>"
+      }
+    }
+  ]
+}
+
+Independent collection examples (replace illustrative values with supported typed details):
+Acquired item:
+{
+  "clothing": {
+    "add": [
+      {
+        "name": "<exact primary field value>",
+        "slot": "<supported item detail>",
+        "color": "<supported item detail>",
+        "details": "<supported item detail>"
+      }
+    ]
+  }
+}
+
+Lost item:
+{
+  "clothing": {
+    "remove": [
+      "<exact primary field value>"
+    ]
+  }
+}
+
+Changed item:
+{
+  "clothing": {
+    "update": [
+      {
+        "name": "<exact primary field value>",
+        "slot": "<new value>"
+      }
+    ]
+  }
+}
+
+Check the JSON structure, present cast, field names, and evidence for each change.
+For an established setting or arrival, put "locations" beside "global", "player", and "characters". Set "locations.current" to the place name. Put new place records in "locations.places".
+
+ORIGINAL RESPONSE:
+```json
+{
+  "global": {
+    "Day and Time": "Monday morning",
+    "Occasion": "",
+    "locations": {
+      "current": "Paper Crane bookstore",
+      "places": [
+        {
+          "name": "Paper Crane bookstore",
+          "description": "A used books store on Linden Street, featuring shelves of used novels and green reading lamps."
+        }
+      ]
+    }
+  },
+  "player": {
+    "stats": {
+      "Social Energy": "10/10",
+      "Mood": "Neutral"
+    },
+    "collections": {
+      "clothing": [],
+      "items": []
+    }
+  },
+  "characters": [
+    {
+      "name": "Sam",
+      "stats": {
+        "Mood": "Neutral",
+        "Affection": 0,
+        "Trust": 0,
+        "Comfort": 0,
+        "Relationship": "Unestablished"
+      }
+    }
+  ]
+}
+```
+
+NORMALIZED RESULT:
+{
+  "update": {
+    "global": {
+      "Day and Time": "Monday morning",
+      "Occasion": "",
+      "locations": {
+        "current": "Paper Crane bookstore",
+        "places": [
+          {
+            "name": "Paper Crane bookstore",
+            "description": "A used books store on Linden Street, featuring shelves of used novels and green reading lamps."
+          }
+        ]
+      }
+    },
+    "player": {
+      "stats": {
+        "Social Energy": "10/10",
+        "Mood": "Neutral"
+      },
+      "collections": {
+        "clothing": [],
+        "items": []
+      }
+    },
+    "characters": [
+      {
+        "name": "Sam",
+        "stats": {
+          "Mood": "Neutral",
+          "Affection": "0/100",
+          "Trust": "0/100",
+          "Comfort": "0/100",
+          "Relationship": "Unestablished"
+        }
+      }
+    ]
+  },
+  "effective": {
+    "global": {
+      "Day and Time": "Monday morning",
+      "Occasion": ""
+    },
+    "player": {
+      "stats": {
+        "Social Energy": "10/10",
+        "Mood": "Neutral"
+      },
+      "collections": {
+        "items": [],
+        "clothing": []
+      },
+      "name": "Alex"
+    },
+    "characters": [],
+    "locations": {
+      "enabled": true,
+      "currentId": "",
+      "records": {}
+    },
+    "timestamp": 1792525281607
+  },
+  "progression": null,
+  "holdings": {
+    "player": {
+      "stats": {
+        "Social Energy": "10/10",
+        "Mood": "Neutral"
+      },
+      "collections": {
+        "items": [],
+        "clothing": []
+      },
+      "name": "Alex"
+    },
+    "characters": [
+      {
+        "name": "Sam",
+        "npcTemplateId": "character",
+        "collections": {}
+      }
+    ]
+  },
+  "warnings": [
+    "World · locations: skipped: no configured stat matches this name.",
+    "Sam · Mood: skipped: the NPC is offstage and has no saved card.",
+    "Sam · Affection: skipped: the NPC is offstage and has no saved card.",
+    "Sam · Trust: skipped: the NPC is offstage and has no saved card.",
+    "Sam · Comfort: skipped: the NPC is offstage and has no saved card.",
+    "Sam · Relationship: skipped: the NPC is offstage and has no saved card."
+  ],
+  "places": []
+}
+
+CASE 7: natural / dating-quiet-control / repetition 1
+
+FAILED CHECKS:
+[
+  {
+    "name": "noInventoryChanges ",
+    "critical": true,
+    "passed": false
+  }
+]
+
+SCENARIO:
+{
+  "id": "dating-quiet-control",
+  "system": "dating",
+  "startPlace": "Moonbeam Café",
+  "npc": "June",
+  "energy": "6/10",
+  "text": "Alex and June sit at their usual table while a bus splashes through a puddle outside. June has heard a rumor that the Glasshouse conservatory may close for repairs. She says she would like to see it someday, if the story turns out to be true. Alex listens and turns a page of the magazine already on the table.\n\nThe conversation drifts to the weather. They settle into a comfortable silence while the magazine lies open between them. June turns her cup in her hands and wonders what the conservatory's glass roof looks like in the rain. A bus pulls away outside as they continue sitting together.",
+  "checks": [
+    [
+      "playerUnchanged",
+      "Social Energy"
+    ],
+    [
+      "relationshipUnchanged",
+      "June",
+      true
+    ],
+    [
+      "noMovement",
+      true
+    ],
+    [
+      "noPlaceCreated",
+      "Glasshouse",
+      true
+    ],
+    [
+      "noInventoryChanges",
+      true
+    ]
+  ]
+}
+
+INITIAL STATE:
+{
+  "global": {
+    "Day and Time": "",
+    "Occasion": ""
+  },
+  "player": {
+    "stats": {
+      "Social Energy": "6/10",
+      "Mood": "Neutral"
+    },
+    "collections": {
+      "items": [],
+      "clothing": []
+    }
+  },
+  "characters": [
+    {
+      "name": "June",
+      "npcTemplateId": "character",
+      "stats": {
+        "Mood": "Neutral",
+        "Affection": "15",
+        "Trust": "10",
+        "Comfort": "20",
+        "Relationship": "Friends"
+      },
+      "collections": {}
+    }
+  ],
+  "locations": {
+    "enabled": true,
+    "currentId": "home",
+    "records": {
+      "home": {
+        "id": "home",
+        "name": "Moonbeam Café",
+        "description": "",
+        "aliases": [],
+        "parentId": ""
+      }
+    }
+  }
+}
+
+SYSTEM MESSAGE:
+Read the latest roleplay message and return a JSON tracker update.
+Use configured fields and exact names.
+Report resolved events. Use earlier messages as context.
+Use stated amounts. Estimate conservatively when an effect is clear but its amount is unstated.
+List every NPC present after the message.
+Follow the output format in the request.
+
+USER MESSAGE:
+Report changes from the latest message and list the present NPCs.
+Alex is the player-controlled character. Put their changes under "player".
+
+### EVIDENCE RULES
+Use configured field purposes and rules to interpret resolved events.
+Apply costs when incurred.
+Use stated amounts.
+Estimate a conservative amount when an effect is clear but its amount is unstated.
+Use the field's current scale for estimates.
+Apply configured persistence and reset rules.
+Update the listed editable fields.
+Add physical items when the recipient acquires them.
+Use established possessions for a new NPC's starting items.
+Treat scene props as part of the setting.
+Add missing abilities or knowledge when demonstrated, including during a failed action.
+Reusable entries stay held after use.
+
+### RECOVERY
+For complete recovery, report the full missing amount for each affected pool.
+Sound sleep followed by waking refreshed, effective healing, or recharging can establish complete recovery when field rules permit.
+Match recovery to the affected owner and pools.
+Use a smaller gain for partial recovery.
+Missing amounts:
+Player.Social Energy 6/10 needs +4 to reach capacity.
+
+### CONFIGURED FIELDS
+Editable stats:
+- World.Day and Time: text. Current day and time.
+- World.Occasion: text. Current event or planned date.
+- Player.Social Energy: pool (current/maximum). Current energy for social activity.
+- Player.Mood: text. Current emotional state.
+- NPC.Mood: text. Current emotional state.
+- NPC.Affection: number. Warmth toward the player, based on established interactions.
+- NPC.Trust: number. Trust earned through actions in the story.
+- NPC.Comfort: number. How comfortable this character currently feels around the player.
+- NPC.Relationship: text. Current relationship in words; change only when events support it.
+
+### NPC INITIALIZATION
+Fill blank fields from this list when an NPC enters the scene.
+Use plausible individual values when the story provides no detail.
+Write initial pool readings as "current/maximum" with an individual capacity.
+NPC initialization fields:
+- NPC.Mood: text. Current emotional state. Default: Neutral.
+- NPC.Affection: number. Warmth toward the player, based on established interactions. Default: 0. Minimum: 0. Maximum: 100.
+- NPC.Trust: number. Trust earned through actions in the story. Default: 0. Minimum: 0. Maximum: 100.
+- NPC.Comfort: number. How comfortable this character currently feels around the player. Default: 0. Minimum: 0. Maximum: 100.
+- NPC.Relationship: text. Current relationship in words; change only when events support it.
+
+### COLLECTION DEFINITIONS
+- "clothing" for player or Character NPCs (npcTemplateId: character) - Garments currently being worn. Preserve their color and details until the story changes the outfit; remove garments when taken off. Fields: name [identifies the item], slot, color, details [include when adding]
+- "items" for player or Character NPCs (npcTemplateId: character) - Carried belongings, gifts, keepsakes, and useful objects. Change holdings only when the story establishes a transfer. Fields: name [identifies the item], quantity (number) [minimum 0], description [include when adding] Quantity field: quantity.
+Use the quoted collection ID as the key.
+Use exact field names and declared types.
+The configured primary field identifies each entry.
+NPC fields: Mood, Affection, Trust, Comfort, Relationship. NPC guidance: Every recurring person shares the same relationship fields.
+
+### PLACES
+Note when the current scene’s location changes.
+Set "locations.current" to the opening setting or the place reached.
+Record newly established places and details in "locations.places".
+Put "locations" beside "global", "player", and "characters".
+{"global":{},"player":{},"characters":[],"locations":{"places":[{"name":"<parent place>"},{"name":"<place>","parent":"<parent place>","description":"<complete established description>","aliases":["<alternate name>"]}],"current":"<place>"}}
+Replace placeholders with established story facts.
+Identify places by name or a known alias.
+Include changed details.
+Write a complete description that preserves established facts.
+Use "parent" for the containing place.
+Include newly discovered parents in "places".
+Use "" for an explicit departure with unknown destination.
+Omit unchanged "current" and "parent" fields.
+Plans, rumours, invitations, and mentions remain context until established.
+Known places: {"current":"Moonbeam Café","places":[{"name":"Moonbeam Café"}]}
+
+### CURRENT STATE
+{"global":{"Day and Time":"","Occasion":""},"player":{"stats":{"Social Energy":"6/10","Mood":"Neutral"},"collections":{"clothing":[],"items":[]}},"characters":[{"name":"June","npcTemplateId":"character","stats":{"Mood":"Neutral","Affection":"15","Trust":"10","Comfort":"20","Relationship":"Friends"},"collections":{"clothing":[],"items":[]}}]}
+Profiles and filled fields outside the editable list provide context.
+
+### ELIGIBLE NUMERIC DELTAS
+player.deltas: Social Energy
+characters[].deltas (name: June): Affection, Trust, Comfort
+
+### LATEST MESSAGE
+Alex and June sit at their usual table while a bus splashes through a puddle outside. June has heard a rumor that the Glasshouse conservatory may close for repairs. She says she would like to see it someday, if the story turns out to be true. Alex listens and turns a page of the magazine already on the table.
+
+The conversation drifts to the weather. They settle into a comfortable silence while the magazine lies open between them. June turns her cup in her hands and wonders what the conservatory's glass roof looks like in the rain. A bus pulls away outside as they continue sitting together.
+
+### OUTPUT FORMAT
+Return raw JSON with "global", "player", and "characters".
+Include changed fields and blank NPC initializations.
+Use exact configured names.
+
+Put text values and initial numeric readings in these objects as JSON strings:
+- World: "global".
+- Player: "player.stats".
+- NPC: "characters[].stats".
+String readings include "8", "8/10", and configured text values.
+
+Put changes to existing numeric values in these objects as JSON numbers:
+- World: "globalDeltas".
+- Player: "player.deltas".
+- NPC: "characters[].deltas".
+Use positive numbers for gains and negative numbers for losses.
+For a pool, report the change to its current amount.
+Use one representation per field.
+
+"characters" is an array of objects.
+Each object has the NPC's exact "name".
+List every present NPC, including those with no changes.
+Known absent NPC updates also go in this array with "offstage": true.
+Player changes go under "player".
+Use "characters": [] when the present cast and offstage updates are both empty.
+
+Put collection changes under "player.collections" or "characters[].collections".
+Key each collection by its configured ID.
+Use "add" for acquisitions.
+Use "remove" for consumption or loss.
+Use "update" for changes to other item fields.
+Include the primary field in each add, update, and counted remove object.
+For uncounted removals, supply identifiers.
+For counted gains or losses, use the configured quantity field for the amount gained or spent.
+The default amount is 1.
+Use "all": true to remove a whole stack.
+For transfers, remove from the giver and add to the recipient.
+Include supported item details using their declared types.
+Keep one entry per identifier.
+
+No-change example:
+{"global":{},"player":{},"characters":[{"name":"June"}]}
+
+Changed-reply example (illustrative changes):
+{"global":{},"player":{"deltas":{"Social Energy":-1},"collections":{"clothing":{"add":[{"name":"<item identifier>"}]}}},"characters":[{"name":"June","deltas":{"Affection":-1},"collections":{"clothing":{"remove":["<item identifier>"]}}}]}
+
+New NPC example (replace placeholders with initial readings using the field definitions):
+{
+  "global": {},
+  "player": {},
+  "characters": [
+    {
+      "name": "<exact NPC name from the story>",
+      "stats": {
+        "Mood": "<initial reading>",
+        "Affection": "<initial reading>",
+        "Trust": "<initial reading>",
+        "Comfort": "<initial reading>",
+        "Relationship": "<initial reading>"
+      }
+    }
+  ]
+}
+
+Independent collection examples (replace illustrative values with supported typed details):
+Acquired item:
+{
+  "clothing": {
+    "add": [
+      {
+        "name": "<exact primary field value>",
+        "slot": "<supported item detail>",
+        "color": "<supported item detail>",
+        "details": "<supported item detail>"
+      }
+    ]
+  }
+}
+
+Lost item:
+{
+  "clothing": {
+    "remove": [
+      "<exact primary field value>"
+    ]
+  }
+}
+
+Changed item:
+{
+  "clothing": {
+    "update": [
+      {
+        "name": "<exact primary field value>",
+        "slot": "<new value>"
+      }
+    ]
+  }
+}
+
+Check the JSON structure, present cast, field names, and evidence for each change.
+For an established setting or arrival, put "locations" beside "global", "player", and "characters". Set "locations.current" to the place name. Put new place records in "locations.places".
+
+ORIGINAL RESPONSE:
+```json
+{
+  "global": {
+    "Day and Time": "",
+    "Occasion": ""
+  },
+  "player": {
+    "stats": {
+      "Social Energy": "6/10",
+      "Mood": "Neutral"
+    },
+    "collections": {
+      "items": {
+        "add": [
+          {
+            "name": "Magazine",
+            "quantity": 1,
+            "description": "A magazine lying on the table"
+          }
+        ]
+      }
+    }
+  },
+  "characters": [
+    {
+      "name": "June",
+      "stats": {
+        "Mood": "Neutral",
+        "Affection": 16,
+        "Trust": 11,
+        "Comfort": 21,
+        "Relationship": "Friends"
+      }
+    }
+  ]
+}
+```
+
+NORMALIZED RESULT:
+{
+  "update": {
+    "global": {
+      "Day and Time": "",
+      "Occasion": ""
+    },
+    "player": {
+      "stats": {
+        "Social Energy": "6/10",
+        "Mood": "Neutral"
+      },
+      "collections": {
+        "items": {
+          "add": [
+            {
+              "name": "Magazine",
+              "quantity": 1,
+              "description": "A magazine lying on the table"
+            }
+          ]
+        }
+      }
+    },
+    "characters": [
+      {
+        "name": "June",
+        "stats": {
+          "Mood": "Neutral",
+          "Affection": "16",
+          "Trust": "11",
+          "Comfort": "21",
+          "Relationship": "Friends"
+        }
+      }
+    ]
+  },
+  "effective": {
+    "global": {
+      "Day and Time": "",
+      "Occasion": ""
+    },
+    "player": {
+      "stats": {
+        "Social Energy": "6/10",
+        "Mood": "Neutral"
+      },
+      "collections": {
+        "items": [
+          {
+            "name": "Magazine",
+            "quantity": 1,
+            "description": "A magazine lying on the table"
+          }
+        ],
+        "clothing": []
+      },
+      "name": "Alex"
+    },
+    "characters": [
+      {
+        "name": "June",
+        "npcTemplateId": "character",
+        "stats": {
+          "Mood": "Neutral",
+          "Affection": "16",
+          "Trust": "11",
+          "Comfort": "21",
+          "Relationship": "Friends"
+        },
+        "collections": {}
+      }
+    ],
+    "locations": {
+      "enabled": true,
+      "currentId": "home",
+      "records": {
+        "home": {
+          "id": "home",
+          "name": "Moonbeam Café",
+          "description": "",
+          "aliases": [],
+          "parentId": ""
+        }
+      }
+    },
+    "timestamp": 1792527754925
+  },
+  "progression": null,
+  "holdings": {
+    "player": {
+      "stats": {
+        "Social Energy": "6/10",
+        "Mood": "Neutral"
+      },
+      "collections": {
+        "items": [
+          {
+            "name": "Magazine",
+            "quantity": 1,
+            "description": "A magazine lying on the table"
+          }
+        ],
+        "clothing": []
+      },
+      "name": "Alex"
+    },
+    "characters": [
+      {
+        "name": "June",
+        "npcTemplateId": "character",
+        "stats": {
+          "Mood": "Neutral",
+          "Affection": "15",
+          "Trust": "10",
+          "Comfort": "20",
+          "Relationship": "Friends"
+        },
+        "collections": {}
+      }
+    ]
+  },
+  "warnings": [],
+  "places": []
+}
+
+CASE 8: natural / fantasy-wound-treated / repetition 2
+
+FAILED CHECKS:
+[
+  {
+    "name": "noXp ",
+    "critical": true,
+    "passed": false
+  }
+]
+
+SCENARIO:
+{
+  "id": "fantasy-wound-treated",
+  "system": "fantasy",
+  "startPlace": "Rusty Lantern",
+  "npc": "Mira",
+  "hp": "5/12",
+  "condition": "Wounded",
+  "text": "Alex sits beside the Rusty Lantern hearth, still hurting from an earlier injury. Mira cleans the wound with warm water and wraps it carefully in fresh linen from her own supplies. The bleeding stops. Alex rests there for most of the afternoon while Mira keeps the fire going and makes sure the bandage stays in place.\n\nWhen Alex stands, the sharpest pain has eased and moving feels easier than it did before. The wound has begun to heal, although Alex is not fully recovered. Mira puts the leftover linen back in her satchel, then settles beside Alex at the hearth as the fire burns low.",
+  "checks": [
+    [
+      "playerIncreased",
+      "HP",
+      true
+    ],
+    [
+      "playerBelowCapacity",
+      "HP",
+      true
+    ],
+    [
+      "npcPresent",
+      "Mira"
+    ],
+    [
+      "noMovement",
+      true
+    ],
+    [
+      "noPlayerInventoryChanges",
+      true
+    ],
+    [
+      "noXp",
+      true
+    ]
+  ]
+}
+
+INITIAL STATE:
+{
+  "global": {
+    "Time": "",
+    "Quest": ""
+  },
+  "player": {
+    "stats": {
+      "HP": "5/12",
+      "Mana": "10/10",
+      "Armor": "10",
+      "Strength": "10",
+      "Dexterity": "10",
+      "Constitution": "10",
+      "Intelligence": "10",
+      "Wisdom": "10",
+      "Charisma": "10",
+      "Condition": "Wounded",
+      "Currency": "0",
+      "XP": "0/100",
+      "Level": "1"
+    },
+    "collections": {
+      "equipment": [],
+      "clothing": []
+    }
+  },
+  "characters": [
+    {
+      "name": "Mira",
+      "npcTemplateId": "character",
+      "stats": {
+        "HP": "12/12",
+        "Mana": "10/10",
+        "Armor": "10",
+        "Strength": "10",
+        "Dexterity": "10",
+        "Constitution": "10",
+        "Intelligence": "10",
+        "Wisdom": "10",
+        "Charisma": "10",
+        "Condition": "Healthy",
+        "Currency": "0",
+        "XP": "0/100",
+        "Level": "1"
+      },
+      "collections": {}
+    }
+  ],
+  "locations": {
+    "enabled": true,
+    "currentId": "home",
+    "records": {
+      "home": {
+        "id": "home",
+        "name": "Rusty Lantern",
+        "description": "",
+        "aliases": [],
+        "parentId": ""
+      }
+    }
+  }
+}
+
+SYSTEM MESSAGE:
+Read the latest roleplay message and return a JSON tracker update.
+Use configured fields and exact names.
+Report resolved events. Use earlier messages as context.
+Use stated amounts. Estimate conservatively when an effect is clear but its amount is unstated.
+List every NPC present after the message.
+Follow the output format in the request.
+
+USER MESSAGE:
+Report changes from the latest message and list the present NPCs.
+Alex is the player-controlled character. Put their changes under "player".
+
+### EVIDENCE RULES
+Use configured field purposes and rules to interpret resolved events.
+Apply costs when incurred.
+Use stated amounts.
+Estimate a conservative amount when an effect is clear but its amount is unstated.
+Use the field's current scale for estimates.
+Apply configured persistence and reset rules.
+Update the listed editable fields.
+Add physical items when the recipient acquires them.
+Use established possessions for a new NPC's starting items.
+Treat scene props as part of the setting.
+Add missing abilities or knowledge when demonstrated, including during a failed action.
+Reusable entries stay held after use.
+
+### EXPERIENCE
+Award XP once per concrete accomplishment by its recipient.
+Meaningful active progress toward a goal qualifies.
+Rest, care, accidents, rumours, and routine conversation leave XP unchanged.
+Report earned XP as a positive delta in the recipient's configured XP field.
+
+### RECOVERY
+For complete recovery, report the full missing amount for each affected pool.
+Sound sleep followed by waking refreshed, effective healing, or recharging can establish complete recovery when field rules permit.
+Match recovery to the affected owner and pools.
+Use a smaller gain for partial recovery.
+Missing amounts:
+Player.HP 5/12 needs +7 to reach capacity.
+Report bodily injury as a decrease in player.deltas.HP.
+Report effective wound care or healing as an increase in that field.
+Include any text condition change separately.
+Estimate a conservative amount for partial healing.
+
+### CONFIGURED FIELDS
+Editable stats:
+- World.Time: text. The time of day or moment in the story.
+- World.Quest: text. The objective or lead the characters are currently pursuing.
+- Player.HP: pool (current/maximum). Physical well-being. Wounds lower current HP; healing restores it. Maximum HP reflects lasting resilience.
+- Player.Mana: pool (current/maximum). Magical energy. Casting spells spends current Mana; rest or magical recovery restores it. Maximum Mana reflects lasting magical capacity.
+- Player.Armor: number. Protection from worn gear, natural hide, or magic. Higher values suggest that a blow is less threatening.
+- Player.Strength: number. Physical power used to lift, grapple, break, and strike with force. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- Player.Dexterity: number. Agility, balance, quick reactions, and precise movement. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- Player.Constitution: number. Endurance against exhaustion, illness, harsh conditions, and prolonged effort. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- Player.Intelligence: number. Memory, learned knowledge, investigation, and deliberate reasoning. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- Player.Wisdom: number. Awareness, intuition, judgment, and attention to subtle details. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- Player.Charisma: number. Presence and the ability to persuade, inspire, or unsettle others. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- Player.Condition: text. Describe injuries, ailments, and other temporary effects in plain words.
+- Player.Currency: number. Money held by this character; change it when the story establishes a gain or expense.
+- Player.XP: earned experience. Experience earned through meaningful challenges, discoveries, and growth in the story.
+- NPC.HP: pool (current/maximum). Physical well-being. Wounds lower current HP; healing restores it. Maximum HP reflects lasting resilience.
+- NPC.Mana: pool (current/maximum). Magical energy. Casting spells spends current Mana; rest or magical recovery restores it. Maximum Mana reflects lasting magical capacity.
+- NPC.Armor: number. Protection from worn gear, natural hide, or magic. Higher values suggest that a blow is less threatening.
+- NPC.Strength: number. Physical power used to lift, grapple, break, and strike with force. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- NPC.Dexterity: number. Agility, balance, quick reactions, and precise movement. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- NPC.Constitution: number. Endurance against exhaustion, illness, harsh conditions, and prolonged effort. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- NPC.Intelligence: number. Memory, learned knowledge, investigation, and deliberate reasoning. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- NPC.Wisdom: number. Awareness, intuition, judgment, and attention to subtle details. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- NPC.Charisma: number. Presence and the ability to persuade, inspire, or unsettle others. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.
+- NPC.Condition: text. Describe injuries, ailments, and other temporary effects in plain words.
+- NPC.Currency: number. Money held by this character; change it when the story establishes a gain or expense.
+- NPC.XP: earned experience. Experience earned through meaningful challenges, discoveries, and growth in the story.
+
+### NPC INITIALIZATION
+Fill blank fields from this list when an NPC enters the scene.
+Use plausible individual values when the story provides no detail.
+Write initial pool readings as "current/maximum" with an individual capacity.
+NPC initialization fields:
+- NPC.HP: pool (current/maximum). Physical well-being. Wounds lower current HP; healing restores it. Maximum HP reflects lasting resilience. Default: 12/12. Minimum: 0.
+- NPC.Mana: pool (current/maximum). Magical energy. Casting spells spends current Mana; rest or magical recovery restores it. Maximum Mana reflects lasting magical capacity. Default: 10/10. Minimum: 0.
+- NPC.Armor: number. Protection from worn gear, natural hide, or magic. Higher values suggest that a blow is less threatening. Default: 10. Minimum: 0.
+- NPC.Strength: number. Physical power used to lift, grapple, break, and strike with force. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change. Default: 10. Minimum: 0.
+- NPC.Dexterity: number. Agility, balance, quick reactions, and precise movement. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change. Default: 10. Minimum: 0.
+- NPC.Constitution: number. Endurance against exhaustion, illness, harsh conditions, and prolonged effort. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change. Default: 10. Minimum: 0.
+- NPC.Intelligence: number. Memory, learned knowledge, investigation, and deliberate reasoning. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change. Default: 10. Minimum: 0.
+- NPC.Wisdom: number. Awareness, intuition, judgment, and attention to subtle details. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change. Default: 10. Minimum: 0.
+- NPC.Charisma: number. Presence and the ability to persuade, inspire, or unsettle others. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change. Default: 10. Minimum: 0.
+- NPC.Condition: text. Describe injuries, ailments, and other temporary effects in plain words. Default: Healthy.
+- NPC.Currency: number. Money held by this character; change it when the story establishes a gain or expense. Default: 0. Minimum: 0.
+- NPC.XP: earned experience. Experience earned through meaningful challenges, discoveries, and growth in the story. Default: 0/100. Minimum: 0.
+- NPC.Level: number. A broad measure of how much this character has grown through experience. Default: 1. Minimum: 1.
+
+### COLLECTION DEFINITIONS
+- "equipment" for player or Character NPCs (npcTemplateId: character) - Carried gear; change holdings only when the story establishes a transfer. Fields: name [identifies the item], quantity (number) [minimum 0], description [include when adding] Quantity field: quantity.
+- "abilities" (Abilities and Spells) for player or Character NPCs (npcTemplateId: character) - Known abilities, spells, or techniques and any limits established by the story. Fields: name [identifies the item], kind, rank, uses - Optional. Leave blank when the ability has no stated use limit., effect [include when adding]
+Use the quoted collection ID as the key.
+Use exact field names and declared types.
+The configured primary field identifies each entry.
+NPC fields: HP, Mana, Armor, Strength, Dexterity, Constitution, Intelligence, Wisdom, Charisma, Condition, Currency, XP, Level. NPC guidance: People, beasts, companions, and foes share the same stats.
+
+### PLACES
+Note when the current scene’s location changes.
+Set "locations.current" to the opening setting or the place reached.
+Record newly established places and details in "locations.places".
+Put "locations" beside "global", "player", and "characters".
+{"global":{},"player":{},"characters":[],"locations":{"places":[{"name":"<parent place>"},{"name":"<place>","parent":"<parent place>","description":"<complete established description>","aliases":["<alternate name>"]}],"current":"<place>"}}
+Replace placeholders with established story facts.
+Identify places by name or a known alias.
+Include changed details.
+Write a complete description that preserves established facts.
+Use "parent" for the containing place.
+Include newly discovered parents in "places".
+Use "" for an explicit departure with unknown destination.
+Omit unchanged "current" and "parent" fields.
+Plans, rumours, invitations, and mentions remain context until established.
+Known places: {"current":"Rusty Lantern","places":[{"name":"Rusty Lantern"}]}
+
+### CURRENT STATE
+{"global":{"Time":"","Quest":""},"player":{"stats":{"HP":"5/12","Mana":"10/10","Armor":"10","Strength":"10","Dexterity":"10","Constitution":"10","Intelligence":"10","Wisdom":"10","Charisma":"10","Condition":"Wounded","Currency":"0","XP":"0/100","Level":"1"},"collections":{"equipment":[],"abilities":[]}},"characters":[{"name":"Mira","npcTemplateId":"character","stats":{"HP":"12/12","Mana":"10/10","Armor":"10","Strength":"10","Dexterity":"10","Constitution":"10","Intelligence":"10","Wisdom":"10","Charisma":"10","Condition":"Healthy","Currency":"0","XP":"0/100","Level":"1"},"collections":{"equipment":[],"abilities":[]}}]}
+Profiles and filled fields outside the editable list provide context.
+
+### ELIGIBLE NUMERIC DELTAS
+player.deltas: HP, Mana, Armor, Strength, Dexterity, Constitution, Intelligence, Wisdom, Charisma, Currency, XP
+characters[].deltas (name: Mira): HP, Mana, Armor, Strength, Dexterity, Constitution, Intelligence, Wisdom, Charisma, Currency, XP
+
+### LATEST MESSAGE
+Alex sits beside the Rusty Lantern hearth, still hurting from an earlier injury. Mira cleans the wound with warm water and wraps it carefully in fresh linen from her own supplies. The bleeding stops. Alex rests there for most of the afternoon while Mira keeps the fire going and makes sure the bandage stays in place.
+
+When Alex stands, the sharpest pain has eased and moving feels easier than it did before. The wound has begun to heal, although Alex is not fully recovered. Mira puts the leftover linen back in her satchel, then settles beside Alex at the hearth as the fire burns low.
+
+### OUTPUT FORMAT
+Return raw JSON with "global", "player", and "characters".
+Include changed fields and blank NPC initializations.
+Use exact configured names.
+
+Put text values and initial numeric readings in these objects as JSON strings:
+- World: "global".
+- Player: "player.stats".
+- NPC: "characters[].stats".
+String readings include "8", "8/10", and configured text values.
+
+Put changes to existing numeric values in these objects as JSON numbers:
+- World: "globalDeltas".
+- Player: "player.deltas".
+- NPC: "characters[].deltas".
+Use positive numbers for gains and negative numbers for losses.
+For a pool, report the change to its current amount.
+Use one representation per field.
+
+"characters" is an array of objects.
+Each object has the NPC's exact "name".
+List every present NPC, including those with no changes.
+Known absent NPC updates also go in this array with "offstage": true.
+Player changes go under "player".
+Use "characters": [] when the present cast and offstage updates are both empty.
+
+Put collection changes under "player.collections" or "characters[].collections".
+Key each collection by its configured ID.
+Use "add" for acquisitions.
+Use "remove" for consumption or loss.
+Use "update" for changes to other item fields.
+Include the primary field in each add, update, and counted remove object.
+For uncounted removals, supply identifiers.
+For counted gains or losses, use the configured quantity field for the amount gained or spent.
+The default amount is 1.
+Use "all": true to remove a whole stack.
+For transfers, remove from the giver and add to the recipient.
+Include supported item details using their declared types.
+Keep one entry per identifier.
+
+No-change example:
+{"global":{},"player":{},"characters":[{"name":"Mira"}]}
+
+Changed-reply example (illustrative changes):
+{"global":{},"player":{"deltas":{"HP":-1},"collections":{"equipment":{"add":[{"name":"<item identifier>","quantity":1}]}}},"characters":[{"name":"Mira","deltas":{"HP":-1},"collections":{"equipment":{"remove":[{"name":"<item identifier>","quantity":1}]}}}]}
+
+New NPC example (replace placeholders with initial readings using the field definitions):
+{
+  "global": {},
+  "player": {},
+  "characters": [
+    {
+      "name": "<exact NPC name from the story>",
+      "stats": {
+        "HP": "<initial reading>",
+        "Mana": "<initial reading>",
+        "Armor": "<initial reading>",
+        "Strength": "<initial reading>",
+        "Dexterity": "<initial reading>",
+        "Constitution": "<initial reading>",
+        "Intelligence": "<initial reading>",
+        "Wisdom": "<initial reading>",
+        "Charisma": "<initial reading>",
+        "Condition": "<initial reading>",
+        "Currency": "<initial reading>",
+        "XP": "<initial reading>",
+        "Level": "<initial reading>"
+      }
+    }
+  ]
+}
+
+Independent collection examples (replace illustrative values with supported typed details):
+Acquired item:
+{
+  "equipment": {
+    "add": [
+      {
+        "name": "<exact primary field value>",
+        "quantity": 1,
+        "description": "<supported item detail>"
+      }
+    ]
+  }
+}
+
+Lost item:
+{
+  "equipment": {
+    "remove": [
+      {
+        "name": "<exact primary field value>",
+        "quantity": 1
+      }
+    ]
+  }
+}
+
+Whole stack lost:
+{
+  "equipment": {
+    "remove": [
+      {
+        "name": "<exact primary field value>",
+        "all": true
+      }
+    ]
+  }
+}
+
+Changed item:
+{
+  "equipment": {
+    "update": [
+      {
+        "name": "<exact primary field value>",
+        "description": "<new value>"
+      }
+    ]
+  }
+}
+
+Check the JSON structure, present cast, field names, and evidence for each change.
+For an established setting or arrival, put "locations" beside "global", "player", and "characters". Set "locations.current" to the place name. Put new place records in "locations.places".
+
+ORIGINAL RESPONSE:
+```json
+{
+  "global": {
+    "Time": "Afternoon",
+    "Quest": ""
+  },
+  "player": {
+    "stats": {
+      "HP": "8/12",
+      "Mana": "10/10",
+      "Armor": "10",
+      "Strength": "10",
+      "Dexterity": "10",
+      "Constitution": "10",
+      "Intelligence": "10",
+      "Wisdom": "10",
+      "Charisma": "10",
+      "Condition": "Injured (Healing)",
+      "Currency": "0",
+      "XP": "5/100",
+      "Level": "1"
+    },
+    "deltas": {
+      "HP": 3,
+      "XP": 5
+    },
+    "collections": {}
+  },
+  "characters": [
+    {
+      "name": "Mira",
+      "stats": {
+        "HP": "12/12",
+        "Mana": "10/10",
+        "Armor": "10",
+        "Strength": "10",
+        "Dexterity": "10",
+        "Constitution": "10",
+        "Intelligence": "10",
+        "Wisdom": "10",
+        "Charisma": "10",
+        "Condition": "Healthy",
+        "Currency": "0",
+        "XP": "0/100",
+        "Level": "1"
+      },
+      "deltas": {}
+    }
+  ],
+  "locations": {
+    "current": "Rusty Lantern",
+    "places": [
+      {
+        "name": "Rusty Lantern"
+      }
+    ]
+  }
+}
+```
+
+NORMALIZED RESULT:
+{
+  "update": {
+    "global": {
+      "Time": "Afternoon",
+      "Quest": ""
+    },
+    "player": {
+      "stats": {
+        "HP": "8/12",
+        "Mana": "10/10",
+        "Armor": "10",
+        "Strength": "10",
+        "Dexterity": "10",
+        "Constitution": "10",
+        "Intelligence": "10",
+        "Wisdom": "10",
+        "Charisma": "10",
+        "Condition": "Injured (Healing)",
+        "Currency": "0",
+        "XP": "5/100"
+      },
+      "collections": {}
+    },
+    "characters": [
+      {
+        "name": "Mira",
+        "stats": {
+          "HP": "12/12",
+          "Mana": "10/10",
+          "Armor": "10",
+          "Strength": "10",
+          "Dexterity": "10",
+          "Constitution": "10",
+          "Intelligence": "10",
+          "Wisdom": "10",
+          "Charisma": "10",
+          "Condition": "Healthy",
+          "Currency": "0"
+        }
+      }
+    ],
+    "locations": {
+      "current": "Rusty Lantern",
+      "places": [
+        {
+          "name": "Rusty Lantern"
+        }
+      ]
+    }
+  },
+  "effective": {
+    "global": {
+      "Time": "Afternoon",
+      "Quest": ""
+    },
+    "player": {
+      "stats": {
+        "HP": "8/12",
+        "Mana": "10/10",
+        "Armor": "10",
+        "Strength": "10",
+        "Dexterity": "10",
+        "Constitution": "10",
+        "Intelligence": "10",
+        "Wisdom": "10",
+        "Charisma": "10",
+        "Condition": "Injured (Healing)",
+        "Currency": "0",
+        "XP": "5/100",
+        "Level": "1"
+      },
+      "collections": {
+        "equipment": [],
+        "clothing": []
+      },
+      "name": "Alex"
+    },
+    "characters": [
+      {
+        "name": "Mira",
+        "npcTemplateId": "character",
+        "stats": {
+          "HP": "12/12",
+          "Mana": "10/10",
+          "Armor": "10",
+          "Strength": "10",
+          "Dexterity": "10",
+          "Constitution": "10",
+          "Intelligence": "10",
+          "Wisdom": "10",
+          "Charisma": "10",
+          "Condition": "Healthy",
+          "Currency": "0",
+          "XP": "0/100",
+          "Level": "1"
+        },
+        "collections": {}
+      }
+    ],
+    "locations": {
+      "enabled": true,
+      "currentId": "home",
+      "records": {
+        "home": {
+          "id": "home",
+          "name": "Rusty Lantern",
+          "description": "",
+          "aliases": [],
+          "parentId": ""
+        }
+      }
+    },
+    "timestamp": 1792527754943
+  },
+  "progression": {
+    "xp": "5/100",
+    "level": "1",
+    "levelsGained": 0
+  },
+  "holdings": {
+    "player": {
+      "stats": {
+        "HP": "5/12",
+        "Mana": "10/10",
+        "Armor": "10",
+        "Strength": "10",
+        "Dexterity": "10",
+        "Constitution": "10",
+        "Intelligence": "10",
+        "Wisdom": "10",
+        "Charisma": "10",
+        "Condition": "Wounded",
+        "Currency": "0",
+        "XP": "0/100",
+        "Level": "1"
+      },
+      "collections": {
+        "equipment": [],
+        "clothing": []
+      },
+      "name": "Alex"
+    },
+    "characters": [
+      {
+        "name": "Mira",
+        "npcTemplateId": "character",
+        "stats": {
+          "HP": "12/12",
+          "Mana": "10/10",
+          "Armor": "10",
+          "Strength": "10",
+          "Dexterity": "10",
+          "Constitution": "10",
+          "Intelligence": "10",
+          "Wisdom": "10",
+          "Charisma": "10",
+          "Condition": "Healthy",
+          "Currency": "0",
+          "XP": "0/100",
+          "Level": "1"
+        },
+        "collections": {}
+      }
+    ]
+  },
+  "warnings": [
+    "Player · XP: \"5/100\" skipped: earned XP must be reported as a positive delta.",
+    "Player · HP delta \"3\" skipped: the reply also provided an absolute value.",
+    "Mira · XP: \"0/100\" skipped: earned XP must be reported as a positive delta.",
+    "Player · Level: \"1\" skipped: Level is managed by XP progression.",
+    "Mira · Level: \"1\" skipped: Level is managed by XP progression."
+  ],
+  "places": []
+}
+
+CASE 9: places / dating-root-mixed / repetition 1
+
+FAILED CHECKS:
+[
+  {
+    "name": "npcItemAdd June items sunflower 1",
+    "critical": true,
+    "passed": false
+  }
+]
+
+SCENARIO:
+{
+  "id": "dating-root-mixed",
+  "system": "dating",
+  "npc": "June",
+  "items": [
+    {
+      "name": "sunflower",
+      "quantity": 2
+    }
+  ],
+  "text": "Alex and June leave Moonbeam Café in the rain. Across town, the Marigold Theater glows beneath its old marquee, and they hurry through the doors before the performance begins.\n\nInside the theater, Alex gives June one of the two sunflowers from the bag. June keeps the flower and smiles, feeling closer to Alex. After a long, draining evening, Alex is worn out but stays beside June among the red velvet seats as the house lights dim.",
+  "checks": [
+    [
+      "placeCreated",
+      "Marigold Theater",
+      true
+    ],
+    [
+      "placeRoot",
+      "Marigold Theater",
+      true
+    ],
+    [
+      "currentPlace",
+      "Marigold Theater",
+      true
+    ],
+    [
+      "itemRemove",
+      "items",
+      "sunflower",
+      1,
+      true
+    ],
+    [
+      "npcItemAdd",
+      "June",
+      "items",
+      "sunflower",
+      1,
+      true
+    ],
+    [
+      "npcIncreased",
+      "June",
+      "Affection",
+      true
+    ],
+    [
+      "playerDecreased",
+      "Social Energy",
+      true
+    ],
+    [
+      "npcPresent",
+      "June",
+      true
+    ],
+    [
+      "createdPlaceCount",
+      1,
+      true
+    ]
+  ]
+}
+
+INITIAL STATE:
+{
+  "global": {
+    "Day and Time": "",
+    "Occasion": ""
+  },
+  "player": {
+    "stats": {
+      "Social Energy": "10/10",
+      "Mood": "Neutral"
+    },
+    "collections": {
+      "items": [
+        {
+          "name": "sunflower",
+          "quantity": 2
+        }
+      ],
+      "clothing": []
+    }
+  },
+  "characters": [
+    {
+      "name": "June",
+      "npcTemplateId": "character",
+      "stats": {
+        "Mood": "Neutral",
+        "Affection": "15",
+        "Trust": "10",
+        "Comfort": "20",
+        "Relationship": "Friends"
+      },
+      "collections": {}
+    }
+  ],
+  "locations": {
+    "enabled": true,
+    "currentId": "home",
+    "records": {
+      "home": {
+        "id": "home",
+        "name": "Moonbeam Café",
+        "description": "",
+        "aliases": [],
+        "parentId": ""
+      }
+    }
+  }
+}
+
+SYSTEM MESSAGE:
+Read the latest roleplay message and return a JSON tracker update.
+Use configured fields and exact names.
+Report resolved events. Use earlier messages as context.
+Use stated amounts. Estimate conservatively when an effect is clear but its amount is unstated.
+List every NPC present after the message.
+Follow the output format in the request.
+
+USER MESSAGE:
+Report changes from the latest message and list the present NPCs.
+Alex is the player-controlled character. Put their changes under "player".
+
+### EVIDENCE RULES
+Use configured field purposes and rules to interpret resolved events.
+Apply costs when incurred.
+Use stated amounts.
+Estimate a conservative amount when an effect is clear but its amount is unstated.
+Use the field's current scale for estimates.
+Apply configured persistence and reset rules.
+Update the listed editable fields.
+Add physical items when the recipient acquires them.
+Use established possessions for a new NPC's starting items.
+Treat scene props as part of the setting.
+Add missing abilities or knowledge when demonstrated, including during a failed action.
+Reusable entries stay held after use.
+
+### CONFIGURED FIELDS
+Editable stats:
+- World.Day and Time: text. Current day and time.
+- World.Occasion: text. Current event or planned date.
+- Player.Social Energy: pool (current/maximum). Current energy for social activity.
+- Player.Mood: text. Current emotional state.
+- NPC.Mood: text. Current emotional state.
+- NPC.Affection: number. Warmth toward the player, based on established interactions.
+- NPC.Trust: number. Trust earned through actions in the story.
+- NPC.Comfort: number. How comfortable this character currently feels around the player.
+- NPC.Relationship: text. Current relationship in words; change only when events support it.
+
+### NPC INITIALIZATION
+Fill blank fields from this list when an NPC enters the scene.
+Use plausible individual values when the story provides no detail.
+Write initial pool readings as "current/maximum" with an individual capacity.
+NPC initialization fields:
+- NPC.Mood: text. Current emotional state. Default: Neutral.
+- NPC.Affection: number. Warmth toward the player, based on established interactions. Default: 0. Minimum: 0. Maximum: 100.
+- NPC.Trust: number. Trust earned through actions in the story. Default: 0. Minimum: 0. Maximum: 100.
+- NPC.Comfort: number. How comfortable this character currently feels around the player. Default: 0. Minimum: 0. Maximum: 100.
+- NPC.Relationship: text. Current relationship in words; change only when events support it.
+
+### COLLECTION DEFINITIONS
+- "clothing" for player or Character NPCs (npcTemplateId: character) - Garments currently being worn. Preserve their color and details until the story changes the outfit; remove garments when taken off. Fields: name [identifies the item], slot, color, details [include when adding]
+- "items" for player or Character NPCs (npcTemplateId: character) - Carried belongings, gifts, keepsakes, and useful objects. Change holdings only when the story establishes a transfer. Fields: name [identifies the item], quantity (number) [minimum 0], description [include when adding] Quantity field: quantity.
+Use the quoted collection ID as the key.
+Use exact field names and declared types.
+The configured primary field identifies each entry.
+NPC fields: Mood, Affection, Trust, Comfort, Relationship. NPC guidance: Every recurring person shares the same relationship fields.
+
+### PLACES
+Note when the current scene’s location changes.
+Set "locations.current" to the opening setting or the place reached.
+Record newly established places and details in "locations.places".
+Put "locations" beside "global", "player", and "characters".
+{"global":{},"player":{},"characters":[],"locations":{"places":[{"name":"<parent place>"},{"name":"<place>","parent":"<parent place>","description":"<complete established description>","aliases":["<alternate name>"]}],"current":"<place>"}}
+Replace placeholders with established story facts.
+Identify places by name or a known alias.
+Include changed details.
+Write a complete description that preserves established facts.
+Use "parent" for the containing place.
+Include newly discovered parents in "places".
+Use "" for an explicit departure with unknown destination.
+Omit unchanged "current" and "parent" fields.
+Plans, rumours, invitations, and mentions remain context until established.
+Known places: {"current":"Moonbeam Café","places":[{"name":"Moonbeam Café"}]}
+
+### CURRENT STATE
+{"global":{"Day and Time":"","Occasion":""},"player":{"stats":{"Social Energy":"10/10","Mood":"Neutral"},"collections":{"clothing":[],"items":[{"name":"sunflower","quantity":2}]}},"characters":[{"name":"June","npcTemplateId":"character","stats":{"Mood":"Neutral","Affection":"15","Trust":"10","Comfort":"20","Relationship":"Friends"},"collections":{"clothing":[],"items":[]}}]}
+Profiles and filled fields outside the editable list provide context.
+
+### ELIGIBLE NUMERIC DELTAS
+player.deltas: Social Energy
+characters[].deltas (name: June): Affection, Trust, Comfort
+
+### LATEST MESSAGE
+Alex and June leave Moonbeam Café in the rain. Across town, the Marigold Theater glows beneath its old marquee, and they hurry through the doors before the performance begins.
+
+Inside the theater, Alex gives June one of the two sunflowers from the bag. June keeps the flower and smiles, feeling closer to Alex. After a long, draining evening, Alex is worn out but stays beside June among the red velvet seats as the house lights dim.
+
+### OUTPUT FORMAT
+Return raw JSON with "global", "player", and "characters".
+Include changed fields and blank NPC initializations.
+Use exact configured names.
+
+Put text values and initial numeric readings in these objects as JSON strings:
+- World: "global".
+- Player: "player.stats".
+- NPC: "characters[].stats".
+String readings include "8", "8/10", and configured text values.
+
+Put changes to existing numeric values in these objects as JSON numbers:
+- World: "globalDeltas".
+- Player: "player.deltas".
+- NPC: "characters[].deltas".
+Use positive numbers for gains and negative numbers for losses.
+For a pool, report the change to its current amount.
+Use one representation per field.
+
+"characters" is an array of objects.
+Each object has the NPC's exact "name".
+List every present NPC, including those with no changes.
+Known absent NPC updates also go in this array with "offstage": true.
+Player changes go under "player".
+Use "characters": [] when the present cast and offstage updates are both empty.
+
+Put collection changes under "player.collections" or "characters[].collections".
+Key each collection by its configured ID.
+Use "add" for acquisitions.
+Use "remove" for consumption or loss.
+Use "update" for changes to other item fields.
+Include the primary field in each add, update, and counted remove object.
+For uncounted removals, supply identifiers.
+For counted gains or losses, use the configured quantity field for the amount gained or spent.
+The default amount is 1.
+Use "all": true to remove a whole stack.
+For transfers, remove from the giver and add to the recipient.
+Include supported item details using their declared types.
+Keep one entry per identifier.
+
+No-change example:
+{"global":{},"player":{},"characters":[{"name":"June"}]}
+
+Changed-reply example (illustrative changes):
+{"global":{},"player":{"deltas":{"Social Energy":-1},"collections":{"clothing":{"add":[{"name":"<item identifier>"}]}}},"characters":[{"name":"June","deltas":{"Affection":-1},"collections":{"clothing":{"remove":["<item identifier>"]}}}]}
+
+New NPC example (replace placeholders with initial readings using the field definitions):
+{
+  "global": {},
+  "player": {},
+  "characters": [
+    {
+      "name": "<exact NPC name from the story>",
+      "stats": {
+        "Mood": "<initial reading>",
+        "Affection": "<initial reading>",
+        "Trust": "<initial reading>",
+        "Comfort": "<initial reading>",
+        "Relationship": "<initial reading>"
+      }
+    }
+  ]
+}
+
+Independent collection examples (replace illustrative values with supported typed details):
+Acquired item:
+{
+  "clothing": {
+    "add": [
+      {
+        "name": "<exact primary field value>",
+        "slot": "<supported item detail>",
+        "color": "<supported item detail>",
+        "details": "<supported item detail>"
+      }
+    ]
+  }
+}
+
+Lost item:
+{
+  "clothing": {
+    "remove": [
+      "<exact primary field value>"
+    ]
+  }
+}
+
+Changed item:
+{
+  "clothing": {
+    "update": [
+      {
+        "name": "<exact primary field value>",
+        "slot": "<new value>"
+      }
+    ]
+  }
+}
+
+Check the JSON structure, present cast, field names, and evidence for each change.
+For an established setting or arrival, put "locations" beside "global", "player", and "characters". Set "locations.current" to the place name. Put new place records in "locations.places".
+
+ORIGINAL RESPONSE:
+```json
+{
+  "global": {
+    "Occasion": "Attending a performance at Marigold Theater"
+  },
+  "player": {
+    "stats": {
+      "Social Energy": "4/10",
+      "Mood": "Exhausted"
+    },
+    "collections": {
+      "items": {
+        "update": [
+          {
+            "name": "sunflower",
+            "quantity": 1
+          }
+        ]
+      }
+    }
+  },
+  "characters": [
+    {
+      "name": "June",
+      "stats": {
+        "Affection": 20,
+        "Trust": 12,
+        "Mood": "Happy",
+        "Comfort": "20",
+        "Relationship": "Friends"
+      },
+      "collections": {
+        "items": {
+          "add": [
+            {
+              "name": "sunflower",
+              "quantity": 1,
+              "description": "Gift from Alex"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "locations": {
+    "current": "Marigold Theater",
+    "places": [
+      {
+        "name": "Moonbeam Café"
+      },
+      {
+        "name": "Marigold Theater",
+        "description": "An old theater with a glowing marquee and red velvet seats, hosting a performance."
+      }
+    ]
+  },
+  "globalDeltas": {},
+  "playerDeltas": {
+    "Social Energy": -6
+  },
+  "characters": [
+    {
+      "name": "June",
+      "deltas": {
+        "Affection": 5,
+        "Trust": 2
+      }
+    }
+  ]
+}
+```
+
+NORMALIZED RESULT:
+{
+  "update": {
+    "global": {
+      "Occasion": "Attending a performance at Marigold Theater"
+    },
+    "player": {
+      "stats": {
+        "Social Energy": "4/10",
+        "Mood": "Exhausted"
+      },
+      "collections": {
+        "items": {
+          "update": [
+            {
+              "name": "sunflower",
+              "quantity": 1
+            }
+          ]
+        }
+      }
+    },
+    "characters": [
+      {
+        "name": "June",
+        "Affection": "20",
+        "Trust": "12"
+      }
+    ],
+    "locations": {
+      "current": "Marigold Theater",
+      "places": [
+        {
+          "name": "Moonbeam Café"
+        },
+        {
+          "name": "Marigold Theater",
+          "description": "An old theater with a glowing marquee and red velvet seats, hosting a performance."
+        }
+      ]
+    },
+    "playerDeltas": {
+      "Social Energy": -6
+    }
+  },
+  "effective": {
+    "global": {
+      "Day and Time": "",
+      "Occasion": "Attending a performance at Marigold Theater"
+    },
+    "player": {
+      "stats": {
+        "Social Energy": "4/10",
+        "Mood": "Exhausted"
+      },
+      "collections": {
+        "items": [
+          {
+            "name": "sunflower",
+            "quantity": 1,
+            "description": ""
+          }
+        ],
+        "clothing": []
+      },
+      "name": "Alex"
+    },
+    "characters": [
+      {
+        "name": "June",
+        "npcTemplateId": "character",
+        "stats": {
+          "Mood": "Neutral",
+          "Affection": "20",
+          "Trust": "12",
+          "Comfort": "20",
+          "Relationship": "Friends"
+        },
+        "collections": {}
+      }
+    ],
+    "locations": {
+      "enabled": true,
+      "currentId": "home",
+      "records": {
+        "home": {
+          "id": "home",
+          "name": "Moonbeam Café",
+          "description": "",
+          "aliases": [],
+          "parentId": ""
+        }
+      }
+    },
+    "timestamp": 1792527813468
+  },
+  "progression": null,
+  "holdings": {
+    "player": {
+      "stats": {
+        "Social Energy": "10/10",
+        "Mood": "Neutral"
+      },
+      "collections": {
+        "items": [
+          {
+            "name": "sunflower",
+            "quantity": 1,
+            "description": ""
+          }
+        ],
+        "clothing": []
+      },
+      "name": "Alex"
+    },
+    "characters": [
+      {
+        "name": "June",
+        "npcTemplateId": "character",
+        "stats": {
+          "Mood": "Neutral",
+          "Affection": "15",
+          "Trust": "10",
+          "Comfort": "20",
+          "Relationship": "Friends"
+        },
+        "collections": {}
+      }
+    ]
+  },
+  "warnings": [],
+  "places": [
+    {
+      "id": "place-0295b134-4593-4767-8145-1df05dceae2b",
+      "kind": "location-create",
+      "scope": "location",
+      "actor": "Marigold Theater",
+      "label": "New place",
+      "before": "",
+      "after": "An old theater with a glowing marquee and red velvet seats, hosting a performance.",
+      "risk": "risky",
+      "location": {
+        "id": "place-3f0ccbb1-7d0d-4310-9a8c-6132a5c1c7f4",
+        "record": {
+          "id": "place-3f0ccbb1-7d0d-4310-9a8c-6132a5c1c7f4",
+          "name": "Marigold Theater",
+          "aliases": [],
+          "description": "An old theater with a glowing marquee and red velvet seats, hosting a performance.",
+          "parentId": "",
+          "lorebook": "",
+          "loreEntryId": null
+        },
+        "before": null,
+        "provenance": {
+          "messageId": 1
+        }
+      }
+    },
+    {
+      "id": "place-2937db4e-4d8d-4c61-9c65-ae1d2ce64937",
+      "kind": "location-current",
+      "scope": "location",
+      "actor": "Marigold Theater",
+      "label": "Current place",
+      "before": "Moonbeam Café",
+      "after": "Marigold Theater",
+      "risk": "safe",
+      "location": {
+        "id": "place-3f0ccbb1-7d0d-4310-9a8c-6132a5c1c7f4",
+        "record": {
+          "id": "place-3f0ccbb1-7d0d-4310-9a8c-6132a5c1c7f4",
+          "name": "Marigold Theater",
+          "aliases": [],
+          "description": "An old theater with a glowing marquee and red velvet seats, hosting a performance.",
+          "parentId": "",
+          "lorebook": "",
+          "loreEntryId": null
+        },
+        "before": null,
+        "provenance": {
+          "messageId": 1
+        },
+        "currentBefore": "home"
+      }
+    }
+  ]
+}
