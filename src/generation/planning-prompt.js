@@ -4,7 +4,7 @@ const disabled = { enabled: false, xp: '', level: '', growth: '' };
 export const PLANNING_EXAMPLE = {
     name: 'Creature Expedition', description: 'A small trainer and creature adventure.',
     rationale: 'Trainers use travel stamina; creatures learn through combat. Learned levels persist.',
-    memories: { enabled: true, guidance: 'Remember consequential battles, witnessed captures, rivalries, and promises. Skip routine travel.', interval: 8, maxEntriesPerCharacter: 50 },
+    memories: { enabled: true, carryOver: false, guidance: 'Remember consequential battles, witnessed captures, rivalries, and promises. Skip routine travel.', interval: 8, maxEntriesPerCharacter: 50 },
     locations: { enabled: true },
     profiles: [field('Background', 'Trainer history', ['player']), field('Appearance', 'Visible appearance', ['player', 'npc']), field('Species', 'Creature species', ['Creature'])],
     stats: {
@@ -26,7 +26,7 @@ Places:
 - Configure locations.enabled at System level; default true for persistent named places across visits. Disable only when the premise has no meaningful places. Records, current place, and geography belong to each chat, never the generated System. When Places are enabled, omit a world Location stat that repeats the current place; use world stats for distinct facts such as time, weather, or a broader region.
 
 NPC memories:
-- Configure memories independently of profile fields. enabled controls automatic capture; manual entries remain available. Default interval is 8 assistant replies (1-100), maxEntriesPerCharacter is 50 (1-500). Disable capture if unnecessary.
+- Configure memories independently of profile fields. enabled controls automatic capture; manual entries remain available. carryOver controls whether active and archived NPC memories travel during character transfer and optional NPC reuse, independently of enabled; default false unless the premise requests knowledge across adventures. Default interval is 8 assistant replies (1-100), maxEntriesPerCharacter is 50 (1-500). Disable capture if unnecessary.
 - guidance is optional genre-specific guidance for durable memorable events. Capture only events experienced or knowledge acquired by that NPC; distinguish suspicions from facts, skip routine activity and duplicates. Never plan a Memory profile field to enable capture.
 
 Catalogs:

@@ -10,6 +10,7 @@ is no build step. [FILE_MAP.md](FILE_MAP.md) locates the implementation.
 | --- | --- |
 | Reusable System rules | `extension_settings.sillynpc.statusTracker.presets` |
 | Reusable character cards and item library | Extension settings |
+| Optional per-System NPC rosters and reuse preferences | `extension_settings.sillynpc.systemNpcRosters` (local, separate from System rules) |
 | NPC instances, cast selection, active System, tracker state | Chat metadata |
 | Place cards, containment, last confirmed place | Chat-wide tracker state (`locations`) |
 | Remember Places switch | System definition (`locations.enabled`), projected into active tracker/chat state |
@@ -21,11 +22,50 @@ A chat selects its System before its first player message. Started chats keep th
 System. Changing persona does not change the chat's NPC ownership. Player values
 remain separate for each persona in the chat.
 
+NPC reuse is disabled by default. An enabled roster snapshots portable card fields
+and only carryover stats on settings saves. Fresh chats seed independent metadata
+cards once, before play, with new IDs and destination stat defaults. Their collections
+and memories start empty unless memory carryover is selected. Per-card saved signatures prevent unchanged older copies
+from overwriting later roster edits. Started chats are never backfilled; chat deletions
+do not delete roster entries. Portrait files, sprite/voice bindings, and explicitly
+linked lorebook entries retain their local references. Roster images participate in
+cleanup reference checks. System deletion removes its roster; rules imports/exports
+exclude rosters. Full settings backups and World Character exports include them.
+
+Linked active-cast profiles are supplied at the host's awaited
+`WORLDINFO_ENTRIES_LOADED` hook, before normal keyword scanning and budget handling.
+The same helper handles reused cards and newly generated profiles, including profiles
+written into a default book that is not attached to the chat. It appends only missing
+linked entries to the per-scan chat lore array; it does not change chat, global, character
+or persona lorebook selections, copy whole books, or override disabled-entry settings.
+Entries already present from any host source are deduplicated by world and UID. Loads
+are grouped by book and discarded if the chat, System, active cast or link changes.
+Fill's existing creation path remains responsible for creating and attaching a new
+chat book when there is no selected chat/default book.
+
 System exports contain a normalized `schemaVersion: 2` rules definition, including
 shared profile and character stat catalogs, assignment targets, NPC templates, collections, progression,
 memories, the Places switch, and HUD selections. Runtime consumers use player and NPC projections of the shared catalogs. Imports of older Systems keep rules and discard embedded
 world characters, persona records, and item libraries. Whole-settings backups and
 character-transfer files are separate formats with different import behavior.
+
+Local carryover options can also include Places independently of NPC reuse. Memory
+carryover is the canonical System rule `memories.carryOver`, controlled beside automatic
+reading in Builder → Profile fields. It defaults off, independently of `memories.enabled`,
+and governs active and archived memories during character export/import and roster reuse.
+It travels in System rules exports and generation, like a stat's `carryOver`. The earlier
+local `reuseMemories` preference migrates once into this rule without replacing an
+explicit canonical choice. Memory snapshots themselves remain local roster data.
+Tracker saves publish changes to these
+snapshots as well as card saves. Map snapshots contain normalized records and parent
+relationships, with chat-scoped IDs retained; the current location resets. Memory
+copies use the destination NPC IDs and contain unsourced knowledge without old reply
+or swipe provenance, so the new chat's source invalidation does not delete them. Player
+memories do not carry over. Older unchanged copies cannot overwrite newer snapshots.
+Fresh tracker seeds are staged in `sillynpc_roster_state_seed` until the state loader
+has initialized the destination player, preventing accidental legacy-player migration.
+Existing maps take precedence, started chats are never backfilled, and choosing another
+System before play removes only automatically seeded Places and NPC memories.
 
 ## Profiles and memories
 

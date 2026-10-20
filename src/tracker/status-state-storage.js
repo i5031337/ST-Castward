@@ -1,7 +1,9 @@
 import { npcStatsFor, npcTemplateFor } from '../core/npc-templates.js';
 import { eventSource } from '../../../../../events.js';
 import { getContext } from '../../../../../st-context.js';
-import { getSettings } from '../core/settings.js';
+import { getSettings, saveSettings } from '../core/settings.js';
+import { captureNpcRoster } from '../characters/system-npc-roster.js';
+import { applyRosterStateSeed } from '../characters/system-roster-state.js';
 import { LOG_PREFIX, debugLog } from '../core/constants.js';
 
 export function bind(deps) {
@@ -43,6 +45,8 @@ function loadStateFromMetadata() {
         deps.committedChatId = deps.currentChatId();
         deps.stateOrigin.set(stateToReturn, deps.committedChatId);
     }
+
+    if (applyRosterStateSeed(stateToReturn, deps.getMetadata())) stateChanged = true;
 
     // Fill declared stats and repair casing; retain undeclared values for archived history.
     const settings = getSettings().statusTracker;
@@ -237,6 +241,7 @@ function saveStateToMetadata(state, options = {}) {
     metadata[deps.STATE_KEY] = state;
     deps.committedState = state;
     deps.committedChatId = deps.currentChatId();
+    if (captureNpcRoster(getSettings(), getContext())) saveSettings();
 
     /* Anything saved here that is not a message being read is a correction from the sheet
        or item editor. The swipe base has to learn about it, or

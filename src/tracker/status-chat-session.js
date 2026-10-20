@@ -9,6 +9,7 @@ import { getSettings, saveSettings } from '../core/settings.js';
 import { getAllCharacters } from '../characters/character-repository.js';
 import { LOG_PREFIX, debugLog } from '../core/constants.js';
 import { diffTurnValues, applyTurnValues } from './snapshots/status-turn-delta.js';
+import { restoreNpcRoster } from '../characters/system-npc-roster-runtime.js';
 
 export function bind(deps) {
 const STATE_KEY = 'sillynpc_status_state';
@@ -366,19 +367,12 @@ function rememberChatSystem() {
     if (!active || metadata[SYSTEM_KEY] === active) return false;
 
     metadata[SYSTEM_KEY] = active;
+    restoreNpcRoster();
     getContext()?.saveMetadataDebounced?.();
     return true;
 }
 
-/**
- * Puts the extension into the system a chat belongs to.
- *
- * This is what makes changing ruleset stop being something you do. Opening a Pathfinder
- * chat brings its stats, its cast and its item library with it; a chat that has never
- * recorded a system adopts the one in use, so nothing is guessed about older chats.
- *
- * @returns {boolean} Whether a switch actually happened.
- */
+/** Restore the chat's recorded System, or adopt the active one on first open. */
 function restoreChatSystem() {
     if (!hasOpenChat()) return false;
 
@@ -404,6 +398,7 @@ async function onChatChanged() {
     // System first. It carries the persona records that the restore below reads from, so
     // the other order would match a persona against the outgoing system's storage.
     restoreChatSystem();
+    restoreNpcRoster();
     await restoreChatPersona();
 }
 

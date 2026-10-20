@@ -1,3 +1,5 @@
+import { applyRosterStateSeed } from '../src/characters/system-roster-state.js';
+import { captureNpcRoster } from '../src/characters/system-npc-roster.js';
 import { profileFieldValue } from '../src/core/profile-fields.js';
 import assert from 'node:assert/strict';
 import test from 'node:test';
@@ -122,8 +124,8 @@ test('storage loads legacy tracker player from master, but fresh chats use defau
         getInitialStatValue: value => value, clampToCeiling: value => value,
     };
     bindFrom('../src/tracker/status-state-storage.js',
-        ['getSettings', 'getContext', 'eventSource', 'debugLog', 'LOG_PREFIX'],
-        [() => settings, () => ({ saveMetadataDebounced() {} }), { emit() {} }, () => {}, '[test]'])(storage);
+        ['getSettings', 'getContext', 'eventSource', 'debugLog', 'LOG_PREFIX', 'applyRosterStateSeed', 'captureNpcRoster', 'saveSettings'],
+        [() => settings, () => ({ saveMetadataDebounced() {} }), { emit() {} }, () => {}, '[test]', applyRosterStateSeed, captureNpcRoster, () => {}])(storage);
     assert.equal(storage.loadStateFromMetadata().player.stats.HP, '3');
     const loaded = storage.loadStateFromMetadata();
     loaded.locations = { enabled: false, currentId: 'inn', records: { inn: { name: 'Inn' } } };
@@ -137,5 +139,12 @@ test('storage loads legacy tracker player from master, but fresh chats use defau
     delete metadata.sillynpc_status_state;
     storage.committedState = null;
     storage.committedChatId = null;
+    metadata.sillynpc_roster_state_seed = {
+        locations: { enabled: true, currentId: '', records: { inn: { id: 'inn', name: 'Inn' } } },
+        npcMemories: { 'id:copied': { entries: [{ id: 'one', text: 'Carried memory', manual: true }], archive: [] } },
+    };
     assert.equal(storage.loadStateFromMetadata().player.stats.HP, '10');
+    assert.equal(metadata.sillynpc_roster_state_seed, undefined);
+    assert.equal(metadata.sillynpc_status_state.locations.records.inn.name, 'Inn');
+    assert.equal(metadata.sillynpc_status_state.npcMemories['id:copied'].entries[0].text, 'Carried memory');
 });

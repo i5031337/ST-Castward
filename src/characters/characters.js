@@ -9,6 +9,7 @@ import { getAllCharacters, getLibraryCharacters, addCharacterRecord,
     getWorldCharacters, getChatCharacters } from './character-repository.js';
 import { initialiseNpcStats } from '../tracker/stat-persistence.js';
 import { normalizeNpcPresentation } from '../core/npc-presentation.js';
+import { portableMemories, carriesNpcMemories } from './system-roster-state.js';
 
 /**
  * A colour no other card is already using.
@@ -322,6 +323,8 @@ export function instantiateWorldCharacter(id) {
     card.statusOverrides = initialiseNpcStats(source.statusOverrides,
         npcStatsFor(source, getSettings().statusTracker));
     card.statusCollections = {};
+    if (carriesNpcMemories(getSettings())) card.memories = portableMemories(source.memories);
+    else delete card.memories;
     addCharacterRecord(card);
     addCharacterToChat(card.id);
     return card;

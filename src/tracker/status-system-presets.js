@@ -9,7 +9,7 @@ import { normalizeSystemDefinition, projectSystemTracker, SYSTEM_SCHEMA_VERSION 
 export function bind(deps) {
 const SYSTEM_EXCLUDED_ROOT = new Set([
     // Characters, persona records, and items are not System rules.
-    'characters', 'personaData', 'master_items',
+    'characters', 'personaData', 'master_items', 'systemNpcRosters',
     // The library itself, and which system is open.
     'statusTracker', 'activeSystem', 'version', 'enabled',
     // User-level image settings, including retired backend keys from old exports.
@@ -62,7 +62,7 @@ function migratePreset(name, preset) {
     };
     clean.metadata = { ...clean.metadata, name };
     if (clean.config) {
-        clean.config = copyExcept(clean.config, new Set(['characters', 'personaData', 'master_items', 'systemWorldArchive']));
+        clean.config = copyExcept(clean.config, new Set(['characters', 'personaData', 'master_items', 'systemWorldArchive', 'systemNpcRosters']));
         if (clean.config.statusTracker) clean.config.statusTracker = copyExcept(clean.config.statusTracker, SYSTEM_EXCLUDED_TRACKER);
     }
     clean.definition = normalizeSystemDefinition(preset.definition || preset, { name });
@@ -77,9 +77,9 @@ function migrateSavedPresets(settings) {
     let changed = false;
     let activeMigrated = false;
     for (const [name, preset] of Object.entries(presets)) {
-        if (!preset || (preset.definition?.schemaVersion === SYSTEM_SCHEMA_VERSION && Array.isArray(preset.definition?.npcTemplates) && preset.definition?.progression?.player?.assignment && typeof preset.definition?.locations?.enabled === 'boolean' && !preset.world
+        if (!preset || (preset.definition?.schemaVersion === SYSTEM_SCHEMA_VERSION && Array.isArray(preset.definition?.npcTemplates) && preset.definition?.progression?.player?.assignment && typeof preset.definition?.locations?.enabled === 'boolean' && typeof preset.definition?.memories?.carryOver === 'boolean' && !preset.world
             && ![...PROJECTED_TRACKER_KEYS].some(key => Object.hasOwn(preset.config?.statusTracker || preset.config || {}, key))
-            && !['characters', 'personaData', 'master_items', 'systemWorldArchive']
+            && !['characters', 'personaData', 'master_items', 'systemWorldArchive', 'systemNpcRosters']
                 .some(key => Object.hasOwn(preset.config || {}, key)))) continue;
         presets[name] = migratePreset(name, preset);
         activeMigrated ||= name === settings.activeSystem;
@@ -334,6 +334,7 @@ function deleteSystemPreset(name) {
     const settings = getSettings();
     if (!settings.statusTracker.presets?.[name]) return;
     delete settings.statusTracker.presets[name];
+    if (settings.systemNpcRosters) delete settings.systemNpcRosters[name];
     saveSettings();
 }
 

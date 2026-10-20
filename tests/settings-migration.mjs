@@ -1,3 +1,4 @@
+import { normalizeNpcRosters } from '../src/characters/system-npc-roster.js';
 import { normalizeThemeOverrides } from '../src/core/theme-customization.js';
 import { normalizeTrackerProgression } from '../src/core/progression-config.js';
 import { ensureCollectionIdentifier, ensureCollectionQuantity } from '../src/core/collection-fields.js';
@@ -18,7 +19,7 @@ const source = readFileSync(new URL('../src/core/settings-migration.js', import.
 const loadMigration = new Function('debugLog', 'SPEAKER_PALETTE', 'NPC_LORE_FIELDS',
     'paletteIndexFor', 'normaliseNpcPersistence', 'defaultSettings', 'saveSettings',
     'migratePresetsAndStores', 'normaliseBaseSettings', 'normaliseStatUpdatePolicies',
-    'normalizeHudLayoutId', 'ensureCollectionIdentifier', 'ensureCollectionQuantity', 'normalizeTrackerProgression', 'normalizeCharacterPresentation', 'normalizeTtsSettings', 'normalizeThemeOverrides',
+    'normalizeHudLayoutId', 'ensureCollectionIdentifier', 'ensureCollectionQuantity', 'normalizeTrackerProgression', 'normalizeCharacterPresentation', 'normalizeTtsSettings', 'normalizeThemeOverrides', 'normalizeNpcRosters',
     `${source}\nreturn normalizeSettings;`);
 
 function migration() {
@@ -34,7 +35,7 @@ function migration() {
         () => saves.push('saved'),
         (settings, version) => { settings.version = version; },
         () => {}, normaliseStatUpdatePolicies, normalizeHudLayoutId, ensureCollectionIdentifier, ensureCollectionQuantity, normalizeTrackerProgression,
-        normalizeCharacterPresentation, normalizeTtsSettings, normalizeThemeOverrides);
+        normalizeCharacterPresentation, normalizeTtsSettings, normalizeThemeOverrides, normalizeNpcRosters);
     return { normalize, saves };
 }
 

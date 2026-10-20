@@ -41,6 +41,14 @@ SillyTavern loads `index.js` and `style.css` from `manifest.json`. The JavaScrip
 | `img/screenshots/fantasy-demo/` | Live Fantasy Adventure captures with full user messages, reader-applied state, Joram before and after Fill, his generated sheet, and the player HUD. Evidence is in `docs/evaluations/fantasy-adventure-live-demo.json`. |
 | `img/screenshots/example-portraits.webp` | Original generated example artwork used in the captures: Mira neutral/joy and Rowan neutral/fear, arranged in a two-by-two sheet. |
 | `tests/chat-character-ownership.mjs` | Character visibility, chat NPC routing, persona identity, and chat-local player state boundaries. |
+| `src/characters/system-npc-roster.js`, `system-npc-roster-runtime.js` | Opt-in local System rosters, portable snapshots, and one-time independent chat seeding. |
+| `src/characters/system-roster-state.js` | Optional map and NPC memory snapshots, provenance-free memory copies, and deferred tracker-state seeds. |
+| `src/ui/system/ui-system-reuse.js` | Local per-System NPC reuse, Places carryover controls, and saved-roster clearing. Memory carryover is a canonical Builder profile setting. |
+| `tests/system-npc-roster.mjs`, `tests/ui-system-npc-roster.py` | Roster defaults, carryover, independent copies, stale-copy protection, System boundaries, and unsaved host UI check. |
+| `tests/system-roster-state.mjs` | Independent map and memory copies, opt-outs, stale-copy protection, source invalidation, and tracker save integration. |
+| `tests/character-memory-transfer.mjs` | Source/destination memory carryover policy, active/archive transfer, provenance removal, and same-name chat isolation. |
+| `src/lore/cast-lore.js`, `cast-lore-runtime.js` | Supply linked active-cast entries to the host lore scan, preserving existing selections, entry policy, and chat boundaries. |
+| `tests/cast-lore.mjs`, `tests/lorebook-fill-workflow.mjs`, `tests/ui-cast-lore.py` | Automatic profile lore availability, first-Fill book creation, duplicate prevention, and real host name/alias scanning with unsaved fixtures. |
 | `tests/fill-new-character.mjs` | Automatic fill stages, new chat cards, shared locks, and retry behavior. |
 | `tests/lore-entry-store.mjs` | Concurrent lore creation, ownership, and entry reuse tests. |
 | `tests/ui-audit-followup.py` | Unsaved live checks for editable Time and scan overflow before requests. |

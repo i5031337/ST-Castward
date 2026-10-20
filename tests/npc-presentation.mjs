@@ -1,3 +1,5 @@
+import { portableMemories, carriesNpcMemories } from '../src/characters/system-roster-state.js';
+import { writeNpcMemories } from '../src/tracker/npc-memories.js';
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFileSync } from 'node:fs';
@@ -133,7 +135,7 @@ test('reusable card instantiation copies preferences into independent chat insta
         getContext: () => ({ getCurrentChatId: () => `chat ${count}` }),
         getWorldCharacters: () => world, getChatCharacters: () => chat,
         makeId: () => `local-${++count}`, initialiseNpcStats: () => ({}), npcStatsFor: () => [],
-        getSettings: () => ({ statusTracker: {} }), normalizeNpcPresentation,
+        getSettings: () => ({ statusTracker: {} }), normalizeNpcPresentation, carriesNpcMemories, portableMemories,
         addCharacterRecord: card => chat.push(card), getChatCast: () => ({ categories: null, include: [], exclude: [] }),
     });
     const first = instantiate('world');
@@ -151,6 +153,7 @@ test('reusable card instantiation copies preferences into independent chat insta
 
 test('transfer exports safe preferences and imports explicit unresolved external references', async () => {
     const deps = {
+        portableMemories, writeNpcMemories, getContext: () => ({}),
         normalizeNpcPresentation, getSettings: () => ({ statusTracker: {} }), activeNpcSystem: () => ({}),
         npcTemplateFor: () => null, splitNpcStats: () => ({ innate: {} }), profileStrings: () => ({}),
         initialiseNpcStats: () => ({}), npcStatsFor: () => [], blankActiveProfile: () => ({}),

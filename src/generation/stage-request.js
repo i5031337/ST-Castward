@@ -37,7 +37,7 @@ export function stageRequestSchema(stage) {
     return schema;
 }
 export function stageRequestContext(stage, plan, definition) {
-    const context = { system: { name: plan.name, description: plan.description, rationale: plan.rationale, locations: plan.locations } };
+    const context = { system: { name: plan.name, description: plan.description, rationale: plan.rationale, locations: plan.locations, memories: plan.memories } };
     if (stage.expected) context.expectedObjects = stage.expected;
     if (stage.id.startsWith('stats.')) {
         const scope = stage.id.slice(6);

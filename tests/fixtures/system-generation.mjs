@@ -1,6 +1,6 @@
 export const plan = {
     locations: { enabled: true },
-    memories: { enabled: true, guidance: 'Remember consequential battles and commitments; skip routine travel.', interval: 8, maxEntriesPerCharacter: 50 },
+    memories: { enabled: true, carryOver: true, guidance: 'Remember consequential battles and commitments; skip routine travel.', interval: 8, maxEntriesPerCharacter: 50 },
     name: 'Expedition', description: 'Catch monsters and learn techniques.', rationale: 'Small persistent ratings and expandable resource pools.',
     profiles: [{ name: 'Background', purpose: 'Training history', targets: ['player'] },
         { name: 'Species', purpose: 'Stable visible species', targets: ['Creature'] },

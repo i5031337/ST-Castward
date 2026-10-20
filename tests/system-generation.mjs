@@ -345,6 +345,9 @@ test('generation plans genre memory rules without extra calls or memory profile 
     const calls = [];
     const { definition } = await runWith(args => { calls.push(args); return reply(args); }).generate();
     assert.deepEqual(definition.memories, plan.memories);
+    assert.equal(definition.memories.carryOver, true);
+    assert.ok(calls[0].schema.properties.section.properties.memories.required.includes('carryOver'));
+    assert.deepEqual(JSON.parse(calls[1].userPrompt).system.memories, plan.memories);
     assert.equal(calls.length, 6);
     assert.match(calls[0].systemPrompt, /Never plan a Memory profile field/);
     assert.equal(Object.hasOwn(profileSchema.properties, 'policy'), false);
@@ -355,6 +358,8 @@ test('generation plans genre memory rules without extra calls or memory profile 
     assert.ok(validateDefinition(unsupported).some(error => error.includes('policy')));
     for (const mutation of [
         memories => { memories.enabled = 'yes'; },
+        memories => { memories.carryOver = 'yes'; },
+        memories => { delete memories.carryOver; },
         memories => { memories.interval = 0; },
         memories => { memories.interval = 101; },
         memories => { memories.maxEntriesPerCharacter = 501; },

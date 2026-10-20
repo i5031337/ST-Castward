@@ -9,6 +9,7 @@ import { claimFolder, sharedFolder } from '../characters/character-images.js';
 import { triggerReprocess } from '../chat/reprocess.js';
 import { getSettings, saveSettings } from '../core/settings.js';
 import { resolveImageFolder } from '../core/utils.js';
+import { rosterCharacters } from '../characters/system-npc-roster.js';
 
 /**
  * Writes a freshly generated image to disk and returns its served path.
@@ -197,7 +198,7 @@ export async function removeCharacterImage(char, path, { deleteFile = false } = 
     // The player's card holds images the same way a character's does, so it has to be
     // counted here too - otherwise erasing a portrait from a character could take the
     // file the player is using with it.
-    const holders = [...getLibraryCharacters(), ...Object.values(getSettings().personaData || {})];
+    const holders = [...getLibraryCharacters(), ...rosterCharacters(getSettings()), ...Object.values(getSettings().personaData || {})];
     let stillUsed = holders.some(
         other => other !== char && (other?.imageUrl === path
             || other?.defaultPortrait === path || (other?.images || []).includes(path)),
@@ -257,6 +258,7 @@ export function referencedImagePaths(settings = getSettings()) {
     };
 
     for (const holder of [...getLibraryCharacters(),
+                          ...rosterCharacters(settings),
                           ...Object.values(settings.personaData || {})]) {
         add(holder?.imageUrl);
         add(holder?.defaultPortrait);

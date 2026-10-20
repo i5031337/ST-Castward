@@ -27,7 +27,7 @@ const progression = (enabled, statIds = [], pointsPerLevel = 0) => ({
     enabled, xpFieldId: enabled ? 'xp' : '', levelFieldId: enabled ? 'level' : '',
     pointsPerLevel, assignment: 'manual', statIds,
 });
-const memories = { enabled: false, guidance: '', interval: 8, maxEntriesPerCharacter: 50 };
+const memories = { enabled: false, carryOver: false, guidance: '', interval: 8, maxEntriesPerCharacter: 50 };
 const fantasyActors = ['player', 'template:character'];
 
 const fantasy = {

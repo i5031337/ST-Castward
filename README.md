@@ -44,6 +44,14 @@ Profiles are filled on click by default. Turn on **Tracker → Generate Profiles
 
 Each speaker gets a portrait and their own color, with narration between their lines. Click a portrait to open their sheet. NPCs belong to the chat where you meet them, so another adventure can have its own version of the same character.
 
+To reuse a cast, enable **System → Manager → Reuse NPCs in new chats** for that System. Castward saves a roster from your current NPC cards and subsequent creations and edits. New chats receive independent copies with profiles, portraits, and carryover stats; adventure stats and inventory reset. Existing chats keep their own NPCs. Linked lorebook entries remain shared references.
+
+Linked profiles automatically participate in SillyTavern's lore scan for the active cast, including carried-over NPCs. Mention a profile's name or alias to trigger its entry under the usual lore rules. Existing chat/global lorebook selections stay intact; other entries from the source books are not added. Newly generated profiles use the same activation path. Fill still creates and attaches a chat book when no chat/default book was chosen.
+
+Under **System → Builder → Profile fields → NPC memories**, enable **Carry over NPC memories** to include active and archived memories in character export/import and reused NPC copies. Like stat carryover, this belongs to the System and works independently of automatic memory reading. It defaults to off.
+
+The Manager's **Carry over Places** option copies your known map, descriptions, aliases, parent relationships, and lore references, independently of NPC reuse; the new chat's current location starts unset. It also defaults to off. Copies belong to the new chat, and later edits update the saved data for future chats. **Clear saved roster** removes saved NPCs, Places, and memories without deleting existing chat data.
+
 The tracker beneath the latest reply keeps the current state in view. Let the reader apply changes automatically or review them first. You can also edit values on the character sheets.
 
 A floating HUD keeps your player's stats on screen while you scroll. Drag it where you like and click the portrait to open your sheet. Find its settings under **Appearance → Floating HUD**.

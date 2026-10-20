@@ -9,7 +9,7 @@ with browser_session() as browser:
       if (!entry) throw new Error('Extension entry missing');
       const script = document.createElement('script'); script.type = 'module'; script.id = 'sillynpc-memory-fixture';
       script.textContent = `
-        const result = {}; let settings, savedEnabled, savedTrackerEnabled, chat, savedChat, host, refreshMemoryButton;
+        const result = {}; let settings, savedEnabled, savedTrackerEnabled, chat, savedChat, host, controlsHost, refreshMemoryButton;
         try {
           const root = ${JSON.stringify(new URL('.', entry.src).href)};
           const { getSettings } = await import(root + 'src/core/settings.js');
@@ -29,11 +29,33 @@ with browser_session() as browser:
             && controls.querySelector('.profile-memory-interval').value === '8'
             && controls.querySelector('.profile-memory-limit').value === '50';
           const captureToggle = controls.querySelector('.profile-memory-enabled'); captureToggle.checked = true;
+          const carryToggle = controls.querySelector('.profile-memory-carryover');
+          if (!carryToggle || carryToggle.checked || carryToggle.disabled) throw Error('Missing default-off Builder carryover control');
+          result.readerTooltip = captureToggle.closest('label').title.startsWith('A separate reader')
+            && !controls.querySelector('.profile-memory-reader-help')
+            && carryToggle.closest('label').previousElementSibling === captureToggle.closest('label');
+          controlsHost = document.createElement('div');
+          controlsHost.className = 'sillynpc sillynpc-manage sillynpc-system-builder';
+          controlsHost.style.cssText = 'position:fixed;top:0;left:0;';
+          controlsHost.append(controls); document.body.append(controlsHost);
+          result.checkboxLayout = [700, 320].every(width => {
+            controlsHost.style.width = width + 'px';
+            return [captureToggle, carryToggle].every(input => {
+              const label = input.closest('label');
+              const range = document.createRange(); range.selectNodeContents(label.lastChild);
+              const text = range.getBoundingClientRect(), box = input.getBoundingClientRect();
+              return getComputedStyle(label).flexDirection === 'row' && text.left >= box.right
+                && Math.abs(text.top + text.height / 2 - box.top - box.height / 2) < 3;
+            }) && controlsHost.scrollWidth <= controlsHost.clientWidth + 2;
+          });
+          controlsHost.remove();
+          carryToggle.checked = true; carryToggle.dispatchEvent(new Event('change'));
+          result.carryIndependent = definition.memories.carryOver && !definition.memories.enabled;
           captureToggle.dispatchEvent(new Event('change'));
           const guidance = controls.querySelector('.profile-memory-guidance'); guidance.value = 'Remember promises';
           guidance.dispatchEvent(new Event('input'));
           result.systemControlsSave = definition.memories.enabled && definition.memories.guidance === 'Remember promises'
-            && saves === 2 && refreshes === 1;
+            && saves === 3 && refreshes === 1;
           const fixtureSettings = { enabled:true, activeSystem:'fixture', statusTracker:{reviewMode:'risky',presets:{fixture:{definition}}} };
           const fixtureContext = { chatMetadata:{}, getCurrentChatId: () => 'fixture-chat',
             chat:[{is_user:true,mes:'Ada, please guard the bridge.'},{mes:'Ada promises to guard the bridge.'}] };
@@ -88,7 +110,7 @@ with browser_session() as browser:
             && !host.querySelector('.sillynpc-status-tracker-container');
         } catch (error) { result.error = String(error); result.stack = error.stack; }
         finally {
-          host?.remove(); if (chat && savedChat) chat.splice(0, chat.length, ...savedChat);
+          host?.remove(); controlsHost?.remove(); if (chat && savedChat) chat.splice(0, chat.length, ...savedChat);
           if (settings) { settings.enabled = savedEnabled; settings.statusTracker.enabled = savedTrackerEnabled; }
           refreshMemoryButton?.();
         }

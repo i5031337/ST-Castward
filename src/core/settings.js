@@ -7,6 +7,7 @@ import { createInitialSettings } from './settings-initial.js';
 import { normalizeSettings } from './settings-migration.js';
 import { setProfileSettingsProvider } from './profile-fields.js';
 import { normalizeCharacterPresentation } from './npc-presentation.js';
+import { captureNpcRoster } from '../characters/system-npc-roster.js';
 export { defaultSettings, normalizeSettings };
 setProfileSettingsProvider(getSettings);
 export { normaliseStatDefs } from './settings-migration.js';
@@ -31,6 +32,7 @@ export function getSettings() {
 }
 
 export function saveSettings() {
+    captureNpcRoster(getSettings(), getContext());
     saveSettingsDebounced();
     // Card editors already save after in-place changes. If this chat owns cards,
     // persist those metadata changes alongside the settings save.

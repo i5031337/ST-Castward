@@ -37,6 +37,7 @@ import { setMemoryButtonRefresh, resetMemorySchedule } from './src/memory/memory
 import { applyPortraitFraming, applySpeechPadding } from './src/ui/shared/ui-shared.js';
 import { applyScenePrompt } from './src/tracker/status-logic.js';
 import { noteActivatedLore } from './src/lore/activated-lore.js';
+import { activateCastLore } from './src/lore/cast-lore-runtime.js';
 import { setDebugLogging } from './src/core/constants.js';
 import { describeChatConnection } from './src/core/utils.js';
 import { applyDialogueFormatPrompt } from './src/prompts/dialogue-format.js';
@@ -138,6 +139,8 @@ jQuery(async () => {
         eventSource.on(event_types.GENERATION_STARTED, allowStoryPlayerDialogue);
         eventSource.on(event_types.GENERATION_ENDED, restorePlayerDialogueSetting);
         eventSource.on(event_types.GENERATION_STOPPED, restorePlayerDialogueSetting);
+
+        eventSource.on(event_types.WORLDINFO_ENTRIES_LOADED, activateCastLore);
 
         // Refresh the scene prompt after lore activation, before host chat injection.
         eventSource.on(event_types.WORLD_INFO_ACTIVATED, (entries) => {

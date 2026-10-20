@@ -17,7 +17,7 @@ export function chatNpcSources(headers, systemName) {
             const identity = `${sourceChat}:${char.id}`;
             if (seen.has(identity)) continue;
             seen.add(identity);
-            found.push({ char, sourceChat });
+            found.push({ char, sourceChat, state: metadata.sillynpc_status_state });
         }
     }
     return found;

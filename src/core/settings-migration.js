@@ -11,6 +11,7 @@ import { migratePresetsAndStores } from './settings-store-migration.js';
 import { normaliseBaseSettings } from './settings-base-migration.js';
 import { normalizeCharacterPresentation } from './npc-presentation.js';
 import { normalizeTtsSettings } from '../tts/tts-settings.js';
+import { normalizeNpcRosters } from '../characters/system-npc-roster.js';
 
 /**
  * Is version a older than version b? Dotted numbers, missing parts count as zero.
@@ -55,6 +56,7 @@ export function normaliseStatDefs(list) {
 }
 
 function normalizeCharactersAndCategories(settings) {
+    normalizeNpcRosters(settings);
     debugLog('Processing characters');
     if (!Array.isArray(settings.characters)) settings.characters = [];
     for (const char of settings.characters) {

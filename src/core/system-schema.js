@@ -213,6 +213,7 @@ export function normalizeSystemDefinition(source, { id, name } = {}) {
         locations: { enabled: tracker.locations?.enabled !== false },
         memories: {
             enabled: input.memories?.enabled === true,
+            carryOver: input.memories?.carryOver === true,
             guidance: string(input.memories?.guidance).slice(0, 4000),
             interval: Number.isSafeInteger(input.memories?.interval) && input.memories.interval >= 1 && input.memories.interval <= 100
                 ? input.memories.interval : 8,

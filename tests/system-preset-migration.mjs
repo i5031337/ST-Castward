@@ -200,6 +200,8 @@ test('generated fixture imports without activation and retains rules through cap
     assert.deepEqual(captured.npcTemplates, definition.npcTemplates);
     assert.deepEqual(captured.collections, definition.collections);
     assert.deepEqual(captured.stats, definition.stats);
+    assert.deepEqual(captured.memories, definition.memories);
+    assert.equal(captured.memories.carryOver, true);
 });
 
 test('capture preserves canonical edits and omits runtime projection catalogs', () => {
@@ -294,6 +296,28 @@ test('existing schema-2 presets acquire System-owned places and retain canonical
         assert.equal(Object.hasOwn(settings.statusTracker.presets[definition.name].config.statusTracker, 'locations'), false);
         deps.applySystemPreset(settings.statusTracker.presets[definition.name]);
         assert.deepEqual(settings.statusTracker.locations, { enabled: false });
+    } finally {
+        for (const key of Object.keys(settings)) delete settings[key];
+        Object.assign(settings, before);
+    }
+});
+
+test('local NPC rosters stay outside captured and imported rules and are removed with their System', () => {
+    const before = structuredClone(settings);
+    try {
+        const definition = createBuiltinSystem('fantasy');
+        settings.activeSystem = definition.name;
+        settings.statusTracker.presets = { [definition.name]: { definition, config: {} } };
+        settings.systemNpcRosters = { [definition.name]: { enabled: true, cards: [{ id: 'mira', name: 'Mira' }] } };
+        deps.saveSystemPreset(definition.name);
+        assert.equal(Object.hasOwn(settings.statusTracker.presets[definition.name].config, 'systemNpcRosters'), false);
+        const profile = deps.importSystemPreset(JSON.stringify({ metadata: { name: 'Imported' }, definition,
+            config: { systemNpcRosters: { Imported: { enabled: true, cards: [] } } } }));
+        assert.equal(Object.hasOwn(profile.config, 'systemNpcRosters'), false);
+        deps.applySystemPreset(profile);
+        assert.equal(settings.systemNpcRosters[definition.name].cards[0].name, 'Mira');
+        deps.deleteSystemPreset(definition.name);
+        assert.equal(settings.systemNpcRosters[definition.name], undefined);
     } finally {
         for (const key of Object.keys(settings)) delete settings[key];
         Object.assign(settings, before);

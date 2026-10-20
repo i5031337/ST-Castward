@@ -1,5 +1,6 @@
 import { buildSystemGeneration } from './ui-system-generation.js';
 import { getSettings, defaultSettings } from '../../core/settings.js';
+import { buildSystemReuseControls } from './ui-system-reuse.js';
 import { offerDownload } from '../../core/utils.js';
 import { updateAllExtensionThemes } from '../shared/ui-shared.js';
 import { deleteSystemPreset, importSystemPreset, getActiveSystem, getChatSystem, chatHasStarted, setActiveSystem, createSystem } from '../../tracker/status-logic.js';
@@ -60,6 +61,7 @@ export function buildSystemManager(onRefresh) {
             nameCell.innerHTML = `<div style="font-weight:bold">${escapeHtml(name)}`
                 + (name === getActiveSystem() ? ' <small style="opacity:0.6">(in use)</small>' : '')
                 + `</div><small style="opacity:0.6">${escapeHtml(detail)}</small>`;
+            nameCell.append(buildSystemReuseControls(name, onRefresh));
             
             const actionsCell = document.createElement('td');
             actionsCell.style.padding = '8px';
@@ -117,6 +119,7 @@ export function buildSystemManager(onRefresh) {
                     const confirmed = await Popup.show.confirm('Export World Characters',
                         `${payload.characters.length} characters from reusable cards and assigned chats. `
                         + `Carryover fields carried: ${innate.join(', ') || 'none'}. `
+                        + (profile.definition?.memories?.carryOver ? 'Active and archived NPC memories are included. ' : 'NPC memories stay here. ')
                         + 'Turn stats, conditions and inventory reset on import. Export this file?');
                     if (!confirmed) return;
                     offerDownload(payload,

@@ -31,7 +31,7 @@ export const templateSchema = object({ id, name: text, description: text, progre
 export const collectionSchema = object({ id, name: text, targets: array(text, 8), guidance: text,
     trackQuantity: bool, includeInImagePrompt: bool, retired: bool, fields: array(fieldSchema), levelUpRewards: rewardSchema },
 ['id', 'name', 'targets', 'guidance', 'trackQuantity', 'fields']);
-export const memorySchema = object({ enabled: bool, guidance: text,
+export const memorySchema = object({ enabled: bool, carryOver: { ...bool, description: 'Preserve active and archived NPC memories during character transfer and optional NPC reuse. Independent of automatic reading; default false unless the premise requests persistent knowledge across adventures.' }, guidance: text,
     interval: { type: 'integer', minimum: 1, maximum: 100 },
     maxEntriesPerCharacter: { type: 'integer', minimum: 1, maximum: 500 } });
 export const locationSchema = object({ enabled: { ...bool, description: 'When enabled, Places track the current place; avoid a duplicate world Location stat.' } });

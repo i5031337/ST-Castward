@@ -6,6 +6,7 @@ import { serialiseCharacter, TRANSFER_FORMAT, TRANSFER_VERSION } from './charact
 import { listChatHeaders } from '../chat/chat-listing.js';
 import { normaliseNpcPersistence } from '../tracker/stat-persistence.js';
 import { normaliseStatUpdatePolicies } from '../tracker/stat-update-policy.js';
+import { npcRoster } from './system-npc-roster.js';
 
 export async function exportWorldCharacters(systemName) {
     const settings = getSettings();
@@ -18,7 +19,7 @@ export async function exportWorldCharacters(systemName) {
         : (profile.definition?.stats?.npc || profile.config?.statusTracker?.npcStats || profile.config?.npcStats || []));
     normaliseStatUpdatePolicies({ npcStats });
     normaliseNpcPersistence(npcStats);
-    const worldCards = getWorldCharacters();
+    const worldCards = [...getWorldCharacters(), ...(npcRoster(settings, systemName)?.cards || [])];
     const headers = await listChatHeaders();
 
     // The current chat may contain debounced edits that have not reached its file yet.
@@ -42,13 +43,14 @@ export async function exportWorldCharacters(systemName) {
     const characters = [];
     for (const char of worldCards) {
         characters.push({
-            ...await serialiseCharacter(char, { npcStats, system: profile.definition }),
+            ...await serialiseCharacter(char, { npcStats, system: profile.definition, state: null,
+                memories: npcRoster(settings, systemName)?.memories?.[char.id] }),
             source: { kind: 'world', system: systemName, npcId: char.id },
         });
     }
-    for (const { char, sourceChat } of chatNpcSources(headers, systemName)) {
+    for (const { char, sourceChat, state } of chatNpcSources(headers, systemName)) {
         characters.push({
-            ...await serialiseCharacter(char, { npcStats, system: profile.definition }),
+            ...await serialiseCharacter(char, { npcStats, system: profile.definition, state: state || null }),
             source: { kind: 'chat', system: systemName, chat: sourceChat, npcId: char.id },
         });
     }

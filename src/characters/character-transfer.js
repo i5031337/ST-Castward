@@ -9,6 +9,9 @@ import { blankActiveProfile, profileStrings } from '../core/profile-fields.js';
 import { splitNpcStats, initialiseNpcStats } from '../tracker/stat-persistence.js';
 import { getAllCharacters, isChatCharacter } from './character-repository.js';
 import { normalizeNpcPresentation } from '../core/npc-presentation.js';
+import { getContext } from '../../../../../st-context.js';
+import { readNpcMemories, writeNpcMemories } from '../tracker/npc-memories.js';
+import { portableMemories } from './system-roster-state.js';
 
 /** Transfer portable character prose, lore, and innate stats between installations.
  * Portraits are supplied by the recipient; older files with embedded portraits still import.
@@ -48,6 +51,8 @@ async function readLoreEntry(char) {
 export async function serialiseCharacter(char, {
     npcStats = getSettings().statusTracker?.npcStats,
     system = activeNpcSystem(),
+    state,
+    memories,
 } = {}) {
     // A different System may have retired a field; exports must keep its prose.
     const profile = profileStrings(char.profile);
@@ -63,6 +68,9 @@ export async function serialiseCharacter(char, {
         npcTemplateId: npcTemplateFor(char, system)?.id || char.npcTemplateId || '',
         // Keep the version 2 field name so existing character files remain readable.
         innateStats: splitNpcStats(char.statusOverrides, npcStats).innate,
+        ...(system?.memories?.carryOver === true ? { memories: portableMemories(memories
+            ?? readNpcMemories(state === undefined
+                ? (isChatCharacter(char.id) ? getContext()?.chatMetadata?.sillynpc_status_state : null) : state, char)) } : {}),
         lore: await readLoreEntry(char),
     };
 }
@@ -148,6 +156,10 @@ function applyRecord(char, record, name, version) {
     char.statusOverrides = initialiseNpcStats(incoming, npcStatsFor(char, getSettings().statusTracker));
     // Collections, conditions and inventory belong to the adventure instance.
     char.statusCollections = {};
+    char.memories = portableMemories(activeNpcSystem()?.memories?.carryOver === true ? record.memories : undefined);
+    const context = getContext();
+    const state = context?.getCurrentChatId?.() !== undefined && context.chatMetadata?.sillynpc_status_state;
+    if (state) writeNpcMemories(state, char, char.memories);
 
     // Field by field, for the same reason normalizeSettings does it that way: a file
     // written before a field existed should gain it blank, not replace the set.

@@ -19,6 +19,8 @@ export const defaultSettings = {
     colorStyle: 'text',
     /** Active System name; empty means none. */
     activeSystem: '',
+    /** Local opt-in reusable NPC rosters, keyed by System name. */
+    systemNpcRosters: {},
     /** Add speaker-line formatting instructions to the story prompt. */
     dialogueFormatEnabled: true,
     /** 0 puts it after the newest message - the last thing read before answering. */

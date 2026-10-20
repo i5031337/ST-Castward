@@ -108,9 +108,9 @@ test('System normalization ignores removed goal switches while retaining profile
 
 test('System memory capture is opt-in, independently configured, and bounded', () => {
     const defaults = normalizeSystemDefinition({}).memories;
-    assert.deepEqual(defaults, { enabled: false, guidance: '', interval: 8, maxEntriesPerCharacter: 50 });
+    assert.deepEqual(defaults, { enabled: false, carryOver: false, guidance: '', interval: 8, maxEntriesPerCharacter: 50 });
     const input = { schemaVersion: 1, profiles: { player: [], npc: [] },
-        memories: { enabled: true, guidance: 'Remember clues personally discovered.', interval: 12, maxEntriesPerCharacter: 20 } };
+        memories: { enabled: true, carryOver: true, guidance: 'Remember clues personally discovered.', interval: 12, maxEntriesPerCharacter: 20 } };
     const normalized = normalizeSystemDefinition(input);
     assert.deepEqual(normalized.memories, input.memories);
     assert.deepEqual(normalizeSystemDefinition(normalized), normalized);
@@ -119,6 +119,8 @@ test('System memory capture is opt-in, independently configured, and bounded', (
     }
     assert.equal(normalizeSystemDefinition({ memories: { enabled: 'true', guidance: 'x'.repeat(4001) } }).memories.enabled, false);
     assert.equal(normalizeSystemDefinition({ memories: { guidance: 'x'.repeat(4001) } }).memories.guidance.length, 4000);
+    assert.equal(normalizeSystemDefinition({ memories: { enabled: false, carryOver: true } }).memories.carryOver, true);
+    assert.equal(normalizeSystemDefinition({ memories: { carryOver: 'yes' } }).memories.carryOver, false);
 });
 
 test('retired HUD layouts resolve to a supported style', () => {

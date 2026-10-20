@@ -146,26 +146,36 @@ export function buildProfilesEditor(onRefresh, context = liveSystemContext) {
 function buildMemoryControls(definition, saveSettings, refreshMemoryButton) {
     const wrap = document.createElement('div');
     wrap.className = 'sillynpc-system-memory-controls';
-    definition.memories ??= { enabled: false, guidance: '', interval: 8, maxEntriesPerCharacter: 50 };
+    definition.memories ??= { enabled: false, carryOver: false, guidance: '', interval: 8, maxEntriesPerCharacter: 50 };
     const memories = definition.memories;
     const title = document.createElement('h4');
     title.textContent = 'NPC memories';
     const enabledLabel = document.createElement('label');
+    enabledLabel.className = 'sillynpc-check-group';
+    enabledLabel.title = 'A separate reader occasionally finds durable events and knowledge for NPCs. Ask Before Applying controls whether new memories are saved or reviewed. Manual editing is always available.';
     const enabled = document.createElement('input');
     enabled.className = 'profile-memory-enabled';
     enabled.type = 'checkbox';
     enabled.checked = memories.enabled === true;
     enabled.addEventListener('change', () => { memories.enabled = enabled.checked; saveSettings(); refreshMemoryButton?.(); });
     enabledLabel.append(enabled, ' Read NPC memories automatically');
-    const help = document.createElement('p');
-    help.textContent = 'A separate reader occasionally finds durable events and knowledge for NPCs. Ask Before Applying controls whether new memories are saved or reviewed. Manual editing is always available.';
+    const carryLabel = document.createElement('label');
+    carryLabel.className = 'sillynpc-check-group';
+    carryLabel.title = 'Preserve active and archived memories during NPC export/import and reuse in new chats. Independent of automatic memory reading; old message references are removed from copied memories.';
+    const carry = document.createElement('input');
+    carry.className = 'profile-memory-carryover';
+    carry.type = 'checkbox';
+    carry.checked = memories.carryOver === true;
+    carry.setAttribute('aria-label', 'Carry over NPC memories');
+    carry.addEventListener('change', () => { memories.carryOver = carry.checked; saveSettings(); });
+    carryLabel.append(carry, ' Carry over NPC memories');
     const guidance = control('textarea', 'profile-memory-guidance', memories.guidance || '');
     guidance.rows = 3;
     guidance.maxLength = 4000;
     guidance.placeholder = 'Optional genre guidance: remember significant battles, promises, rivalries, or personally discovered clues. Skip routine activity.';
     guidance.setAttribute('aria-label', 'Memorable-event guidance');
     guidance.addEventListener('input', () => { memories.guidance = guidance.value; saveSettings(); });
-    wrap.append(title, enabledLabel, help, guidance);
+    wrap.append(title, enabledLabel, carryLabel, guidance);
     for (const [key, label, fallback, max, className] of [
         ['interval', 'Read every N assistant replies: ', 8, 100, 'profile-memory-interval'],
         ['maxEntriesPerCharacter', 'Active memory entries per character: ', 50, 500, 'profile-memory-limit'],
