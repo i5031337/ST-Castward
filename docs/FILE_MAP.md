@@ -391,8 +391,11 @@ SillyTavern loads `index.js` and `style.css` from `manifest.json`. The JavaScrip
 | `docs/location-persistence-plan.md` | Stage-one ownership, review, context, editing, and verification contract. |
 | `src/locations/location-store.js` | Pure place normalization, stable IDs, aliases, containment validation, CRUD, current marker, and display path. |
 | `src/locations/location-proposals.js` | Story-derived proposals, immutable review payloads, freshness, and dependent acceptance. |
+| `src/locations/location-reader.js` | Dedicated place prompt context, strict output parsing, and configured model requests. |
+| `src/locations/location-reading.js` | Code-owned first-location initialization, boolean movement gating, freshness, and isolated request failures. |
+| `src/prompts/prompt-texts-locations.js` | Editable system and user prompts for the separate place reader. |
 | `src/locations/location-runtime.js` | Reader provenance, source validation, chat saves, and reviewed turn effects. |
-| `src/locations/location-context.js` | Literal mention detection, bounded narrator recall, name-based reader directory/instructions, and output schema. |
+| `src/locations/location-context.js` | Literal mention detection, bounded narrator recall, current-place context and movement-flag instructions, and place-detail schema. |
 | `src/locations/location-lore.js` | Read-only lorebook listings and entry reads. |
 | `src/ui/locations/ui-locations.js` | Chat-scoped Places management, search, manual editing, current marker, and deletion undo. |
 | `src/ui/locations/ui-location-lore.js` | Reference linking and explicit copying into an unsaved place description. |
@@ -483,3 +486,8 @@ paths have regression tests under `tests/`.
 | `styles/17-theme-customization.css` | Custom effects and responsive editor layout. |
 | `tests/theme-customization.mjs` | Import validation, preset isolation, and stale-style cleanup. |
 | `tests/ui-theme-customization.py` | Unsaved live checks of all presets, themed surfaces, resets, and narrow layout. |
+
+| `tests/fixtures/gemma-location-change-scenarios.mjs`, `tests/gemma-location-change.mjs` | Boolean scene-location detection, mixed stat/inventory cases, and real reader prompt/schema checks. |
+
+| `tests/location-reader.mjs`, `tests/location-reading.mjs` | Dedicated reader contract, request routing, initialization, movement gates, stale replies, and failure isolation. |
+| `tests/eval-gemma-location-reader.js` | Explicit frozen local-model evaluation of dedicated place reading and production review proposals. |

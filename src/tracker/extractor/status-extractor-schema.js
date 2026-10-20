@@ -1,4 +1,3 @@
-import { locationExtractionSchema } from '../../locations/location-context.js';
 import { collectionQuantityField } from '../../core/collection-fields.js';
 import { collectionAppliesTo } from '../../core/collection-targets.js';
 import { progressionFields } from '../progression-fields.js';
@@ -93,12 +92,12 @@ export function buildExtractionSchema(trackerSettings, { strangers = [], state =
         type: 'object',
         // Required at the top level so a model cannot satisfy the schema with "{}",
         // which is exactly what happened while the schema was being rejected.
-        required: ['global', 'player', 'characters'],
+        required: ['global', 'player', 'characters', ...(state?.locations?.enabled ? ['locationChanged'] : [])],
         properties: {
             ...(trackerSettings.extractionReasons === false ? {} : {
                 why: { type: 'object', additionalProperties: { type: 'string' } },
             }),
-            ...(state?.locations?.enabled ? { locations: locationExtractionSchema() } : {}),
+            ...(state?.locations?.enabled ? { locationChanged: { type: 'boolean' } } : {}),
             global: stringMap(globalStatDefs),
             ...(worldDeltas.length ? { globalDeltas: deltaMap(worldDeltas) } : {}),
             player: {

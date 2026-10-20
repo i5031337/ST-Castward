@@ -43,3 +43,14 @@ docs/evaluations/*.json
 !docs/evaluations/gemma-e4b-place-action-quantity-natural-results.json
 !docs/evaluations/gemma-e4b-place-action-quantity-places-prompts.json
 !docs/evaluations/gemma-e4b-place-action-quantity-places-results.json
+!docs/evaluations/gemma-e4b-location-flag-v1-prompts.json
+!docs/evaluations/gemma-e4b-location-flag-v1-results.json
+!docs/evaluations/gemma-e4b-location-flag-player-v2-prompts.json
+!docs/evaluations/gemma-e4b-location-flag-player-v2-results.json
+!docs/evaluations/gemma-e4b-location-flag-player-v3-prompts.json
+!docs/evaluations/gemma-e4b-location-flag-player-v3-results.json
+!docs/evaluations/gemma-e4b-location-reader-initial-prompts.json
+!docs/evaluations/gemma-e4b-location-reader-initial-results.json
+!docs/evaluations/gemma-e4b-location-reader-shape-v2-prompts.json
+!docs/evaluations/gemma-e4b-location-reader-shape-v2-results.json
+!docs/evaluations/gemma-e4b-location-reader-extra-fields-replay.json

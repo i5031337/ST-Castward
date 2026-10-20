@@ -14,6 +14,10 @@ export async function checkLocations(root) {
         import(root + 'src/tracker/status-logic.js'),
         import(root + 'src/tracker/ui/status-ui-box.js'),
         import(root + 'src/core/settings.js'),
+        import(root + 'src/locations/location-reader.js'),
+        import(root + 'src/locations/location-reading.js'),
+        import(root + 'src/prompts/prompt-texts.js'),
+        import(root + 'src/core/usage.js'),
     ]);
     check('realModuleStartup', actual.every(Boolean));
     const hostMetadata = JSON.stringify(SillyTavern.getContext().chatMetadata);
@@ -180,6 +184,29 @@ export async function checkLocations(root) {
         [...reviewView.querySelectorAll('button')].find(node => node.textContent.includes('Apply selected')).click();
         check('reviewEditableAndApplied', accepted[0].after === 'A weathered wooden wharf.'
             && !reviewView.querySelector('.sillynpc-review-panel'));
+        const opening = { locations: { enabled: true, currentId: '', records: {} } };
+        check('locationInitializationGate', actual[8].shouldReadSceneLocation(opening, false));
+        check('locationReaderPromptLoaded', actual[7].buildLocationPrompt({ state: opening,
+            playerName: 'Alex', messageText: 'Alex enters Moonlit Wharf.' }).includes('Moonlit Wharf')
+            && actual[9].promptText('locationReaderSystem').includes('JSON place update'));
+        check('locationUsageCounter', actual[10].USAGE_KINDS.some(kind => kind.id === 'location'));
+        const reportHost = document.createElement('div');
+        reportHost.innerHTML = '<div class="mes_text">Temporary reader report fixture</div>';
+        host.appendChild(reportHost);
+        const report = { status: 'done', summary: '1 applied · 0 awaiting review',
+            breakdown: { applied: '1 place', pending: 'None', rows: [] },
+            output: { locationChanged: true },
+            locationReading: { status: 'done', raw: { places: [{ name: '<Moonlit Wharf>' }], current: '<Moonlit Wharf>' } } };
+        const renderReport = await factory('src/tracker/ui/status-ui-report.js', {
+            document, applyThemeAppearance() {}, getExtractionReport: () => report,
+            getSettings: () => ({ enabled: true, statusTracker: { showRawTrackerOutput: true } }),
+            getContext: () => ({ chat: [{ extra: {} }] }), trackerMessageIndex: () => 0, getSwipeBase: () => null,
+        }, 'renderExtractionReport');
+        renderReport(reportHost, 0);
+        check('locationReaderReportVisible', reportHost.textContent.includes('Scene location changed')
+            && reportHost.textContent.includes('Location reading') && reportHost.textContent.includes('<Moonlit Wharf>')
+            && !reportHost.querySelector('moonlit'));
+        reportHost.remove();
         check('isolatedWrites', writes >= 5 && JSON.stringify(SillyTavern.getContext().chatMetadata) === hostMetadata
             && JSON.stringify(SillyTavern.getContext().chat) === hostChat);
         return result;

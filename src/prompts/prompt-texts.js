@@ -1,7 +1,8 @@
 import { readerPromptTexts } from './prompt-texts-reader.js';
 import { otherPromptTexts } from './prompt-texts-other.js';
+import { locationPromptTexts } from './prompt-texts-locations.js';
 
-export const PROMPT_TEXTS = [...readerPromptTexts, ...otherPromptTexts];
+export const PROMPT_TEXTS = [...readerPromptTexts, ...otherPromptTexts, ...locationPromptTexts];
 const BY_ID = new Map(PROMPT_TEXTS.map(entry => [entry.id, entry]));
 
 /** The built-in wording for an id. Throws on a typo, which would otherwise send nothing. */

@@ -196,3 +196,6 @@ Complete failed checks:
 - natural, `dating-quiet-control` #1: noInventoryChanges.
 - natural, `fantasy-wound-treated` #2: noXp.
 - places, `dating-root-mixed` #1: npcItemAdd June items sunflower 1.
+
+
+The subsequent boolean scene-location signal experiment is documented in [the location flag report](gemma-e4b-location-flag-report.md). Its scores use a different output contract and are not directly comparable with the place-detail results above.

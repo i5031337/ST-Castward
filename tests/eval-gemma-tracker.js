@@ -9,19 +9,21 @@ import { currentPlaceContains } from './fixtures/gemma-location-check.mjs';
 import { changedPoolMaxima } from './fixtures/tracker-pool-audit.mjs';
 import { harness, constants } from './fixtures/gemma-tracker-harness.mjs';
 import { scenarios as standardScenarios, criteria as standardCriteria, makeState } from './fixtures/gemma-tracker-scenarios.mjs';
+import { locationChangeScenarios, makeLocationChangeState } from './fixtures/gemma-location-change-scenarios.mjs';
 import { naturalScenarios, makeNaturalState } from './fixtures/gemma-tracker-natural-scenarios.mjs';
 import { locationTreeScenarios, naturalLocationTreeScenarios, mixedLocationTreeScenarios } from './fixtures/gemma-location-tree-scenarios.mjs';
 const args = process.argv.slice(2), action = args[0], label = args[1];
-if (!['--freeze', '--run', '--score'].includes(action) || !/^[a-z0-9-]+$/.test(label || '')) throw Error('Usage: --freeze|--run|--score LABEL [--natural|--location-tree|--location-tree-prose|--location-tree-mixed] [--repeats N] [--endpoints URL,URL] [--concurrency N]');
+if (!['--freeze', '--run', '--score'].includes(action) || !/^[a-z0-9-]+$/.test(label || '')) throw Error('Usage: --freeze|--run|--score LABEL [--location-change|--natural|--location-tree|--location-tree-prose|--location-tree-mixed] [--repeats N] [--endpoints URL,URL] [--concurrency N]');
+const locationChange = args.includes('--location-change');
 const natural = args.includes('--natural');
 const locationTree = args.includes('--location-tree');
 const locationTreeProse = args.includes('--location-tree-prose');
 const locationTreeMixed = args.includes('--location-tree-mixed');
-if ([natural, locationTree, locationTreeProse, locationTreeMixed].filter(Boolean).length > 1) throw Error('Choose only one scenario suite.');
-const scenarios = locationTreeMixed ? mixedLocationTreeScenarios : locationTreeProse ? naturalLocationTreeScenarios
+if ([locationChange, natural, locationTree, locationTreeProse, locationTreeMixed].filter(Boolean).length > 1) throw Error('Choose only one scenario suite.');
+const scenarios = locationChange ? locationChangeScenarios : locationTreeMixed ? mixedLocationTreeScenarios : locationTreeProse ? naturalLocationTreeScenarios
     : locationTree ? locationTreeScenarios : natural ? naturalScenarios : standardScenarios;
-const makeScenarioState = natural ? makeNaturalState : makeState;
-const freezeCriteria = natural ? { ...standardCriteria, suite: 'natural-prose' }
+const makeScenarioState = locationChange ? makeLocationChangeState : natural ? makeNaturalState : makeState;
+const freezeCriteria = locationChange ? { ...standardCriteria, suite: 'location-change' } : natural ? { ...standardCriteria, suite: 'natural-prose' }
     : locationTree || locationTreeProse || locationTreeMixed ? { ...standardCriteria,
         suite: locationTreeMixed ? 'location-tree-mixed' : locationTreeProse ? 'location-tree-prose' : 'location-tree', overallRequiredCheckRate: 1,
         perSystemRequiredCheckRate: 1 } : standardCriteria;
@@ -38,6 +40,7 @@ const sourceFiles = ['src/core/builtin-systems.js', 'src/core/settings-tracker-d
     'src/tracker/status-apply-update.js',
     'src/tracker/progression.js', 'src/tracker/numeric-stat-bounds.js',
     'tests/eval-gemma-tracker.js', 'tests/fixtures/gemma-request-batches.mjs',
+    'tests/fixtures/gemma-location-change-scenarios.mjs',
     'tests/fixtures/gemma-location-check.mjs', 'tests/fixtures/tracker-pool-audit.mjs'];
 const sourceHashes = () => Object.fromEntries(sourceFiles.map(path => [path, createHash('sha256').update(readFileSync(new URL('../' + path, import.meta.url))).digest('hex')]));
 const file = suffix => new URL(`gemma-e4b-${label}-${suffix}.json`, directory);
@@ -72,6 +75,8 @@ function score(bundle, normalized, raw, finishReason) {
     const belowCapacity = value => { const parts = String(value ?? '').split('/').map(Number); return parts.length === 2 && parts[0] < parts[1]; };
     const inventory = owner => Object.values(owner?.collections || {}).some(col => ['add', 'remove', 'update'].some(verb => col?.[verb]?.length));
     const methods = {
+        locationFlag: expected => typeof raw?.locationChanged === 'boolean'
+            && raw.locationChanged === (expected === 'yes') && !raw.locations && !raw.global?.locations,
         placeCreated: name => rows.some(row => row.kind === 'location-create' && includes(row.actor, name)),
         currentPlace: name => currentPlaceContains(rows, state, name),
         placeParent: (childName, parentName) => {

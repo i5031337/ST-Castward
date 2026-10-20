@@ -10,23 +10,13 @@ const state = () => ({ locations: { enabled: true, currentId: 'inn', records: {
     town: record('town', 'Ashford'), ruins: record('ruins', 'Old Ruins'),
     other: record('other', 'Unmentioned Cave'),
 } } });
-const json = context => JSON.parse(context.slice(context.indexOf('{')));
 
-test('reader recognizes an established opening scene without requiring travel', () => {
-    const current = { locations: { enabled: true, currentId: '', records: {} } };
-    const notes = buildLocationReaderNotes(current, 'You sit inside the Copper Lantern tavern.');
-    assert.match(notes, /opening setting/);
-    assert.match(notes, /### PLACES\nNote when the current scene’s location changes\./);
-    assert.match(notes, /Set "locations.current" to the opening setting or the place reached/);
-    assert.match(notes, /Record newly established places and details in "locations.places"/);
-    assert.match(notes, /"current":"<place>"/);
-    assert.match(notes, /"current":"","places":\[\]/);
-    assert.doesNotMatch(notes, /"lastConfirmedCurrentRef"/);
-    assert.match(notes, /Put "locations" beside "global", "player", and "characters"/);
-    assert.match(notes, /"places":\[\{"name":/);
-    assert.match(notes, /Plans, rumours, invitations, and mentions/);
-    assert.match(notes, /until established/);
-    assert.doesNotMatch(notes, /currentEvidence|"evidence"|exact quote/i);
+test('reader asks for a boolean movement flag and delegates unknown opening locations', () => {
+    const notes = buildLocationReaderNotes({ locations: { enabled: true, currentId: '', records: {} } });
+    assert.match(notes, /"locationChanged" at the top level as a JSON boolean/);
+    assert.match(notes, /Use false when the recorded location is unknown/);
+    assert.match(notes, /Recorded location .*: null/);
+    assert.doesNotMatch(notes, /"places"|"current"|description|parent|location agent/);
 });
 
 test('recall includes current ancestors and places named by the player without a global dump', () => {
@@ -75,19 +65,15 @@ test('recent messages retain latest player input and remain bounded', () => {
     assert.ok(recent.every(text => text.length <= 1200));
 });
 
-test('reader directory preserves identities with selected full descriptions and partial-list warning', () => {
+test('reader receives only current location identities and containment context', () => {
     const current = state();
     current.locations.records.inn.description = 'x'.repeat(4000);
-    for (let i = 0; i < 100; i++) current.locations.records[`p${i}`] = record(`p${i}`, `Place ${i}`);
+    const before = structuredClone(current);
     const notes = buildLocationReaderNotes(current, 'We enter the Old Ruins.');
-    const directory = json(notes.slice(notes.indexOf('Known places:')));
-    assert.equal(directory.places[0].name, 'Rusty Lantern');
-    assert.equal(directory.places[0].description.length, 4000);
-    assert.ok(directory.places.length <= 80);
-    assert.match(notes, /directory is partial/);
-    assert.match(notes, /explicit departure with unknown destination/);
-    assert.ok(notes.length < 27000);
-    assert.ok(!directory.places.find(place => place.name === 'Unmentioned Cave')?.description);
+    const path = JSON.parse(notes.split('Recorded location (current place first, then containing places): ')[1]);
+    assert.deepEqual(path, [{ name: 'Rusty Lantern', aliases: ['the Lantern'] }, { name: 'Ashford' }]);
+    assert.doesNotMatch(notes, /Old Ruins|Unmentioned Cave|xxxx|"id"|"parentId"/);
+    assert.deepEqual(current, before);
 });
 
 test('narrator context remains bounded under large saved records', () => {
@@ -148,32 +134,25 @@ test('scene and inline narrator prompts wire place recall to live player message
     }
 });
 
-test('reader schema integration opts in without making locations mandatory', () => {
+test('reader schema requires a movement boolean only when Places are enabled', () => {
     const build = new Function('progressionFields', 'configuredXpName', 'numericDeltaNames', 'npcTemplates',
         'locationExtractionSchema', sourceWithoutImports('../src/tracker/extractor/status-extractor-schema.js')
         + '\nreturn buildExtractionSchema;')(() => ({ enabled: false }), () => '', () => [], () => [], locationExtractionSchema);
     const disabled = build({}, { state: {} });
     const enabled = build({}, { state: state() });
     assert.equal(disabled.properties.locations, undefined);
-    assert.deepEqual(enabled.properties.locations, locationExtractionSchema());
-    assert.ok(!enabled.required.includes('locations'));
+    assert.equal(enabled.properties.locations, undefined);
+    assert.equal(disabled.properties.locationChanged, undefined);
+    assert.deepEqual(enabled.properties.locationChanged, { type: 'boolean' });
+    assert.ok(enabled.required.includes('locationChanged'));
+    assert.ok(!disabled.required.includes('locationChanged'));
 });
 
-test('reader directory and schema keep stored IDs behind place names', () => {
-    const current = state();
-    const notes = buildLocationReaderNotes(current, 'We stay at the Lantern.');
-    const directory = json(notes.slice(notes.indexOf('Known places:')));
-    assert.equal(directory.current, 'Rusty Lantern');
-    assert.equal(directory.places[0].parent, 'Ashford');
-    assert.deepEqual(directory.places[0].aliases, ['the Lantern']);
-    for (const place of directory.places) {
-        assert.equal(place.ref, undefined);
-        assert.equal(place.id, undefined);
-        assert.equal(place.parentRef, undefined);
-    }
-    const schema = locationExtractionSchema();
-    assert.deepEqual(Object.keys(schema.properties), ['places', 'current']);
-    assert.deepEqual(schema.properties.places.items.required, ['name']);
-    assert.doesNotMatch(notes, /UUID|temporary ref|parentRef|currentRef|lastConfirmedRef|Brackenport|Blue Heron/);
-    assert.match(notes, /Replace placeholders with established story facts/);
+test('movement instructions distinguish actual changes from mentioned destinations', () => {
+    const notes = buildLocationReaderNotes(state());
+    assert.match(notes, /Use true when the player finishes elsewhere or leaves/);
+    assert.match(notes, /Use false when the player finishes in the recorded place, even if another character travels/);
+    assert.match(notes, /Entering a different room counts as changing place/);
+    assert.match(notes, /Plans, invitations, rumours, and mentions/);
+    assert.doesNotMatch(notes, /UUID|temporary ref|parentRef|currentRef|"locations"/);
 });

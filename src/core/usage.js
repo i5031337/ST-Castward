@@ -14,6 +14,8 @@ export const USAGE_KINDS = [
       note: 'All planning, definition, and repair requests for generated Systems.' },
     { id: 'extraction', label: 'Tracker Extraction', sends: 'text',
       note: 'One per message, when the tracker is set to a separate pass.' },
+    { id: 'location', label: 'Location Reading', sends: 'text',
+      note: 'A separate pass for the opening setting and tracker-detected scene changes.' },
     { id: 'lore', label: 'Lore Generation', sends: 'text',
       note: 'One per lore entry you generate.' },
     { id: 'scan', label: 'History Scan', sends: 'text',

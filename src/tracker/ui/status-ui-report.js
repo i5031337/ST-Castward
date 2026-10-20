@@ -9,7 +9,7 @@ const labels = {
     why: 'Reasons given by the reader',
     global: 'World', player: 'Player', characters: 'Characters',
     stats: 'Stats', collections: 'Collections',
-    strangers: 'New characters', profile: 'Profile',
+    strangers: 'New characters', profile: 'Profile', locationChanged: 'Scene location changed',
 };
 
 function labelFor(key) {
@@ -125,6 +125,9 @@ export function renderExtractionReport(mesEl, messageId) {
             content.appendChild(text);
         } else {
             content.textContent = 'The reader returned no output.';
+        }
+        if (showOutput && report.locationReading) {
+            appendValue(content, 'Location reading', report.locationReading.raw ?? report.locationReading.output);
         }
         if (showOutput) details.appendChild(content);
         if (Number(messageId) === trackerMessageIndex(getContext()?.chat || [])

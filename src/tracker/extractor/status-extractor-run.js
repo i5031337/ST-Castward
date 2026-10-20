@@ -1,8 +1,9 @@
+import { prepareSceneLocationReading } from '../../locations/location-reading.js';
 import { getAllCharacters } from '../../characters/character-repository.js';
 import { getContext } from '../../../../../../st-context.js';
 import { getSettings } from '../../core/settings.js';
 import { LOG_PREFIX, debugLog } from '../../core/constants.js';
-import { loadStateFromMetadata, getCurrentPersonaKey, rememberSwipeBase, refreshTurnBase, sanitizeModelUpdate, reconcileScenePresence, applyUpdate, takeRefusedValues, takeCollectionWarnings } from '../status-logic.js';
+import { loadStateFromMetadata, getCurrentPersonaKey, getCurrentPersonaName, rememberSwipeBase, refreshTurnBase, sanitizeModelUpdate, reconcileScenePresence, applyUpdate, takeRefusedValues, takeCollectionWarnings } from '../status-logic.js';
 import { computeStateDiff, partitionChanges, buildUpdateFromChanges, attachReasons } from '../status-diff.js';
 import { setPendingChanges, isItemDecided } from '../status-review.js';
 import { recordAppliedChanges } from '../snapshots/status-snapshots.js';
@@ -97,6 +98,16 @@ export async function extractStateFromMessage(messageText, messageId, options = 
     const sourceText = reportMessage?.mes;
     const sourceMetadata = getContext()?.chatMetadata;
     const swipe = extractionSwipe(reportMessage);
+    const sourcePersona = getCurrentPersonaKey();
+    const sourceSystem = getSettings().activeSystem;
+    const sourceIsCurrent = () => getSettings().enabled && getSettings().statusTracker.enabled
+        && activeExtraction === run && getContext()?.chatMetadata === sourceMetadata
+        && getContext()?.chat?.[Number(messageId)] === reportMessage
+        && reportMessage?.mes === sourceText && extractionSwipe(reportMessage) === swipe
+        && getCurrentPersonaKey() === sourcePersona && getSettings().activeSystem === sourceSystem;
+    const staleResult = () => ({ applied: false, reason: !getSettings().enabled
+        || !getSettings().statusTracker.enabled || activeExtraction !== run
+        ? 'extension disabled' : 'reply changed while reading' });
     let report = { swipe, status: 'failed', summary: 'The request did not complete', output: null };
     const refreshReport = () => {
         try {
@@ -120,14 +131,7 @@ export async function extractStateFromMessage(messageText, messageId, options = 
 
         debugLog('Extraction request for message', key);
         const raw = await requestExtraction(userPrompt, schema, trackerSettings);
-        if (!getSettings().enabled || !getSettings().statusTracker.enabled || activeExtraction !== run) {
-            return { applied: false, reason: 'extension disabled' };
-        }
-        if (getContext()?.chat?.[Number(messageId)] !== reportMessage
-            || extractionSwipe(reportMessage) !== swipe
-            || (options.manual && Number(messageId) !== trackerMessageIndex(getContext()?.chat || []))) {
-            return { applied: false, reason: 'reply changed while reading' };
-        }
+        if (!sourceIsCurrent()) return staleResult();
 
         const parsed = coerceToUpdate(raw);
         if (!parsed || typeof parsed !== 'object') {
@@ -147,22 +151,25 @@ export async function extractStateFromMessage(messageText, messageId, options = 
         // Those steps change the object in place, and the original is what explains the
         // reader's decisions, including values the tracker later refuses.
         const readerOutput = structuredClone(parsed);
+        const locationReading = await prepareSceneLocationReading({
+            state: locationBase, locationChanged: parsed.locationChanged,
+            messageText: String(messageText), earlier: leadUp, trackerSettings,
+            playerName: state.player?.name || getCurrentPersonaName(),
+            isCurrent: () => sourceIsCurrent() && Number(messageId) === trackerMessageIndex(getContext()?.chat || [])
+                && loadStateFromMetadata().locations?.enabled === true,
+        });
+        if (!sourceIsCurrent()) return staleResult();
         const liveState = options.regenerate ? replacementReadingState(messageId) : loadStateFromMetadata();
         if (!liveState || (options.regenerate && !canReplace())) return { applied: false, reason: 'reply changed while reading' };
-        const warnings = normalizeCollectionUpdates(parsed, trackerSettings, liveState, getAllCharacters());
+        const warnings = [...(locationReading?.warnings || []),
+            ...normalizeCollectionUpdates(parsed, trackerSettings, liveState, getAllCharacters())];
         expandNumericDeltas(parsed, liveState, trackerSettings, { cards: getAllCharacters(), warnings });
         // No ceilings the stats do not have, and nothing for a locked stat. See
         // sanitizeModelUpdate.
         sanitizeModelUpdate(parsed, liveState, trackerSettings, { warnings });
         const grants = await prepareLevelReading(parsed, liveState, trackerSettings,
             String(messageText), leadUp, reportMessage, messageId, options);
-        if (!getSettings().enabled || !getSettings().statusTracker.enabled || activeExtraction !== run) {
-            return { applied: false, reason: 'extension disabled' };
-        }
-        if (getContext()?.chat?.[Number(messageId)] !== reportMessage
-            || getContext()?.chatMetadata !== sourceMetadata || reportMessage?.mes !== sourceText
-            || grants.reading.personaId !== getCurrentPersonaKey()
-            || extractionSwipe(reportMessage) !== swipe
+        if (!sourceIsCurrent() || grants.reading.personaId !== getCurrentPersonaKey()
             || (options.manual && Number(messageId) !== trackerMessageIndex(getContext()?.chat || []))) {
             return { applied: false, reason: 'reply changed while reading' };
         }
@@ -230,8 +237,8 @@ export async function extractStateFromMessage(messageText, messageId, options = 
         prepareGrantReview(auto, pending, grants.transitions);
         pending.push(...grants.rows.filter(change => !isItemDecided(change)));
         let automaticPlaces = [];
-        if (locationBase && currentState.locations?.enabled) {
-            const places = locationProposalsForReading(locationBase, parsed.locations, messageId);
+        if (locationReading?.output && currentState.locations?.enabled) {
+            const places = locationProposalsForReading(locationBase, locationReading.output, messageId);
             const placeReview = partitionLocationRows(places.rows, trackerSettings);
             automaticPlaces = placeReview.auto;
             pending.push(...placeReview.pending);
@@ -275,7 +282,7 @@ export async function extractStateFromMessage(messageText, messageId, options = 
         if (warnings.length) parts.push(`${warnings.length} warning${warnings.length === 1 ? '' : 's'}`);
         if (grants.failures.length) parts.push(`${grants.failures.length} level-up choices failed; retry rewards`);
         if (blocked) parts.push(`${blocked} blocked by standing decisions`);
-        report = { swipe, status: 'done', summary: parts.join(' · '), output: readerOutput, warnings };
+        report = { swipe, status: 'done', summary: parts.join(' · '), output: readerOutput, warnings, ...(locationReading ? { locationReading } : {}) };
         // Save the reading before the additional lore requests, so changing chats or
         // replies during profile generation cannot lose applied rows or review proposals.
         const profiles = await generateNewNpcProfiles(

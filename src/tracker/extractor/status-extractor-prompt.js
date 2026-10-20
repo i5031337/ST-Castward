@@ -132,7 +132,7 @@ function readerValues(state, messageText, trackerSettings, leadUp = [], { strang
         notes: [describeNpcTemplates(), describeExtractionNotes(state, messageText),
             state?.locations?.enabled ? buildLocationReaderNotes(state, messageText, leadUp) : ''].filter(Boolean).join('\n'),
         locationReminder: state?.locations?.enabled
-            ? 'For an established setting or arrival, put "locations" beside "global", "player", and "characters". Set "locations.current" to the place name. Put new place records in "locations.places".' : '',
+            ? 'Include the top-level boolean "locationChanged": true for a changed scene location, false otherwise.' : '',
         poolRecovery: describePoolRecovery(state, trackerSettings),
         injuryConsequence: describeInjuryConsequence(trackerSettings),
         ...strangerValues(strangers),
@@ -140,7 +140,7 @@ function readerValues(state, messageText, trackerSettings, leadUp = [], { strang
         collectionExample: buildDeltaExample(trackerSettings),
         minimalReply: buildMinimalExample(state, trackerSettings),
         changedReply: buildChangedExample(state, trackerSettings),
-        newNpcReply: buildNewNpcExample(trackerSettings),
+        newNpcReply: buildNewNpcExample(trackerSettings, state?.locations?.enabled),
         earlier: leadUp.join('\n---\n'),
         message: messageText,
         reasons: trackerSettings.extractionReasons === false ? '' : 'on',
@@ -189,6 +189,7 @@ export function buildMinimalExample(state, trackerSettings = {}) {
     const present = (state?.characters || []).map(c => c?.name).filter(Boolean);
     return JSON.stringify({
         ...(trackerSettings.extractionReasons === false ? {} : { why: {} }),
+        ...(state?.locations?.enabled ? { locationChanged: false } : {}),
         global: {},
         player: {},
         characters: present.map(name => ({ name })),
@@ -196,12 +197,13 @@ export function buildMinimalExample(state, trackerSettings = {}) {
 }
 
 /** Show a populated NPC entry even when the current scene has no cast. */
-export function buildNewNpcExample(trackerSettings = {}) {
+export function buildNewNpcExample(trackerSettings = {}, locationsEnabled = false) {
     const template = npcTemplates()[0];
     const stats = Object.fromEntries((template ? npcStatsFor({ npcTemplateId: template.id }, trackerSettings) : trackerSettings.npcStats || [])
         .filter(stat => stat?.name)
         .map(stat => [stat.name, '<initial reading>']));
     return JSON.stringify({
+        ...(locationsEnabled ? { locationChanged: false } : {}),
         global: {},
         player: {},
         characters: [{
@@ -256,6 +258,7 @@ function buildChangedExample(state, trackerSettings) {
         ...(trackerSettings.extractionReasons === false ? {} : {
             why: playerStat ? { [`Player.${playerStat}`]: '<short quote from the latest message>' } : {},
         }),
+        ...(state?.locations?.enabled ? { locationChanged: false } : {}),
         global: {},
         player,
         characters,

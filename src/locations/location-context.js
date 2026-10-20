@@ -61,15 +61,6 @@ function selectedPlaces(store, messages, limit = 12) {
     return [...selected.values()];
 }
 
-function promptPlace(place, store, description = true, descriptionLimit = 1000) {
-    return {
-        name: place.name,
-        ...(place.aliases.length ? { aliases: place.aliases.slice(0, 8) } : {}),
-        ...(store.records[place.parentId] ? { parent: store.records[place.parentId].name } : {}),
-        ...(description && place.description ? { description: place.description.slice(0, descriptionLimit) } : {}),
-    };
-}
-
 /** Plain scene facts for the narrator; internal place references stay with the reader. */
 export function buildLocationSceneContext(state, messages = []) {
     const store = readLocationStore(state);
@@ -91,39 +82,27 @@ export function buildLocationSceneContext(state, messages = []) {
     return lines.length ? `Known places:\n${lines.join('\n')}` : '';
 }
 
-/** A bounded name directory keeps stored IDs out of reader requests. */
-export function buildLocationReaderNotes(state, messageText, earlier = []) {
+/** The tracker classifies movement; a separate reader will supply place details. */
+export function buildLocationReaderNotes(state) {
     const store = readLocationStore(state);
     if (!store.enabled) return '';
-    const selected = selectedPlaces(store, [...earlier, messageText]);
-    const order = new Map(selected.map(place => [place.id, place]));
-    for (const place of Object.values(store.records)) order.set(place.id, place);
-    const full = new Set(selected.map(place => place.id));
-    const directory = [];
-    for (const place of order.values()) {
-        const next = promptPlace(place, store, full.has(place.id), 4000);
-        if (directory.length >= 80 || JSON.stringify([...directory, next]).length > 24000) break;
-        directory.push(next);
+    const current = store.records[store.currentId];
+    const path = [], seen = new Set();
+    for (let place = current; place && !seen.has(place.id); place = store.records[place.parentId]) {
+        seen.add(place.id);
+        path.push({ name: place.name, ...(place.aliases.length ? { aliases: place.aliases } : {}) });
     }
     return [
-        '\n### PLACES',
-        'Note when the current scene’s location changes.',
-        'Set "locations.current" to the opening setting or the place reached.',
-        'Record newly established places and details in "locations.places".',
-        'Put "locations" beside "global", "player", and "characters".',
-        '{"global":{},"player":{},"characters":[],"locations":{"places":[{"name":"<parent place>"},{"name":"<place>","parent":"<parent place>","description":"<complete established description>","aliases":["<alternate name>"]}],"current":"<place>"}}',
-        'Replace placeholders with established story facts.',
-        'Identify places by name or a known alias.',
-        'Include changed details.',
-        'Write a complete description that preserves established facts.',
-        'Use "parent" for the containing place.',
-        'Include newly discovered parents in "places".',
-        'Use "" for an explicit departure with unknown destination.',
-        'Omit unchanged "current" and "parent" fields.',
-        'Plans, rumours, invitations, and mentions remain context until established.',
-        directory.length < order.size ? 'The directory is partial.' : '',
-        'Known places: ' + JSON.stringify({ current: store.records[store.currentId]?.name || '', places: directory }),
-    ].filter(Boolean).join('\n');
+        '\n### SCENE LOCATION',
+        'Compare the player’s final location with the recorded location.',
+        'Put "locationChanged" at the top level as a JSON boolean.',
+        'Use true when the player finishes elsewhere or leaves for an unknown destination.',
+        'Entering a different room counts as changing place.',
+        'Use false when the player finishes in the recorded place, even if another character travels.',
+        'Plans, invitations, rumours, and mentions leave the player’s location unchanged.',
+        'Use false when the recorded location is unknown.',
+        'Recorded location (current place first, then containing places): ' + JSON.stringify(path.length ? path : null),
+    ].join('\n');
 }
 
 export function locationExtractionSchema() {

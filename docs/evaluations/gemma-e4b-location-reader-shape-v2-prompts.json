@@ -1,0 +1,248 @@
+{
+  "frozenAt": "2026-10-20T20:56:53.939Z",
+  "sourceHashes": {
+    "src/locations/location-reader.js": "e3f12e085323e2bb6598dfb0a01068fafdb21792c5f3cd17625e1a476f2ad8df",
+    "src/locations/location-context.js": "0b414212eaa9d9c11d1c79d09ba1e390fb40f67954c8e62eed7062ae93934b23",
+    "src/locations/location-store.js": "e3e114c717588370ba4742a929336f05f261a79635ce51256694cc6a4f2bb87c",
+    "src/locations/location-proposals.js": "0270e412d3fd2841dbed89a682107820f0e1a66543f096ee3ec8cfd032503e71",
+    "src/prompts/prompt-texts.js": "462e7f39e328ebb3fed4ad09f996f50166312a5abfa3f7c7b3674864afe6fafc",
+    "src/prompts/prompt-texts-locations.js": "45dfba60151ae8d3163554633b155c7baab988953ec9ef870d9fb9c174cce7b0",
+    "src/core/utils-format.js": "0181fe13c572d2790deaa2c2cdbdb7c313be7120e13808498aecd7e4f6f1fbda",
+    "src/tracker/extractor/status-extractor-request.js": "cd154c2a11ebec73c46900b0f9044a42b0e99f1a85ffe268f1994cf20391f3b3",
+    "tests/eval-gemma-location-reader.js": "7c0d6583a5cedf53c798df1323014160fc4ab500d68d59a6db0d115ec5afb4c5",
+    "tests/fixtures/gemma-request-batches.mjs": "fede71a833bcd1102857a26249122911d339afed85538fb8aa59f442635fc4bf"
+  },
+  "git": "d2426a7be976356577733392d346dc746393c2c0",
+  "criteria": {
+    "requiredCheckRate": 1,
+    "repeats": 2,
+    "casesInformedWording": true,
+    "failedFrom": "location-reader-initial",
+    "note": "Focused initial component evaluation, not end-to-end tracker trigger coverage or broad reliability validation."
+  },
+  "bundles": [
+    {
+      "scenario": {
+        "id": "opening-fantasy",
+        "state": {
+          "locations": {
+            "enabled": true,
+            "currentId": "",
+            "records": {}
+          }
+        },
+        "text": "Alex and Mira sit inside the Blue Heron Inn in the town of Brackenport. Rain taps the inn’s leaded windows while a fire warms the common room. Alex stays at the table as Mira places two healing potions beside him and describes their quest.",
+        "current": "Blue Heron Inn",
+        "creates": [
+          "Blue Heron Inn",
+          "Brackenport"
+        ],
+        "parents": [
+          [
+            "Blue Heron Inn",
+            "Brackenport"
+          ]
+        ],
+        "descriptions": [
+          [
+            "Blue Heron Inn",
+            "window",
+            "fire"
+          ]
+        ]
+      },
+      "settings": {
+        "extractionMaxTokens": 2400,
+        "extractionUseSchema": false
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "Read the roleplay and return a JSON place update.\nIdentify the player’s final scene location and established place facts.\nUse earlier messages and known places as context.\nFollow the output format in the request."
+        },
+        {
+          "role": "user",
+          "content": "Identify where the player Alex finishes the latest message.\nUse the opening setting when the current place is unknown.\nEntering another room counts as changing place.\nFollow the player’s scene when other characters travel separately.\nUse resolved arrivals and departures. Treat plans, invitations, rumours, and mentions as context.\n\n### KNOWN PLACES\n{\"current\":null,\"containingPlaces\":[],\"directory\":[],\"directoryComplete\":true}\n\n### LATEST MESSAGE\nAlex and Mira sit inside the Blue Heron Inn in the town of Brackenport. Rain taps the inn’s leaded windows while a fire warms the common room. Alex stays at the table as Mira places two healing potions beside him and describes their quest.\n\n### OUTPUT FORMAT\nReturn one JSON object with optional \"places\" and \"current\" fields.\nSet \"current\" to the final place’s exact name or known alias.\nUse \"current\":\"\" after an explicit departure to an unknown destination.\nOmit \"current\" when the player’s location remains unchanged or cannot be established.\nPut newly established places and changed details in \"places\", an array of objects.\nShape: {\"places\":[{\"name\":\"<place>\"}],\"current\":\"<final place>\"}.\nEach entry has \"name\" and may include \"description\", \"aliases\", and \"parent\".\nReuse known names or aliases for existing places.\nSet \"parent\" to the containing place’s name when containment is established. Include that containing place in \"places\" when new.\nUse \"parent\":\"\" only when established facts remove a containing place.\nWrite descriptions from established facts. Preserve known facts when replacing a description.\nInclude established alternative names in \"aliases\". Preserve existing aliases when replacing them.\nOmit unchanged details. Return {} when there is nothing to update."
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "id": "opening-dating",
+        "state": {
+          "locations": {
+            "enabled": true,
+            "currentId": "",
+            "records": {}
+          }
+        },
+        "text": "Alex is at Moonbeam Café, a quiet café with blue chairs and a brass espresso machine. June sits across the table and gives Alex a sunflower. They remain there chatting over coffee.",
+        "current": "Moonbeam Café",
+        "creates": [
+          "Moonbeam Café"
+        ],
+        "roots": [
+          "Moonbeam Café"
+        ],
+        "descriptions": [
+          [
+            "Moonbeam Café",
+            "blue",
+            "espresso"
+          ]
+        ]
+      },
+      "settings": {
+        "extractionMaxTokens": 2400,
+        "extractionUseSchema": false
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "Read the roleplay and return a JSON place update.\nIdentify the player’s final scene location and established place facts.\nUse earlier messages and known places as context.\nFollow the output format in the request."
+        },
+        {
+          "role": "user",
+          "content": "Identify where the player Alex finishes the latest message.\nUse the opening setting when the current place is unknown.\nEntering another room counts as changing place.\nFollow the player’s scene when other characters travel separately.\nUse resolved arrivals and departures. Treat plans, invitations, rumours, and mentions as context.\n\n### KNOWN PLACES\n{\"current\":null,\"containingPlaces\":[],\"directory\":[],\"directoryComplete\":true}\n\n### LATEST MESSAGE\nAlex is at Moonbeam Café, a quiet café with blue chairs and a brass espresso machine. June sits across the table and gives Alex a sunflower. They remain there chatting over coffee.\n\n### OUTPUT FORMAT\nReturn one JSON object with optional \"places\" and \"current\" fields.\nSet \"current\" to the final place’s exact name or known alias.\nUse \"current\":\"\" after an explicit departure to an unknown destination.\nOmit \"current\" when the player’s location remains unchanged or cannot be established.\nPut newly established places and changed details in \"places\", an array of objects.\nShape: {\"places\":[{\"name\":\"<place>\"}],\"current\":\"<final place>\"}.\nEach entry has \"name\" and may include \"description\", \"aliases\", and \"parent\".\nReuse known names or aliases for existing places.\nSet \"parent\" to the containing place’s name when containment is established. Include that containing place in \"places\" when new.\nUse \"parent\":\"\" only when established facts remove a containing place.\nWrite descriptions from established facts. Preserve known facts when replacing a description.\nInclude established alternative names in \"aliases\". Preserve existing aliases when replacing them.\nOmit unchanged details. Return {} when there is nothing to update."
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "id": "new-parent-inn-mixed",
+        "state": {
+          "locations": {
+            "enabled": true,
+            "currentId": "inn",
+            "records": {
+              "town": {
+                "id": "town",
+                "name": "Ashford",
+                "aliases": [],
+                "description": "A riverside town.",
+                "parentId": ""
+              },
+              "inn": {
+                "id": "inn",
+                "name": "Copper Lantern",
+                "aliases": [
+                  "the Lantern"
+                ],
+                "description": "A warm roadside inn.",
+                "parentId": "town"
+              },
+              "ruins": {
+                "id": "ruins",
+                "name": "Old Ruins",
+                "aliases": [
+                  "the broken tower"
+                ],
+                "description": "A roofless stone tower.",
+                "parentId": "town"
+              }
+            }
+          }
+        },
+        "text": "Alex and Mira leave Ashford behind and arrive in Brackenport. They enter the Blue Heron Inn, a small tavern within Brackenport, and sit at its oak bar under a green lantern. Mira buys Alex a potion for three gold, and Alex recovers two HP while drinking it. They remain inside the inn.",
+        "current": "Blue Heron Inn",
+        "creates": [
+          "Brackenport",
+          "Blue Heron Inn"
+        ],
+        "parents": [
+          [
+            "Blue Heron Inn",
+            "Brackenport"
+          ]
+        ],
+        "descriptions": [
+          [
+            "Blue Heron Inn",
+            "oak",
+            "green"
+          ]
+        ]
+      },
+      "settings": {
+        "extractionMaxTokens": 2400,
+        "extractionUseSchema": false
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "Read the roleplay and return a JSON place update.\nIdentify the player’s final scene location and established place facts.\nUse earlier messages and known places as context.\nFollow the output format in the request."
+        },
+        {
+          "role": "user",
+          "content": "Identify where the player Alex finishes the latest message.\nUse the opening setting when the current place is unknown.\nEntering another room counts as changing place.\nFollow the player’s scene when other characters travel separately.\nUse resolved arrivals and departures. Treat plans, invitations, rumours, and mentions as context.\n\n### KNOWN PLACES\n{\"current\":\"Copper Lantern\",\"containingPlaces\":[\"Ashford\"],\"directory\":[{\"name\":\"Copper Lantern\",\"aliases\":[\"the Lantern\"],\"description\":\"A warm roadside inn.\",\"parent\":\"Ashford\"},{\"name\":\"Ashford\",\"aliases\":[],\"description\":\"A riverside town.\",\"parent\":\"\"},{\"name\":\"Old Ruins\",\"aliases\":[\"the broken tower\"],\"description\":\"A roofless stone tower.\",\"parent\":\"Ashford\"}],\"directoryComplete\":true}\n\n### LATEST MESSAGE\nAlex and Mira leave Ashford behind and arrive in Brackenport. They enter the Blue Heron Inn, a small tavern within Brackenport, and sit at its oak bar under a green lantern. Mira buys Alex a potion for three gold, and Alex recovers two HP while drinking it. They remain inside the inn.\n\n### OUTPUT FORMAT\nReturn one JSON object with optional \"places\" and \"current\" fields.\nSet \"current\" to the final place’s exact name or known alias.\nUse \"current\":\"\" after an explicit departure to an unknown destination.\nOmit \"current\" when the player’s location remains unchanged or cannot be established.\nPut newly established places and changed details in \"places\", an array of objects.\nShape: {\"places\":[{\"name\":\"<place>\"}],\"current\":\"<final place>\"}.\nEach entry has \"name\" and may include \"description\", \"aliases\", and \"parent\".\nReuse known names or aliases for existing places.\nSet \"parent\" to the containing place’s name when containment is established. Include that containing place in \"places\" when new.\nUse \"parent\":\"\" only when established facts remove a containing place.\nWrite descriptions from established facts. Preserve known facts when replacing a description.\nInclude established alternative names in \"aliases\". Preserve existing aliases when replacing them.\nOmit unchanged details. Return {} when there is nothing to update."
+        }
+      ]
+    },
+    {
+      "scenario": {
+        "id": "independent-root-mixed",
+        "state": {
+          "locations": {
+            "enabled": true,
+            "currentId": "inn",
+            "records": {
+              "town": {
+                "id": "town",
+                "name": "Ashford",
+                "aliases": [],
+                "description": "A riverside town.",
+                "parentId": ""
+              },
+              "inn": {
+                "id": "inn",
+                "name": "Copper Lantern",
+                "aliases": [
+                  "the Lantern"
+                ],
+                "description": "A warm roadside inn.",
+                "parentId": "town"
+              },
+              "ruins": {
+                "id": "ruins",
+                "name": "Old Ruins",
+                "aliases": [
+                  "the broken tower"
+                ],
+                "description": "A roofless stone tower.",
+                "parentId": "town"
+              }
+            }
+          }
+        },
+        "text": "Alex leaves Ashford entirely, crosses the unincorporated countryside, and enters Moonbeam Café. The café is a standalone roadside building outside every town, not part of Ashford. It has pink curtains. June is waiting inside. Alex gives her one of his two sunflowers and stays at their table in the café.",
+        "current": "Moonbeam Café",
+        "creates": [
+          "Moonbeam Café"
+        ],
+        "roots": [
+          "Moonbeam Café"
+        ],
+        "descriptions": [
+          [
+            "Moonbeam Café",
+            "pink"
+          ]
+        ]
+      },
+      "settings": {
+        "extractionMaxTokens": 2400,
+        "extractionUseSchema": false
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "Read the roleplay and return a JSON place update.\nIdentify the player’s final scene location and established place facts.\nUse earlier messages and known places as context.\nFollow the output format in the request."
+        },
+        {
+          "role": "user",
+          "content": "Identify where the player Alex finishes the latest message.\nUse the opening setting when the current place is unknown.\nEntering another room counts as changing place.\nFollow the player’s scene when other characters travel separately.\nUse resolved arrivals and departures. Treat plans, invitations, rumours, and mentions as context.\n\n### KNOWN PLACES\n{\"current\":\"Copper Lantern\",\"containingPlaces\":[\"Ashford\"],\"directory\":[{\"name\":\"Copper Lantern\",\"aliases\":[\"the Lantern\"],\"description\":\"A warm roadside inn.\",\"parent\":\"Ashford\"},{\"name\":\"Ashford\",\"aliases\":[],\"description\":\"A riverside town.\",\"parent\":\"\"},{\"name\":\"Old Ruins\",\"aliases\":[\"the broken tower\"],\"description\":\"A roofless stone tower.\",\"parent\":\"Ashford\"}],\"directoryComplete\":true}\n\n### LATEST MESSAGE\nAlex leaves Ashford entirely, crosses the unincorporated countryside, and enters Moonbeam Café. The café is a standalone roadside building outside every town, not part of Ashford. It has pink curtains. June is waiting inside. Alex gives her one of his two sunflowers and stays at their table in the café.\n\n### OUTPUT FORMAT\nReturn one JSON object with optional \"places\" and \"current\" fields.\nSet \"current\" to the final place’s exact name or known alias.\nUse \"current\":\"\" after an explicit departure to an unknown destination.\nOmit \"current\" when the player’s location remains unchanged or cannot be established.\nPut newly established places and changed details in \"places\", an array of objects.\nShape: {\"places\":[{\"name\":\"<place>\"}],\"current\":\"<final place>\"}.\nEach entry has \"name\" and may include \"description\", \"aliases\", and \"parent\".\nReuse known names or aliases for existing places.\nSet \"parent\" to the containing place’s name when containment is established. Include that containing place in \"places\" when new.\nUse \"parent\":\"\" only when established facts remove a containing place.\nWrite descriptions from established facts. Preserve known facts when replacing a description.\nInclude established alternative names in \"aliases\". Preserve existing aliases when replacing them.\nOmit unchanged details. Return {} when there is nothing to update."
+        }
+      ]
+    }
+  ]
+}

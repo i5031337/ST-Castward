@@ -9,6 +9,33 @@ travel mechanics, map visualization, automatic backgrounds, or NPC residence rul
 Remembered information comes from explicit edits, selected lore, or reviewed story
 evidence. A name mentioned in dialogue is not evidence that the scene moved there.
 
+## Current reader flow
+
+The tracker reports only the top-level boolean `locationChanged`. Code requests a
+separate place reading when the chat has no confirmed current place, or when an
+existing place is followed by `locationChanged: true`. Disabled Places and unchanged
+known scenes skip this request. Initialization repeats while the current place
+remains unconfirmed, including while a discovery awaits review.
+
+The place reader uses the configured tracker connection and its own editable
+prompts. It receives current/known place facts and recent story, and returns names,
+descriptions, aliases, containment, and the current place. Code resolves names to
+stored IDs and routes proposals through the existing automatic/review settings.
+Unsolicited place records from the stat tracker are ignored.
+
+Unsupported model fields are ignored with visible warnings; supported fields are
+validated. A failed place request leaves successful stat/inventory reading intact and appears
+in the tracker report. Regenerating the latest tracker reading retries from its turn
+base. Replies are checked against chat, message, text, swipe, persona, and active
+System before publishing changes; place review also preserves intervening edits.
+The report displays both model outputs, and usage has a separate Location Reading
+counter. These flows have focused tests and a read-only live Places UI fixture.
+
+Dedicated-reader model results are retained in
+[evaluation evidence](evaluations/gemma-e4b-location-reader-shape-v2-report.md).
+The shape retest is a regression sample; missing or invented details remain model
+limitations and do not establish broad extraction reliability.
+
 ## Ownership and identity
 
 Places live in `sillynpc_status_state.locations`, inside existing chat metadata:
