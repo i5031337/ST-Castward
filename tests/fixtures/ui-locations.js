@@ -127,8 +127,8 @@ export async function checkLocations(root) {
         check('parentRowExpands', parentButton?.getAttribute('aria-expanded') === 'false'
             && !view.querySelector('.sillynpc-location-children')
             && (parentButton.click(), !!view.querySelector('.sillynpc-location-children')));
-        view.querySelector('.sillynpc-location-edit').click();
-        check('parentEditSeparate', view.querySelector('.sillynpc-location-form h4')?.textContent.includes('Edit A very long parent'));
+        check('parentClickOpensEditor', view.querySelector('.sillynpc-location-form h4')?.textContent.includes('Edit A very long parent')
+            && !view.querySelector('.sillynpc-location-edit'));
         check('longNameContained', view.scrollWidth <= view.clientWidth + 2);
         state.locations.currentId = 'room';
         render(view);

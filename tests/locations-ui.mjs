@@ -79,6 +79,8 @@ test('parent places collapse independently and search reveals matching children'
     assert.ok(cards().some(node => node.textContent === 'City'));
     assert.ok(!cards().some(node => node.textContent === 'Inn'));
     find(f.view, el => el.textContent === 'City' && el.attributes?.['aria-expanded'] === 'false').listeners.click();
+    assert.ok(find(f.view, el => el.textContent === 'Edit City' && el.tag === 'h4'));
+    assert.ok(!cards().some(node => node.textContent === 'Edit'));
     assert.ok(cards().some(node => node.textContent === 'Inn'));
     assert.ok(!cards().some(node => node.textContent === 'Room'));
     assert.ok(!cards().some(node => node.textContent === 'Clearing'));
@@ -90,7 +92,7 @@ test('parent places collapse independently and search reveals matching children'
     search.value = 'Room'; search.listeners.input();
     assert.ok(cards().some(node => node.textContent === 'Room'));
     assert.ok(!cards().some(node => node.textContent === 'Clearing'));
-    find(f.view, el => el.attributes?.['aria-label'] === 'Edit City').listeners.click();
+    find(f.view, el => el.textContent === 'City' && el.attributes?.['aria-expanded'] === 'true').listeners.click();
     assert.ok(find(f.view, el => el.textContent === 'Edit City' && el.tag === 'h4'));
 });
 

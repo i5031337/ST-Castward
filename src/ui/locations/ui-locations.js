@@ -132,11 +132,12 @@ export function renderLocationsView(view) {
             const descendants = (children.get(record.id) || []).filter(visible);
             const expanded = query ? !searchCollapsedIds.has(record.id) : expandedIds.has(record.id);
             const row = button(record.name, () => {
-                if (!descendants.length) return drawEditor(record);
-                const ids = query ? searchCollapsedIds : expandedIds;
-                if (ids.has(record.id)) ids.delete(record.id);
-                else ids.add(record.id);
-                drawList();
+                if (descendants.length) {
+                    const ids = query ? searchCollapsedIds : expandedIds;
+                    if (ids.has(record.id)) ids.delete(record.id);
+                    else ids.add(record.id);
+                }
+                drawEditor(record);
             });
             row.classList.add('sillynpc-location-card');
             if (descendants.length) {
@@ -148,12 +149,6 @@ export function renderLocationsView(view) {
             row.title = record.name;
             if (record.id === store.currentId) row.append(element('span', 'Confirmed', 'sillynpc-location-badge'));
             header.append(row);
-            if (descendants.length) {
-                const edit = button('Edit', () => drawEditor(record));
-                edit.classList.add('sillynpc-location-edit');
-                edit.setAttribute('aria-label', `Edit ${record.name}`);
-                header.append(edit);
-            }
             group.append(header);
             if (descendants.length && expanded) {
                 const nested = element('div', '', 'sillynpc-location-children');

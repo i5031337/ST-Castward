@@ -17,7 +17,6 @@
 .sillynpc-location-parent.menu_button { font-weight: 600; color: var(--sillynpc-accent-text, var(--sillynpc-accent)); }
 .sillynpc-location-parent::before { content: '▸'; flex: none; }
 .sillynpc-location-parent[aria-expanded="true"]::before { content: '▾'; }
-.sillynpc-location-edit.menu_button { flex: none; margin: 0; font-size: var(--sillynpc-text-base); }
 .sillynpc-location-card.active { outline: 2px solid currentColor; outline-offset: -2px; }
 .sillynpc-location-form > .sillynpc-section-title { overflow-wrap: anywhere; }
 .sillynpc-location-badge { font-size: 0.8em; opacity: 0.8; white-space: nowrap; }
