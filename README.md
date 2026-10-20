@@ -10,6 +10,8 @@ Castward gives your player and NPCs character sheets that grow with the story. A
 
 Start with a minimal persona and a Narrator card. The built-in Fantasy Adventure System supplies the tracking rules, so you can describe who you are and start playing.
 
+Switch between the included Fantasy Adventure, Dating Sim, and Creature Trainer Systems, or customize the rules to fit your own setting.
+
 ## Built for local models
 
 Other trackers often failed because my local model couldn't return the JSON they needed. Castward is built with that problem in mind. A small local model should be able to handle the bookkeeping.
