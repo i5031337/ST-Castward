@@ -63,10 +63,7 @@ export function buildExtractionSchema(trackerSettings, { strangers = [], state =
                             all: { type: 'boolean' },
                         },
                     } : { type: itemShape(col).properties[itemShape(col).required[0]]?.type || 'string' } },
-                    update: { type: 'array', items: {
-                        ...itemShape(col), properties: Object.fromEntries(Object.entries(itemShape(col).properties)
-                            .filter(([key]) => key !== collectionQuantityField(col)?.name)),
-                    } },
+                    update: { type: 'array', items: itemShape(col) },
                 },
             }])),
         };

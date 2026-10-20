@@ -184,7 +184,7 @@ function applyCollectionUpdate(actor, collectionId, update, { allowReplace = fal
         const primary = colDef.fields.find(field => field.isPrimary)?.name || 'name';
         for (const upd of update.update) {
             const itemName = itemIdentifier(actor, actualCollectionId, upd, primary, dryRun);
-            if (itemName !== undefined) updateItem(actor, actualCollectionId, itemName, upd);
+            if (itemName !== undefined) updateItem(actor, actualCollectionId, itemName, upd, { dryRun });
         }
     }
 }
@@ -277,7 +277,7 @@ function removeItem(actor, collectionId, itemName, isManual = false) {
 /**
  * Updates an item in an actor's collection.
  */
-function updateItem(actor, collectionId, itemName, updates) {
+function updateItem(actor, collectionId, itemName, updates, { dryRun = false } = {}) {
     if (!actor.collections || !actor.collections[collectionId] || itemName === undefined || itemName === null) return;
     
     const settings = getSettings().statusTracker;
@@ -294,9 +294,21 @@ function updateItem(actor, collectionId, itemName, updates) {
     if (itemIndex !== -1) {
         const item = actor.collections[collectionId][itemIndex];
 
+        const qtyField = collectionQuantityField(colDef);
+        if (qtyField && Object.hasOwn(updates, qtyField.name)) {
+            const amount = updates[qtyField.name];
+            if (typeof amount !== 'number' || !Number.isFinite(amount) || amount < 0) {
+                warnSkipped(actor, collectionId, 'update requires a nonnegative quantity.', dryRun);
+                return;
+            }
+            if (amount === 0) {
+                removeItem(actor, collectionId, itemName);
+                return;
+            }
+        }
         const merged = { ...item };
         Object.keys(updates).forEach(key => {
-            if (validFields.has(key) && key !== collectionQuantityField(colDef)?.name) merged[key] = updates[key];
+            if (validFields.has(key)) merged[key] = updates[key];
         });
 
         /* Normalised like the add and replace paths, which this used to skip: writing

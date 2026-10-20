@@ -62,13 +62,36 @@ test('invalid quantities leave holdings intact and produce review diagnostics', 
     assert.ok(deps.takeCollectionWarnings().every(message => /positive quantity/.test(message)));
 });
 
-test('updates change other fields, while history and accepted review replacements retain absolute quantities', () => {
+test('updates set absolute quantities alongside other fields, and replacements retain absolute quantities', () => {
     const { actor, apply } = fixture();
     apply({ add: [{ name: 'Potion', quantity: 4 }] });
     apply({ update: [{ name: 'Potion', quantity: 1, condition: 'Opened' }] });
-    assert.deepEqual(actor.collections.items, [{ name: 'Potion', quantity: 4, condition: 'Opened' }]);
+    assert.deepEqual(actor.collections.items, [{ name: 'Potion', quantity: 1, condition: 'Opened' }]);
     apply({ replace: [{ name: 'Potion', quantity: 2, condition: 'Opened' }] });
     assert.equal(actor.collections.items[0].quantity, 2);
+});
+
+test('absolute updates preserve omitted quantities and remove an entry at zero', () => {
+    const { actor, apply } = fixture();
+    apply({ add: [{ name: 'Potion', quantity: 4 }] });
+    apply({ update: [{ name: 'potion', quantity: 2 }] });
+    assert.equal(actor.collections.items[0].quantity, 2);
+    apply({ update: [{ name: 'potion', condition: 'Opened' }] });
+    assert.equal(actor.collections.items[0].quantity, 2);
+    apply({ update: [{ name: 'Potion', quantity: 0 }] });
+    assert.deepEqual(actor.collections.items, []);
+    apply({ update: [{ name: 'Unknown', quantity: 3 }] });
+    assert.deepEqual(actor.collections.items, []);
+});
+
+test('invalid absolute quantities leave holdings intact and produce diagnostics', () => {
+    const { actor, apply, deps } = fixture();
+    apply({ add: [{ name: 'Potion', quantity: 4 }] });
+    for (const quantity of [-1, '2', null, Infinity, NaN]) {
+        apply({ update: [{ name: 'Potion', quantity, condition: 'Invalid' }] });
+    }
+    assert.deepEqual(actor.collections.items, [{ name: 'Potion', quantity: 4, condition: '' }]);
+    assert.equal(deps.takeCollectionWarnings().length, 1);
 });
 
 test('uncounted collections retain set membership semantics', () => {
@@ -89,6 +112,9 @@ test('custom identifiers, legacy quantity keys and transfers keep quantities own
     deps.applyCollectionUpdate(npc, 'items', { add: [{ code: 'Potion', qty: 2 }] }, { dryRun: true });
     assert.equal(actor.collections.items[0].qty, 2);
     assert.equal(npc.collections.items[0].qty, 2);
+    deps.applyCollectionUpdate(npc, 'items', { update: [{ code: 'Potion', qty: 1 }] }, { dryRun: true });
+    assert.equal(npc.collections.items[0].qty, 1);
+    assert.equal(actor.collections.items[0].qty, 2);
     assert.deepEqual(deps.committedState, {});
 });
 
@@ -105,7 +131,7 @@ test('quantity settings infer existing counted fields, preserve keys, and round-
     assert.equal(uncounted.trackQuantity, false);
 });
 
-test('reader schema and examples show amounts for removals and reserve update for other fields', () => {
+test('reader schema accepts quantity updates while existing examples retain incremental amounts', () => {
     const { settings, col } = fixture();
     const dependencies = { collectionQuantityField, collectionAppliesTo, progressionFields: () => null,
         npcStatsFor: () => [], npcTemplates: () => [], poolTags: () => [], strangerKind: () => '',
@@ -116,7 +142,7 @@ test('reader schema and examples show amounts for removals and reserve update fo
     assert.deepEqual(operations.remove.items.required, ['name']);
     assert.equal(operations.remove.items.properties.quantity.type, 'number');
     assert.equal(operations.remove.items.properties.all.type, 'boolean');
-    assert.equal(operations.update.items.properties.quantity, undefined);
+    assert.equal(operations.update.items.properties.quantity.type, 'number');
     const examples = load('../src/tracker/extractor/status-extractor-prompt-state.js', { collectionQuantityField }, 'buildDeltaExample')({ collections: [col] });
     const changes = examples.split('\n\n').map(block => JSON.parse(block.slice(block.indexOf('\n') + 1)).items);
     assert.deepEqual(changes[1], { remove: [{ name: '<exact primary field value>', quantity: 1 }] });
@@ -139,4 +165,24 @@ test('accepting a partial-consumption review writes the absolute remainder once'
     actor.collections = structuredClone(before.player.collections);
     apply(accepted.player.collections.items);
     assert.equal(actor.collections.items[0].quantity, 3);
+});
+
+
+test('reader normalization applies absolute remainders to production review holdings', async () => {
+    const { harness } = await import('./fixtures/gemma-tracker-harness.mjs');
+    for (const [system, collectionId, name, before, after] of [
+        ['fantasy', 'equipment', 'red healing potion', 3, 2],
+        ['dating', 'items', 'mint candy', 4, 2],
+        ['dating', 'items', 'sunflower', 2, 1],
+    ]) {
+        const state = { global: {}, player: { name: 'Alex', stats: {},
+            collections: { [collectionId]: [{ name, quantity: before }] } }, characters: [] };
+        const api = await harness(system, state);
+        const result = api.normalize({ global: {}, characters: [], player: { collections: {
+            [collectionId]: { update: [{ name, quantity: after }] },
+        } } }, 'Alex uses part of the stack.');
+        assert.equal(result.effective.player.collections[collectionId][0].quantity, after);
+        assert.equal(result.holdings.player.collections[collectionId][0].quantity, after);
+        assert.equal(state.player.collections[collectionId][0].quantity, before);
+    }
 });
