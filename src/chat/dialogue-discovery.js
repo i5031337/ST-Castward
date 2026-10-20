@@ -1,3 +1,4 @@
+import { cardForShortName } from '../characters/short-name-match.js';
 import { dialogueLabels } from './dialogue-line.js';
 import { stripVoiceCueNodes } from '../tts/voice-cue-format.js';
 
@@ -20,7 +21,7 @@ export function cardForDialogueName(name, characters, caseInsensitive = false) {
             } catch { /* An invalid alias must not interrupt message processing. */ }
         }
     }
-    return null;
+    return cardForShortName(name, characters, caseInsensitive);
 }
 
 /** Extract quoted speech on the recognized line, excluding prose and action spans. */

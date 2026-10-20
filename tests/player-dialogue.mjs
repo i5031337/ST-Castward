@@ -1,3 +1,4 @@
+import { cardForShortName } from '../src/characters/short-name-match.js';
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFileSync } from 'node:fs';
@@ -20,6 +21,7 @@ function fixture() {
     };
     load('tracker/status-cast-decisions.js', {
         getAllCharacters: () => cards,
+        getActiveCharacters: () => cards.filter(card => card.active !== false), cardForShortName,
         getUserAvatar: avatar => `/User Avatars/${avatar}`,
         getIgnoredSpeakerLabels: () => new Set(),
         normaliseSpeakerLabel: name => name.trim().toLowerCase(),
@@ -70,4 +72,20 @@ test('player avatar keeps the written label ahead of a matched NPC alias', () =>
     assert.equal(avatar.dataset.persona, 'true');
     assert.equal(avatar.dataset.charId, undefined);
     assert.equal(avatar.dataset.default, undefined);
+});
+
+test('short dialogue labels and tracker names share one canonical identity', () => {
+    const { deps, state, cards } = fixture();
+    const card = { id: 'professor', name: 'Professor Vale', aliases: [] };
+    cards.push(card, { id: 'inactive', name: 'Doctor Vale', active: false });
+    assert.equal(deps.findCardForName('Vale'), card);
+    assert.equal(deps.resolveCanonicalName('vale'), 'Professor Vale');
+    state.castDecisions['professor vale'] = 'excluded';
+    assert.equal(deps.mayJoinScene('Vale'), false);
+    cards.push({ id: 'doctor', name: 'Doctor Vale' });
+    assert.equal(deps.findCardForName('Vale'), null);
+    assert.equal(deps.resolveCanonicalName('Vale'), 'Vale');
+    cards.push({ id: 'exact', name: 'Vale' });
+    assert.equal(deps.findCardForName('Vale').id, 'exact');
+    assert.deepEqual(card.aliases, []);
 });

@@ -23,6 +23,8 @@ with browser_session() as browser:
                 saved = Object.fromEntries(keys.map(key => [key, settings[key]]));
                 Object.assign(settings, { enabled: true, caseInsensitive: true,
                     hideSpeakerNames: false, applyColors: true });
+                const { checkShortNames } = await import(base + 'tests/fixtures/ui-short-names.js');
+                Object.assign(result, await checkShortNames(base, settings));
                 const player = logic.getCurrentPersonaName();
                 const cards = [
                     { id: 'dialogue-fixture-a', name: 'Zélie', aliases: [] },

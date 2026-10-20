@@ -1,3 +1,5 @@
+import { getActiveCharacters } from '../characters/characters.js';
+import { cardForShortName } from '../characters/short-name-match.js';
 import { getUserAvatar } from '../../../../../personas.js';
 import { getAllCharacters } from '../characters/character-repository.js';
 import { getIgnoredSpeakerLabels, normaliseSpeakerLabel } from '../story/speaker-labels.js';
@@ -21,7 +23,7 @@ function findCardForName(name) {
             }
         }
     }
-    return null;
+    return cardForShortName(name, getActiveCharacters(), true);
 }
 
 /**
