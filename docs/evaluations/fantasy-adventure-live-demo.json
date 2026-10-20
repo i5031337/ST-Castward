@@ -2,7 +2,7 @@
   "captured": "2026-10-19",
   "chatTitle": "Castward live demo — The Floodgate",
   "system": "Built-in Fantasy Adventure template; no rule edits",
-  "storyModel": "gemma-4-26B-A4B-it-qat-UD-Q4_K_XL.gguf",
+  "storyModel": "gemma-4-31B-it-qat-UD-Q4_K_XL.gguf",
   "readerProfile": "llama-gemma-26b-nothink (same model, separate reader request)",
   "profileGeneration": {
     "mode": "Clicked Joram’s placeholder after turn one to create and Fill through the extension UI.",
@@ -302,7 +302,7 @@
   ],
   "observations": [
     "No NPC name, profile, image, or dialogue was supplied in advance. The opening prompt supplies the player and situation only.",
-    "No tracked stats or collections were manually edited. Cropped browser screenshots include the complete user message, reply, and tracker for each story turn.",
+    "No tracked stats or collections were manually edited. The README shows the first two story turns. Each turn screenshot includes the complete user message, reply, and tracker.",
     "The generated character sheet was recaptured after turn three, with the wrench returned to Joram. The demo System’s display settings now match the corrected starter: Background, Appearance, and Motivation are text sections; Ancestry and Role remain badges. Stats are collapsed and Lore is open to show the profile. No generated text, messages, tracked stats, or holdings changed during this display update.",
     "Profile generation filled ancestry, role, appearance, and motivation; unsupported Background remained blank.",
     "The reader did not initialize the player’s starting staff or potions as Equipment. The last turn does not demonstrate a tracked potion decrement.",
