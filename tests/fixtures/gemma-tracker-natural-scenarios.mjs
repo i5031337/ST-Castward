@@ -55,7 +55,6 @@ They talk for a while about whether it would be worth asking the merchant for di
 export function makeNaturalState(scenario, settings) {
     const state = makeState(scenario, settings);
     if (scenario.startPlace) {
-        state.global.Location = scenario.startPlace;
         state.locations.records.home.name = scenario.startPlace;
     }
     if (scenario.condition) state.player.stats.Condition = scenario.condition;

@@ -5,7 +5,7 @@ const place = (id, name, description = '') => ({ id, name, description, aliases:
 export const scenarios = [
     { id: 'fantasy-opening', system: 'fantasy', opening: true,
         text: 'You are seated inside the Rusty Lantern tavern in the town of Briar Glen. Copper lamps hang above its oak tables. Mira, the human innkeeper, greets you: "Welcome, Alex." It is morning.',
-        checks: [['placeCreated', 'Rusty Lantern', true], ['currentPlace', 'Rusty Lantern', true], ['worldContains', 'Location', 'Rusty Lantern'], ['npcPresent', 'Mira'], ['noXp', true]] },
+        checks: [['placeCreated', 'Rusty Lantern', true], ['currentPlace', 'Rusty Lantern', true], ['npcPresent', 'Mira'], ['noXp', true]] },
     { id: 'fantasy-battle', system: 'fantasy', npc: 'Mira', xp: '90/100',
         text: 'Inside the Rusty Lantern, the trapped cellar door snaps against Alex, dealing 3 HP of damage. Alex frees the trapped courier and earns 20 XP. Mira remains beside Alex, unharmed. The rescue is complete; Alex picks up two red healing potions, each a small glass bottle that restores health. No one travels anywhere.',
         checks: [['playerValue', 'HP', '9/12'], ['playerValue', 'XP', '110/100'], ['itemAdd', 'equipment', 'red healing potion', 2], ['npcPresent', 'Mira'], ['noMovement', true]] },
@@ -17,7 +17,7 @@ export const scenarios = [
         checks: [['noMovement', true], ['noPlaceCreated', 'Old Mill', true], ['noInventoryChanges', true], ['noXp', true], ['npcPresent', 'Mira']] },
     { id: 'dating-opening', system: 'dating', opening: true,
         text: 'You sit inside Moonbeam Café in the Riverside district. Blue tile lines the counter and rain taps its tall windows. June, a human university student, sits across from you. "Nice to finally meet you, Alex," she says. It is Saturday afternoon.',
-        checks: [['placeCreated', 'Moonbeam Café', true], ['currentPlace', 'Moonbeam Café', true], ['worldContains', 'Location', 'Moonbeam'], ['npcPresent', 'June'], ['noInventoryChanges', true]] },
+        checks: [['placeCreated', 'Moonbeam Café', true], ['currentPlace', 'Moonbeam Café', true], ['npcPresent', 'June'], ['noInventoryChanges', true]] },
     { id: 'dating-gift', system: 'dating', npc: 'June', items: [{ name: 'sunflower', quantity: 3 }],
         text: 'Still seated inside Moonbeam Café, Alex gives June one of the three sunflowers from the bag. June keeps the bright yellow flower. "You remembered my favorite. I feel much closer to you now," she says, smiling warmly. Alex feels happy, though the long conversation costs 2 Social Energy. No one leaves.',
         checks: [['itemRemove', 'items', 'sunflower', 1], ['npcItemAdd', 'June', 'items', 'sunflower', 1], ['playerValue', 'Social Energy', '8/10'], ['npcIncreased', 'June', 'Affection'], ['noMovement', true]] },
@@ -29,14 +29,14 @@ export const scenarios = [
         checks: [['noMovement', true], ['noPlaceCreated', 'Glasshouse', true], ['noInventoryChanges', true], ['relationshipUnchanged', 'June', true], ['npcPresent', 'June']] },
     { id: 'fantasy-holdout-opening', system: 'fantasy', holdout: true, opening: true,
         text: 'Alex stands inside Emberwatch Keep, a fortress in Ashvale. A cracked stone hearth warms the guardroom. Captain Rowan, a human guard, stands beside Alex. "You are safe here," Rowan says. Dusk has fallen.',
-        checks: [['placeCreated', 'Emberwatch Keep', true], ['currentPlace', 'Emberwatch Keep', true], ['worldContains', 'Location', 'Emberwatch'], ['npcPresent', 'Rowan'], ['noXp', true]] },
+        checks: [['placeCreated', 'Emberwatch Keep', true], ['currentPlace', 'Emberwatch Keep', true], ['npcPresent', 'Rowan'], ['noXp', true]] },
     { id: 'fantasy-holdout-cost', system: 'fantasy', holdout: true, npc: 'Mira',
         earlier: ['[Narrator] If Alex casts Spark, it will drain 2 HP. Alex has not cast it yet.'],
         text: 'Alex stays at the Rusty Lantern table beside Mira. "I might cast Spark later, but not now," Alex says. Mira mentions a silver key she saw yesterday, but neither of them obtains it. They rest quietly.',
         checks: [['playerValue', 'HP', '12/12'], ['noInventoryChanges', true], ['noXp', true], ['noMovement', true], ['npcPresent', 'Mira']] },
     { id: 'dating-holdout-opening', system: 'dating', holdout: true, opening: true,
         text: 'Alex is inside the Paper Crane bookstore on Linden Street. Green reading lamps light shelves of used novels. Sam, a human librarian, stands across the counter. "Hello, Alex," Sam says. It is Monday morning.',
-        checks: [['placeCreated', 'Paper Crane', true], ['currentPlace', 'Paper Crane', true], ['worldContains', 'Location', 'Paper Crane'], ['npcPresent', 'Sam'], ['noInventoryChanges', true]] },
+        checks: [['placeCreated', 'Paper Crane', true], ['currentPlace', 'Paper Crane', true], ['npcPresent', 'Sam'], ['noInventoryChanges', true]] },
     { id: 'dating-holdout-drink', system: 'dating', holdout: true, npc: 'June', items: [{ name: 'mint candy', quantity: 4 }],
         text: 'Alex remains at Moonbeam Café with June and eats two of the four mint candies from the bag, leaving two. June quietly reads her own book; nothing about their relationship changes. After a quiet rest, Alex recovers 1 Social Energy.', energy: '6/10',
         checks: [['itemRemove', 'items', 'mint candy', 2], ['playerValue', 'Social Energy', '7/10'], ['relationshipUnchanged', 'June', true], ['noMovement', true], ['npcPresent', 'June']] },
@@ -44,7 +44,7 @@ export const scenarios = [
 export function makeState(scenario, settings) {
     const defaults = defs => Object.fromEntries(defs.map(def => [def.name, String(def.defaultValue ?? '')]));
     const name = scenario.system === 'fantasy' ? 'Rusty Lantern' : 'Moonbeam Café';
-    return { global: { ...defaults(settings.globalStats), Location: scenario.opening ? 'Unknown' : name },
+    return { global: defaults(settings.globalStats),
         player: { stats: { ...defaults(settings.playerStats), ...(scenario.hp ? { HP: scenario.hp } : {}),
             ...(scenario.xp ? { XP: scenario.xp } : {}), ...(scenario.energy ? { 'Social Energy': scenario.energy } : {}) },
             collections: { [scenario.system === 'fantasy' ? 'equipment' : 'items']: scenario.items || [], clothing: scenario.clothing || [] } },
