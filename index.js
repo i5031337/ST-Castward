@@ -1,6 +1,7 @@
 import { refreshExtensionEnabled } from './src/entry/entry-enabled.js';
 import { initNpcExpressions } from './src/expressions/npc-expressions.js';
 import { initNpcTts } from './src/tts/npc-tts.js';
+import { initNpcCreationTool } from './src/npc/npc-tool.js';
 import { buildSettingToggle } from './src/ui/shared/ui-shared.js';
 import { eventSource, event_types } from '../../../events.js';
 import { onMessageRendered, onMessageForExtraction, onSwipe, onRegenerateStarted, onMessageDeleted, onMessageEdited } from './src/entry/entry-message-events.js';
@@ -90,6 +91,7 @@ jQuery(async () => {
             })
             .catch(err => console.warn(LOG_PREFIX, 'Could not move pictures into folders', err));
         initStatusLogic();
+        initNpcCreationTool();
         initNpcExpressions();
         initNpcTts();
         setMemoryButtonRefresh(refreshMemoryButton);

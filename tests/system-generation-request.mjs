@@ -45,3 +45,14 @@ test('main API supports both structured and ordinary text paths', async () => {
     const structured = build({ generateRawData: async params => { parameters = params; return { section: {}, assumptions: [] }; } })({ extractionUseSchema: true });
     assert.deepEqual(await structured(args), { section: {}, assumptions: [] }); assert.deepEqual(parameters.jsonSchema, args.schema);
 });
+
+test('NPC creation uses its explicit lore connection and separate usage counter', async () => {
+    let profileId, counted;
+    const context = { ConnectionManagerRequestService: { sendRequest: async id => {
+        profileId = id; return { content: '{}' };
+    } } };
+    const request = build(context, kind => { counted = kind; })({ extractionProfileId: 'reader' }, 'lore', 'npc');
+    await request(args);
+    assert.equal(profileId, 'lore');
+    assert.equal(counted, 'npc');
+});

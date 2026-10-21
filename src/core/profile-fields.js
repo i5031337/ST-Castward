@@ -37,7 +37,7 @@ export function profileFieldsForCard(card, settings) {
     const fields = resolveProfileFields(card?.isPlayer ? 'player' : 'npc', settings);
     if (card?.isPlayer) return fields;
     const ids = npcProfileIdsFor(card, settings === undefined ? undefined
-        : settings?.statusTracker?.presets?.[settings.activeSystem]?.definition);
+        : settings?.statusTracker?.presets?.[settings.activeSystem]?.definition ?? null);
     return ids ? fields.filter(field => ids.has(field.id)) : fields;
 }
 

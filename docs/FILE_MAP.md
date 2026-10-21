@@ -10,6 +10,8 @@ SillyTavern loads `index.js` and `style.css` from `manifest.json`. The JavaScrip
 | `src/core/` | Constants, settings, System schemas, active profile fields, memories, migrations, and shared utilities. |
 | `src/api/` | Lore and image generation and file operations. |
 | `src/generation/` | Staged System generation, canonical schema fragments, validation, requests, and isolated drafts. |
+| `src/npc/` | Narrator Create NPC tool, System-aware creation contract, randomized name selection, validation, guarded chat-owned saves and background portraits. |
+| `tests/npc-creation.mjs`, `tests/ui-npc-creation.py` | Creation contracts, name randomness and collisions, stat bounds, retries, cancellation, duplicate prevention and unsaved host tool/UI checks. |
 | `src/characters/` | Character records, ownership, portraits, and transfer. |
 | `src/chat/` | Chat ownership, message decoration, and reprocessing. |
 | `src/expressions/` | NPC sprite packs, per-line expression cache, static dialogue portraits, and full-size speech sprites. |

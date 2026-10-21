@@ -23,6 +23,8 @@ export const defaultSettings = {
     systemNpcRosters: {},
     /** Add speaker-line formatting instructions to the story prompt. */
     dialogueFormatEnabled: true,
+    /** Let the narrator commission structured, chat-owned NPCs before introducing them. */
+    npcCreationToolEnabled: true,
     /** 0 puts it after the newest message - the last thing read before answering. */
     dialogueFormatDepth: 0,
     /** Expose formatting in the host prompt list instead of injecting it at dialogueFormatDepth. */

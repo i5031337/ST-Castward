@@ -40,6 +40,10 @@ You can read the [full session and reader outputs](docs/evaluations/fantasy-adve
 
 Profiles are filled on click by default. Turn on **Tracker → Generate Profiles For New NPCs** to fill them as you meet people. Portraits need a configured SillyTavern Image Generation service.
 
+With a supported Chat Completion model and SillyTavern's **Enable function calling** switched on, the narrator can use **Create NPC** before introducing a new supporting character. Castward generates a profile and initial stats for your active System, asks for eight varied names, and randomly chooses an unused candidate. The tool returns the saved name and character details before the narrator continues. Returning characters should use their existing cards.
+
+Control this under **Writing → Let The Narrator Create NPCs** (enabled by default). Creation uses the **Lore Connection** and **Lore Reply Budget**, with at most one repair request for invalid output. Collections start empty; portraits follow the automatic Fill portrait setting and run in the background. NPCs belong to the current chat and remain available across swipes and regeneration; creating a card does not itself put someone in the scene. Tool support and the model's decision to call it depend on your chat connection. Failed or cancelled generation does not save a partial NPC; a lorebook failure leaves the completed card available for retry with Fill.
+
 ## What it does
 
 Each speaker gets a portrait and their own color, with narration between their lines. Click a portrait to open their sheet. NPCs belong to the chat where you meet them, so another adventure can have its own version of the same character.

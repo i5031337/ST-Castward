@@ -10,6 +10,8 @@ import { debugLog } from './constants.js';
  * so counting reply tokens for it would be inventing a number.
  */
 export const USAGE_KINDS = [
+    { id: 'npc', label: 'NPC Creation', sends: 'text',
+      note: 'Narrator tool requests for new NPC profiles and randomized names.' },
     { id: 'system', label: 'System Generation', sends: 'text',
       note: 'All planning, definition, and repair requests for generated Systems.' },
     { id: 'extraction', label: 'Tracker Extraction', sends: 'text',

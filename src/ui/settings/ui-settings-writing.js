@@ -3,6 +3,7 @@ import { promptListAvailable } from '../../prompts/prompt-slot.js';
 import { applyDialogueFormatPrompt } from '../../prompts/dialogue-format.js';
 import { buildSettingToggle, buildSettingTextArea, buildSettingNumber } from '../shared/ui-shared.js';
 import { renderBanList } from '../shared/ui-banlist.js';
+import { npcCreationService } from '../../npc/npc-tool.js';
 
 export function renderWritingRulesView(view, onReprocessMessages) {
     if (!view) return;
@@ -20,6 +21,18 @@ export function renderWritingRulesView(view, onReprocessMessages) {
     intro.className = 'notes sillynpc-tab-intro';
     intro.textContent = 'Ask for consistent dialogue, avoid repeated phrases, and choose how speakers are recognized.';
     view.appendChild(intro);
+
+    view.append(buildSettingToggle({
+        key: 'npcCreationToolEnabled',
+        label: 'Let The Narrator Create NPCs',
+        help: 'Offers a Create NPC tool before a new supporting character enters the story. '
+            + 'Generates a structured profile and initial stats, then randomly selects an unused name from eight candidates. '
+            + 'Requires a Chat Completion model with SillyTavern function calling enabled. '
+            + 'Uses the Lore Connection and Lore Reply Budget; each creation makes one generation request, with one repair if needed. '
+            + 'Cards belong to this chat and remain available across swipes and regeneration. '
+            + 'Collections start empty. Missing portraits follow the automatic Fill portrait setting.',
+        onChange: () => npcCreationService.invalidate(),
+    }));
 
     const formatHeading = document.createElement('h4');
     formatHeading.className = 'sillynpc-subsection-title';
