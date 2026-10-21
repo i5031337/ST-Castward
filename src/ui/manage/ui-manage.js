@@ -49,10 +49,11 @@ export function refreshManageOnStatusUpdate(state, details) {
 }
 eventSource.on('sillynpc-status-updated', refreshManageOnStatusUpdate);
 
-export async function openManagePopup({ tab = 'characters', charId = null } = {}) {
+export async function openManagePopup({ tab = 'characters', charId = null, locationId = null } = {}) {
     if (manageState.managePopup && manageState.manageRoot) {
         commitStatEdits(manageState.manageRoot);
         manageState.editingCharId = charId;
+        manageState.openLocationId = locationId;
         manageState.activeTab = tab;
         renderManageView();
         return;
@@ -80,6 +81,7 @@ export async function openManagePopup({ tab = 'characters', charId = null } = {}
             manageState.managePopup = null;
             manageState.manageRoot = null;
             manageState.editingCharId = null;
+            manageState.openLocationId = null;
             // Only when something that affects the chat actually changed. This used to run
             // every time, so opening the menu, reading something and closing it again
             // redrew a hundred messages for nothing - which is the stalled scrolling you
@@ -94,6 +96,7 @@ export async function openManagePopup({ tab = 'characters', charId = null } = {}
     
     manageState.manageRoot = container;
     manageState.editingCharId = charId;
+    manageState.openLocationId = locationId;
     manageState.charView = 'profile';
     manageState.activeTab = tab;
     
@@ -277,7 +280,9 @@ export function renderManageView() {
     if (manageState.activeTab === 'player') {
         draw('sillynpc-player-view', renderPlayerView);
     } else if (manageState.activeTab === 'places') {
-        draw('sillynpc-locations-view', renderLocationsView);
+        const locationId = manageState.openLocationId;
+        manageState.openLocationId = null;
+        draw('sillynpc-locations-view', view => renderLocationsView(view, { locationId }));
     } else if (manageState.activeTab === 'characters') {
         const gridView = manageState.manageRoot.querySelector('#sillynpc-grid-view');
         const editView = manageState.manageRoot.querySelector('#sillynpc-editor-view');

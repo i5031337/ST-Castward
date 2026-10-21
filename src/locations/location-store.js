@@ -38,13 +38,17 @@ export function readLocationStore(state) {
         currentId: Object.hasOwn(records, source?.currentId) ? source.currentId : '', records };
 }
 
-/** Names from the outermost parent to the confirmed current place. */
-export function currentLocationPath(state) {
+/** Records from the outermost parent to the confirmed current place. */
+export function currentLocationTrail(state) {
     const store = readLocationStore(state);
     if (!store.enabled) return [];
     const path = [];
-    for (let id = store.currentId; id; id = store.records[id]?.parentId) path.unshift(store.records[id].name);
+    for (let id = store.currentId; id; id = store.records[id]?.parentId) path.unshift(store.records[id]);
     return path;
+}
+
+export function currentLocationPath(state) {
+    return currentLocationTrail(state).map(place => place.name);
 }
 
 export function createLocationId() {

@@ -96,7 +96,7 @@
     box-sizing: border-box !important;
 }
 
-.sillynpc-status-box *:not(.fa-solid):not(.fa-regular):not(.fa-brands):not(.sillynpc-status-buttons-container):not(.sillynpc-status-add-btn):not(.sillynpc-status-settings-btn):not(.sillynpc-status-undo-btn):not(.sillynpc-status-meter):not(.sillynpc-status-meter-fill):not(.sillynpc-status-meter-text):not(.sillynpc-status-portrait):not(.sillynpc-status-divider):not(.sillynpc-status-collection-item):not(.sillynpc-status-collection-more):not(.sillynpc-status-place):not(.sillynpc-status-place *):not(.sillynpc-char-columns .sillynpc-status-characters):not(.sillynpc-char-columns .sillynpc-status-characters > :not(.sillynpc-status-char)) {
+.sillynpc-status-box *:not(.fa-solid):not(.fa-regular):not(.fa-brands):not(.sillynpc-status-buttons-container):not(.sillynpc-status-add-btn):not(.sillynpc-status-settings-btn):not(.sillynpc-status-undo-btn):not(.sillynpc-status-meter):not(.sillynpc-status-meter-fill):not(.sillynpc-status-meter-text):not(.sillynpc-status-portrait):not(.sillynpc-status-editable):not(.sillynpc-status-divider):not(.sillynpc-status-collection-item):not(.sillynpc-status-collection-more):not(.sillynpc-status-place):not(.sillynpc-status-place *):not(.sillynpc-char-columns .sillynpc-status-characters):not(.sillynpc-char-columns .sillynpc-status-characters > :not(.sillynpc-status-char)) {
     all: revert !important;
     box-sizing: border-box !important;
     font-family: inherit !important;
@@ -124,6 +124,9 @@
 .sillynpc-status-place-parent, .sillynpc-status-place-current { overflow-wrap: anywhere; min-width: 0; }
 .sillynpc-status-place-parent, .sillynpc-status-place-separator { opacity: 0.7; }
 .sillynpc-status-place-current { color: var(--sillynpc-accent-text, var(--sillynpc-accent)); font-weight: 700; }
+.sillynpc-status-place [role="button"] { cursor: pointer; }
+.sillynpc-status-place [role="button"]:hover { text-decoration: underline; }
+.sillynpc-status-place [role="button"]:focus-visible { outline: 1px solid currentColor; outline-offset: 2px; }
 
 .sillynpc-status-box .sillynpc-status-collection-item,
 .sillynpc-status-box .sillynpc-status-collection-more {

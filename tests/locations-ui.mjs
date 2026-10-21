@@ -60,8 +60,24 @@ function fixture(open = true) {
     }, 'renderLocationsView');
     const view = new Element('div');
     render(view);
-    return { view, render: () => render(view), context, saves, settings, system, promptedFlags, get state() { return state; }, get settingSaves() { return settingSaves; }, get loads() { return loads; }, setState: next => { state = next; } };
+    return { view, render: options => render(view, options), context, saves, settings, system, promptedFlags, get state() { return state; }, get settingSaves() { return settingSaves; }, get loads() { return loads; }, setState: next => { state = next; } };
 }
+
+test('a place shortcut opens its editor by ID and expands its ancestors without saving', () => {
+    const f = fixture();
+    f.setState({ locations: { records: {
+        city: { name: 'City' }, inn: { name: 'Inn', parentId: 'city' }, room: { name: 'Room', parentId: 'inn' },
+    } } });
+    f.render({ locationId: 'room' });
+    assert.ok(find(f.view, el => el.textContent === 'Edit Room' && el.tag === 'h4'));
+    assert.equal(find(f.view, el => el.textContent === 'City' && el.attributes?.['aria-expanded'])?.attributes['aria-expanded'], 'true');
+    assert.equal(find(f.view, el => el.textContent === 'Inn' && el.attributes?.['aria-expanded'])?.attributes['aria-expanded'], 'true');
+    f.render({ locationId: 'city' });
+    assert.ok(find(f.view, el => el.textContent === 'Edit City' && el.tag === 'h4'));
+    f.render({ locationId: 'missing' });
+    assert.ok(!find(f.view, el => el.tag === 'form'));
+    assert.equal(f.saves.length, 0);
+});
 
 test('parent places collapse independently and search reveals matching children', () => {
     const f = fixture();

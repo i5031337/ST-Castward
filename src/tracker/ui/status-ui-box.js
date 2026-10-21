@@ -15,7 +15,7 @@ import { showAddCharacterDropdown } from './status-ui-menu.js';
 import { attachInlineEditListeners } from './status-ui-edit.js';
 import { renderExtractionReport } from './status-ui-report.js';
 import { trackerMessageIndex } from './status-ui-placement.js';
-import { currentLocationPath } from '../../locations/location-store.js';
+import { currentLocationTrail } from '../../locations/location-store.js';
 import { appendPlaceTrail } from './status-ui-place.js';
 
 /**
@@ -176,7 +176,7 @@ export function buildTrackerBox(state, {
     const settings = getSettings().statusTracker;
     const htmlToRender = buildStatusHtml(state,
         view === 'globals' ? { ...settings, showPlayerStats: false, showNpcStats: false } : settings);
-    const placePath = settings.showGlobalStats ? currentLocationPath(state) : [];
+    const placePath = settings.showGlobalStats ? currentLocationTrail(state) : [];
 
     if (!hasVisibleContent(htmlToRender) && !placePath.length) return null;
 

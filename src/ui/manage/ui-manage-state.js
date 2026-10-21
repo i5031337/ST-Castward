@@ -2,6 +2,7 @@ export const manageState = {
     managePopup: null,
     manageRoot: null,
     editingCharId: null,
+    openLocationId: null,
     activeTab: "characters",
     systemsView: "builder",
     gridBulk: null,

@@ -155,6 +155,45 @@ export async function checkLocations(root) {
                 && place?.textContent.includes('Guest room')
                 && place?.querySelector('.sillynpc-status-place-current')?.textContent === 'Guest room'
                 && trackerBox.scrollWidth <= trackerBox.clientWidth + 2);
+            const { manageState } = await import(root + 'src/ui/manage/ui-manage-state.js');
+            const current = place.querySelector('.sillynpc-status-place-current');
+            const parent = place.querySelector('.sillynpc-status-place-parent');
+            check('trackerPlaceAccessible', [parent, current].every(crumb => crumb.getAttribute('role') === 'button' && crumb.tabIndex === 0));
+            const { eventSource } = await import('/scripts/events.js');
+            const previousState = state;
+            let opened;
+            // Exercise editing against isolated records even when the host has no chat open.
+            const route = data => {
+                opened = data;
+                state = trackerState;
+                render(view, { locationId: data.locationId });
+            };
+            eventSource.on('sillynpc-open-manage', route);
+            const waitForPlace = async id => {
+                for (let attempt = 0; attempt < 80; attempt++) {
+                    if (opened?.locationId === id && manageState.manageRoot) return;
+                    await new Promise(resolve => setTimeout(resolve, 50));
+                }
+                throw Error('Place shortcut did not reach the menu');
+            };
+            try {
+                current.click();
+                await waitForPlace('room');
+                check('trackerPlaceOpensMenu', manageState.activeTab === 'places'
+                    && !!manageState.manageRoot?.querySelector('#sillynpc-locations-view'));
+                check('trackerCurrentPlaceEditor', view.querySelector('.sillynpc-location-form input[required]')?.value === 'Guest room');
+                parent.click();
+                await waitForPlace('city');
+                check('trackerParentPlaceEditor', view.querySelector('.sillynpc-location-form input[required]')?.value === 'A very long parent place name');
+                await manageState.managePopup.completeCancelled();
+                current.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true }));
+                await waitForPlace('room');
+                check('trackerPlaceKeyboardEditor', view.querySelector('.sillynpc-location-form input[required]')?.value === 'Guest room');
+            } finally {
+                eventSource.removeListener('sillynpc-open-manage', route);
+                await manageState.managePopup?.completeCancelled();
+                state = previousState;
+            }
             liveTracker.showGlobalStats = false;
             check('trackerWorldToggle', !actual[5].buildTrackerBox(trackerState, { view: 'globals' })
                 ?.querySelector('.sillynpc-status-place'));

@@ -20,7 +20,7 @@ function button(text, action) {
 }
 
 /** Places belong to the chat, including when its active persona changes. */
-export function renderLocationsView(view) {
+export function renderLocationsView(view, { locationId = null } = {}) {
     view.replaceChildren();
     view.classList.add('sillynpc-locations');
     view.append(element('h3', 'Places', 'sillynpc-section-title'));
@@ -249,6 +249,9 @@ export function renderLocationsView(view) {
         editor.append(form);
     }
     search.addEventListener('input', () => { searchCollapsedIds.clear(); drawList(); });
-    drawList();
-    editor.append(element('p', 'Select a place to edit it.', 'sillynpc-hint'));
+    if (locationId && store.records[locationId]) drawEditor(store.records[locationId]);
+    else {
+        drawList();
+        editor.append(element('p', 'Select a place to edit it.', 'sillynpc-hint'));
+    }
 }
