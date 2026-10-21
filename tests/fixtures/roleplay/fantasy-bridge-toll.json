@@ -1,0 +1,84 @@
+{
+  "id": "fantasy-bridge-toll",
+  "system": "fantasy",
+  "title": "A coin paid without a second accounting",
+  "startPlace": "Eastbridge",
+  "npc": "Rowan",
+  "history": [
+    {
+      "role": "user",
+      "content": "I stop before the bridge gate and ask the watchman why the road is closed."
+    },
+    {
+      "role": "assistant",
+      "content": "The bridge gate has been pulled halfway across the road. Rowan, a broad watchman in a patched blue surcoat, leans on the winch. \"Flood took the far parapet. Foot passengers only.\" He taps a dented toll bowl, then looks past you at the empty road."
+    },
+    {
+      "role": "user",
+      "content": "I count my purse under my cloak. \"Just me, no cart. What do I owe?\""
+    },
+    {
+      "role": "assistant",
+      "content": "\"Three coppers,\" Rowan says. \"And wait while I check the safety rope.\" His gloves are dark with river water. The bowl rests on the ledge within your reach; beyond him, spray rises through a gap in the bridge stones."
+    }
+  ],
+  "user": "I place three copper coins in Rowan's bowl. \"Then I'll wait here until you've checked the ropes.\" I keep my pack on and watch him work.",
+  "generationBrief": "Rowan acknowledges the payment indirectly by marking his ledger and begins checking the rope. End with Alex still at the gate. Do not repeat the amount, narrate the coin placement again, grant loot, or complete a challenge.",
+  "checks": [
+    [
+      "appliedPlayerValue",
+      "Currency",
+      "17",
+      true
+    ],
+    [
+      "npcPresent",
+      "Rowan"
+    ],
+    [
+      "noXp",
+      true
+    ],
+    [
+      "sameHoldings",
+      true
+    ],
+    [
+      "locationFlag",
+      "no",
+      true
+    ]
+  ],
+  "playerStats": {
+    "Currency": "20"
+  },
+  "text": "Rowan opens the ledger on the gate ledge and makes a mark beside the morning's entries. The charcoal leaves a black streak across his glove. He wipes it on his patched surcoat without looking, then closes the book and sets a small stone on it to keep the wind from lifting the cover.\n\n\"Stay behind that post,\" he says. \"If the anchor gives, I don't want you standing in the way.\"\n\nHe walks out as far as the first intact section of parapet. With both hands on the safety rope, he leans back until it takes his weight, then eases forward and tests it again. The wet fibers creak against the stone. You can see him checking the knot where it passes through an iron ring, working each loop with a gloved thumb.\n\nA branch comes downriver below the broken parapet and catches briefly in the rubble. Rowan watches it break free. \"Water's still rising,\" he calls. He lifts a hand for you to keep waiting while he moves to the next anchor. Spray blows through the gap and darkens the road beside the gate.",
+  "generation": {
+    "model": "/mnt/D/backup_models/gemma-4-31B-it-qat-UD-Q4_K_XL.gguf",
+    "endpoint": "http://127.0.0.1:9931/v1",
+    "generatedAt": "2026-10-20T22:15:10.011Z",
+    "narratorSha256": "ed57edec3be466a732d032b8f9d3b643df8061b72bd285ec506b3fa395444f93",
+    "parameters": {
+      "temperature": 0.8,
+      "top_p": 0.95,
+      "seed": 5031348,
+      "max_tokens": 1800,
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    },
+    "usage": {
+      "completion_tokens": 244,
+      "prompt_tokens": 653,
+      "total_tokens": 897,
+      "prompt_tokens_details": {
+        "cached_tokens": 147
+      }
+    },
+    "finishReason": "stop"
+  },
+  "review": {
+    "note": "Edited for continuity, plain prose, and the intended evidence boundary; removed unnecessary arrivals.",
+    "originalText": "Rowan doesn't offer a thank you or a nod. Instead, he reaches into the bowl with a calloused hand, sweeping the coins into a heavy leather pouch at his belt. He turns his back to you, producing a thick, stained ledger from a wooden crate. With a charcoal nub, he scrawls a quick, illegible mark beside a column of numbers, his movements methodical and devoid of warmth.\n\nOnce the ledger is snapped shut, he moves toward the edge of the bridge. He is a man of heavy proportions, his frame filling the blue surcoat, which is frayed at the seams and smeared with old grease. His face is weathered, with deep creases around a perpetual scowl and a thick, salt-and-pepper beard that smells faintly of wet wool and tobacco.\n\nHe grips a thick hempen rope, leaning his weight into it to test the tension. The rope groans under the strain, vibrating with a low, ominous hum that echoes across the gorge. Rowan narrows his eyes, listening intently to the sound of the fibers stretching against the stone anchor. You remain at the gate, the spray of the river dampening your cloak as you wait for his signal."
+  }
+}

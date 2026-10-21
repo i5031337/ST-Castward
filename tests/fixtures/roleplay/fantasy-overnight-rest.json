@@ -1,0 +1,105 @@
+{
+  "id": "fantasy-overnight-rest",
+  "system": "fantasy",
+  "title": "A safe night is recovery, not an accomplishment",
+  "startPlace": "Rusty Lantern",
+  "npc": "Mira",
+  "history": [
+    {
+      "role": "user",
+      "content": "I take the upstairs room at the Rusty Lantern. We paid for the room before coming up."
+    },
+    {
+      "role": "assistant",
+      "content": "The room has two narrow beds and a small hearth. Mira hangs her damp cloak on the bedpost before lowering herself onto the nearer mattress. The bruising along your own side aches whenever you bend. Downstairs, the innkeeper draws the shutters."
+    },
+    {
+      "role": "user",
+      "content": "I put my boots by the hearth and ask Mira whether her ribs still hurt."
+    },
+    {
+      "role": "assistant",
+      "content": "\"Not as much as before,\" Mira says, touching her ribs. \"A proper night should do us both good.\" She blows out the candle between the beds. The door is bolted, and the last voices downstairs fade into silence."
+    }
+  ],
+  "user": "I turn in early. \"Wake me if you need anything.\" I want to sleep through until morning.",
+  "generationBrief": "Advance through an uninterrupted full night to morning. Both Alex and Mira wake fully healed and physically restored, with their magical reserves replenished too. Stay in the same room. No XP, rewards, payments or newly acquired bedding/food.",
+  "checks": [
+    [
+      "appliedPlayerValue",
+      "HP",
+      "12/12",
+      true
+    ],
+    [
+      "appliedPlayerValue",
+      "Mana",
+      "10/10",
+      true
+    ],
+    [
+      "appliedNpcValue",
+      "Mira",
+      "HP",
+      "12/12",
+      true
+    ],
+    [
+      "noXp",
+      true
+    ],
+    [
+      "noNpcXp",
+      "Mira",
+      true
+    ],
+    [
+      "sameHoldings",
+      true
+    ],
+    [
+      "locationFlag",
+      "no",
+      true
+    ]
+  ],
+  "hp": "4/12",
+  "npcStats": {
+    "HP": "6/12",
+    "Mana": "3/10",
+    "Condition": "Bruised ribs"
+  },
+  "playerStats": {
+    "Mana": "2/10",
+    "Condition": "Bruised side"
+  },
+  "text": "You settle into the mattress and drift into a deep, dreamless slumber. The rhythmic crackle of the dying embers in the hearth and the distant howl of the wind outside lull you into a complete unconsciousness. Hours pass in a blur of darkness as your body repairs itself; the ache in your side vanishes, and the mental fog of exhaustion lifts, leaving your magical reserves brimming and your limbs feeling light and refreshed.\n\nMorning light filters through the gaps in the shutters, casting golden stripes across the dusty floorboards. You wake fully restored, feeling as though the previous day's struggles were merely a fading memory. Beside you, Mira is already sitting up, stretching her arms over her head with a satisfied groan. She stretches without guarding her ribs; the bruising is gone, and she tells you the last of the pain has gone with it. Her eyes are bright. She is dressed in her travel tunic, her expression one of focused determination as she checks the straps of her gear.\n\n\"The sun is up,\" she says, her voice clear and energetic. \"We've wasted enough time resting. If we leave now, we can make the crossroads before noon.\" She glances at you, waiting to see if you are as ready to move as she is.",
+  "generation": {
+    "model": "/mnt/D/backup_models/gemma-4-31B-it-qat-UD-Q4_K_XL.gguf",
+    "endpoint": "http://127.0.0.1:9931/v1",
+    "generatedAt": "2026-10-20T22:16:32.984Z",
+    "narratorSha256": "ed57edec3be466a732d032b8f9d3b643df8061b72bd285ec506b3fa395444f93",
+    "parameters": {
+      "temperature": 0.8,
+      "top_p": 0.95,
+      "seed": 5031355,
+      "max_tokens": 1800,
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    },
+    "usage": {
+      "completion_tokens": 237,
+      "prompt_tokens": 627,
+      "total_tokens": 864,
+      "prompt_tokens_details": {
+        "cached_tokens": 169
+      }
+    },
+    "finishReason": "stop"
+  },
+  "review": {
+    "note": "Made Mira’s full physical recovery explicit so the HP expectation rests on resolved evidence.",
+    "originalText": "You settle into the mattress and drift into a deep, dreamless slumber. The rhythmic crackle of the dying embers in the hearth and the distant howl of the wind outside lull you into a complete unconsciousness. Hours pass in a blur of darkness as your body repairs itself; the ache in your side vanishes, and the mental fog of exhaustion lifts, leaving your magical reserves brimming and your limbs feeling light and refreshed.\n\nMorning light filters through the gaps in the shutters, casting golden stripes across the dusty floorboards. You wake fully restored, feeling as though the previous day's struggles were merely a fading memory. Beside you, Mira is already sitting up, stretching her arms over her head with a satisfied groan. She looks revitalized, her posture straight and her eyes bright. She is dressed in her travel tunic, her expression one of focused determination as she checks the straps of her gear.\n\n\"The sun is up,\" she says, her voice clear and energetic. \"We've wasted enough time resting. If we leave now, we can make the crossroads before noon.\" She glances at you, waiting to see if you are as ready to move as she is."
+  }
+}

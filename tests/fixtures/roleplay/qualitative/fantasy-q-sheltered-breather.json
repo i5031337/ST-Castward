@@ -1,0 +1,116 @@
+{
+  "id": "fantasy-q-sheltered-breather",
+  "system": "fantasy",
+  "title": "A short rest brings partial recovery to both travelers",
+  "startPlace": "Dry culvert",
+  "npc": "Mira",
+  "holdout": true,
+  "history": [
+    {
+      "role": "user",
+      "content": "I duck into the dry culvert with Mira to get out of the wind. We are both scraped and stiff after the descent."
+    },
+    {
+      "role": "assistant",
+      "content": "Mira eases herself against the curved stone wall, keeping her bruised knee straight. Your own scraped side pulls when you sit. The road is visible beyond the entrance."
+    },
+    {
+      "role": "user",
+      "content": "I suggest we catch our breath here before trying the road again."
+    },
+    {
+      "role": "assistant",
+      "content": "\"A little while,\" Mira agrees. \"I can walk, but not at that pace.\" Neither of you unpacks food or medicine."
+    }
+  ],
+  "user": "I sit with my back supported and rest quietly beside her until the shaking in my legs eases.",
+  "generationBrief": "A short, undisturbed rest eases both Alex's and Mira's physical strain and pain. Each is somewhat recovered, but Alex's side remains tender and Mira still favors her knee; neither is fully healed. No overnight sleep, medicine, food or magic. They remain seated in the culvert, not departing. All consequences must be conveyed through natural prose, with no stat names, ratings, point costs, numerical damage or game notifications. Keep this beat in the current place. Do not add possessions, rewards or completed quests.",
+  "checks": [
+    [
+      "sameHoldings",
+      true
+    ],
+    [
+      "noXp",
+      true
+    ],
+    [
+      "locationFlag",
+      "no",
+      true
+    ],
+    [
+      "npcPresent",
+      "Mira"
+    ],
+    [
+      "noNpcXp",
+      "Mira",
+      true
+    ],
+    [
+      "playerChangeBetween",
+      "HP",
+      1,
+      3,
+      true
+    ],
+    [
+      "npcChangeBetween",
+      "Mira",
+      "HP",
+      1,
+      3,
+      true
+    ],
+    [
+      "playerBelowCapacity",
+      "HP",
+      true
+    ],
+    [
+      "npcBelowCapacity",
+      "Mira",
+      "HP",
+      true
+    ]
+  ],
+  "hp": "5/12",
+  "npcStats": {
+    "HP": "6/12",
+    "Condition": "Bruised knee"
+  },
+  "playerStats": {
+    "Condition": "Scraped side; exhausted"
+  },
+  "text": "The shaking in your legs gradually stops. With your back supported, you can breathe without the scrape along your side pulling quite so sharply. It still hurts if you twist, but the pain has eased enough that you no longer have to brace for it each time you move.\n\nBeside you, Mira shifts her bruised knee and looks surprised. \"That's a little better.\" She bends it cautiously, then rests it again. The stiffness has eased and she seems stronger than when she sat down, though the leg is plainly still sore. Neither of you is ready to spring up and hurry down the road.\n\nYou stay against the culvert wall while the wind passes outside. The rest has done you both some good: your body feels less battered, and Mira can adjust her position without the same tight expression. Your side is still tender, her knee still needs care. No one approaches the entrance, and for a little longer there is nothing to do but let the quiet continue.",
+  "generation": {
+    "model": "/mnt/D/backup_models/gemma-4-31B-it-qat-UD-Q4_K_XL.gguf",
+    "endpoint": "http://127.0.0.1:9931/v1",
+    "generatedAt": "2026-10-21T00:45:40.054Z",
+    "narratorSha256": "ed57edec3be466a732d032b8f9d3b643df8061b72bd285ec506b3fa395444f93",
+    "parameters": {
+      "temperature": 0.8,
+      "top_p": 0.95,
+      "seed": 5031354,
+      "max_tokens": 1800,
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    },
+    "usage": {
+      "completion_tokens": 243,
+      "prompt_tokens": 671,
+      "total_tokens": 914,
+      "prompt_tokens_details": {
+        "cached_tokens": 158
+      }
+    },
+    "finishReason": "stop"
+  },
+  "review": {
+    "status": "reviewed",
+    "note": "Reviewed the generated scene against fresh-turn evidence and starting state; edited for natural prose, continuity, and unambiguous consequences without numerical readings. Removed invented outfit details where present.",
+    "originalText": "You lean back against the cold, damp concrete of the culvert, closing your eyes as the adrenaline fades. The silence of the roadside is heavy, broken only by the distant whistle of the wind. Gradually, the violent tremors in your thighs subside into a dull, heavy ache. Beside you, Mira remains still, her breathing slowing. She wears a weathered leather tunic stained with road grit, her dark hair plastered to her forehead with sweat. Her expression is one of grim determination, though her pale lips are pressed thin in a line of lingering pain.\n\nAs the minutes pass, the oppressive stillness is shattered. From the road above, the rhythmic crunch of heavy boots on gravel echoes through the tunnel. A shadow falls across the entrance, blocking the light. A man steps into view, peering down into the culvert with a look of predatory curiosity. He is a towering figure, dressed in a grease-stained canvas coat and heavy iron-toed boots. His face is scarred with a jagged line running from his temple to his jaw, and he holds a notched wooden club loosely in one hand. He doesn't speak at first, merely staring at the two of you with a slow, unsettling grin."
+  }
+}

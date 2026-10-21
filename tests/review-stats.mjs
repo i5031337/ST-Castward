@@ -6,7 +6,11 @@ import { mergePendingMemoryRows } from '../src/memory/memory-review.js';
 import * as numeric from '../src/tracker/numeric-stat-bounds.js';
 import { progressionFields } from '../src/tracker/progression-fields.js';
 import { progressXp } from '../src/tracker/progression.js';
-import { npcStatsFor, npcTemplateFor, proposedNpcTemplate } from '../src/core/npc-templates.js';
+import { activeNpcSystem, npcStatsFor, npcTemplateFor, proposedNpcTemplate } from '../src/core/npc-templates.js';
+import { sameStatReading } from '../src/tracker/stat-reading-equality.js';
+
+import { normalizeModelReadings } from '../src/tracker/extractor/status-extractor-readings.js';
+import { collectLevelTransitions } from '../src/tracker/extractor/status-level-grants.js';
 
 const source = path => readFileSync(new URL(`../src/${path}`, import.meta.url), 'utf8')
     .replace(/^import .*;\n/gm, '').replace(/export /g, '');
@@ -19,7 +23,7 @@ function harness({ state, cards = [], settings, openChat = true }) {
     const message = { swipe_id: 0, extra: { sillynpc_applied: [], sillynpc_level_reading: {},
         sillynpc_reader_report: { swipe: 0, status: 'done', summary: '0 applied · 0 awaiting review' } } };
     const context = { chat: [message] };
-    const globals = { ...numeric, npcStatsFor, npcTemplateFor, proposedNpcTemplate, progressionFields, progressXp,
+    const globals = { ...numeric, npcStatsFor, npcTemplateFor, proposedNpcTemplate, progressionFields, progressXp, sameStatReading,
         splitValue, ceilingFromValue: value => { const max = splitValue(value).max; return max && Number.isFinite(Number(max)) ? Number(max) : null; },
         getSettings: () => ({ statusTracker: settings }), getAllCharacters: () => cards,
         getContext: () => context, debugLog() {}, saveSettings() {}, LOG_PREFIX: '[test]', eventSource: { emit() {} } };
@@ -37,7 +41,18 @@ function harness({ state, cards = [], settings, openChat = true }) {
         getCurrentPersonaKey: () => 'player', activeNpcSystem: () => null, saveChatSoon() {},
         appliedChangesForCurrentSwipe: () => message.extra.sillynpc_applied,
         recordAppliedChanges: (_id, rows) => message.extra.sillynpc_applied.push(...rows) });
-    return { message, state: () => live, apply: rows => {
+    return { message, state: () => live, preview: raw => {
+        const update = structuredClone(raw);
+        const warnings = [];
+        normalizeModelReadings(update, live, settings, { cards, warnings });
+        deps.sanitizeModelUpdate(update, live, settings, { warnings });
+        const transitions = collectLevelTransitions(update, live, settings, { personaId: 'player' });
+        const after = deps.applyUpdate(update, { dryRun: true });
+        const { computeStateDiff } = load('tracker/status-diff-compare.js', 'computeStateDiff', { activeNpcSystem, npcTemplateFor, splitValue });
+        const rows = computeStateDiff(live, after, settings);
+        grants.prepareGrantReview([], rows, transitions);
+        return { rows, after, warnings };
+    }, apply: rows => {
         message.extra.sillynpc_pending = rows;
         // Match the inline review panel's submitted payload, including absent destinations.
         const accepted = rows.map(row => ({ ...row, after: String(row.after ?? ''),
@@ -124,4 +139,29 @@ test('a story stat followed by level growth is still recorded as successfully re
     assert.equal(h.state().player.stats.HP, '7/11');
     assert.equal(result.remaining, 0);
     assert.equal(result.applied, 3);
+});
+
+
+test('absolute XP119 becomes reviewed Level2 and XP19 exactly once; rejection preserves baseline', () => {
+    const xpSettings = { ...settings, playerStats: [
+        { id: 'xp', name: 'XP', type: 'number' }, { id: 'level', name: 'Level', type: 'number', locked: true }],
+        progression: { player: { enabled: true, xpFieldId: 'xp', levelFieldId: 'level' } } };
+    for (const accept of [true, false]) {
+        const state = blank(); state.player.stats = { XP: '99/100', Level: '1' };
+        const h = harness({ state, settings: xpSettings });
+        const proposed = h.preview({ player: { stats: { XP: '119/100' } } });
+        assert.deepEqual(proposed.warnings, []);
+        assert.deepEqual(proposed.after.player.stats, { XP: '19/100', Level: '2' });
+        assert.deepEqual(h.state().player.stats, { XP: '99/100', Level: '1' });
+        assert.ok(proposed.rows.every(row => row.transition));
+        h.message.extra.sillynpc_pending = proposed.rows;
+        const accepted = accept ? proposed.rows : [];
+        h.resolvePendingChanges(0, accepted);
+        const expected = accept ? { XP: '19/100', Level: '2' } : { XP: '99/100', Level: '1' };
+        assert.deepEqual(h.state().player.stats, expected);
+        const recorded = h.message.extra.sillynpc_applied.length;
+        h.resolvePendingChanges(0, proposed.rows);
+        assert.deepEqual(h.state().player.stats, expected);
+        assert.equal(h.message.extra.sillynpc_applied.length, recorded);
+    }
 });

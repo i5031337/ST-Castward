@@ -3,7 +3,7 @@ import test from 'node:test';
 import { readFileSync } from 'node:fs';
 import { normalizeCollectionUpdates } from '../src/tracker/extractor/status-collection-normalize.js';
 import { diffTurnValues, applyTurnValues, turnEffectStatus } from '../src/tracker/snapshots/status-turn-delta.js';
-import { expandNumericDeltas } from '../src/tracker/extractor/status-extractor-deltas.js';
+import { normalizeModelReadings } from '../src/tracker/extractor/status-extractor-readings.js';
 
 const settings = { enabled: true, extractionMode: 'extract', collections: [
     { id: 'inventory', target: 'player' }, { id: 'abilities', target: 'npc' },
@@ -42,7 +42,7 @@ function harness(mode = 'extract') {
     const message = { mes: 'You earned experience.', extra: { sillynpc_applied: [{ old: true }] } };
     const context = { chat: [message] };
     let pending = [{ old: true }];
-    let response = { player: { stats: {}, deltas: { XP: 20 } } };
+    let response = { player: { stats: { XP: '30' } } };
     let onRequest = () => {};
     let enabled = true;
     let previewWarnings = [];
@@ -84,7 +84,7 @@ function harness(mode = 'extract') {
         triggerReprocess: () => {}, buildExtractionSchema: () => ({}), strangersToClassify: () => [],
         buildUserPrompt: state => { prompted = structuredClone(state); return ''; }, collectLeadUp: () => '',
         requestExtraction: async () => { await onRequest(); return structuredClone(response); },
-        coerceToUpdate: raw => raw, expandNumericDeltas,
+        coerceToUpdate: raw => raw, normalizeModelReadings,
         prepareLevelReading: async () => ({ rows: [], failures: [], transitions: [], reading: { personaId: 'hero' } }),
         saveLevelReading: () => {}, retryLevelReading: async () => ({ applied: false }),
         validateReviewedTransitions: () => ({ invalid: new Set() }),
@@ -193,7 +193,7 @@ test('master switch blocks forced reads and discards replies from an in-flight r
     h.setResponse({ player: { deltas: { Missing: 1 } } });
     await h.run();
     assert.deepEqual(h.pending(), []);
-    assert.match(h.message.report.warnings[0], /Player · Missing.*no configured stat/);
+    assert.match(h.message.report.warnings[0], /Player · deltas.*absolute readings/);
     assert.match(h.message.report.summary, /1 warning/);
     assert.deepEqual(h.message.report.output, { player: { deltas: { Missing: 1 } } });
     h.setResponse({ player: {} });

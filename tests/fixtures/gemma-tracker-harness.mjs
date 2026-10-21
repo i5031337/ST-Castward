@@ -9,11 +9,11 @@ import * as bounds from '../../src/tracker/numeric-stat-bounds.js';
 import { progressXp } from '../../src/tracker/progression.js';
 import { buildLocationProposals } from '../../src/locations/location-proposals.js';
 import { normalizeCollectionUpdates } from '../../src/tracker/extractor/status-collection-normalize.js';
-import { expandNumericDeltas } from '../../src/tracker/extractor/status-extractor-deltas.js';
+import { normalizeModelReadings } from '../../src/tracker/extractor/status-extractor-readings.js';
 
 // Host boundaries only: these fixtures have no saved cards, lore, persona profile or chat UI.
 // Production prompt/schema, numeric normalization, sanitation and place review are exercised.
-export async function harness(systemId, state) {
+export async function harness(systemId, state, { chat = [] } = {}) {
     const system = createBuiltinSystem(systemId);
     const settings = { ...structuredClone(defaultTrackerSettings), ...projectSystemTracker(system) };
     const root = { activeSystem: system.name, statusTracker: { ...settings, presets: { [system.name]: { definition: system } } } };
@@ -28,7 +28,7 @@ export async function harness(systemId, state) {
         if (cache.has(url.href)) return cache.get(url.href);
         const filename = url.pathname;
         if (filename.endsWith('/status-logic.js')) return status;
-        if (filename.endsWith('/st-context.js')) return { getContext: () => ({ chat: [] }) };
+        if (filename.endsWith('/st-context.js')) return { getContext: () => ({ chat }) };
         if (filename.endsWith('/core/settings.js')) return { getSettings: () => root, saveSettings() {} };
         if (filename.endsWith('/events.js')) return { eventSource: { emit() {} } };
         if (filename.endsWith('/characters/character-repository.js')) return { getAllCharacters: () => [] };
@@ -85,13 +85,13 @@ export async function harness(systemId, state) {
         saveStateToMetadata() {},
     });
     (await load('../../src/tracker/status-apply-update.js')).bind(deps);
-    return { settings, system,
+    return { settings, system, collectLeadUp: prompt.collectLeadUp,
         prompt: (text, earlier = []) => prompt.buildUserPrompt(state, text, settings, earlier),
         schema: schema.buildExtractionSchema(settings, { state }),
         normalize(raw, text) {
             const update = structuredClone(raw);
             const warnings = normalizeCollectionUpdates(update, settings, state);
-            expandNumericDeltas(update, state, settings, { warnings });
+            normalizeModelReadings(update, state, settings, { warnings });
             deps.sanitizeModelUpdate(update, state, settings, { warnings });
             const places = buildLocationProposals(state, update.locations, { provenance: { messageId: 1 } });
             // This is the same dry run used by review. It applies configured stat rules,

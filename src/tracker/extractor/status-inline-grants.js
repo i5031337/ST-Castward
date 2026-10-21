@@ -9,7 +9,7 @@ import { recordAppliedChanges } from '../snapshots/status-snapshots.js';
 import { replacementReadingState, revertToBase } from '../snapshots/status-snapshot-swipe.js';
 import { trackerMessageIndex } from '../ui/status-ui-placement.js';
 import { renderStatusTrackerBox } from '../ui/status-ui-box.js';
-import { expandNumericDeltas } from './status-extractor-deltas.js';
+import { normalizeModelReadings } from './status-extractor-readings.js';
 import { prepareGrantReview, validateReviewedTransitions } from '../level-grant-review.js';
 import { prepareLevelReading, saveLevelReading } from './status-level-reading.js';
 import { collectLeadUp } from './status-extractor-prompt.js';
@@ -19,7 +19,7 @@ import { finishExtractionReport } from './status-extraction-report.js';
 const queued = new WeakMap();
 const READING_KEY = 'sillynpc_inline_reading';
 
-/** The inline block has the same XP delta boundary and review rules as a reader reply. */
+/** The inline block has the same absolute-reading boundary and review rules as a reader reply. */
 export function queueInlineReading(update, messageId, mesEl, fingerprint) {
     const context = getContext();
     const message = context?.chat?.[Number(messageId)];
@@ -48,9 +48,9 @@ export function queueInlineReading(update, messageId, mesEl, fingerprint) {
         if (!state) return;
         rememberSwipeBase(messageId, state);
         const parsed = structuredClone(update);
-        normalizeCollectionUpdates(parsed, tracker, state, getAllCharacters());
-        expandNumericDeltas(parsed, state, tracker, { cards: getAllCharacters() });
-        sanitizeModelUpdate(parsed, state, tracker);
+        const warnings = normalizeCollectionUpdates(parsed, tracker, state, getAllCharacters());
+        normalizeModelReadings(parsed, state, tracker, { cards: getAllCharacters(), warnings });
+        sanitizeModelUpdate(parsed, state, tracker, { warnings });
         const leadUp = collectLeadUp(messageId, Number(tracker.extractionContextMessages ?? 2));
         const grants = await prepareLevelReading(parsed, state, tracker, cleaned || source, leadUp,
             message, messageId, { regenerate });
@@ -67,7 +67,7 @@ export function queueInlineReading(update, messageId, mesEl, fingerprint) {
         }
         refreshTurnBase(messageId);
         const before = loadStateFromMetadata();
-        const preview = applyUpdate(parsed, { dryRun: true, admitCharacters: true });
+        const preview = applyUpdate(parsed, { dryRun: true, admitCharacters: true, warnings });
         const changes = computeStateDiff(before, preview, tracker).filter(row => !isItemDecided(row));
         const notes = attachReasons(changes, parsed.why);
         const { auto, pending } = partitionChanges(changes, tracker);
@@ -83,8 +83,9 @@ export function queueInlineReading(update, messageId, mesEl, fingerprint) {
         message.extra[READING_KEY] = { token, swipe };
         finishExtractionReport(messageId, message, { swipe: Number(swipe), status: 'done',
             summary: `${auto.length} applied · ${pending.length} awaiting review`
+                + (warnings.length ? ` · ${warnings.length} warning${warnings.length === 1 ? '' : 's'}` : '')
                 + (grants.failures.length ? ` · ${grants.failures.length} level-up choices need retry` : ''),
-            output: structuredClone(update) });
+            output: structuredClone(update), warnings });
         renderStatusTrackerBox(mesEl);
     }).catch(error => {
         console.warn('[Castward] Inline tracker reading failed:', error);

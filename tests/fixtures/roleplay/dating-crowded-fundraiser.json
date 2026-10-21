@@ -1,0 +1,91 @@
+{
+  "id": "dating-crowded-fundraiser",
+  "system": "dating",
+  "title": "A good evening can still be exhausting",
+  "startPlace": "Community Hall",
+  "npc": "Sam",
+  "history": [
+    {
+      "role": "user",
+      "content": "I join Sam at the library fundraiser. I promised to help at the book table for the evening."
+    },
+    {
+      "role": "assistant",
+      "content": "The community hall is full of overlapping voices. Sam has rolled his sleeves up and is making change at the book table. You have spent hours answering the same questions, fetching boxes, and leaning close enough to hear people over the music."
+    },
+    {
+      "role": "user",
+      "content": "I help him stack the last box. \"How much longer until we can stop smiling at people?\""
+    },
+    {
+      "role": "assistant",
+      "content": "\"Ten minutes,\" Sam says quietly. \"Then I'm putting the closed sign up.\" He looks at your tired face and moves a stack so there is room for you behind the table. Another group approaches with books in their arms."
+    }
+  ],
+  "user": "I finish the last few sales with him, then sit behind the table and try to catch my breath. \"I need a quiet minute.\"",
+  "generationBrief": "Finish the shift at the same table; Alex is visibly socially drained after the sustained crowd, but not unconscious. Sam gives space rather than demanding talk. No books become personal possessions, no money belongs to Alex, no romance milestone. Estimate fatigue without stats in prose.",
+  "checks": [
+    [
+      "playerDecreased",
+      "Social Energy",
+      true
+    ],
+    [
+      "relationshipUnchanged",
+      "Sam",
+      true
+    ],
+    [
+      "sameHoldings",
+      true
+    ],
+    [
+      "npcPresent",
+      "Sam"
+    ],
+    [
+      "locationFlag",
+      "no",
+      true
+    ]
+  ],
+  "energy": "8/10",
+  "text": "Sam finishes with the last customer and turns the closed sign toward the hall. When someone starts to ask about another box, he points them toward the collection desk. \"We're done here. They'll sort you out over there.\"\n\nThe chair feels hard under you, but it is a relief to sit. Even with no one waiting for an answer, you keep catching fragments of other conversations and trying to follow them. Your face aches from smiling. The thought of making another introduction is more than you can manage just now.\n\nSam lowers an empty box onto the floor instead of dropping it onto the stack. He stays at the other end of the table, counting the fundraiser's cash and leaving you alone. After a minute he catches your eye and points to the quieter space behind the display boards, an offer rather than an instruction.\n\n\"We can wait here until the crowd clears,\" he says. \"No rush.\" He rolls his red sleeve back down over his wrist and returns to the count. The music is still playing, but at least nobody needs anything from you.",
+  "generation": {
+    "model": "/mnt/D/backup_models/gemma-4-31B-it-qat-UD-Q4_K_XL.gguf",
+    "endpoint": "http://127.0.0.1:9931/v1",
+    "generatedAt": "2026-10-20T22:13:31.426Z",
+    "narratorSha256": "ed57edec3be466a732d032b8f9d3b643df8061b72bd285ec506b3fa395444f93",
+    "parameters": {
+      "temperature": 0.8,
+      "top_p": 0.95,
+      "seed": 5031339,
+      "max_tokens": 1800,
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    },
+    "usage": {
+      "completion_tokens": 240,
+      "prompt_tokens": 645,
+      "total_tokens": 885,
+      "prompt_tokens_details": {
+        "cached_tokens": 124
+      }
+    },
+    "finishReason": "stop"
+  },
+  "review": {
+    "note": "Edited the generated reply for continuity, natural prose, and scene focus; removed unnecessary arrivals and unsupported actions.",
+    "originalText": "You sink into the hard plastic chair, your shoulders dropping as the adrenaline of the crowd finally fades. The noise of the hall begins to blur into a distant hum, and your mind feels heavy, as if the social exertion of the night has physically drained you. You lean back, closing your eyes for a moment to simply exist in the silence of your own head.\n\nSam notices your slump and doesn't push for conversation. Instead, he moves with a quiet, deliberate efficiency, sliding the \"Closed\" sign across the tabletop with a soft click. He stands as a silent sentinel between you and the lingering guests, his presence acting as a shield that grants you the solitude you requested.\n\nAs the room begins to clear, a final visitor lingers near the edge of the table. This is Thomas, a longtime library patron with a spindly frame and a nervous energy. He is dressed in an oversized, moth-eaten tweed blazer that smells faintly of old parchment and peppermint. His thin, wire-rimmed glasses are perched precariously on a sharp nose, and he clutches a weathered leather ledger to his chest with trembling fingers, watching you and Sam with an expectant, flickering gaze."
+  },
+  "npcCollections": {
+    "clothing": [
+      {
+        "name": "red sweater",
+        "slot": "top",
+        "color": "red"
+      }
+    ]
+  }
+}

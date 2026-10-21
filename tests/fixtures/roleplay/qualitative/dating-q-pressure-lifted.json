@@ -1,0 +1,112 @@
+{
+  "id": "dating-q-pressure-lifted",
+  "system": "dating",
+  "title": "Relief can restore some energy before any outing happens",
+  "startPlace": "Moonbeam Café",
+  "npc": "June",
+  "holdout": true,
+  "history": [
+    {
+      "role": "user",
+      "content": "I sit with June in Moonbeam Café, dreading the crowded party we had talked about attending later."
+    },
+    {
+      "role": "assistant",
+      "content": "June notices you checking the time. \"You don't look excited. Is it the crowd?\" The café itself is quiet, with only the hiss of the espresso machine behind you."
+    },
+    {
+      "role": "user",
+      "content": "I admit I have been bracing myself for meeting so many people and would rather stay somewhere quiet."
+    },
+    {
+      "role": "assistant",
+      "content": "\"Then let's not force it,\" she says. \"We can decide on something quieter another day.\" She stays seated across from you."
+    }
+  ],
+  "user": "I agree to skip the party and let myself stop rehearsing introductions. \"Thank you. I needed to hear that.\"",
+  "generationBrief": "After sitting quietly for a short while, Alex feels the social strain lift and some energy return, still not fully refreshed. June is understanding without a new romantic milestone. The party is cancelled, not attended; any quieter future outing is undecided. Both remain at the café and receive no new possessions. All consequences must be conveyed through natural prose, with no stat names, ratings, point costs, numerical damage or game notifications. Keep this beat in the current place. Do not add possessions, rewards or completed quests.",
+  "checks": [
+    [
+      "sameHoldings",
+      true
+    ],
+    [
+      "noXp",
+      true
+    ],
+    [
+      "locationFlag",
+      "no",
+      true
+    ],
+    [
+      "npcPresent",
+      "June"
+    ],
+    [
+      "relationshipUnchanged",
+      "June",
+      true
+    ],
+    [
+      "playerChangeBetween",
+      "Social Energy",
+      1,
+      3,
+      true
+    ],
+    [
+      "playerBelowCapacity",
+      "Social Energy",
+      true
+    ],
+    [
+      "worldExcludes",
+      "Occasion",
+      "party",
+      true
+    ],
+    [
+      "npcChangeBetween",
+      "June",
+      "Trust",
+      0,
+      2,
+      true
+    ]
+  ],
+  "energy": "4/10",
+  "globalStats": {
+    "Occasion": "Afternoon coffee"
+  },
+  "text": "For a few minutes neither of you tries to replace the party with another plan. June watches the rain beginning to collect on the café window. Without the need to rehearse names and introductions, you can let your attention settle on the room you are actually in.\n\n\"We don't have to make a whole evening of something just because we mentioned it,\" she says. \"Another day is fine.\" She looks back at you. \"And we can work out what we want to do then.\"\n\nAs the quiet continues, answering her stops feeling quite so difficult. Some of the energy you had spent bracing yourself seems to come back. You still would not want a crowded room or a long round of introductions, but staying at this table no longer feels like a pause before another demand. June seems content with that. She rests her arms on the table, makes no move to leave, and lets the subject of the party end without asking for an alternative.",
+  "generation": {
+    "model": "/mnt/D/backup_models/gemma-4-31B-it-qat-UD-Q4_K_XL.gguf",
+    "endpoint": "http://127.0.0.1:9931/v1",
+    "generatedAt": "2026-10-21T00:43:41.939Z",
+    "narratorSha256": "ed57edec3be466a732d032b8f9d3b643df8061b72bd285ec506b3fa395444f93",
+    "parameters": {
+      "temperature": 0.8,
+      "top_p": 0.95,
+      "seed": 5031344,
+      "max_tokens": 1800,
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    },
+    "usage": {
+      "completion_tokens": 231,
+      "prompt_tokens": 678,
+      "total_tokens": 909,
+      "prompt_tokens_details": {
+        "cached_tokens": 168
+      }
+    },
+    "finishReason": "stop"
+  },
+  "review": {
+    "status": "reviewed",
+    "note": "Reviewed the generated scene against fresh-turn evidence and starting state; edited for natural prose, continuity, and unambiguous consequences without numerical readings. Removed invented outfit details where present.",
+    "originalText": "You lean back into the vinyl seat, feeling a physical weight lift from your shoulders as the mental rehearsal of polite introductions simply vanishes. The oppressive noise of the imagined party fades, replaced by the soft, ambient hum of the Moonbeam Café. As you sit in the companionable silence, the jagged edges of your social exhaustion begin to smooth over. You aren't fully recharged, but the suffocating pressure in your chest eases, allowing you to actually taste the lingering sweetness of your drink.\n\nJune watches you with a soft, knowing expression. She is dressed in a lightweight, cream-colored linen blouse that catches the warm glow of the café's fairy lights, and her dark hair is tucked neatly behind one ear. Her demeanor is patient and grounded, devoid of any disappointment or demand for a romantic gesture. She doesn't push for a new plan or a promise of a future date; she simply exists in the moment with you, her gaze steady and supportive. The two of you remain tucked away in your corner booth, shielded from the world outside by the steamed windows and the scent of roasted beans, letting the quiet reclaim the afternoon."
+  }
+}

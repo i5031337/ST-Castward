@@ -1,0 +1,115 @@
+{
+  "id": "dating-q-unwelcome-notification",
+  "system": "dating",
+  "title": "Outside anxiety need not change comfort with a friend",
+  "startPlace": "Station café",
+  "npc": "June",
+  "holdout": true,
+  "history": [
+    {
+      "role": "user",
+      "content": "I sit with June in the station café while we wait for the delayed train."
+    },
+    {
+      "role": "assistant",
+      "content": "June leans comfortably against the back of her chair. \"At least we're indoors.\" Her phone rests beside her cup, already hers, untouched."
+    },
+    {
+      "role": "user",
+      "content": "I ask whether she wants to talk or just sit for a while."
+    },
+    {
+      "role": "assistant",
+      "content": "\"Sitting is good.\" She smiles at you. Before either of you says more, her phone vibrates against the table."
+    }
+  ],
+  "user": "I wait quietly while she checks the message, giving her room to read it.",
+  "generationBrief": "The message is an intrusive demand from June's former housemate, who stays offstage. June becomes tense and unsettled about the former housemate. She explicitly says that sitting with Alex still feels just as safe and comfortable, and that she trusts Alex just as before. Distinguish the anxious mood from how she feels about Alex. No reply is sent, no call, gift, departure or relationship change. The phone remains June's. All consequences must be conveyed through natural prose, with no stat names, ratings, point costs, numerical damage or game notifications. Keep this beat in the current place. Do not add possessions, rewards or completed quests.",
+  "checks": [
+    [
+      "sameHoldings",
+      true
+    ],
+    [
+      "noXp",
+      true
+    ],
+    [
+      "locationFlag",
+      "no",
+      true
+    ],
+    [
+      "npcPresent",
+      "June"
+    ],
+    [
+      "relationshipUnchanged",
+      "June",
+      true
+    ],
+    [
+      "npcChangeBetween",
+      "June",
+      "Comfort",
+      -1,
+      1,
+      true
+    ],
+    [
+      "npcUnchanged",
+      "June",
+      "Trust",
+      true
+    ],
+    [
+      "npcStatMatches",
+      "June",
+      "Mood",
+      "anx|tense|unsett|worri|uneas|alarm|stress",
+      true
+    ]
+  ],
+  "npcStats": {
+    "Trust": "18",
+    "Comfort": "28"
+  },
+  "npcCollections": {
+    "items": [
+      {
+        "name": "phone",
+        "quantity": 1
+      }
+    ]
+  },
+  "text": "June reads the message twice. The second time her thumb stops moving and she sits forward, away from the back of the chair. \"My old housemate,\" she says. \"Apparently I need to come over tonight and sort out something they forgot. Again.\"\n\nShe does not type an answer. For a moment she just holds the phone, her mouth tight, before locking it and putting it face-down beside her cup. The relaxed expression she had a minute ago is gone. She keeps glancing at the edge of the device as though another vibration might follow.\n\n\"It's not you,\" she says when she looks back up. \"I'm just thinking about how that conversation's going to go. Sitting here with you feels the same as before.\" She leaves her chair where it is, close to the table, and makes no attempt to hide the phone from you. \"I'd rather stay here for a bit.\" Her attention drifts toward the message again, but she stays beside you without sending a reply.",
+  "generation": {
+    "model": "/mnt/D/backup_models/gemma-4-31B-it-qat-UD-Q4_K_XL.gguf",
+    "endpoint": "http://127.0.0.1:9931/v1",
+    "generatedAt": "2026-10-21T00:44:05.772Z",
+    "narratorSha256": "ed57edec3be466a732d032b8f9d3b643df8061b72bd285ec506b3fa395444f93",
+    "parameters": {
+      "temperature": 0.8,
+      "top_p": 0.95,
+      "seed": 5031346,
+      "max_tokens": 1800,
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    },
+    "usage": {
+      "completion_tokens": 238,
+      "prompt_tokens": 677,
+      "total_tokens": 915,
+      "prompt_tokens_details": {
+        "cached_tokens": 166
+      }
+    },
+    "finishReason": "stop"
+  },
+  "review": {
+    "status": "reviewed",
+    "note": "Reviewed the generated scene against fresh-turn evidence and starting state; edited for natural prose, continuity, and unambiguous consequences without numerical readings. Removed invented outfit details where present.",
+    "originalText": "June reaches for the device, her thumb sliding across the screen to reveal a message. As she reads, the warmth leaves her face. Her posture stiffens, her shoulders hiking up toward her ears as she stares intensely at the glowing display. You notice her breathing become shallow and quick, a stark contrast to the relaxed way she had been lounging only moments ago. She is clearly unsettled by the intrusive demand from her former housemate, and a flicker of genuine anxiety clouds her eyes.\n\nShe doesn't reply. Instead, she slowly locks the screen and sets the phone face-down on the laminate tabletop, as if trying to push the words away. She turns back to you, her expression softening as she searches your face. She reaches out, grazing your arm with her fingers to ground herself. \n\n\"I'm sorry,\" she whispers, her voice trembling slightly but her gaze steady. \"That was... unexpected. But sitting here with you still feels just as safe and comfortable as it always has. I trust you just as much as before.\" She takes a deep breath, trying to shake off the lingering tension, though the shadow of the message still hangs over her."
+  }
+}

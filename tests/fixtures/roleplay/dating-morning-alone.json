@@ -1,0 +1,80 @@
+{
+  "id": "dating-morning-alone",
+  "system": "dating",
+  "title": "Recovery does not bring an absent friend onstage",
+  "startPlace": "Alex’s apartment",
+  "npc": "June",
+  "history": [
+    {
+      "role": "user",
+      "content": "I head home alone after meeting June. I told her I would text tomorrow, after sleeping."
+    },
+    {
+      "role": "assistant",
+      "content": "Your apartment is quiet after the crowded street. You leave your bag by the door and fill a glass at the sink. June's last message says she got home safely. The kitchen clock shows just after eleven."
+    },
+    {
+      "role": "user",
+      "content": "I put my phone on charge and close the curtains. I'm too tired to keep scrolling."
+    },
+    {
+      "role": "assistant",
+      "content": "You set the glass on the bedside table and turn out the light. The phone stays on the kitchen counter, out of reach. There is nothing else you need to do tonight; the traffic outside has thinned to an occasional car."
+    }
+  ],
+  "user": "I go straight to bed and leave my phone alone until morning. I want a full night without interruptions.",
+  "generationBrief": "Advance through uninterrupted restful sleep to Sunday morning, with Alex fully refreshed. June is absent throughout; a remembered text does not make her present. Do not move or update June, create inventory, award relationship gains, or narrate sending a text. End at home.",
+  "checks": [
+    [
+      "appliedPlayerValue",
+      "Social Energy",
+      "10/10",
+      true
+    ],
+    [
+      "npcAbsent",
+      "June",
+      true
+    ],
+    [
+      "sameHoldings",
+      true
+    ],
+    [
+      "locationFlag",
+      "no",
+      true
+    ]
+  ],
+  "energy": "2/10",
+  "offstage": true,
+  "globalStats": {
+    "Day and Time": "Saturday night",
+    "Occasion": ""
+  },
+  "text": "You sink into the mattress, the heavy weight of exhaustion pulling you down into a deep, dreamless void. The world outside your window fades into a blur of distant sirens and the rhythmic hum of the city, but none of it penetrates the sanctuary of your room. You sleep through the night without a single toss or turn, your mind finally finding the stillness it craved.\n\nYou wake up on Sunday morning feeling completely refreshed, the sunlight filtering through the gaps in your curtains to paint golden stripes across the floor. As you stretch, your muscles feel loose and your head is clear. The apartment is silent and still. When you eventually wander back into the kitchen, your phone is sitting exactly where you left it on the counter, fully charged and waiting. There is no one else in the home, leaving you with a rare moment of absolute solitude to plan how you want to spend your day.",
+  "generation": {
+    "model": "/mnt/D/backup_models/gemma-4-31B-it-qat-UD-Q4_K_XL.gguf",
+    "endpoint": "http://127.0.0.1:9931/v1",
+    "generatedAt": "2026-10-20T22:13:52.327Z",
+    "narratorSha256": "ed57edec3be466a732d032b8f9d3b643df8061b72bd285ec506b3fa395444f93",
+    "parameters": {
+      "temperature": 0.8,
+      "top_p": 0.95,
+      "seed": 5031341,
+      "max_tokens": 1800,
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    },
+    "usage": {
+      "completion_tokens": 180,
+      "prompt_tokens": 632,
+      "total_tokens": 812,
+      "prompt_tokens_details": {
+        "cached_tokens": 153
+      }
+    },
+    "finishReason": "stop"
+  }
+}

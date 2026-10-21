@@ -1,0 +1,94 @@
+{
+  "id": "fantasy-healing-draught",
+  "system": "fantasy",
+  "title": "An empty bottle and an incomplete recovery",
+  "startPlace": "Old Mill",
+  "npc": "Mira",
+  "history": [
+    {
+      "role": "user",
+      "content": "I sit on the mill steps and ask Mira to look at the cut on my arm."
+    },
+    {
+      "role": "assistant",
+      "content": "Mira kneels in the flour dust and eases the torn sleeve away from your arm. Blood has dried along the seam. \"You can walk, but not far like this.\" She folds your cloak under your elbow. The mill wheel knocks slowly against its broken axle behind the wall."
+    },
+    {
+      "role": "user",
+      "content": "I take one red healing potion from my pack and loosen the stopper. \"Will this be enough to get me walking?\""
+    },
+    {
+      "role": "assistant",
+      "content": "Mira reads the faded label. \"A small draught. It will help, but it won't close that whole cut.\" She gives the bottle back without drinking any. Through the open doorway you can see rain beating on the mill yard."
+    }
+  ],
+  "user": "I drink the potion and set the empty bottle on the step. \"Give it a moment. We're not leaving yet.\"",
+  "generationBrief": "Resolve drinking the draught successfully. Describe pain easing and the wound partly closing, but still tender and not fully healed. Mira stays nearby. The empty bottle remains on the step. No numbers, XP, travel, or new loot.",
+  "checks": [
+    [
+      "itemRemove",
+      "equipment",
+      "red healing potion",
+      1,
+      true
+    ],
+    [
+      "playerIncreased",
+      "HP",
+      true
+    ],
+    [
+      "playerBelowCapacity",
+      "HP",
+      true
+    ],
+    [
+      "noXp",
+      true
+    ],
+    [
+      "npcPresent",
+      "Mira"
+    ],
+    [
+      "locationFlag",
+      "no",
+      true
+    ]
+  ],
+  "hp": "5/12",
+  "items": [
+    {
+      "name": "red healing potion",
+      "quantity": 3
+    }
+  ],
+  "playerStats": {
+    "Condition": "Cut on left forearm"
+  },
+  "text": "As the thick, syrupy liquid slides down your throat, a sudden, searing heat flares in your chest before rushing toward your arm. You hiss through your teeth as the sensation turns into an intense, itching prickle. The jagged edges of the wound begin to knit together with unnatural speed, the raw flesh sealing and the heavy bleeding finally stopping. However, the relief is only partial; a thin, angry red line remains, and the area feels tender and bruised, throbbing in time with your heartbeat.\n\nMira remains crouched beside you, her gaze fixed on the injury. She is a lean woman with sun-darkened skin and sharp, observant eyes that seem to weigh your every movement. She wears a heavy linen tunic of charcoal grey, stained with oil and grit, and her dark hair is pulled back in a tight, practical knot that reveals a jagged scar running along her jawline. Her demeanor is guarded, yet there is a flicker of cautious relief in her expression as she sees the wound close.\n\nThe empty glass bottle clinks softly on the wooden step, reflecting the grey light of the storm. Mira doesn't move to leave, staying close enough to offer support if you stumble.",
+  "generation": {
+    "model": "/mnt/D/backup_models/gemma-4-31B-it-qat-UD-Q4_K_XL.gguf",
+    "endpoint": "http://127.0.0.1:9931/v1",
+    "generatedAt": "2026-10-20T22:16:21.445Z",
+    "narratorSha256": "ed57edec3be466a732d032b8f9d3b643df8061b72bd285ec506b3fa395444f93",
+    "parameters": {
+      "temperature": 0.8,
+      "top_p": 0.95,
+      "seed": 5031354,
+      "max_tokens": 1800,
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    },
+    "usage": {
+      "completion_tokens": 244,
+      "prompt_tokens": 647,
+      "total_tokens": 891,
+      "prompt_tokens_details": {
+        "cached_tokens": 170
+      }
+    },
+    "finishReason": "stop"
+  }
+}

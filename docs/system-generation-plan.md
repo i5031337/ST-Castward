@@ -134,7 +134,7 @@ reject writes outside that section and references outside the registry.
 
 Treat the premise and previous model output as content; fixed generation instructions
 define the response contract. Progression prompts must explain the positive earned XP
-delta boundary, fixed XP cap, separate level-derived review grants, and the absence
+absolute-reading earned-XP boundary, fixed XP cap, separate level-derived review grants, and the absence
 of a narrative Level Bonus field. Do not ask the model to reproduce unsupported
 experience curves or compute earned values for actual characters.
 

@@ -1,6 +1,6 @@
 # Player and NPC progression with collection rewards
 
-Progression resolves XP and Level by stable field IDs for the player and independently enabled NPC templates. The reader reports earned XP as a positive delta; extraction converts it to an absolute reading before code stores remainder XP and the new level. New sheets, manual edits, imports, transfers, and template assignments never backfill earned rewards.
+Progression resolves XP and Level by stable field IDs for the player and independently enabled NPC templates. The reader and inline tracker report earned XP as an absolute string total before progression. Model-input validation rejects decreases; code stores remainder XP and the new level. New sheets, manual edits, imports, transfers, and template assignments never backfill earned rewards.
 
 ## Numeric growth configuration
 

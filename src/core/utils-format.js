@@ -60,6 +60,41 @@ export function extractJSON(text) {
     return null;
 }
 
+/** Repair one adjacent pair of transposed closers without changing any values. */
+function repairSwappedClosers(text) {
+    const stack = [];
+    let inString = false, escaped = false;
+    let pair = null;
+    for (let i = 0; i < text.length; i++) {
+        const char = text[i];
+        if (inString) {
+            if (escaped) escaped = false;
+            else if (char === '\\') escaped = true;
+            else if (char === '"') inString = false;
+            continue;
+        }
+        if (char === '"') { inString = true; continue; }
+        if (char === '{' || char === '[') {
+            stack.push(char === '{' ? '}' : ']');
+            continue;
+        }
+        if (char !== '}' && char !== ']') continue;
+        const expected = stack.at(-1);
+        if (char === expected) { stack.pop(); continue; }
+        if (pair || stack.length < 2 || char !== stack.at(-2)) return null;
+        let next = i + 1;
+        while (next < text.length && /\s/.test(text[next])) next++;
+        if (text[next] !== expected) return null;
+        pair = { first: i, second: next, firstCloser: expected, secondCloser: char };
+        stack.pop();
+        stack.pop();
+        i = next;
+    }
+    if (!pair || inString || stack.length) return null;
+    return text.slice(0, pair.first) + pair.firstCloser
+        + text.slice(pair.first + 1, pair.second) + pair.secondCloser + text.slice(pair.second + 1);
+}
+
 function closeOpenStructures(str) {
     let repaired = str.trim();
     let inString = false;
@@ -136,13 +171,23 @@ function tryRepairAndParse(str) {
     return null;
 }
 
-/** Parse model JSON, then try trailing-comma, truncation, and bare-key repairs.
+/** Parse model JSON, then try swapped-closer, trailing-comma, truncation, and bare-key repairs.
  * Each repair must pass JSON.parse; returns null if all attempts fail.
  */
 export function safeJsonParse(jsonStr) {
     if (!jsonStr) return null;
     let repaired = jsonStr.trim();
-    
+    // Accept valid JSON before repairs can mistake quoted punctuation for syntax.
+    try { return JSON.parse(repaired); } catch { /* Try bounded structural repair. */ }
+    const swapped = repairSwappedClosers(repaired);
+    if (swapped) {
+        try {
+            const parsed = JSON.parse(swapped);
+            debugLog('JSON repaired by swapping two adjacent closing delimiters');
+            return parsed;
+        } catch { /* Leave other errors to the existing repair paths. */ }
+    }
+
     // Remove trailing commas in objects and arrays
     repaired = repaired.replace(/,(\s*[\]}])/g, '$1');
     

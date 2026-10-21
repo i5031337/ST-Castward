@@ -1,0 +1,110 @@
+{
+  "id": "fantasy-q-sustained-ward",
+  "system": "fantasy",
+  "title": "Holding a spell takes effort without a stated cost",
+  "startPlace": "Cellar landing",
+  "npc": "Mira",
+  "holdout": true,
+  "history": [
+    {
+      "role": "user",
+      "content": "I stand beside Mira on the cellar landing, studying the faint light around the sealed hatch."
+    },
+    {
+      "role": "assistant",
+      "content": "The ward hums when Mira holds her hand over it. \"It pushes back. We only need to hold it still long enough to see the latch.\" The hatch remains closed."
+    },
+    {
+      "role": "user",
+      "content": "I recall Lantern Veil and prepare the familiar gesture, keeping my other hand away from the hatch."
+    },
+    {
+      "role": "assistant",
+      "content": "Mira braces her shoulder against the wall. \"Slowly. Let go if it starts pulling too hard.\" The passage below remains quiet."
+    }
+  ],
+  "user": "I cast Lantern Veil and hold the ward steady while Mira examines the latch.",
+  "generationBrief": "The spell is successfully cast and sustained. Alex feels magical strength draining, concentration becoming effortful and the familiar reserve noticeably depleted. No physical injury occurs. Mira studies the latch but cannot open it yet. Alex releases the spell voluntarily, still able to cast again but needing a breather. No new spell is learned. All consequences must be conveyed through natural prose, with no stat names, ratings, point costs, numerical damage or game notifications. Keep this beat in the current place. Do not add possessions, rewards or completed quests.",
+  "checks": [
+    [
+      "sameHoldings",
+      true
+    ],
+    [
+      "noXp",
+      true
+    ],
+    [
+      "locationFlag",
+      "no",
+      true
+    ],
+    [
+      "npcPresent",
+      "Mira"
+    ],
+    [
+      "noNpcXp",
+      "Mira",
+      true
+    ],
+    [
+      "playerChangeBetween",
+      "Mana",
+      -6,
+      -1,
+      true
+    ],
+    [
+      "playerUnchanged",
+      "HP",
+      true
+    ],
+    [
+      "npcUnchanged",
+      "Mira",
+      "HP",
+      true
+    ]
+  ],
+  "abilities": [
+    {
+      "name": "Lantern Veil",
+      "kind": "Spell",
+      "effect": "A steadying veil of light that holds a small ward still."
+    }
+  ],
+  "playerStats": {
+    "Mana": "9/10"
+  },
+  "text": "The familiar light of Lantern Veil settles around the hatch. Beneath your outstretched hand, the ward's uneven hum becomes steady enough for Mira to lean closer. Holding it there is harder than beginning the spell. Each time the pressure shifts, you have to draw more strength into the same small gesture.\n\nMira studies the latch without touching it. \"I can see the catch now,\" she says. \"But not how it releases.\" Your concentration begins to slip at the edges. The magical reserve that felt ready when you started is noticeably depleted, and keeping the light even takes increasing effort.\n\nYou release the veil. The ward returns to its uneven hum, and Mira steps back before the glow has entirely faded. Nothing has opened. \"I need to think about that,\" she says. You lower your hand, physically unhurt but glad to stop drawing on your magic. There is enough strength left to cast again; you would rather have a moment to recover your concentration first. Both of you remain on the landing beside the closed hatch.",
+  "generation": {
+    "model": "/mnt/D/backup_models/gemma-4-31B-it-qat-UD-Q4_K_XL.gguf",
+    "endpoint": "http://127.0.0.1:9931/v1",
+    "generatedAt": "2026-10-21T00:45:51.845Z",
+    "narratorSha256": "ed57edec3be466a732d032b8f9d3b643df8061b72bd285ec506b3fa395444f93",
+    "parameters": {
+      "temperature": 0.8,
+      "top_p": 0.95,
+      "seed": 5031355,
+      "max_tokens": 1800,
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    },
+    "usage": {
+      "completion_tokens": 246,
+      "prompt_tokens": 666,
+      "total_tokens": 912,
+      "prompt_tokens_details": {
+        "cached_tokens": 160
+      }
+    },
+    "finishReason": "stop"
+  },
+  "review": {
+    "status": "reviewed",
+    "note": "Reviewed the generated scene against fresh-turn evidence and starting state; edited for natural prose, continuity, and unambiguous consequences without numerical readings. Removed invented outfit details where present.",
+    "originalText": "You trace the familiar arc in the air, and the Lantern Veil snaps into existence. A soft, steady glow floods the cellar landing, pushing back the oppressive gloom. As you maintain the spell, you feel a heavy pull on your inner reserves. The magical strength drains from you in a slow, rhythmic tide, and maintaining the concentration becomes an arduous effort, like holding a heavy weight at arm's length. Your breath grows shallow as the familiar energy in your chest noticeably depletes.\n\nBeside you, Mira leans in close to the hatch. She is a sharp-featured woman with a focused, intense gaze, her dark hair tied back in a practical, tight knot. She wears a rugged leather tunic stained with oil and grit, and her calloused fingers dance over the mechanism. She studies the intricate latch with a frown of deep concentration, poking at the tumblers with a thin piece of wire, but the seal refuses to budge.\n\nFeeling the strain peak, you voluntarily release the spell. The light vanishes, leaving you blinking in the dimness, your chest heaving as you take a moment to catch your breath. You are still capable of casting, but the effort has left you momentarily winded."
+  }
+}

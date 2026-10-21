@@ -24,9 +24,9 @@ test('evaluation applies actual collection removals and does not forgive changed
 });
 test('real numeric sanitation and progression turn earned XP into remainder and next level', async () => {
     const { reader } = await setup('fantasy-battle');
-    const result = reader.normalize({ global: {}, player: { deltas: { XP: 20, HP: -3 } }, characters: [] }, '');
-    assert.equal(result.update.player.HP, '9/12');
-    assert.equal(result.update.player.XP, '110/100');
+    const result = reader.normalize({ global: {}, player: { stats: { XP: '110/100', HP: '9/12' } }, characters: [] }, '');
+    assert.equal(result.update.player.stats.HP, '9/12');
+    assert.equal(result.update.player.stats.XP, '110/100');
     assert.deepEqual(result.progression, { xp: '10/100', level: '2', levelsGained: 1 });
 });
 
@@ -35,7 +35,7 @@ test('raw reader capacity audit distinguishes initialization, current changes, a
     const { changedPoolMaxima } = await import('./fixtures/tracker-pool-audit.mjs');
     const state = { global: { Ward: '3/8' }, player: { stats: { HP: '4/12' } },
         characters: [{ name: 'Mira', stats: { HP: '5/10' } }] };
-    assert.deepEqual(changedPoolMaxima({ player: { deltas: { HP: 2 } },
+    assert.deepEqual(changedPoolMaxima({ player: { stats: { HP: '6/12' } },
         characters: [{ name: 'New', stats: { HP: '20/20' } }, { name: 'Mira', stats: { HP: '6/10' } }] }, state), []);
     assert.deepEqual(changedPoolMaxima({ global: { Ward: '4/9' }, player: { stats: { HP: '5/15' } },
         characters: [{ name: 'Mira', stats: { HP_max: 11 } }] }, state), ['World.Ward', 'Player.HP', 'Mira.HP_max']);

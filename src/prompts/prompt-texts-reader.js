@@ -20,20 +20,26 @@ export const readerPromptTexts = [
             changedReply: 'A configured example with player and NPC stats and collections.',
             newNpcReply: 'A new NPC reply example with configured stat guidance, even with an empty scene.',
             locationReminder: 'Final check for the scene-location change flag.',
-            poolRecovery: 'Recovery rule and missing amounts for configured pools.',
+            poolRecovery: 'Recovery rule and final readings for configured pools.',
             injuryConsequence: 'Conditional harm and healing reminder for a configured player health pool.',
-            numericDeltas: 'Existing numeric stats eligible for delta updates, by owner.',
-            earlier: 'The messages before this one, when you send any.',
+            earlier: 'Older messages already reflected in state.',
+            userTurn: 'The fresh player turn preceding the assistant reply, when present.',
             message: 'The message being read.',
             reasons: 'Switch: on when "Ask for reasons" is on.',
         },
-        text: `Report changes from the latest message and list the present NPCs.
+        text: `Report changes from the latest exchange and list the present NPCs.
 {{#playerName}}
 {{playerName}} is the player-controlled character. Put their changes under "player".
 {{/playerName}}
 
 ### EVIDENCE RULES
 Use configured field purposes and rules to interpret resolved events.
+Read the fresh player turn together with the assistant reply.
+Include completed player actions that the reply leaves standing, even when it does not repeat them.
+Treat intentions, attempts, hypotheticals, and out-of-character instructions as context until resolved.
+Use the assistant's resolution when it blocks, changes, or resolves an attempted outcome.
+A player's declaration of a contested outcome does not establish success.
+Count an event once when both turns describe it.
 Apply costs when incurred.
 Use stated amounts.
 Estimate a conservative amount when an effect is clear but its amount is unstated.
@@ -53,7 +59,10 @@ Reusable entries stay held after use.
 Award XP once per concrete accomplishment by its recipient.
 Meaningful active progress toward a goal qualifies.
 Rest, care, accidents, rumours, and routine conversation leave XP unchanged.
-Report earned XP as a positive delta in the recipient's configured XP field.
+For earned XP, add the award to the current reading and report the resulting total as a string.
+Keep the existing XP threshold, even when the total exceeds it.
+The application handles level-ups and the XP remainder; report the total before that calculation.
+Omit existing configured level and level-bonus fields. A blank NPC level field may be initialized.
 {{/xpProgression}}
 {{#poolRecovery}}
 
@@ -99,11 +108,6 @@ Include an arriving NPC in the present cast.
 For a known NPC who remains absent, report established changes with "offstage": true.
 A name mentioned in conversation leaves presence unchanged.
 {{/offstage}}
-{{#numericDeltas}}
-
-### ELIGIBLE NUMERIC DELTAS
-{{numericDeltas}}
-{{/numericDeltas}}
 {{#strangers}}
 
 ### STRANGERS
@@ -116,7 +120,12 @@ Assign each a portrait kind from {{strangerKinds}}, or "", under "strangers".
 {{earlier}}
 {{/earlier}}
 
-### LATEST MESSAGE
+{{#userTurn}}
+### FRESH PLAYER TURN (not yet reflected in state)
+{{userTurn}}
+{{/userTurn}}
+
+### LATEST ASSISTANT REPLY
 {{message}}
 
 ### OUTPUT FORMAT
@@ -124,19 +133,15 @@ Return raw JSON with "global", "player", and "characters".
 Include changed fields and blank NPC initializations.
 Use exact configured names.
 
-Put text values and initial numeric readings in these objects as JSON strings:
+Put all stat readings in these objects as JSON strings:
 - World: "global".
 - Player: "player.stats".
 - NPC: "characters[].stats".
-String readings include "8", "8/10", and configured text values.
-
-Put changes to existing numeric values in these objects as JSON numbers:
-- World: "globalDeltas".
-- Player: "player.deltas".
-- NPC: "characters[].deltas".
-Use positive numbers for gains and negative numbers for losses.
-For a pool, report the change to its current amount.
-Use one representation per field.
+Report the resulting absolute value, not the amount gained or lost.
+Quoted readings include "17", "9/12", and text values such as "Calm".
+For an existing pool, keep its maximum and report the new "current/maximum" reading.
+Use these same stat objects for initial values and changes.
+Report each field once.
 
 "characters" is an array of objects.
 Each object has the NPC's exact "name".
@@ -234,6 +239,12 @@ Collection schemas:
 
 ### EVIDENCE RULES
 Use field purposes and rules to interpret resolved events.
+Read the latest player turn together with the story you resolve in this reply.
+Include completed player actions left standing, even when the story does not repeat them.
+Treat intentions, attempts, hypotheticals, and out-of-character instructions as context until resolved.
+A player's declaration of a contested outcome does not establish success.
+Use the story's resolution when it blocks, changes, or resolves an attempted outcome.
+Count each event once across the player turn and this reply.
 Apply costs when incurred.
 Use stated amounts.
 Estimate conservatively when an effect is clear but its amount is unstated.
@@ -243,7 +254,10 @@ Update the listed editable fields.
 {{#xpProgression}}
 Award positive XP for concrete accomplishments or meaningful active progress by the recipient.
 Rest, care, accidents, rumours, and routine conversation leave XP unchanged.
-Use the recipient's configured XP field.
+Add earned XP to the current reading in the recipient's configured XP field and report the total as a string.
+Keep the existing XP threshold, even when the total exceeds it.
+The application handles level-ups and the XP remainder; report the total before that calculation.
+Omit existing configured level and level-bonus fields. A blank NPC level field may be initialized.
 {{/xpProgression}}
 {{#schemas}}
 Add physical items when the recipient acquires them.
@@ -258,19 +272,15 @@ End the story with a JSON object inside <status_update> tags.
 Include "global", "player", and "characters".
 Report changed fields and blank NPC initializations.
 
-Put text values and initial numeric readings in these objects as JSON strings:
+Put all stat readings in these objects as JSON strings:
 - World: "global".
 - Player: "player.stats".
 - NPC: "characters[].stats".
-String readings include "8", "8/10", and configured text values.
-
-Put existing numeric changes in these objects as JSON numbers:
-- World: "globalDeltas".
-- Player: "player.deltas".
-- NPC: "characters[].deltas".
-Use positive numbers for gains and negative numbers for losses.
-For a pool, report the change to its current amount.
-Use one representation per field.
+Report the resulting absolute value, not the amount gained or lost.
+Quoted readings include "17", "9/12", and text values such as "Calm".
+For an existing pool, keep its maximum and report the new "current/maximum" reading.
+Use these same stat objects for initial values and changes.
+Report each field once.
 
 "characters" is an array of objects with exact NPC "name" values.
 List every present NPC, including those with no changes.

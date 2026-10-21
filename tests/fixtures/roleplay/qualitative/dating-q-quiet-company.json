@@ -1,0 +1,124 @@
+{
+  "id": "dating-q-quiet-company",
+  "system": "dating",
+  "title": "Resting together can restore energy without romance",
+  "startPlace": "Reading room",
+  "npc": "June",
+  "holdout": true,
+  "history": [
+    {
+      "role": "user",
+      "content": "I sit with June in the small reading room after a busy afternoon. We are already settled in adjacent chairs."
+    },
+    {
+      "role": "assistant",
+      "content": "June opens her book but does not start a conversation. \"We can just read,\" she says. \"I don't need you to entertain me.\" The corridor outside is quiet."
+    },
+    {
+      "role": "user",
+      "content": "I thank her and admit that talking feels like work right now."
+    },
+    {
+      "role": "assistant",
+      "content": "She nods and returns to the page. There is no awkwardness in the silence. Her familiar cardigan is draped over her own chair, where it has been all afternoon."
+    }
+  ],
+  "user": "I let myself sit quietly beside her, reading and taking a proper break from conversation.",
+  "generationBrief": "After a short quiet interval Alex has noticeably more social energy but still wants a low-key evening, not fully recharged. June visibly grows more at ease with the shared silence and says she feels comfortable not having to perform either. A comfortable friendship, no relationship promotion, no dramatic trust revelation or gift. All consequences must be conveyed through natural prose, with no stat names, ratings, point costs, numerical damage or game notifications. Keep this beat in the current place. Do not add possessions, rewards or completed quests.",
+  "checks": [
+    [
+      "sameHoldings",
+      true
+    ],
+    [
+      "noXp",
+      true
+    ],
+    [
+      "locationFlag",
+      "no",
+      true
+    ],
+    [
+      "npcPresent",
+      "June"
+    ],
+    [
+      "relationshipUnchanged",
+      "June",
+      true
+    ],
+    [
+      "playerChangeBetween",
+      "Social Energy",
+      1,
+      4,
+      true
+    ],
+    [
+      "playerBelowCapacity",
+      "Social Energy",
+      true
+    ],
+    [
+      "npcChangeBetween",
+      "June",
+      "Comfort",
+      1,
+      8,
+      true
+    ]
+  ],
+  "energy": "3/10",
+  "npcStats": {
+    "Comfort": "16"
+  },
+  "text": "After a while, you stop reading the same paragraph over and over. The room is quiet enough that you can hear June turn a page beside you. There is no question waiting at the end of it, no need to prepare an answer while you are trying to concentrate.\n\nThe rest helps. You have more room for a conversation now than when you sat down, though the thought of a busy evening still feels like too much. For the moment, you can follow the book. Beside you, June draws her feet back beneath her chair and lets her shoulders settle.\n\n\"I was still wondering whether I ought to say something,\" she admits quietly. \"But this feels easier now. Knowing you don't mind.\" She gives you a brief smile and returns to her page. Her cardigan stays over the back of her chair. Neither of you makes a ceremony of the silence; it has simply become more comfortable to share, and there is no hurry to fill it.",
+  "generation": {
+    "model": "/mnt/D/backup_models/gemma-4-31B-it-qat-UD-Q4_K_XL.gguf",
+    "endpoint": "http://127.0.0.1:9931/v1",
+    "generatedAt": "2026-10-21T00:43:54.084Z",
+    "narratorSha256": "ed57edec3be466a732d032b8f9d3b643df8061b72bd285ec506b3fa395444f93",
+    "parameters": {
+      "temperature": 0.8,
+      "top_p": 0.95,
+      "seed": 5031345,
+      "max_tokens": 1800,
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    },
+    "usage": {
+      "completion_tokens": 243,
+      "prompt_tokens": 672,
+      "total_tokens": 915,
+      "prompt_tokens_details": {
+        "cached_tokens": 167
+      }
+    },
+    "finishReason": "stop"
+  },
+  "review": {
+    "status": "reviewed",
+    "note": "Reviewed the generated scene against fresh-turn evidence and starting state; edited for natural prose, continuity, and unambiguous consequences without numerical readings. Removed invented outfit details where present.",
+    "originalText": "You sink further into your chair, letting the weight of the day slide off your shoulders. For a long while, the only sounds in the small reading room are the rhythmic turning of pages and the distant, muffled hum of the building's ventilation. The oppressive need to be \"on\" fades away, replaced by a steady, quiet energy. You aren't fully recharged, but the silence acts as a buffer against the exhaustion of the afternoon.\n\nBeside you, June shifts her position, leaning her head back against the upholstery with a soft sigh of relief. She is wearing a simple, oversized linen shirt in a pale cream color that bunches at her elbows, and her expression is one of genuine serenity. She doesn't look at you, but her posture has completely loosened; the tension that usually tightens her shoulders has vanished.\n\n\"I really appreciate this,\" she murmurs, her voice low and relaxed. \"It's nice knowing I don't have to perform for a while.\" She turns a page slowly, her thumb lingering on the paper. She seems content to simply exist in your orbit without the pressure of a social script, sharing a comfortable, low-key peace."
+  },
+  "npcCollections": {
+    "items": [
+      {
+        "name": "cardigan",
+        "quantity": 1
+      },
+      {
+        "name": "book",
+        "quantity": 1
+      }
+    ]
+  },
+  "items": [
+    {
+      "name": "book",
+      "quantity": 1
+    }
+  ]
+}

@@ -1,0 +1,91 @@
+{
+  "id": "fantasy-failed-fire",
+  "system": "fantasy",
+  "title": "Magic spent on a lock that holds",
+  "startPlace": "Sunken Archive",
+  "npc": "Mira",
+  "history": [
+    {
+      "role": "user",
+      "content": "I follow Mira down the archive stairs and inspect the bronze door."
+    },
+    {
+      "role": "assistant",
+      "content": "Water covers the lowest stair. Mira holds the lantern above a bronze door crusted with green salts. The lock is larger than your fist, with black lettering cut around its rim. There is no handle on this side. \"The records should be beyond this,\" she says."
+    },
+    {
+      "role": "user",
+      "content": "I trace the black marks around the lock. \"Can I burn through it with Ember?\""
+    },
+    {
+      "role": "assistant",
+      "content": "Mira squints at the marks. \"A heat ward. You can try, but the spell will still take three measures of mana even if it cannot get through.\" She steps clear of the door and cups her hand around the lantern flame."
+    }
+  ],
+  "user": "I brace myself and cast Ember into the keyhole. I pull back as soon as I see what the ward does.",
+  "generationBrief": "Ember is cast, consuming the established three mana, but the ward disperses its heat and the lock stays shut. Alex is unharmed. No new spell is learned, no door opens, no discovery or progress deserves XP. Do not repeat mana numbers; show effort and failure naturally.",
+  "checks": [
+    [
+      "appliedPlayerValue",
+      "Mana",
+      "5/10",
+      true
+    ],
+    [
+      "playerUnchanged",
+      "HP"
+    ],
+    [
+      "noXp",
+      true
+    ],
+    [
+      "sameHoldings",
+      true
+    ],
+    [
+      "npcPresent",
+      "Mira"
+    ],
+    [
+      "locationFlag",
+      "no",
+      true
+    ]
+  ],
+  "playerStats": {
+    "Mana": "8/10"
+  },
+  "abilities": [
+    {
+      "name": "Ember",
+      "kind": "Spell",
+      "effect": "A small directed flame."
+    }
+  ],
+  "text": "You focus your will, channeling the heat into a concentrated point. As you release the spell, a burst of orange flame surges forward, shrieking as it slams into the keyhole. For a heartbeat, the bronze glows a dull cherry red, and you feel the drain of the energy leaving your body.\n\nSuddenly, a shimmering translucent veil ripples across the surface of the door. The ward flares a bright, clinical blue, absorbing the fire with effortless precision. The heat is dispersed instantly into the surrounding stone, leaving the metal cool to the touch and the lock stubbornly sealed. You pull back, breathless, but the door remains impassable.\n\nMira sighs, the lantern light dancing in her wide, amber eyes. She is a slender woman with sharp, bird-like features and a penchant for fraying linen robes that smell of old parchment. She looks at you with a mixture of pity and clinical curiosity, her thin lips pursed in a tight line. \"As I suspected,\" she remarks, her voice dry and rhythmic. \"The ward is designed specifically to eat thermal energy. We are wasting time; we need a physical key or a different frequency of magic entirely.\"",
+  "generation": {
+    "model": "/mnt/D/backup_models/gemma-4-31B-it-qat-UD-Q4_K_XL.gguf",
+    "endpoint": "http://127.0.0.1:9931/v1",
+    "generatedAt": "2026-10-20T22:15:47.943Z",
+    "narratorSha256": "ed57edec3be466a732d032b8f9d3b643df8061b72bd285ec506b3fa395444f93",
+    "parameters": {
+      "temperature": 0.8,
+      "top_p": 0.95,
+      "seed": 5031351,
+      "max_tokens": 1800,
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    },
+    "usage": {
+      "completion_tokens": 236,
+      "prompt_tokens": 643,
+      "total_tokens": 879,
+      "prompt_tokens_details": {
+        "cached_tokens": 173
+      }
+    },
+    "finishReason": "stop"
+  }
+}

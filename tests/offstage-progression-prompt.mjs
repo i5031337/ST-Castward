@@ -5,7 +5,6 @@ import { readFileSync } from 'node:fs';
 import { progressionFields } from '../src/tracker/progression-fields.js';
 import { npcStatsFor } from '../src/core/npc-templates.js';
 import { collectionAppliesTo } from '../src/core/collection-targets.js';
-import { numericDeltaNames, configuredXpName } from '../src/tracker/extractor/status-extractor-deltas.js';
 import { isReaderStat } from '../src/tracker/stat-update-policy.js';
 import { readerPromptTexts } from '../src/prompts/prompt-texts-reader.js';
 
@@ -24,15 +23,16 @@ const card = { name: 'Mira', npcTemplateId: 'fighter', statusOverrides: {
     Experience: '90/100', Rank: '1', Power: '5',
 } };
 
-test('schema offers known offstage experience deltas and explicit absent-actor flag', () => {
+test('schema offers known offstage absolute experience readings and explicit absent-actor flag', () => {
     const build = load('../src/tracker/extractor/status-extractor-schema.js', {
-        progressionFields, npcStatsFor, collectionAppliesTo, numericDeltaNames, configuredXpName, isReaderStat,
+        progressionFields, npcStatsFor, collectionAppliesTo, isReaderStat,
         npcTemplates: () => [],
     }, 'buildExtractionSchema');
     const schema = build(tracker, { state: { characters: [] }, cards: [card] });
     const actor = schema.properties.characters.items.properties;
     assert.equal(actor.offstage.type, 'boolean');
-    assert.deepEqual(actor.deltas.properties, { Experience: { type: 'number' } });
+    assert.equal(actor.deltas, undefined);
+    assert.deepEqual(actor.stats.properties.Experience, { type: 'string' });
     assert.equal(actor.stats.properties.Rank.type, 'string'); // Blank locked NPC stats can be initialized.
 });
 
@@ -54,7 +54,7 @@ test('offstage prompt exposes filled locked stats as initialization reference da
 
 test('collection removal schema uses the configured primary field type', () => {
     const build = load('../src/tracker/extractor/status-extractor-schema.js', {
-        progressionFields, npcStatsFor, collectionAppliesTo, numericDeltaNames, configuredXpName, isReaderStat,
+        progressionFields, npcStatsFor, collectionAppliesTo, isReaderStat,
         npcTemplates: () => [],
     }, 'buildExtractionSchema');
     for (const type of ['number', 'boolean', 'text']) {

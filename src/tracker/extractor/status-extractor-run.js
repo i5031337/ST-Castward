@@ -12,7 +12,7 @@ import { triggerReprocess } from '../../chat/reprocess.js';
 import { buildExtractionSchema, strangersToClassify } from './status-extractor-schema.js';
 import { buildUserPrompt, collectLeadUp } from './status-extractor-prompt.js';
 import { requestExtraction, coerceToUpdate } from './status-extractor-request.js';
-import { expandNumericDeltas } from './status-extractor-deltas.js';
+import { normalizeModelReadings } from './status-extractor-readings.js';
 import { prepareGrantReview, validateReviewedTransitions } from '../level-grant-review.js';
 import { prepareLevelReading, saveLevelReading, retryLevelReading, LEVEL_READING_KEY } from './status-level-reading.js';
 import { startExtractionReport, finishExtractionReport, extractionSwipe } from './status-extraction-report.js';
@@ -163,7 +163,7 @@ export async function extractStateFromMessage(messageText, messageId, options = 
         if (!liveState || (options.regenerate && !canReplace())) return { applied: false, reason: 'reply changed while reading' };
         const warnings = [...(locationReading?.warnings || []),
             ...normalizeCollectionUpdates(parsed, trackerSettings, liveState, getAllCharacters())];
-        expandNumericDeltas(parsed, liveState, trackerSettings, { cards: getAllCharacters(), warnings });
+        normalizeModelReadings(parsed, liveState, trackerSettings, { cards: getAllCharacters(), warnings });
         // No ceilings the stats do not have, and nothing for a locked stat. See
         // sanitizeModelUpdate.
         sanitizeModelUpdate(parsed, liveState, trackerSettings, { warnings });

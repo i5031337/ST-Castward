@@ -1,0 +1,94 @@
+{
+  "id": "dating-rain-check",
+  "system": "dating",
+  "title": "A real invitation can end with a different plan",
+  "startPlace": "Moonbeam Café",
+  "npc": "June",
+  "history": [
+    {
+      "role": "user",
+      "content": "I meet June at Moonbeam Café before our plan to go to the outdoor cinema."
+    },
+    {
+      "role": "assistant",
+      "content": "June rests her chin on one hand and watches rain stream down the glass. Her umbrella is propped against her own chair. You have already bought the cinema tickets, but the screening has not started. Thunder rolls somewhere beyond the river."
+    },
+    {
+      "role": "user",
+      "content": "I show her the weather warning on my phone. \"We could still try it if you really want to.\""
+    },
+    {
+      "role": "assistant",
+      "content": "\"Honestly? I'd rather be dry,\" June says. She gives you an apologetic smile. \"Could we do something another day? I've been looking forward to seeing you.\" She glances at the untouched tickets beside your phone."
+    }
+  ],
+  "user": "\"Let's skip the screening and meet here for breakfast on Sunday instead. I'd rather have time to talk than sit in a storm.\"",
+  "generationBrief": "June explicitly agrees to Sunday breakfast at Moonbeam Café, replacing tonight's outdoor cinema plan. Stay at current table and current Saturday evening. Tickets remain owned and unused, no refund or transfer, no automatic partners status. Make the new occasion clear in dialogue.",
+  "checks": [
+    [
+      "worldExcludes",
+      "Occasion",
+      "breakfast",
+      true
+    ],
+    [
+      "worldExcludes",
+      "Occasion",
+      "Sunday",
+      true
+    ],
+    [
+      "sameHoldings",
+      true
+    ],
+    [
+      "relationshipUnchanged",
+      "June",
+      true
+    ],
+    [
+      "locationFlag",
+      "no",
+      true
+    ]
+  ],
+  "items": [
+    {
+      "name": "cinema ticket",
+      "quantity": 2
+    }
+  ],
+  "globalStats": {
+    "Day and Time": "Saturday evening",
+    "Occasion": "Catching up with June at Moonbeam Café"
+  },
+  "text": "\"Sunday breakfast,\" June repeats. \"Yes. Could we make it ten? I want to sleep in a little, but I don't want to miss the cinnamon rolls.\" She takes her phone out and adds a note to her calendar, angling the screen so you can see: Moonbeam, Sunday, ten.\n\nThunder sounds again, close enough to make the window rattle. June looks toward it and laughs. \"I think that's our answer about the cinema.\" She leaves the two unused tickets where they are beside your phone. There is no point trying to rescue tonight's plan by sitting in the rain, but she seems pleased that you have found another time.\n\nHer umbrella has tipped against the chair leg. She sets it upright with her foot, then rests her elbows on the table. \"I'm glad you said breakfast. I kept trying to work out how to tell you I wanted to go home without making it sound like I didn't want to see you.\"\n\nShe looks less apologetic now. Outside, water runs along the curb past the café window.",
+  "generation": {
+    "model": "/mnt/D/backup_models/gemma-4-31B-it-qat-UD-Q4_K_XL.gguf",
+    "endpoint": "http://127.0.0.1:9931/v1",
+    "generatedAt": "2026-10-20T22:14:26.816Z",
+    "narratorSha256": "ed57edec3be466a732d032b8f9d3b643df8061b72bd285ec506b3fa395444f93",
+    "parameters": {
+      "temperature": 0.8,
+      "top_p": 0.95,
+      "seed": 5031344,
+      "max_tokens": 1800,
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    },
+    "usage": {
+      "completion_tokens": 254,
+      "prompt_tokens": 646,
+      "total_tokens": 900,
+      "prompt_tokens_details": {
+        "cached_tokens": 151
+      }
+    },
+    "finishReason": "stop"
+  },
+  "review": {
+    "note": "Edited the generated reply for continuity, natural prose, and scene focus; removed unnecessary arrivals and unsupported actions.",
+    "originalText": "June’s eyes brighten, and she lets out a soft, relieved sigh. \"Sunday breakfast sounds perfect,\" she says, her voice warming. \"I'll be here at ten. I've heard the cinnamon rolls at Moonbeam are legendary, and I'd much prefer a cozy booth over a soaking wet lawn chair.\" She reaches across the table, her fingers briefly brushing your hand in a gesture of appreciation.\n\nAs you both relax into the new plan, a waiter approaches your table. This is Tobias, a lean man with an intensity that borders on the neurotic. He is dressed in a crisp, oversized white shirt tucked into high-waisted black trousers, held up by thin suspenders. His hair is a shock of bleached blonde, slicked back tightly with an excessive amount of pomade that catches the café's amber lighting. He carries a tray with a trembling precision, his expression one of perpetual anxiety as if he expects a glass to shatter at any moment.\n\n\"Complimentary lemon tarts for the table,\" Tobias announces in a clipped, nasal tone, sliding the plate between you and June with a sudden, jerky movement. \"The chef is feeling... experimental today. Please, enjoy them before they lose their structural integrity.\""
+  }
+}

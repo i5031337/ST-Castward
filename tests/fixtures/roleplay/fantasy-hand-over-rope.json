@@ -1,0 +1,92 @@
+{
+  "id": "fantasy-hand-over-rope",
+  "system": "fantasy",
+  "title": "One coil changes hands once",
+  "startPlace": "Quarry Path",
+  "npc": "Mira",
+  "history": [
+    {
+      "role": "user",
+      "content": "I stop where the quarry path has washed out. Mira is looking for a way around the gap."
+    },
+    {
+      "role": "assistant",
+      "content": "Mira crouches at the edge of the washed-out path. A pine leans over the gap, its roots sunk into solid rock. \"That tree would hold a rope,\" she says. Wind brings the sound of loose stones rattling down into the quarry."
+    },
+    {
+      "role": "user",
+      "content": "I check the rope in my pack. \"You can tie the anchor better than I can.\""
+    },
+    {
+      "role": "assistant",
+      "content": "Mira stands and brushes grit from the knees of her trousers. \"Give it here. I'll work out how much length we need before either of us tries crossing.\" She holds out one hand and studies the pine."
+    }
+  ],
+  "user": "I pass Mira my coil of hemp rope. \"Keep hold of it while you choose a knot. I'll watch the slope.\"",
+  "generationBrief": "Mira accepts the coil and keeps it in her hands, checking the fibers and deciding how to secure it. Mention the handover naturally only once. No crossing or successful anchoring yet, no XP, no additional possessions.",
+  "checks": [
+    [
+      "itemRemove",
+      "equipment",
+      "hemp rope",
+      1,
+      true
+    ],
+    [
+      "npcItemAdd",
+      "Mira",
+      "equipment",
+      "hemp rope",
+      1,
+      true
+    ],
+    [
+      "noXp",
+      true
+    ],
+    [
+      "locationFlag",
+      "no",
+      true
+    ],
+    [
+      "npcPresent",
+      "Mira"
+    ]
+  ],
+  "items": [
+    {
+      "name": "hemp rope",
+      "quantity": 1
+    }
+  ],
+  "text": "You hand the heavy coil of hemp rope to Mira. She takes it with a firm grip, her fingers calloused and stained with grit and pine resin. She is a lean woman with a sharp, focused intensity in her amber eyes, wearing a faded canvas jacket that has been patched at the elbows with mismatched fabric. Her dark hair is pulled back into a severe, practical knot, though several stray strands whip across her face in the wind.\n\nMira doesn't look back at you as she begins to unravel a length of the cord. She holds the fibers up to the light, squinting to check for frays or weak points in the weave. She moves with a methodical, quiet efficiency, her expression one of deep concentration as she weighs the rope in one hand and glances at the sturdy branch of the leaning pine.\n\nWhile she determines the best way to secure the line, you turn your attention to the slope. The earth is unstable, smelling of wet slate and decay. Below the washout, the quarry floor is a jagged mess of grey stone, and you can hear the distant, rhythmic drip of water echoing from the depths.",
+  "generation": {
+    "model": "/mnt/D/backup_models/gemma-4-31B-it-qat-UD-Q4_K_XL.gguf",
+    "endpoint": "http://127.0.0.1:9931/v1",
+    "generatedAt": "2026-10-20T22:16:09.947Z",
+    "narratorSha256": "ed57edec3be466a732d032b8f9d3b643df8061b72bd285ec506b3fa395444f93",
+    "parameters": {
+      "temperature": 0.8,
+      "top_p": 0.95,
+      "seed": 5031353,
+      "max_tokens": 1800,
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    },
+    "usage": {
+      "completion_tokens": 230,
+      "prompt_tokens": 632,
+      "total_tokens": 862,
+      "prompt_tokens_details": {
+        "cached_tokens": 171
+      }
+    },
+    "finishReason": "stop"
+  },
+  "review": {
+    "note": "Replaced an out-of-setting engine detail.",
+    "originalText": "You hand the heavy coil of hemp rope to Mira. She takes it with a firm grip, her fingers calloused and stained with old engine grease and dirt. She is a lean woman with a sharp, focused intensity in her amber eyes, wearing a faded canvas jacket that has been patched at the elbows with mismatched fabric. Her dark hair is pulled back into a severe, practical knot, though several stray strands whip across her face in the wind.\n\nMira doesn't look back at you as she begins to unravel a length of the cord. She holds the fibers up to the light, squinting to check for frays or weak points in the weave. She moves with a methodical, quiet efficiency, her expression one of deep concentration as she weighs the rope in one hand and glances at the sturdy branch of the leaning pine.\n\nWhile she determines the best way to secure the line, you turn your attention to the slope. The earth is unstable, smelling of wet slate and decay. Below the washout, the quarry floor is a jagged mess of grey stone, and you can hear the distant, rhythmic drip of water echoing from the depths."
+  }
+}

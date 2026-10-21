@@ -33,6 +33,9 @@ export async function requestExtraction(userPrompt, schema, trackerSettings, sys
     const profileId = trackerSettings.extractionProfileId;
     const maxTokens = Number(trackerSettings.extractionMaxTokens) || 1200;
     const temperature = readerTemperature(trackerSettings);
+    // SillyTavern expects its named wrapper, then forwards value as the provider schema.
+    const jsonSchema = schema && trackerSettings.extractionUseSchema
+        ? { name: 'castward_reader', value: schema, strict: true } : null;
 
     debugLog(`Extraction -> ${describeConnection(profileId)}, reply budget ${maxTokens}`);
 
@@ -50,7 +53,7 @@ export async function requestExtraction(userPrompt, schema, trackerSettings, sys
                     // Structured output is opt-in: some backends return an empty object
                     // rather than reject a schema they dislike, which loses the update
                     // silently. The system prompt pins the shape without it.
-                    ...((schema && trackerSettings.extractionUseSchema) ? { json_schema: schema } : {}),
+                    ...(jsonSchema ? { json_schema: jsonSchema } : {}),
                     // Sent only when you set one. Nothing of the story preset comes with the
                     // request (includePreset is off). Without a reader or custom-profile
                     // temperature, the model's own default decides.
@@ -75,7 +78,7 @@ export async function requestExtraction(userPrompt, schema, trackerSettings, sys
         prompt: userPrompt,
         systemPrompt,
         responseLength: maxTokens,
-        jsonSchema: trackerSettings.extractionUseSchema ? schema : null,
+        jsonSchema,
     });
     // Without a schema, generateRawData returns the provider response. Its text may
     // be in choices, results, or content blocks rather than a top-level content field.

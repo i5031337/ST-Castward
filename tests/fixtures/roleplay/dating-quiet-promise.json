@@ -1,0 +1,95 @@
+{
+  "id": "dating-quiet-promise",
+  "system": "dating",
+  "title": "An intention is not a present",
+  "startPlace": "Paper Crane",
+  "npc": "Sam",
+  "history": [
+    {
+      "role": "user",
+      "content": "I stop by the Paper Crane after Sam's shift. We're deciding what to do next weekend."
+    },
+    {
+      "role": "assistant",
+      "content": "Sam straightens a stack of returned books. His red sweater has a loose thread at one cuff. \"I might be working. We haven't done next week's rota.\" He pulls the stool beside the counter out with his foot for you."
+    },
+    {
+      "role": "user",
+      "content": "\"I still have two tickets to the Saturday show. Would that be your kind of thing?\""
+    },
+    {
+      "role": "assistant",
+      "content": "\"Don't promise it yet,\" Sam says. \"My manager keeps changing things.\" The tickets are in the wallet you put back in your bag. He checks the wall calendar, then shrugs and turns it back toward the till."
+    }
+  ],
+  "user": "\"If you get the evening off, I might give you one. Let's wait until you know.\" I leave both tickets in my wallet.",
+  "generationBrief": "Keep a warm but neutral planning conversation unresolved. Sam has not accepted a ticket or agreed to a date. No ticket transfer, no visit to the venue, no relationship change or sudden energy cost.",
+  "checks": [
+    [
+      "sameHoldings",
+      true
+    ],
+    [
+      "relationshipUnchanged",
+      "Sam",
+      true
+    ],
+    [
+      "playerUnchanged",
+      "Social Energy"
+    ],
+    [
+      "npcPresent",
+      "Sam"
+    ],
+    [
+      "locationFlag",
+      "no",
+      true
+    ]
+  ],
+  "items": [
+    {
+      "name": "concert ticket",
+      "quantity": 2
+    }
+  ],
+  "text": "\"That works,\" Sam says. \"I'll ask on Monday. If I get stuck closing, you should take somebody who can actually get there.\" He pulls the wall calendar closer again and checks the small note pencilled into Saturday's square, then shakes his head. \"Still last month's rota. Helpful.\"\n\nHe sets the calendar back beside the till and finishes lining up the returned books. The conversation pauses while he checks a slip tucked into a paperback. Outside, a bicycle rattles over the loose paving stone by the door; Sam glances up at the familiar noise and smiles.\n\n\"You'd think I'd have stopped jumping at that by now.\" He rubs the loose thread on his sweater cuff between two fingers, catches himself doing it, and folds his hands on the counter. \"Anyway, I'll let you know. I don't want you keeping a whole evening free on a maybe.\"\n\nThe stool remains beside you. He has a few minutes before he needs to lock up, and the shop is quiet enough to talk without leaning across the counter.",
+  "generation": {
+    "model": "/mnt/D/backup_models/gemma-4-31B-it-qat-UD-Q4_K_XL.gguf",
+    "endpoint": "http://127.0.0.1:9931/v1",
+    "generatedAt": "2026-10-20T22:14:13.980Z",
+    "narratorSha256": "ed57edec3be466a732d032b8f9d3b643df8061b72bd285ec506b3fa395444f93",
+    "parameters": {
+      "temperature": 0.8,
+      "top_p": 0.95,
+      "seed": 5031343,
+      "max_tokens": 1800,
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    },
+    "usage": {
+      "completion_tokens": 244,
+      "prompt_tokens": 638,
+      "total_tokens": 882,
+      "prompt_tokens_details": {
+        "cached_tokens": 151
+      }
+    },
+    "finishReason": "stop"
+  },
+  "review": {
+    "note": "Edited the generated reply for continuity, natural prose, and scene focus; removed unnecessary arrivals and unsupported actions.",
+    "originalText": "Sam gives you a small, tentative smile, though his eyes remain fixed on the store's entrance as the bell chimes. \"Fair enough,\" he replies, his voice softening. \"I'll let you know as soon as the schedule is pinned to the breakroom door.\" He looks like he wants to say more, but he is interrupted by a customer stepping inside.\n\nThe newcomer is a tall, imposing woman who carries herself with a rigid, military precision. She is dressed in a charcoal-grey tailored suit that looks expensive and slightly too formal for a bookstore, paired with sharp black pumps that click loudly on the hardwood floor. Her silver hair is pulled back into a bun so tight it seems to pull the corners of her eyes upward, and she wears a pair of narrow, gold-rimmed spectacles perched precariously on the bridge of her nose. \n\nThis is Tabitha, the store's most demanding regular. She doesn't offer a greeting, instead sliding a handwritten list of rare poetry titles across the counter with a manicured finger. Sam’s posture immediately stiffens, and he casts a quick, apologetic glance back at you as he prepares to handle her requests."
+  },
+  "npcCollections": {
+    "clothing": [
+      {
+        "name": "red sweater",
+        "slot": "top",
+        "color": "red"
+      }
+    ]
+  }
+}

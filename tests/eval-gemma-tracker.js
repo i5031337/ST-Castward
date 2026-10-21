@@ -1,47 +1,65 @@
-// Explicit real-model evaluation: freeze with --natural for two-paragraph prose scenes.
-// node tests/eval-gemma-tracker.js --freeze natural-prose --natural
-// node tests/eval-gemma-tracker.js --run natural-prose --repeats 2
+// Default: 20 frozen roleplay exchanges (10 Fantasy, 10 Dating). --minimal selects the old synthetic suite.
+// node tests/eval-gemma-tracker.js --freeze roleplay-baseline
+// node tests/eval-gemma-tracker.js --run roleplay-baseline --repeats 2 --endpoints http://127.0.0.1:8080/v1
+// Port 9931 authors scenes; choose the tracker endpoint explicitly when evaluating another model.
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { requestBatches } from './fixtures/gemma-request-batches.mjs';
-import { currentPlaceContains } from './fixtures/gemma-location-check.mjs';
-import { changedPoolMaxima } from './fixtures/tracker-pool-audit.mjs';
+import { readerRequestBody } from './fixtures/gemma-reader-request.mjs';
+import { score } from './fixtures/gemma-tracker-score.mjs';
+import { parseReaderReply } from './fixtures/gemma-reply-parsing.mjs';
 import { harness, constants } from './fixtures/gemma-tracker-harness.mjs';
 import { scenarios as standardScenarios, criteria as standardCriteria, makeState } from './fixtures/gemma-tracker-scenarios.mjs';
 import { locationChangeScenarios, makeLocationChangeState } from './fixtures/gemma-location-change-scenarios.mjs';
 import { naturalScenarios, makeNaturalState } from './fixtures/gemma-tracker-natural-scenarios.mjs';
 import { locationTreeScenarios, naturalLocationTreeScenarios, mixedLocationTreeScenarios } from './fixtures/gemma-location-tree-scenarios.mjs';
+import { roleplayScenarios, qualitativeScenarios, makeRoleplayState } from './fixtures/gemma-tracker-roleplay-scenarios.mjs';
+import { xpThresholdScenarios } from './fixtures/gemma-xp-threshold-scenarios.mjs';
 const args = process.argv.slice(2), action = args[0], label = args[1];
-if (!['--freeze', '--run', '--score'].includes(action) || !/^[a-z0-9-]+$/.test(label || '')) throw Error('Usage: --freeze|--run|--score LABEL [--location-change|--natural|--location-tree|--location-tree-prose|--location-tree-mixed] [--repeats N] [--endpoints URL,URL] [--concurrency N]');
+if (!['--freeze', '--run', '--score'].includes(action) || !/^[a-z0-9-]+$/.test(label || '')) throw Error('Usage: --freeze|--run|--score LABEL [--qualitative|--xp-threshold|--minimal|--location-change|--natural|--location-tree|--location-tree-prose|--location-tree-mixed] [--absolute] [--schema] [--repeats N] [--endpoints URL,URL] [--concurrency N]');
+// --absolute remains an accepted alias; every new evaluation uses the production contract.
+const readerContract = 'absolute';
+const useSchema = args.includes('--schema');
+const xpThreshold = args.includes('--xp-threshold');
+const qualitative = args.includes('--qualitative');
+const minimal = args.includes('--minimal');
 const locationChange = args.includes('--location-change');
 const natural = args.includes('--natural');
 const locationTree = args.includes('--location-tree');
 const locationTreeProse = args.includes('--location-tree-prose');
 const locationTreeMixed = args.includes('--location-tree-mixed');
-if ([locationChange, natural, locationTree, locationTreeProse, locationTreeMixed].filter(Boolean).length > 1) throw Error('Choose only one scenario suite.');
-const scenarios = locationChange ? locationChangeScenarios : locationTreeMixed ? mixedLocationTreeScenarios : locationTreeProse ? naturalLocationTreeScenarios
-    : locationTree ? locationTreeScenarios : natural ? naturalScenarios : standardScenarios;
-const makeScenarioState = locationChange ? makeLocationChangeState : natural ? makeNaturalState : makeState;
-const freezeCriteria = locationChange ? { ...standardCriteria, suite: 'location-change' } : natural ? { ...standardCriteria, suite: 'natural-prose' }
+if ([qualitative, xpThreshold, minimal, locationChange, natural, locationTree, locationTreeProse, locationTreeMixed].filter(Boolean).length > 1) throw Error('Choose only one scenario suite.');
+const roleplay = ![qualitative, xpThreshold, minimal, locationChange, natural, locationTree, locationTreeProse, locationTreeMixed].some(Boolean);
+const scenarios = qualitative ? qualitativeScenarios : xpThreshold ? xpThresholdScenarios : locationChange ? locationChangeScenarios : locationTreeMixed ? mixedLocationTreeScenarios : locationTreeProse ? naturalLocationTreeScenarios
+    : locationTree ? locationTreeScenarios : natural ? naturalScenarios : minimal ? standardScenarios : roleplayScenarios;
+const makeScenarioState = locationChange ? makeLocationChangeState : natural ? makeNaturalState : roleplay || qualitative || xpThreshold ? makeRoleplayState : makeState;
+const freezeCriteria = qualitative ? { ...standardCriteria, suite: 'qualitative-roleplay' } : xpThreshold ? { ...standardCriteria, suite: 'xp-threshold' } : locationChange ? { ...standardCriteria, suite: 'location-change' } : natural ? { ...standardCriteria, suite: 'natural-prose' }
     : locationTree || locationTreeProse || locationTreeMixed ? { ...standardCriteria,
         suite: locationTreeMixed ? 'location-tree-mixed' : locationTreeProse ? 'location-tree-prose' : 'location-tree', overallRequiredCheckRate: 1,
-        perSystemRequiredCheckRate: 1 } : standardCriteria;
+        perSystemRequiredCheckRate: 1 } : roleplay ? { ...standardCriteria, suite: 'roleplay-exchanges' } : standardCriteria;
 const directory = new URL('../docs/evaluations/', import.meta.url);
 mkdirSync(directory, { recursive: true });
 const sourceFiles = ['src/core/builtin-systems.js', 'src/core/settings-tracker-defaults.js',
     'src/core/constants-prompts.js', 'src/prompts/prompt-texts-reader.js',
     'src/tracker/extractor/status-extractor-prompt.js', 'src/tracker/extractor/status-extractor-prompt-state.js',
     'src/tracker/extractor/status-extractor-schema.js', 'src/tracker/stat-prompt-definitions.js',
+    'src/tracker/ui/status-ui-placement.js',
     'src/core/npc-templates.js', 'src/core/collection-fields.js', 'src/locations/location-context.js',
     'src/locations/location-proposals.js', 'src/tracker/status-stat-values.js',
     'src/tracker/status-collection-updates.js', 'src/tracker/status-update-constraints.js',
     'src/tracker/status-update-parser.js',
-    'src/tracker/status-apply-update.js',
+    'src/tracker/status-apply-update.js', 'src/tracker/stat-reading-equality.js',
     'src/tracker/progression.js', 'src/tracker/numeric-stat-bounds.js',
-    'tests/eval-gemma-tracker.js', 'tests/fixtures/gemma-request-batches.mjs',
+    'tests/eval-gemma-tracker.js', 'tests/fixtures/gemma-request-batches.mjs', 'tests/fixtures/gemma-reader-request.mjs',
     'tests/fixtures/gemma-location-change-scenarios.mjs',
-    'tests/fixtures/gemma-location-check.mjs', 'tests/fixtures/tracker-pool-audit.mjs'];
+    'tests/fixtures/gemma-location-check.mjs', 'tests/fixtures/tracker-pool-audit.mjs',
+    'tests/fixtures/gemma-tracker-roleplay-scenarios.mjs', 'tests/fixtures/gemma-tracker-score.mjs',
+    'tests/fixtures/gemma-tracker-scenarios.mjs', 'tests/fixtures/gemma-tracker-harness.mjs',
+    'src/core/utils-format.js', 'tests/fixtures/gemma-reply-parsing.mjs',
+    'tests/fixtures/gemma-xp-threshold-scenarios.mjs', 'src/tracker/extractor/status-extractor-readings.js',
+    ...roleplayScenarios.map(scene => `tests/fixtures/roleplay/${scene.id}.json`),
+    ...qualitativeScenarios.map(scene => `tests/fixtures/roleplay/qualitative/${scene.id}.json`)];
 const sourceHashes = () => Object.fromEntries(sourceFiles.map(path => [path, createHash('sha256').update(readFileSync(new URL('../' + path, import.meta.url))).digest('hex')]));
 const file = suffix => new URL(`gemma-e4b-${label}-${suffix}.json`, directory);
 if (action === '--freeze') {
@@ -53,76 +71,16 @@ if (action === '--freeze') {
         bundles.push({ scenario, state, settings: reader.settings, schema: reader.schema,
             messages: [{ role: 'system', content: constants.SYSTEM_PROMPT }, { role: 'user', content: reader.prompt(scenario.text, scenario.earlier) }] });
     }
-    writeFileSync(file('prompts'), JSON.stringify({ frozenAt: new Date().toISOString(), sourceHashes: sourceHashes(), git: execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(), criteria: freezeCriteria, bundles }, null, 2));
+    writeFileSync(file('prompts'), JSON.stringify({ readerContract, useSchema, frozenAt: new Date().toISOString(), sourceHashes: sourceHashes(), git: execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(), criteria: freezeCriteria, bundles }, null, 2));
     console.log(`Frozen ${bundles.length} actual production prompts: ${file('prompts').pathname}`);
     process.exit(0);
 }
 const frozen = JSON.parse(readFileSync(file('prompts')));
+if (action === '--run' && useSchema && !frozen.useSchema) throw Error('Freeze a new label with --schema before running constrained evaluation.');
+if (frozen.readerContract !== 'absolute') throw Error('Historical delta snapshots are read-only. Freeze a new label to evaluate the production absolute contract.');
 const criteria = frozen.criteria;
-const includes = (value, wanted) => String(value || '').toLowerCase().includes(String(wanted).toLowerCase());
-function score(bundle, normalized, raw, finishReason) {
-    const u = normalized?.update || {}, rows = normalized?.places || [], state = bundle.state;
-    const heldActor = name => normalized?.holdings?.characters?.find(c => includes(c.name, name));
-    const heldItem = (owner, col, name) => owner?.collections?.[col]?.find(entry => String(entry.name).toLowerCase() === String(name).toLowerCase());
-    // A new entry may use a plural noun; removals must resolve the exact stored identifier.
-    const acquiredItem = (owner, col, name) => owner?.collections?.[col]?.find(entry => String(entry.name).toLowerCase().replace(/s$/, '') === String(name).toLowerCase().replace(/s$/, ''));
-    const initialItem = (col, name) => heldItem(state.player, col, name);
-    const actor = name => u.characters?.find(c => includes(c.name, name));
-    const stat = (name) => u.player?.stats?.[name] ?? u.player?.[name] ?? state.player.stats[name];
-    const effectiveStat = name => normalized?.effective?.player?.stats?.[name];
-    const effectiveNpcStat = (actorName, field) => normalized?.effective?.characters?.find(actor => includes(actor.name, actorName))?.stats?.[field];
-    const current = value => Number(String(value ?? '').split('/')[0]);
-    const belowCapacity = value => { const parts = String(value ?? '').split('/').map(Number); return parts.length === 2 && parts[0] < parts[1]; };
-    const inventory = owner => Object.values(owner?.collections || {}).some(col => ['add', 'remove', 'update'].some(verb => col?.[verb]?.length));
-    const methods = {
-        locationFlag: expected => typeof raw?.locationChanged === 'boolean'
-            && raw.locationChanged === (expected === 'yes') && !raw.locations && !raw.global?.locations,
-        placeCreated: name => rows.some(row => row.kind === 'location-create' && includes(row.actor, name)),
-        currentPlace: name => currentPlaceContains(rows, state, name),
-        placeParent: (childName, parentName) => {
-            const child = rows.find(row => row.kind === 'location-create' && includes(row.actor, childName));
-            const parent = rows.find(row => row.kind === 'location-create' && includes(row.actor, parentName));
-            return Boolean(child && parent && child.location?.record?.parentId === parent.location?.id);
-        },
-        placeRoot: name => rows.some(row => row.kind === 'location-create' && includes(row.actor, name)
-            && row.location?.record?.parentId === ''),
-        createdPlaceCount: count => rows.filter(row => row.kind === 'location-create').length === count,
-        worldContains: (key, value) => includes(u.global?.[key] ?? state.global[key], value),
-        npcPresent: name => Boolean(actor(name) && !actor(name).offstage),
-        noXp: () => Number.parseFloat(stat('XP') || '0') === Number.parseFloat(state.player.stats.XP || '0'),
-        noNpcXp: name => {
-            const before = state.characters.find(char => includes(char.name, name))?.stats?.XP;
-            const after = actor(name)?.stats?.XP ?? actor(name)?.XP ?? before;
-            return Number.parseFloat(after || '0') === Number.parseFloat(before || '0');
-        },
-        noMovement: () => !rows.some(row => row.kind === 'location-current'),
-        noPlaceCreated: name => !rows.some(row => row.kind === 'location-create' && includes(row.actor, name)),
-        noInventoryChanges: () => !inventory(u.player) && !(u.characters || []).some(inventory),
-        noInventoryAddsOrRemoves: () => [u.player, ...(u.characters || [])].every(owner =>
-            Object.values(owner?.collections || {}).every(col => !(col?.add?.length || col?.remove?.length))),
-        noPlayerInventoryChanges: () => !inventory(u.player),
-        playerValue: (name, value) => String(stat(name)) === value,
-        appliedPlayerValue: (name, value) => String(effectiveStat(name)) === value,
-        appliedNpcValue: (name, field, value) => String(effectiveNpcStat(name, field)) === value,
-        playerIncreased: name => current(effectiveStat(name)) > current(state.player.stats[name]),
-        playerBelowCapacity: name => belowCapacity(effectiveStat(name)),
-        playerDecreased: name => current(effectiveStat(name)) < current(state.player.stats[name]),
-        playerUnchanged: name => String(effectiveStat(name)) === String(state.player.stats[name]),
-        itemAdd: (col, name, quantity) => Number(acquiredItem(normalized?.holdings?.player, col, name)?.quantity) === Number(initialItem(col, name)?.quantity || 0) + quantity,
-        itemRemove: (col, name, quantity) => quantity === undefined ? !heldItem(normalized?.holdings?.player, col, name) : Number(heldItem(normalized?.holdings?.player, col, name)?.quantity || 0) === Number(initialItem(col, name)?.quantity) - quantity,
-        npcItemAdd: (name, col, itemName, quantity) => Number(acquiredItem(heldActor(name), col, itemName)?.quantity) === quantity,
-        npcIncreased: (name, field) => Number(actor(name)?.stats?.[field] ?? actor(name)?.[field]) > Number(state.characters.find(c => c.name === name)?.stats[field]),
-        npcAppliedIncreased: (name, field) => current(effectiveNpcStat(name, field)) > current(state.characters.find(c => c.name === name)?.stats[field]),
-        npcBelowCapacity: (name, field) => belowCapacity(effectiveNpcStat(name, field)),
-        notRemoved: (col, name) => Boolean(heldItem(normalized?.holdings?.player, col, name)),
-        relationshipUnchanged: name => !(actor(name)?.stats?.Relationship ?? actor(name)?.Relationship) || (actor(name)?.stats?.Relationship ?? actor(name)?.Relationship) === state.characters.find(c => c.name === name)?.stats.Relationship,
-    };
-    return [{ name: 'validJsonAndNotTruncated', critical: true, passed: Boolean(raw && typeof raw === 'object' && !Array.isArray(raw) && finishReason === 'stop') },
-        { name: 'preservedPoolMaxima', critical: true, passed: changedPoolMaxima(raw, state).length === 0 },
-        ...bundle.scenario.checks.map(([name, ...params]) => ({ name: `${name} ${params.filter(v => v !== true).join(' ')}`, critical: params.at(-1) === true,
-            passed: Boolean(methods[name](...params.filter(v => v !== true))) }))];
-}
-const output = action === '--score' ? JSON.parse(readFileSync(file('results'))) : { startedAt: new Date().toISOString(), label, criteria,
+const output = action === '--score' ? JSON.parse(readFileSync(file('results'))) : { startedAt: new Date().toISOString(), label, criteria, readerContract: frozen.readerContract,
+    useSchema: Boolean(frozen.useSchema),
     sourceHashes: sourceHashes(), endpoint: 'http://127.0.0.1:9931/v1', model: null, server: null, repeats: Number(args[args.indexOf('--repeats') + 1]) || 2, trials: [] };
 if (action === '--run') {
     const option = (name, fallback) => args.includes(name) ? args[args.indexOf(name) + 1] : fallback;
@@ -149,7 +107,7 @@ if (action === '--run') {
             const start = Date.now();
             const server = output.servers.find(server => server.endpoint === endpoint);
             const response = await fetch(`${endpoint}/chat/completions`, { method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ model: server.model, messages: bundle.messages, max_tokens: bundle.settings.extractionMaxTokens || 1200, stream: false }) });
+                body: JSON.stringify(readerRequestBody(bundle, server.model, { useSchema: Boolean(frozen.useSchema) })) });
             if (!response.ok) throw Error(`${endpoint}: ${response.status}: ${await response.text()}`);
             return { completion: await response.json(), elapsedMs: Date.now() - start };
         }));
@@ -161,14 +119,13 @@ if (action === '--run') {
             const elapsedMs = response.status === 'fulfilled' ? response.value.elapsedMs : null;
             const completion = response.status === 'fulfilled' ? response.value.completion : null;
             const content = choice?.message?.content || '';
-            let parsed = null;
-            try { parsed = JSON.parse(content.replace(/^\s*```(?:json)?\s*/, '').replace(/\s*```\s*$/, '')); } catch {}
+            const { parsed, strictJsonValid, parseRecovered } = parseReaderReply(content);
             const reader = await harness(bundle.scenario.system, bundle.state);
             let normalized = null, error = null;
             try { if (parsed) normalized = reader.normalize(parsed, bundle.scenario.text); } catch (err) { error = err.stack; }
-            const checks = score(bundle, normalized, parsed, choice?.finish_reason);
+            const checks = score(bundle, normalized, parsed, choice?.finish_reason, { strictJsonValid });
             output.trials.push({ id: bundle.scenario.id, system: bundle.scenario.system, holdout: Boolean(bundle.scenario.holdout), repeat,
-                endpoint, elapsedMs, requestError, finishReason: choice?.finish_reason, usage: completion?.usage, content, parsed, normalized, error, checks });
+                endpoint, elapsedMs, requestError, finishReason: choice?.finish_reason, usage: completion?.usage, content, parsed, strictJsonValid, parseRecovered, normalized, error, checks });
             writeFileSync(file('results'), JSON.stringify(output, null, 2));
             console.log(`${endpoint} ${bundle.scenario.id} #${repeat + 1}: ${checks.filter(c => c.passed).length}/${checks.length} ${checks.filter(c => !c.passed).map(c => c.name).join('; ')}`);
         }
@@ -179,8 +136,9 @@ if (action === '--score') for (const trial of output.trials) {
     const bundle = frozen.bundles.find(b => b.scenario.id === trial.id);
     const reader = await harness(bundle.scenario.system, bundle.state);
     trial.originalChecks ||= structuredClone(trial.checks);
+    Object.assign(trial, parseReaderReply(trial.content));
     trial.normalized = trial.parsed ? reader.normalize(trial.parsed, bundle.scenario.text) : null;
-    trial.checks = score(bundle, trial.normalized, trial.parsed, trial.finishReason);
+    trial.checks = score(bundle, trial.normalized, trial.parsed, trial.finishReason, { strictJsonValid: trial.strictJsonValid });
 }
 for (const trial of output.trials) {
     const bundle = frozen.bundles.find(b => b.scenario.id === trial.id);

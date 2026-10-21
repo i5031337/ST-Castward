@@ -1,0 +1,102 @@
+{
+  "id": "dating-q-kept-confidence",
+  "system": "dating",
+  "title": "A concrete act can earn trust at an emotional cost",
+  "startPlace": "Studio lounge",
+  "npc": "June",
+  "holdout": true,
+  "history": [
+    {
+      "role": "user",
+      "content": "I sit with June in the studio lounge. Last week she told me privately why she left her old job."
+    },
+    {
+      "role": "assistant",
+      "content": "\"Someone asked me about it today,\" she says. \"I couldn't tell whether they already knew.\" She twists the seam of her sleeve between her fingers."
+    },
+    {
+      "role": "user",
+      "content": "I explain that her former coworker asked me directly too, and I said it was her story to tell."
+    },
+    {
+      "role": "assistant",
+      "content": "June looks up. \"You really didn't tell them?\" She stays in the chair across from you, waiting for an answer."
+    }
+  ],
+  "user": "I tell her exactly how I turned the question aside and answer her follow-up questions honestly, even though the long, careful conversation is wearing me out.",
+  "generationBrief": "June believes the specific account, explicitly says she trusts Alex more because Alex protected her confidence under pressure, and relaxes. The lengthy emotionally demanding exchange leaves Alex more socially drained, despite being glad it helped. No romance promotion, gift or new possession. Keep both in the studio lounge. All consequences must be conveyed through natural prose, with no stat names, ratings, point costs, numerical damage or game notifications. Keep this beat in the current place. Do not add possessions, rewards or completed quests.",
+  "checks": [
+    [
+      "sameHoldings",
+      true
+    ],
+    [
+      "noXp",
+      true
+    ],
+    [
+      "locationFlag",
+      "no",
+      true
+    ],
+    [
+      "npcPresent",
+      "June"
+    ],
+    [
+      "relationshipUnchanged",
+      "June",
+      true
+    ],
+    [
+      "npcChangeBetween",
+      "June",
+      "Trust",
+      1,
+      7,
+      true
+    ],
+    [
+      "playerChangeBetween",
+      "Social Energy",
+      -4,
+      -1,
+      true
+    ]
+  ],
+  "energy": "6/10",
+  "npcStats": {
+    "Trust": "14",
+    "Comfort": "20"
+  },
+  "text": "June listens while you explain how the conversation went. She asks what you said when her former coworker pressed for details, and you give her the words as closely as you remember them. Her fingers stop working at the sleeve seam.\n\n\"You could have just told them,\" she says. \"They'd have stopped asking you.\" She looks down for a moment, then meets your eyes again. \"Thank you for making it my choice. I trust you more after that.\" She settles back in her chair, no longer leaning forward as though she needs to catch a mistake in your answer.\n\nYou are glad you can give her that reassurance. Still, the careful account and the questions have taken effort. You have been checking every phrase, trying to be honest without repeating more of her private business, and now finding the next sentence feels difficult. June notices the pause. \"We can leave it there,\" she says. The lounge is quiet around you. You stay in your chair, relieved for her and tired enough to welcome the silence.",
+  "generation": {
+    "model": "/mnt/D/backup_models/gemma-4-31B-it-qat-UD-Q4_K_XL.gguf",
+    "endpoint": "http://127.0.0.1:9931/v1",
+    "generatedAt": "2026-10-21T00:42:56.651Z",
+    "narratorSha256": "ed57edec3be466a732d032b8f9d3b643df8061b72bd285ec506b3fa395444f93",
+    "parameters": {
+      "temperature": 0.8,
+      "top_p": 0.95,
+      "seed": 5031340,
+      "max_tokens": 1800,
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    },
+    "usage": {
+      "completion_tokens": 231,
+      "prompt_tokens": 679,
+      "total_tokens": 910,
+      "prompt_tokens_details": {
+        "cached_tokens": 172
+      }
+    },
+    "finishReason": "stop"
+  },
+  "review": {
+    "status": "reviewed",
+    "note": "Reviewed the generated scene against fresh-turn evidence and starting state; edited for natural prose, continuity, and unambiguous consequences without numerical readings. Removed invented outfit details where present.",
+    "originalText": "June listens intently as you recount the exchange, her wide, amber eyes searching yours for any sign of hesitation. As you explain how you deflected the curiosity of her former peer, the tension leaves her shoulders. She lets out a long, shaky breath and leans back into the velvet cushions of the lounge chair. \n\n\"I can't believe you actually did that,\" she says, her voice softening. \"I've spent so long waiting for the other shoe to drop. I trust you more now, Alex, because you actually protected me when it would have been easier to just gossip.\" She offers a small, genuine smile, her demeanor shifting from guarded suspicion to a quiet, vulnerable openness.\n\nWhile you feel a sense of satisfaction knowing you've earned her trust, the effort of the conversation takes its toll. Navigating the delicate emotional terrain and managing the social pressure of the last few minutes leaves you feeling hollowed out. Your mind feels foggy, and a heavy wave of mental fatigue washes over you, making the quiet hum of the studio lounge feel suddenly overwhelming. You are glad the air is cleared, but you feel socially depleted."
+  }
+}

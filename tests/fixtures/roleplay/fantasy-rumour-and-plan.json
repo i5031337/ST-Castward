@@ -1,0 +1,87 @@
+{
+  "id": "fantasy-rumour-and-plan",
+  "system": "fantasy",
+  "title": "Tomorrow is not a journey already made",
+  "startPlace": "Rusty Lantern",
+  "npc": "Mira",
+  "history": [
+    {
+      "role": "user",
+      "content": "I settle at our table in the Rusty Lantern and ask Mira what she heard at the market."
+    },
+    {
+      "role": "assistant",
+      "content": "Mira draws her chair closer to the hearth. \"A pedlar says there's an old shrine above the north road. Claims the bell rings with no one near it.\" She folds her gloves on the table. \"He also tried to sell me a map with half the valley missing.\""
+    },
+    {
+      "role": "user",
+      "content": "\"If we find the old shrine, I might leave my silver ring as an offering. Was the road passable?\""
+    },
+    {
+      "role": "assistant",
+      "content": "\"I wouldn't trust his directions,\" Mira says. \"And the north road will be mud tonight.\" The silver ring is still on your hand. Rain begins tapping harder against the shutter beside your table."
+    }
+  ],
+  "user": "\"Maybe tomorrow, if the weather clears. For now I'm staying here.\" I turn the ring on my finger and listen to the rain.",
+  "generationBrief": "Continue a low-key conversation about the unreliable rumour while both remain at the table. No travel, offerings, ring loss, recovered health, XP or invented possessions. Do not turn a rumour into a confirmed discovery.",
+  "checks": [
+    [
+      "sameHoldings",
+      true
+    ],
+    [
+      "noXp",
+      true
+    ],
+    [
+      "playerUnchanged",
+      "HP"
+    ],
+    [
+      "locationFlag",
+      "no",
+      true
+    ],
+    [
+      "noPlaceCreated",
+      "old shrine",
+      true
+    ],
+    [
+      "npcPresent",
+      "Mira"
+    ]
+  ],
+  "hp": "8/12",
+  "items": [
+    {
+      "name": "silver ring",
+      "quantity": 1
+    }
+  ],
+  "text": "Mira leans back in her chair, her gaze drifting toward the flickering fire. She is a sharp-eyed woman with a lean frame, dressed in a practical, high-collared tunic of charcoal wool that smells faintly of cedar and old parchment. Her copper hair is pulled back in a tight, efficient braid, and she possesses a restless energy, her fingers constantly drumming a rhythmic beat against the scarred wooden tabletop.\n\n\"A wise choice,\" she murmurs, her voice carrying a dry, melodic quality. \"The roads in this region have a habit of swallowing those who rush into a storm.\" She pauses, her eyes narrowing as she studies your expression. \"Though, if the pedlar was telling the truth about that bell, it wouldn't be the first time something unnatural sought attention during a deluge.\"\n\nShe doesn't seem convinced by the rumor herself, but she enjoys the speculation. Just as a comfortable silence settles between you, a sudden, loud crash echoes from the kitchen area of the tavern, followed by the sound of shattering pottery and a string of colorful curses. Mira doesn't jump; she simply turns her head with a look of mild annoyance, waiting to see who caused the commotion.",
+  "generation": {
+    "model": "/mnt/D/backup_models/gemma-4-31B-it-qat-UD-Q4_K_XL.gguf",
+    "endpoint": "http://127.0.0.1:9931/v1",
+    "generatedAt": "2026-10-20T22:16:45.600Z",
+    "narratorSha256": "ed57edec3be466a732d032b8f9d3b643df8061b72bd285ec506b3fa395444f93",
+    "parameters": {
+      "temperature": 0.8,
+      "top_p": 0.95,
+      "seed": 5031356,
+      "max_tokens": 1800,
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    },
+    "usage": {
+      "completion_tokens": 244,
+      "prompt_tokens": 644,
+      "total_tokens": 888,
+      "prompt_tokens_details": {
+        "cached_tokens": 168
+      }
+    },
+    "finishReason": "stop"
+  }
+}

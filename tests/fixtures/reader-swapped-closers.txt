@@ -1,0 +1,30 @@
+```json
+{
+  "locationChanged": false,
+  "global": {},
+  "player": {},
+  "characters": [
+    {
+      "name": "June",
+      "stats": {
+        "Mood": "Joyful",
+        "Affection": "55",
+        "Trust": "40",
+        "Comfort": "60",
+        "Relationship": "Committed Partners"
+      },
+      "collections": {
+        "clothing": [
+          {
+            "name": "cardigan",
+            "slot": "top",
+            "color": "cream",
+            "details": "soft, oversized"
+          ]
+        },
+        "items": []
+      }
+    }
+  ]
+}
+```

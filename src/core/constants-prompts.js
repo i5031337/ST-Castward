@@ -6,9 +6,9 @@ export const SPEAKER_PALETTE = Object.freeze([
 ]);
 
 export const SYSTEM_PROMPT = [
-    'Read the latest roleplay message and return a JSON tracker update.',
+    'Read the latest roleplay exchange and return a JSON tracker update.',
     'Use configured fields and exact names.',
-    'Report resolved events. Use earlier messages as context.',
+    'Report resolved events from the fresh player turn and assistant reply. Use earlier messages as context.',
     'Use stated amounts. Estimate conservatively when an effect is clear but its amount is unstated.',
     'List every NPC present after the message.',
     'Follow the output format in the request.',

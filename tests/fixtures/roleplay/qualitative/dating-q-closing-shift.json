@@ -1,0 +1,98 @@
+{
+  "id": "dating-q-closing-shift",
+  "system": "dating",
+  "title": "Being appreciated does not prevent exhaustion",
+  "startPlace": "Community kitchen",
+  "npc": "Sam",
+  "holdout": true,
+  "history": [
+    {
+      "role": "user",
+      "content": "I join Sam at the community kitchen serving table for the last part of the evening."
+    },
+    {
+      "role": "assistant",
+      "content": "The queue bends past the noticeboard. Sam slides the empty trays together while you answer questions about what is still available. Your voice is already getting tired."
+    },
+    {
+      "role": "user",
+      "content": "I tell him I can handle the serving table while he checks the wash-up station."
+    },
+    {
+      "role": "assistant",
+      "content": "\"Thank you. I'll stay within shouting distance.\" He moves along the same counter as the next wave of conversation reaches you."
+    }
+  ],
+  "user": "I keep answering questions and helping people until the queue finally clears.",
+  "generationBrief": "The sustained interaction leaves Alex visibly socially depleted: effortful responses, longing for quiet, still awake and functioning. Sam returns to Alex at the same counter, sincerely grateful and warmly appreciative, showing a modest increase in fondness. No gifts or romantic promotion. Their work is finished but they stay in the kitchen. All consequences must be conveyed through natural prose, with no stat names, ratings, point costs, numerical damage or game notifications. Keep this beat in the current place. Do not add possessions, rewards or completed quests.",
+  "checks": [
+    [
+      "sameHoldings",
+      true
+    ],
+    [
+      "noXp",
+      true
+    ],
+    [
+      "locationFlag",
+      "no",
+      true
+    ],
+    [
+      "npcPresent",
+      "Sam"
+    ],
+    [
+      "relationshipUnchanged",
+      "Sam",
+      true
+    ],
+    [
+      "playerChangeBetween",
+      "Social Energy",
+      -5,
+      -1,
+      true
+    ],
+    [
+      "npcChangeBetween",
+      "Sam",
+      "Affection",
+      1,
+      7,
+      true
+    ]
+  ],
+  "energy": "8/10",
+  "text": "The last visitor thanks you and heads out. With the queue gone, the kitchen seems much larger. You lean against the counter and let your face stop holding the polite expression it has been wearing all evening. When someone calls a goodbye from the doorway, it takes a moment to find an answer.\n\nSam returns from the wash-up station and sets his hands on the counter beside you. \"I saw you explaining the soup to that family while you were finding somewhere for them to sit,\" he says. \"You made them feel welcome. I really like that about you.\" His smile stays with you a little longer than usual. Then he notices how slowly you are blinking and lowers his voice. \"You don't have to make conversation with me too.\"\n\nThat is a relief. You can still help, but the thought of answering another round of cheerful questions makes you want to hide in the quietest room available. Sam stays at the counter, close enough to share the pause, leaving you room to recover your words.",
+  "generation": {
+    "model": "/mnt/D/backup_models/gemma-4-31B-it-qat-UD-Q4_K_XL.gguf",
+    "endpoint": "http://127.0.0.1:9931/v1",
+    "generatedAt": "2026-10-21T00:42:44.864Z",
+    "narratorSha256": "ed57edec3be466a732d032b8f9d3b643df8061b72bd285ec506b3fa395444f93",
+    "parameters": {
+      "temperature": 0.8,
+      "top_p": 0.95,
+      "seed": 5031339,
+      "max_tokens": 1800,
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    },
+    "usage": {
+      "completion_tokens": 240,
+      "prompt_tokens": 656,
+      "total_tokens": 896,
+      "prompt_tokens_details": {
+        "cached_tokens": 173
+      }
+    },
+    "finishReason": "stop"
+  },
+  "review": {
+    "status": "reviewed",
+    "note": "Reviewed the generated scene against fresh-turn evidence and starting state; edited for natural prose, continuity, and unambiguous consequences without numerical readings. Removed invented outfit details where present.",
+    "originalText": "The last of the hungry visitors finally drifts away, leaving the kitchen in a sudden, ringing silence. You lean heavily against the stainless steel counter, your shoulders slouching. Every polite smile and repeated instruction from the last hour now feels like a weight; the mere thought of another social interaction makes you crave a dark, quiet room where no one asks you for anything. You remain functional, but your responses have slowed to a sluggish crawl.\n\nSam returns to your side, wiping his hands on a clean towel. He is dressed in a simple, charcoal-grey apron over a faded navy polo shirt that clings to his broad shoulders. His expression is soft, his eyes crinkling with a genuine, warm appreciation as he looks at you. He has a steady, grounded demeanor that feels calming in the wake of the crowd.\n\n\"You were a lifesaver back there,\" he says, his voice low and sincere. He doesn't try to push you into more conversation, sensing your exhaustion, but he lingers close by, clearly content with your company. He leans back against the table, crossing his arms, seemingly in no rush to leave the kitchen now that the work is done."
+  }
+}

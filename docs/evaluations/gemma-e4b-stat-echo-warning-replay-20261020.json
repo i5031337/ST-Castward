@@ -1,0 +1,1521 @@
+{
+  "replayedAt": "2026-10-21T01:48:22.103Z",
+  "sourceHashes": {
+    "src/tracker/stat-reading-equality.js": "911ae64ea445ca79e3093bcf518fce4f72456da2475ebdce44fbb52f2fc7d8fa",
+    "src/tracker/status-stat-values.js": "27b21f51bcabe641f39f4fba437d10b103d8b30404a3f45d6166b3bec477f026",
+    "src/tracker/extractor/status-extractor-deltas.js": "7e043ba8f1dd23daba273c5dccb2043863eed8d2630d1b376e5dec7098ad834e",
+    "src/tracker/status-update-constraints.js": "d48129e99c45c765abf80d10fcba538d1e13623848cc8f71f0f5aa3b36c82fd5"
+  },
+  "runs": [
+    {
+      "label": "qualitative-deltas-20261020",
+      "trials": [
+        {
+          "id": "dating-q-accepted-boundary",
+          "repeat": 1,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-accepted-boundary",
+          "repeat": 2,
+          "before": [
+            "Player · Social Energy delta \"-1\" skipped: the reply also provided an absolute value."
+          ],
+          "after": [
+            "Player · Social Energy delta \"-1\" skipped: the reply also provided an absolute value."
+          ]
+        },
+        {
+          "id": "dating-q-accepted-boundary",
+          "repeat": 3,
+          "before": [
+            "Sam · Comfort delta \"2\" skipped: the reply also provided an absolute value."
+          ],
+          "after": [
+            "Sam · Comfort delta \"2\" skipped: the reply also provided an absolute value."
+          ]
+        },
+        {
+          "id": "dating-q-candy-before-call",
+          "repeat": 1,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-candy-before-call",
+          "repeat": 2,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-candy-before-call",
+          "repeat": 3,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-closing-shift",
+          "repeat": 1,
+          "before": [
+            "Player · Social Energy delta \"-2\" skipped: the reply also provided an absolute value.",
+            "Sam · Affection delta \"2\" skipped: the reply also provided an absolute value.",
+            "Sam · Trust delta \"1\" skipped: the reply also provided an absolute value.",
+            "Sam · Comfort delta \"3\" skipped: the reply also provided an absolute value."
+          ],
+          "after": [
+            "Player · Social Energy delta \"-2\" skipped: the reply also provided an absolute value.",
+            "Sam · Affection delta \"2\" skipped: the reply also provided an absolute value.",
+            "Sam · Trust delta \"1\" skipped: the reply also provided an absolute value.",
+            "Sam · Comfort delta \"3\" skipped: the reply also provided an absolute value."
+          ]
+        },
+        {
+          "id": "dating-q-closing-shift",
+          "repeat": 2,
+          "before": [
+            "Player · Social Energy delta \"-1\" skipped: the reply also provided an absolute value."
+          ],
+          "after": [
+            "Player · Social Energy delta \"-1\" skipped: the reply also provided an absolute value."
+          ]
+        },
+        {
+          "id": "dating-q-closing-shift",
+          "repeat": 3,
+          "before": [
+            "Player · Social Energy delta \"-2\" skipped: the reply also provided an absolute value.",
+            "Sam · Affection delta \"2\" skipped: the reply also provided an absolute value.",
+            "Sam · Trust delta \"1\" skipped: the reply also provided an absolute value.",
+            "Sam · Comfort delta \"1\" skipped: the reply also provided an absolute value."
+          ],
+          "after": [
+            "Player · Social Energy delta \"-2\" skipped: the reply also provided an absolute value.",
+            "Sam · Affection delta \"2\" skipped: the reply also provided an absolute value.",
+            "Sam · Trust delta \"1\" skipped: the reply also provided an absolute value.",
+            "Sam · Comfort delta \"1\" skipped: the reply also provided an absolute value."
+          ]
+        },
+        {
+          "id": "dating-q-kept-confidence",
+          "repeat": 1,
+          "before": [
+            "Player · Social Energy delta \"-2\" skipped: the reply also provided an absolute value."
+          ],
+          "after": [
+            "Player · Social Energy delta \"-2\" skipped: the reply also provided an absolute value."
+          ]
+        },
+        {
+          "id": "dating-q-kept-confidence",
+          "repeat": 2,
+          "before": [
+            "Player · Social Energy delta \"-2\" skipped: the reply also provided an absolute value.",
+            "June · Affection delta \"5\" skipped: the reply also provided an absolute value.",
+            "June · Trust delta \"4\" skipped: the reply also provided an absolute value.",
+            "June · Comfort delta \"3\" skipped: the reply also provided an absolute value."
+          ],
+          "after": [
+            "Player · Social Energy delta \"-2\" skipped: the reply also provided an absolute value.",
+            "June · Affection delta \"5\" skipped: the reply also provided an absolute value.",
+            "June · Trust delta \"4\" skipped: the reply also provided an absolute value.",
+            "June · Comfort delta \"3\" skipped: the reply also provided an absolute value."
+          ]
+        },
+        {
+          "id": "dating-q-kept-confidence",
+          "repeat": 3,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-misplaced-confidence",
+          "repeat": 1,
+          "before": [
+            "Player · Social Energy delta \"-1\" skipped: the reply also provided an absolute value.",
+            "Sam · Affection delta \"2\" skipped: the reply also provided an absolute value."
+          ],
+          "after": [
+            "Player · Social Energy delta \"-1\" skipped: the reply also provided an absolute value.",
+            "Sam · Affection delta \"2\" skipped: the reply also provided an absolute value."
+          ]
+        },
+        {
+          "id": "dating-q-misplaced-confidence",
+          "repeat": 2,
+          "before": [
+            "Player · Social Energy delta \"-1\" skipped: the reply also provided an absolute value."
+          ],
+          "after": [
+            "Player · Social Energy delta \"-1\" skipped: the reply also provided an absolute value."
+          ]
+        },
+        {
+          "id": "dating-q-misplaced-confidence",
+          "repeat": 3,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-ordinary-pause",
+          "repeat": 1,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-ordinary-pause",
+          "repeat": 2,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-ordinary-pause",
+          "repeat": 3,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-passing-joke",
+          "repeat": 1,
+          "before": [
+            "June · Affection delta \"1\" skipped: the reply also provided an absolute value.",
+            "June · Comfort delta \"2\" skipped: the reply also provided an absolute value."
+          ],
+          "after": [
+            "June · Affection delta \"1\" skipped: the reply also provided an absolute value.",
+            "June · Comfort delta \"2\" skipped: the reply also provided an absolute value."
+          ]
+        },
+        {
+          "id": "dating-q-passing-joke",
+          "repeat": 2,
+          "before": [
+            "Player · Social Energy delta \"1\" skipped: the reply also provided an absolute value.",
+            "June · Affection delta \"1\" skipped: the reply also provided an absolute value.",
+            "June · Trust delta \"1\" skipped: the reply also provided an absolute value.",
+            "June · Comfort delta \"1\" skipped: the reply also provided an absolute value."
+          ],
+          "after": [
+            "Player · Social Energy delta \"1\" skipped: the reply also provided an absolute value.",
+            "June · Affection delta \"1\" skipped: the reply also provided an absolute value.",
+            "June · Trust delta \"1\" skipped: the reply also provided an absolute value.",
+            "June · Comfort delta \"1\" skipped: the reply also provided an absolute value."
+          ]
+        },
+        {
+          "id": "dating-q-passing-joke",
+          "repeat": 3,
+          "before": [
+            "June · Affection delta \"1\" skipped: the reply also provided an absolute value."
+          ],
+          "after": [
+            "June · Affection delta \"1\" skipped: the reply also provided an absolute value."
+          ]
+        },
+        {
+          "id": "dating-q-pressure-lifted",
+          "repeat": 1,
+          "before": [
+            "Player · Social Energy delta \"3\" skipped: the reply also provided an absolute value.",
+            "Player · Mood delta \"Calm\" skipped: the reply also provided an absolute value.",
+            "June · Affection delta \"2\" skipped: the reply also provided an absolute value.",
+            "June · Trust delta \"1\" skipped: the reply also provided an absolute value.",
+            "June · Comfort delta \"1\" skipped: the reply also provided an absolute value."
+          ],
+          "after": [
+            "Player · Social Energy delta \"3\" skipped: the reply also provided an absolute value.",
+            "Player · Mood delta \"Calm\" skipped: the reply also provided an absolute value.",
+            "June · Affection delta \"2\" skipped: the reply also provided an absolute value.",
+            "June · Trust delta \"1\" skipped: the reply also provided an absolute value.",
+            "June · Comfort delta \"1\" skipped: the reply also provided an absolute value."
+          ]
+        },
+        {
+          "id": "dating-q-pressure-lifted",
+          "repeat": 2,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-pressure-lifted",
+          "repeat": 3,
+          "before": [
+            "Player · Social Energy delta \"3\" skipped: the reply also provided an absolute value."
+          ],
+          "after": [
+            "Player · Social Energy delta \"3\" skipped: the reply also provided an absolute value."
+          ]
+        },
+        {
+          "id": "dating-q-quiet-company",
+          "repeat": 1,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-quiet-company",
+          "repeat": 2,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-quiet-company",
+          "repeat": 3,
+          "before": [
+            "Player · Social Energy delta \"1\" skipped: the reply also provided an absolute value."
+          ],
+          "after": [
+            "Player · Social Energy delta \"1\" skipped: the reply also provided an absolute value."
+          ]
+        },
+        {
+          "id": "dating-q-unwelcome-notification",
+          "repeat": 1,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-unwelcome-notification",
+          "repeat": 2,
+          "before": [
+            "June · Affection delta \"-2\" skipped: the reply also provided an absolute value.",
+            "June · Comfort delta \"-3\" skipped: the reply also provided an absolute value."
+          ],
+          "after": [
+            "June · Affection delta \"-2\" skipped: the reply also provided an absolute value.",
+            "June · Comfort delta \"-3\" skipped: the reply also provided an absolute value."
+          ]
+        },
+        {
+          "id": "dating-q-unwelcome-notification",
+          "repeat": 3,
+          "before": [
+            "June · Affection delta \"-2\" skipped: the reply also provided an absolute value.",
+            "June · Trust delta \"-1\" skipped: the reply also provided an absolute value.",
+            "June · Comfort delta \"-3\" skipped: the reply also provided an absolute value."
+          ],
+          "after": [
+            "June · Affection delta \"-2\" skipped: the reply also provided an absolute value.",
+            "June · Trust delta \"-1\" skipped: the reply also provided an absolute value.",
+            "June · Comfort delta \"-3\" skipped: the reply also provided an absolute value."
+          ]
+        },
+        {
+          "id": "fantasy-q-brief-soaking",
+          "repeat": 1,
+          "before": [
+            "Mira · XP: \"0/100\" skipped: earned XP must be reported as a positive delta.",
+            "Mira · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-brief-soaking",
+          "repeat": 2,
+          "before": [
+            "Mira · XP: \"0/100\" skipped: earned XP must be reported as a positive delta.",
+            "Mira · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-brief-soaking",
+          "repeat": 3,
+          "before": [
+            "Mira · XP: \"0/100\" skipped: earned XP must be reported as a positive delta.",
+            "Mira · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-cleaned-cut",
+          "repeat": 1,
+          "before": [
+            "Mira · XP: \"0/100\" skipped: earned XP must be reported as a positive delta.",
+            "Mira · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-cleaned-cut",
+          "repeat": 2,
+          "before": [
+            "Player · XP: \"0/100\" skipped: earned XP must be reported as a positive delta.",
+            "Player · HP: unchanged absolute reading ignored in favor of the numeric delta.",
+            "Mira · XP: \"0/100\" skipped: earned XP must be reported as a positive delta.",
+            "Player · Level: \"1\" skipped: Level is managed by XP progression.",
+            "Mira · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-cleaned-cut",
+          "repeat": 3,
+          "before": [
+            "Player · XP: \"0/100\" skipped: earned XP must be reported as a positive delta.",
+            "Mira · XP: \"0/100\" skipped: earned XP must be reported as a positive delta.",
+            "Player · Level: \"1\" skipped: Level is managed by XP progression.",
+            "Mira · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-falling-plaster",
+          "repeat": 1,
+          "before": [
+            "Mira · XP: \"0/100\" skipped: earned XP must be reported as a positive delta.",
+            "Mira · HP delta \"-1\" skipped: the reply also provided an absolute value.",
+            "Mira · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": [
+            "Mira · HP delta \"-1\" skipped: the reply also provided an absolute value."
+          ]
+        },
+        {
+          "id": "fantasy-q-falling-plaster",
+          "repeat": 2,
+          "before": [
+            "Mira · XP: \"0/100\" skipped: earned XP must be reported as a positive delta.",
+            "Mira · HP delta \"-1\" skipped: the reply also provided an absolute value.",
+            "Mira · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": [
+            "Mira · HP delta \"-1\" skipped: the reply also provided an absolute value."
+          ]
+        },
+        {
+          "id": "fantasy-q-falling-plaster",
+          "repeat": 3,
+          "before": [
+            "Mira · XP: \"0/100\" skipped: earned XP must be reported as a positive delta.",
+            "Mira · HP delta \"-1\" skipped: the reply also provided an absolute value.",
+            "Mira · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": [
+            "Mira · HP delta \"-1\" skipped: the reply also provided an absolute value."
+          ]
+        },
+        {
+          "id": "fantasy-q-fever-easing",
+          "repeat": 1,
+          "before": [
+            "Player · XP: \"0/100\" skipped: earned XP must be reported as a positive delta.",
+            "Player · HP delta \"2\" skipped: the reply also provided an absolute value.",
+            "Mira · XP: \"0/100\" skipped: earned XP must be reported as a positive delta.",
+            "Player · Level: \"1\" skipped: Level is managed by XP progression.",
+            "Mira · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": [
+            "Player · HP delta \"2\" skipped: the reply also provided an absolute value."
+          ]
+        },
+        {
+          "id": "fantasy-q-fever-easing",
+          "repeat": 2,
+          "before": [
+            "Player · XP: \"0/100\" skipped: earned XP must be reported as a positive delta.",
+            "Player · HP delta \"2\" skipped: the reply also provided an absolute value.",
+            "Mira · XP: \"0/100\" skipped: earned XP must be reported as a positive delta.",
+            "Player · Level: \"1\" skipped: Level is managed by XP progression.",
+            "Mira · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": [
+            "Player · HP delta \"2\" skipped: the reply also provided an absolute value."
+          ]
+        },
+        {
+          "id": "fantasy-q-fever-easing",
+          "repeat": 3,
+          "before": [
+            "Mira · XP: \"0/100\" skipped: earned XP must be reported as a positive delta.",
+            "Mira · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-loose-scree",
+          "repeat": 1,
+          "before": [
+            "Player · XP: \"0/100\" skipped: earned XP must be reported as a positive delta.",
+            "Player · HP delta \"-1\" skipped: the reply also provided an absolute value.",
+            "Mira · XP: \"0/100\" skipped: earned XP must be reported as a positive delta.",
+            "Mira · HP delta \"-1\" skipped: the reply also provided an absolute value.",
+            "Player · Level: \"1\" skipped: Level is managed by XP progression.",
+            "Mira · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": [
+            "Player · HP delta \"-1\" skipped: the reply also provided an absolute value.",
+            "Mira · HP delta \"-1\" skipped: the reply also provided an absolute value."
+          ]
+        },
+        {
+          "id": "fantasy-q-loose-scree",
+          "repeat": 2,
+          "before": [
+            "Player · XP: \"0/100\" skipped: earned XP must be reported as a positive delta.",
+            "Mira · XP: \"0/100\" skipped: earned XP must be reported as a positive delta.",
+            "Player · Level: \"1\" skipped: Level is managed by XP progression.",
+            "Mira · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-loose-scree",
+          "repeat": 3,
+          "before": [
+            "Player · HP delta \"-1\" skipped: the reply also provided an absolute value.",
+            "Mira · HP delta \"-1\" skipped: the reply also provided an absolute value."
+          ],
+          "after": [
+            "Player · HP delta \"-1\" skipped: the reply also provided an absolute value.",
+            "Mira · HP delta \"-1\" skipped: the reply also provided an absolute value."
+          ]
+        },
+        {
+          "id": "fantasy-q-pain-easing-spell",
+          "repeat": 1,
+          "before": [
+            "Player · XP: \"0/100\" skipped: earned XP must be reported as a positive delta.",
+            "Player · Mana delta \"-2\" skipped: the reply also provided an absolute value.",
+            "Mira · XP: \"0/100\" skipped: earned XP must be reported as a positive delta.",
+            "Player · Level: \"1\" skipped: Level is managed by XP progression.",
+            "Mira · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": [
+            "Player · Mana delta \"-2\" skipped: the reply also provided an absolute value."
+          ]
+        },
+        {
+          "id": "fantasy-q-pain-easing-spell",
+          "repeat": 2,
+          "before": [
+            "Player · XP: \"0/100\" skipped: earned XP must be reported as a positive delta.",
+            "Player · Mana delta \"-2\" skipped: the reply also provided an absolute value.",
+            "Mira · XP: \"0/100\" skipped: earned XP must be reported as a positive delta.",
+            "Player · Level: \"1\" skipped: Level is managed by XP progression.",
+            "Mira · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": [
+            "Player · Mana delta \"-2\" skipped: the reply also provided an absolute value."
+          ]
+        },
+        {
+          "id": "fantasy-q-pain-easing-spell",
+          "repeat": 3,
+          "before": [
+            "Player · XP: \"0/100\" skipped: earned XP must be reported as a positive delta.",
+            "Player · Mana delta \"-2\" skipped: the reply also provided an absolute value.",
+            "Mira · XP: \"0/100\" skipped: earned XP must be reported as a positive delta.",
+            "Player · Level: \"1\" skipped: Level is managed by XP progression.",
+            "Mira · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": [
+            "Player · Mana delta \"-2\" skipped: the reply also provided an absolute value."
+          ]
+        },
+        {
+          "id": "fantasy-q-practice-impact",
+          "repeat": 1,
+          "before": [
+            "Player · HP delta \"-1\" skipped: the reply also provided an absolute value.",
+            "Rowan · XP: \"0/100\" skipped: earned XP must be reported as a positive delta.",
+            "Rowan · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": [
+            "Player · HP delta \"-1\" skipped: the reply also provided an absolute value."
+          ]
+        },
+        {
+          "id": "fantasy-q-practice-impact",
+          "repeat": 2,
+          "before": [
+            "Player · XP: \"0/100\" skipped: earned XP must be reported as a positive delta.",
+            "Player · HP delta \"-1\" skipped: the reply also provided an absolute value.",
+            "Rowan · XP: \"0/100\" skipped: earned XP must be reported as a positive delta.",
+            "Player · Level: \"1\" skipped: Level is managed by XP progression.",
+            "Rowan · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": [
+            "Player · HP delta \"-1\" skipped: the reply also provided an absolute value."
+          ]
+        },
+        {
+          "id": "fantasy-q-practice-impact",
+          "repeat": 3,
+          "before": [
+            "Player · XP: \"0/100\" skipped: earned XP must be reported as a positive delta.",
+            "Player · HP delta \"-1\" skipped: the reply also provided an absolute value.",
+            "Rowan · XP: \"0/100\" skipped: earned XP must be reported as a positive delta.",
+            "Player · Level: \"1\" skipped: Level is managed by XP progression.",
+            "Rowan · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": [
+            "Player · HP delta \"-1\" skipped: the reply also provided an absolute value."
+          ]
+        },
+        {
+          "id": "fantasy-q-sheltered-breather",
+          "repeat": 1,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-sheltered-breather",
+          "repeat": 2,
+          "before": [
+            "Player · XP: \"0/100\" skipped: earned XP must be reported as a positive delta.",
+            "Player · HP delta \"1\" skipped: the reply also provided an absolute value.",
+            "Mira · XP: \"0/100\" skipped: earned XP must be reported as a positive delta.",
+            "Mira · HP delta \"1\" skipped: the reply also provided an absolute value.",
+            "Player · Level: \"1\" skipped: Level is managed by XP progression.",
+            "Mira · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": [
+            "Player · HP delta \"1\" skipped: the reply also provided an absolute value.",
+            "Mira · HP delta \"1\" skipped: the reply also provided an absolute value."
+          ]
+        },
+        {
+          "id": "fantasy-q-sheltered-breather",
+          "repeat": 3,
+          "before": [
+            "Player · XP: \"0/100\" skipped: earned XP must be reported as a positive delta.",
+            "Mira · XP: \"0/100\" skipped: earned XP must be reported as a positive delta.",
+            "Player · Level: \"1\" skipped: Level is managed by XP progression.",
+            "Mira · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-sustained-ward",
+          "repeat": 1,
+          "before": [
+            "Player · Mana delta \"-1\" skipped: the reply also provided an absolute value.",
+            "Mira · XP: \"0/100\" skipped: earned XP must be reported as a positive delta.",
+            "Mira · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": [
+            "Player · Mana delta \"-1\" skipped: the reply also provided an absolute value."
+          ]
+        },
+        {
+          "id": "fantasy-q-sustained-ward",
+          "repeat": 2,
+          "before": [
+            "Player · XP: \"0/100\" skipped: earned XP must be reported as a positive delta.",
+            "Mira · XP: \"0/100\" skipped: earned XP must be reported as a positive delta.",
+            "Player · Level: \"1\" skipped: Level is managed by XP progression.",
+            "Mira · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-sustained-ward",
+          "repeat": 3,
+          "before": [
+            "Player · XP: \"0/100\" skipped: earned XP must be reported as a positive delta.",
+            "Player · Mana delta \"-3\" skipped: the reply also provided an absolute value.",
+            "Mira · XP: \"0/100\" skipped: earned XP must be reported as a positive delta.",
+            "Player · Level: \"1\" skipped: Level is managed by XP progression.",
+            "Mira · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": [
+            "Player · Mana delta \"-3\" skipped: the reply also provided an absolute value."
+          ]
+        },
+        {
+          "id": "fantasy-q-unspent-threat",
+          "repeat": 1,
+          "before": [
+            "Mira · XP: \"0/100\" skipped: earned XP must be reported as a positive delta.",
+            "Mira · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-unspent-threat",
+          "repeat": 2,
+          "before": [
+            "Mira · XP: \"0/100\" skipped: earned XP must be reported as a positive delta.",
+            "Mira · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-unspent-threat",
+          "repeat": 3,
+          "before": [
+            "Mira · XP: \"0/100\" skipped: earned XP must be reported as a positive delta.",
+            "Mira · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": []
+        }
+      ],
+      "warningsBefore": 144,
+      "warningsAfter": 57,
+      "warningRepliesBefore": 46,
+      "warningRepliesAfter": 33
+    },
+    {
+      "label": "qualitative-absolute-20261020",
+      "trials": [
+        {
+          "id": "dating-q-accepted-boundary",
+          "repeat": 1,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-accepted-boundary",
+          "repeat": 2,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-accepted-boundary",
+          "repeat": 3,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-candy-before-call",
+          "repeat": 1,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-candy-before-call",
+          "repeat": 2,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-candy-before-call",
+          "repeat": 3,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-closing-shift",
+          "repeat": 1,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-closing-shift",
+          "repeat": 2,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-closing-shift",
+          "repeat": 3,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-kept-confidence",
+          "repeat": 1,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-kept-confidence",
+          "repeat": 2,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-kept-confidence",
+          "repeat": 3,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-misplaced-confidence",
+          "repeat": 1,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-misplaced-confidence",
+          "repeat": 2,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-misplaced-confidence",
+          "repeat": 3,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-ordinary-pause",
+          "repeat": 1,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-ordinary-pause",
+          "repeat": 2,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-ordinary-pause",
+          "repeat": 3,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-passing-joke",
+          "repeat": 1,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-passing-joke",
+          "repeat": 2,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-passing-joke",
+          "repeat": 3,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-pressure-lifted",
+          "repeat": 1,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-pressure-lifted",
+          "repeat": 2,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-pressure-lifted",
+          "repeat": 3,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-quiet-company",
+          "repeat": 1,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-quiet-company",
+          "repeat": 2,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-quiet-company",
+          "repeat": 3,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-unwelcome-notification",
+          "repeat": 1,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-unwelcome-notification",
+          "repeat": 2,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-unwelcome-notification",
+          "repeat": 3,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-brief-soaking",
+          "repeat": 1,
+          "before": [
+            "Player · Level: \"1\" skipped: Level is managed by XP progression.",
+            "Mira · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-brief-soaking",
+          "repeat": 2,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-brief-soaking",
+          "repeat": 3,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-cleaned-cut",
+          "repeat": 1,
+          "before": [
+            "Player · Level: \"1\" skipped: Level is managed by XP progression.",
+            "Mira · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-cleaned-cut",
+          "repeat": 2,
+          "before": [
+            "Player · Level: \"1\" skipped: Level is managed by XP progression.",
+            "Mira · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-cleaned-cut",
+          "repeat": 3,
+          "before": [
+            "Player · Level: \"1\" skipped: Level is managed by XP progression.",
+            "Mira · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-falling-plaster",
+          "repeat": 1,
+          "before": [
+            "Player · Level: \"1\" skipped: Level is managed by XP progression.",
+            "Mira · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-falling-plaster",
+          "repeat": 2,
+          "before": [
+            "Mira · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-falling-plaster",
+          "repeat": 3,
+          "before": [
+            "Player · Level: \"1\" skipped: Level is managed by XP progression.",
+            "Mira · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-fever-easing",
+          "repeat": 1,
+          "before": [
+            "Player · Level: \"1\" skipped: Level is managed by XP progression.",
+            "Mira · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-fever-easing",
+          "repeat": 2,
+          "before": [
+            "Mira · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-fever-easing",
+          "repeat": 3,
+          "before": [
+            "Player · Level: \"1\" skipped: Level is managed by XP progression.",
+            "Mira · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-loose-scree",
+          "repeat": 1,
+          "before": [
+            "Player · Level: \"1\" skipped: Level is managed by XP progression.",
+            "Mira · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-loose-scree",
+          "repeat": 2,
+          "before": [
+            "Player · Level: \"1\" skipped: Level is managed by XP progression.",
+            "Mira · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-loose-scree",
+          "repeat": 3,
+          "before": [
+            "Player · Level: \"1\" skipped: Level is managed by XP progression.",
+            "Mira · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-pain-easing-spell",
+          "repeat": 1,
+          "before": [
+            "Player · Level: \"1\" skipped: Level is managed by XP progression.",
+            "Mira · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-pain-easing-spell",
+          "repeat": 2,
+          "before": [
+            "Player · Level: \"1\" skipped: Level is managed by XP progression.",
+            "Mira · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-pain-easing-spell",
+          "repeat": 3,
+          "before": [
+            "Player · Level: \"1\" skipped: Level is managed by XP progression.",
+            "Mira · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-practice-impact",
+          "repeat": 1,
+          "before": [
+            "Player · Level: \"1\" skipped: Level is managed by XP progression.",
+            "Rowan · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-practice-impact",
+          "repeat": 2,
+          "before": [
+            "Player · Level: \"1\" skipped: Level is managed by XP progression.",
+            "Rowan · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-practice-impact",
+          "repeat": 3,
+          "before": [
+            "Player · Level: \"1\" skipped: Level is managed by XP progression.",
+            "Rowan · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-sheltered-breather",
+          "repeat": 1,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-sheltered-breather",
+          "repeat": 2,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-sheltered-breather",
+          "repeat": 3,
+          "before": [
+            "Mira · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-sustained-ward",
+          "repeat": 1,
+          "before": [
+            "Player · Level: \"1\" skipped: Level is managed by XP progression.",
+            "Mira · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-sustained-ward",
+          "repeat": 2,
+          "before": [
+            "Player · Level: \"1\" skipped: Level is managed by XP progression.",
+            "Mira · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-sustained-ward",
+          "repeat": 3,
+          "before": [
+            "Player · Level: \"1\" skipped: Level is managed by XP progression.",
+            "Mira · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-unspent-threat",
+          "repeat": 1,
+          "before": [
+            "Mira · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-unspent-threat",
+          "repeat": 2,
+          "before": [
+            "Mira · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-unspent-threat",
+          "repeat": 3,
+          "before": [],
+          "after": []
+        }
+      ],
+      "warningsBefore": 45,
+      "warningsAfter": 0,
+      "warningRepliesBefore": 25,
+      "warningRepliesAfter": 0
+    },
+    {
+      "label": "qualitative-absolute-schema-20261020",
+      "trials": [
+        {
+          "id": "dating-q-accepted-boundary",
+          "repeat": 1,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-accepted-boundary",
+          "repeat": 2,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-accepted-boundary",
+          "repeat": 3,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-candy-before-call",
+          "repeat": 1,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-candy-before-call",
+          "repeat": 2,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-candy-before-call",
+          "repeat": 3,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-closing-shift",
+          "repeat": 1,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-closing-shift",
+          "repeat": 2,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-closing-shift",
+          "repeat": 3,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-kept-confidence",
+          "repeat": 1,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-kept-confidence",
+          "repeat": 2,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-kept-confidence",
+          "repeat": 3,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-misplaced-confidence",
+          "repeat": 1,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-misplaced-confidence",
+          "repeat": 2,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-misplaced-confidence",
+          "repeat": 3,
+          "before": [
+            "Sam · Affection: \", 23\" adjusted or refused: outside the numeric bounds or not a valid numeric reading; using \"20\".",
+            "Sam · Trust: \", 12\" adjusted or refused: outside the numeric bounds or not a valid numeric reading; using \"12\".",
+            "Sam · Comfort: \", 20\" adjusted or refused: outside the numeric bounds or not a valid numeric reading; using \"20\"."
+          ],
+          "after": [
+            "Sam · Affection: \", 23\" adjusted or refused: outside the numeric bounds or not a valid numeric reading; using \"20\".",
+            "Sam · Trust: \", 12\" adjusted or refused: outside the numeric bounds or not a valid numeric reading; using \"12\".",
+            "Sam · Comfort: \", 20\" adjusted or refused: outside the numeric bounds or not a valid numeric reading; using \"20\"."
+          ]
+        },
+        {
+          "id": "dating-q-ordinary-pause",
+          "repeat": 1,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-ordinary-pause",
+          "repeat": 2,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-ordinary-pause",
+          "repeat": 3,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-passing-joke",
+          "repeat": 1,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-passing-joke",
+          "repeat": 2,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-passing-joke",
+          "repeat": 3,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-pressure-lifted",
+          "repeat": 1,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-pressure-lifted",
+          "repeat": 2,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-pressure-lifted",
+          "repeat": 3,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-quiet-company",
+          "repeat": 1,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-quiet-company",
+          "repeat": 2,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-quiet-company",
+          "repeat": 3,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-unwelcome-notification",
+          "repeat": 1,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-unwelcome-notification",
+          "repeat": 2,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "dating-q-unwelcome-notification",
+          "repeat": 3,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-brief-soaking",
+          "repeat": 1,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-brief-soaking",
+          "repeat": 2,
+          "before": [
+            "Mira · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-brief-soaking",
+          "repeat": 3,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-cleaned-cut",
+          "repeat": 1,
+          "before": [
+            "Mira · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-cleaned-cut",
+          "repeat": 2,
+          "before": [
+            "Mira · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-cleaned-cut",
+          "repeat": 3,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-falling-plaster",
+          "repeat": 1,
+          "before": [
+            "Mira · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-falling-plaster",
+          "repeat": 2,
+          "before": [
+            "Mira · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-falling-plaster",
+          "repeat": 3,
+          "before": [
+            "Mira · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-fever-easing",
+          "repeat": 1,
+          "before": [
+            "Mira · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-fever-easing",
+          "repeat": 2,
+          "before": [
+            "Mira · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-fever-easing",
+          "repeat": 3,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-loose-scree",
+          "repeat": 1,
+          "before": [
+            "Mira · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-loose-scree",
+          "repeat": 2,
+          "before": [
+            "Mira · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-loose-scree",
+          "repeat": 3,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-pain-easing-spell",
+          "repeat": 1,
+          "before": [
+            "Mira · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-pain-easing-spell",
+          "repeat": 2,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-pain-easing-spell",
+          "repeat": 3,
+          "before": [
+            "Mira · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-practice-impact",
+          "repeat": 1,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-practice-impact",
+          "repeat": 2,
+          "before": [
+            "Player · XP: maximum \"100000\" skipped: the reader keeps the existing maximum (using \"0/100\").",
+            "Rowan · XP: maximum \"100000\" skipped: the reader keeps the existing maximum (using \"0/100\").",
+            "Rowan · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": [
+            "Player · XP: maximum \"100000\" skipped: the reader keeps the existing maximum (using \"0/100\").",
+            "Rowan · XP: maximum \"100000\" skipped: the reader keeps the existing maximum (using \"0/100\")."
+          ]
+        },
+        {
+          "id": "fantasy-q-practice-impact",
+          "repeat": 3,
+          "before": [
+            "Rowan · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-sheltered-breather",
+          "repeat": 1,
+          "before": [
+            "Mira · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-sheltered-breather",
+          "repeat": 2,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-sheltered-breather",
+          "repeat": 3,
+          "before": [
+            "Mira · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-sustained-ward",
+          "repeat": 1,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-sustained-ward",
+          "repeat": 2,
+          "before": [
+            "Mira · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-sustained-ward",
+          "repeat": 3,
+          "before": [],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-unspent-threat",
+          "repeat": 1,
+          "before": [
+            "Mira · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-unspent-threat",
+          "repeat": 2,
+          "before": [
+            "Mira · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": []
+        },
+        {
+          "id": "fantasy-q-unspent-threat",
+          "repeat": 3,
+          "before": [
+            "Mira · Level: \"1\" skipped: Level is managed by XP progression."
+          ],
+          "after": []
+        }
+      ],
+      "warningsBefore": 25,
+      "warningsAfter": 5,
+      "warningRepliesBefore": 21,
+      "warningRepliesAfter": 2
+    }
+  ]
+}

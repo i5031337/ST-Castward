@@ -1,4 +1,6 @@
-TRACKER PROMPT DRAFT — TASK-FOCUSED WORDING
+ARCHIVED TRACKER PROMPT DRAFT — PRE-ABSOLUTE CONTRACT
+
+Historical reference only; current runtime templates are in src/prompts/prompt-texts-reader.js.
 
 Unexpanded template reference. Evaluation results and fully assembled requests are in docs/evaluations/.
 

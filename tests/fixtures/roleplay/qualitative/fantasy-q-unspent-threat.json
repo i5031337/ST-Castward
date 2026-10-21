@@ -1,0 +1,108 @@
+{
+  "id": "fantasy-q-unspent-threat",
+  "system": "fantasy",
+  "title": "Preparing to cast is not casting",
+  "startPlace": "Archive vestibule",
+  "npc": "Mira",
+  "holdout": true,
+  "history": [
+    {
+      "role": "user",
+      "content": "I wait with Mira in the archive vestibule, where a locked iron grille blocks the stairs."
+    },
+    {
+      "role": "assistant",
+      "content": "Mira studies the lock from a safe distance. \"It may be alarmed. Let me check before you try anything.\" Dust lies thick on the undisturbed stair treads."
+    },
+    {
+      "role": "user",
+      "content": "I say I could burn through the lock if she cannot open it."
+    },
+    {
+      "role": "assistant",
+      "content": "\"Maybe. But give me a moment first.\" She crouches without touching the lock. Nothing glows or moves."
+    }
+  ],
+  "user": "I gather my nerve and lift my hand. If the lock attacks her, I will cast Ember, but I hold off while she checks it.",
+  "generationBrief": "Mira inspects without triggering anything and asks Alex to keep waiting. Alex does not cast Ember; no magical effect, effort expenditure, injury, lock opening or movement occurs. Preserve the distinction between a conditional intention and a completed spell. Make this an ordinary suspenseful inspection, not a stat lecture. All consequences must be conveyed through natural prose, with no stat names, ratings, point costs, numerical damage or game notifications. Keep this beat in the current place. Do not add possessions, rewards or completed quests.",
+  "checks": [
+    [
+      "sameHoldings",
+      true
+    ],
+    [
+      "noXp",
+      true
+    ],
+    [
+      "locationFlag",
+      "no",
+      true
+    ],
+    [
+      "npcPresent",
+      "Mira"
+    ],
+    [
+      "noNpcXp",
+      "Mira",
+      true
+    ],
+    [
+      "playerUnchanged",
+      "HP",
+      true
+    ],
+    [
+      "playerUnchanged",
+      "Mana",
+      true
+    ],
+    [
+      "npcUnchanged",
+      "Mira",
+      "HP",
+      true
+    ]
+  ],
+  "playerStats": {
+    "Mana": "6/10"
+  },
+  "abilities": [
+    {
+      "name": "Ember",
+      "kind": "Spell",
+      "effect": "A small directed flame."
+    }
+  ],
+  "text": "Mira changes the angle from which she is looking at the lock. She does it slowly, keeping her hands clear of the iron. Nothing moves inside the mechanism. The grille stays shut, and the dust on the stair treads beyond it remains undisturbed.\n\n\"Not yet,\" she says when she notices your raised hand. \"I can see something behind the catch, but I don't know what it does.\" She looks again from the other side, still without touching anything. You have no attack to answer, no sudden sound or light to make the decision for you.\n\nYour hand stays ready, but Ember never leaves it. The heat you are imagining does not appear in the air; there is no spell to sustain or effort to recover from. Mira remains unhurt beside the grille. After a while she straightens, frowning at the same closed lock. \"Keep waiting. I'd rather be slow than set it off.\" The two of you are still in the vestibule, with the inspection unfinished and your magic unspent.",
+  "generation": {
+    "model": "/mnt/D/backup_models/gemma-4-31B-it-qat-UD-Q4_K_XL.gguf",
+    "endpoint": "http://127.0.0.1:9931/v1",
+    "generatedAt": "2026-10-21T00:46:03.850Z",
+    "narratorSha256": "ed57edec3be466a732d032b8f9d3b643df8061b72bd285ec506b3fa395444f93",
+    "parameters": {
+      "temperature": 0.8,
+      "top_p": 0.95,
+      "seed": 5031356,
+      "max_tokens": 1800,
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    },
+    "usage": {
+      "completion_tokens": 233,
+      "prompt_tokens": 665,
+      "total_tokens": 898,
+      "prompt_tokens_details": {
+        "cached_tokens": 159
+      }
+    },
+    "finishReason": "stop"
+  },
+  "review": {
+    "status": "reviewed",
+    "note": "Reviewed the generated scene against fresh-turn evidence and starting state; edited for natural prose, continuity, and unambiguous consequences without numerical readings. Removed invented outfit details where present.",
+    "originalText": "You stand tense, your fingers tingling with the latent heat of a spell you haven't yet released. You keep your gaze locked on the iron grille, ready to ignite the air the moment Mira encounters danger. The silence of the vestibule is heavy, broken only by the soft sound of her breathing and the distant drip of water somewhere deeper in the archives.\n\nMira remains focused, her movements precise and cautious. She is dressed in a heavy, charcoal-grey tunic cinched with a leather belt, her silver hair tied back in a tight, practical knot that exposes the sharp line of her jaw. Her pale eyes narrow as she leans in, using a small mirror to peer into the mechanism of the lock. She doesn't touch the metal, instead hovering her fingertips just inches away to feel for magical vibrations.\n\nAfter a long, agonizing minute, she slowly pulls back and stands up, though her expression remains guarded. She glances back at you with a stern, cautionary look, her demeanor clinical and cold. \"Stay where you are,\" she commands in a low whisper. \"There is a complexity here I didn't anticipate. Keep waiting.\""
+  }
+}

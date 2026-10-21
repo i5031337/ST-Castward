@@ -1,0 +1,378 @@
+{
+  "sourceHashesMatch": true,
+  "trials": 40,
+  "fullyPassingTrials": 27,
+  "duplicateReadingAndDeltaTrials": 15,
+  "numericReadingTrials": 16,
+  "diagnostics": [
+    {
+      "id": "dating-boundary-respected",
+      "repeat": 0,
+      "duplicateReadingsAndDeltas": [
+        "June.Affection",
+        "June.Comfort",
+        "June.Trust"
+      ],
+      "numericValuesInReadingObjects": [
+        "June.Affection",
+        "June.Trust",
+        "June.Comfort"
+      ]
+    },
+    {
+      "id": "dating-boundary-respected",
+      "repeat": 1,
+      "duplicateReadingsAndDeltas": [],
+      "numericValuesInReadingObjects": [
+        "June.Affection",
+        "June.Trust",
+        "June.Comfort"
+      ]
+    },
+    {
+      "id": "dating-coat-off",
+      "repeat": 0,
+      "duplicateReadingsAndDeltas": [],
+      "numericValuesInReadingObjects": [
+        "June.Affection",
+        "June.Trust",
+        "June.Comfort"
+      ]
+    },
+    {
+      "id": "dating-coat-off",
+      "repeat": 1,
+      "duplicateReadingsAndDeltas": [],
+      "numericValuesInReadingObjects": [
+        "June.Affection",
+        "June.Trust",
+        "June.Comfort"
+      ]
+    },
+    {
+      "id": "dating-crowded-fundraiser",
+      "repeat": 0,
+      "duplicateReadingsAndDeltas": [
+        "Sam.Affection",
+        "Sam.Comfort",
+        "Sam.Trust"
+      ],
+      "numericValuesInReadingObjects": [
+        "Sam.Affection",
+        "Sam.Trust",
+        "Sam.Comfort"
+      ]
+    },
+    {
+      "id": "dating-crowded-fundraiser",
+      "repeat": 1,
+      "duplicateReadingsAndDeltas": [
+        "Player.Social Energy"
+      ],
+      "numericValuesInReadingObjects": [
+        "Sam.Affection"
+      ]
+    },
+    {
+      "id": "dating-honest-apology",
+      "repeat": 0,
+      "duplicateReadingsAndDeltas": [],
+      "numericValuesInReadingObjects": []
+    },
+    {
+      "id": "dating-honest-apology",
+      "repeat": 1,
+      "duplicateReadingsAndDeltas": [
+        "Sam.Affection"
+      ],
+      "numericValuesInReadingObjects": []
+    },
+    {
+      "id": "dating-morning-alone",
+      "repeat": 0,
+      "duplicateReadingsAndDeltas": [],
+      "numericValuesInReadingObjects": []
+    },
+    {
+      "id": "dating-morning-alone",
+      "repeat": 1,
+      "duplicateReadingsAndDeltas": [],
+      "numericValuesInReadingObjects": []
+    },
+    {
+      "id": "dating-mutual-agreement",
+      "repeat": 0,
+      "duplicateReadingsAndDeltas": [],
+      "numericValuesInReadingObjects": [
+        "June.Affection",
+        "June.Trust",
+        "June.Comfort"
+      ]
+    },
+    {
+      "id": "dating-mutual-agreement",
+      "repeat": 1,
+      "duplicateReadingsAndDeltas": [],
+      "numericValuesInReadingObjects": [
+        "June.Affection",
+        "June.Trust",
+        "June.Comfort"
+      ]
+    },
+    {
+      "id": "dating-quiet-promise",
+      "repeat": 0,
+      "duplicateReadingsAndDeltas": [
+        "Sam.Affection",
+        "Sam.Trust"
+      ],
+      "numericValuesInReadingObjects": [
+        "Sam.Affection",
+        "Sam.Trust",
+        "Sam.Comfort"
+      ]
+    },
+    {
+      "id": "dating-quiet-promise",
+      "repeat": 1,
+      "duplicateReadingsAndDeltas": [],
+      "numericValuesInReadingObjects": [
+        "Sam.Affection",
+        "Sam.Trust",
+        "Sam.Comfort"
+      ]
+    },
+    {
+      "id": "dating-rain-check",
+      "repeat": 0,
+      "duplicateReadingsAndDeltas": [
+        "June.Affection",
+        "June.Comfort",
+        "June.Trust"
+      ],
+      "numericValuesInReadingObjects": [
+        "June.Affection",
+        "June.Trust",
+        "June.Comfort"
+      ]
+    },
+    {
+      "id": "dating-rain-check",
+      "repeat": 1,
+      "duplicateReadingsAndDeltas": [],
+      "numericValuesInReadingObjects": [
+        "June.Affection",
+        "June.Trust",
+        "June.Comfort"
+      ]
+    },
+    {
+      "id": "dating-remembered-flower",
+      "repeat": 0,
+      "duplicateReadingsAndDeltas": [
+        "June.Affection",
+        "June.Comfort",
+        "June.Trust"
+      ],
+      "numericValuesInReadingObjects": []
+    },
+    {
+      "id": "dating-remembered-flower",
+      "repeat": 1,
+      "duplicateReadingsAndDeltas": [],
+      "numericValuesInReadingObjects": [
+        "June.Affection",
+        "June.Trust",
+        "June.Comfort"
+      ]
+    },
+    {
+      "id": "dating-unwanted-kiss",
+      "repeat": 0,
+      "duplicateReadingsAndDeltas": [
+        "Player.Social Energy",
+        "June.Affection",
+        "June.Comfort",
+        "June.Trust"
+      ],
+      "numericValuesInReadingObjects": [
+        "June.Affection",
+        "June.Trust",
+        "June.Comfort"
+      ]
+    },
+    {
+      "id": "dating-unwanted-kiss",
+      "repeat": 1,
+      "duplicateReadingsAndDeltas": [
+        "Player.Social Energy",
+        "June.Affection",
+        "June.Comfort",
+        "June.Trust"
+      ],
+      "numericValuesInReadingObjects": [
+        "June.Affection",
+        "June.Trust",
+        "June.Comfort"
+      ]
+    },
+    {
+      "id": "fantasy-blocked-strike",
+      "repeat": 0,
+      "duplicateReadingsAndDeltas": [],
+      "numericValuesInReadingObjects": []
+    },
+    {
+      "id": "fantasy-blocked-strike",
+      "repeat": 1,
+      "duplicateReadingsAndDeltas": [],
+      "numericValuesInReadingObjects": []
+    },
+    {
+      "id": "fantasy-bridge-toll",
+      "repeat": 0,
+      "duplicateReadingsAndDeltas": [],
+      "numericValuesInReadingObjects": []
+    },
+    {
+      "id": "fantasy-bridge-toll",
+      "repeat": 1,
+      "duplicateReadingsAndDeltas": [],
+      "numericValuesInReadingObjects": []
+    },
+    {
+      "id": "fantasy-companion-bandage",
+      "repeat": 0,
+      "duplicateReadingsAndDeltas": [],
+      "numericValuesInReadingObjects": []
+    },
+    {
+      "id": "fantasy-companion-bandage",
+      "repeat": 1,
+      "duplicateReadingsAndDeltas": [],
+      "numericValuesInReadingObjects": []
+    },
+    {
+      "id": "fantasy-courier-rescue",
+      "repeat": 0,
+      "duplicateReadingsAndDeltas": [
+        "Player.HP"
+      ],
+      "numericValuesInReadingObjects": []
+    },
+    {
+      "id": "fantasy-courier-rescue",
+      "repeat": 1,
+      "duplicateReadingsAndDeltas": [],
+      "numericValuesInReadingObjects": [
+        "Mira.Armor",
+        "Mira.Strength",
+        "Mira.Dexterity",
+        "Mira.Constitution",
+        "Mira.Intelligence",
+        "Mira.Wisdom",
+        "Mira.Charisma",
+        "Mira.Currency",
+        "Mira.Level",
+        "Courier.Armor",
+        "Courier.Strength",
+        "Courier.Dexterity",
+        "Courier.Constitution",
+        "Courier.Intelligence",
+        "Courier.Wisdom",
+        "Courier.Charisma",
+        "Courier.Currency",
+        "Courier.Level"
+      ]
+    },
+    {
+      "id": "fantasy-failed-fire",
+      "repeat": 0,
+      "duplicateReadingsAndDeltas": [],
+      "numericValuesInReadingObjects": []
+    },
+    {
+      "id": "fantasy-failed-fire",
+      "repeat": 1,
+      "duplicateReadingsAndDeltas": [
+        "Player.Mana"
+      ],
+      "numericValuesInReadingObjects": []
+    },
+    {
+      "id": "fantasy-first-cantrip",
+      "repeat": 0,
+      "duplicateReadingsAndDeltas": [
+        "Player.Mana",
+        "Player.XP"
+      ],
+      "numericValuesInReadingObjects": []
+    },
+    {
+      "id": "fantasy-first-cantrip",
+      "repeat": 1,
+      "duplicateReadingsAndDeltas": [],
+      "numericValuesInReadingObjects": []
+    },
+    {
+      "id": "fantasy-hand-over-rope",
+      "repeat": 0,
+      "duplicateReadingsAndDeltas": [],
+      "numericValuesInReadingObjects": []
+    },
+    {
+      "id": "fantasy-hand-over-rope",
+      "repeat": 1,
+      "duplicateReadingsAndDeltas": [],
+      "numericValuesInReadingObjects": []
+    },
+    {
+      "id": "fantasy-healing-draught",
+      "repeat": 0,
+      "duplicateReadingsAndDeltas": [
+        "Player.HP"
+      ],
+      "numericValuesInReadingObjects": []
+    },
+    {
+      "id": "fantasy-healing-draught",
+      "repeat": 1,
+      "duplicateReadingsAndDeltas": [],
+      "numericValuesInReadingObjects": []
+    },
+    {
+      "id": "fantasy-overnight-rest",
+      "repeat": 0,
+      "duplicateReadingsAndDeltas": [
+        "Player.HP",
+        "Player.Mana",
+        "Mira.HP",
+        "Mira.Mana"
+      ],
+      "numericValuesInReadingObjects": []
+    },
+    {
+      "id": "fantasy-overnight-rest",
+      "repeat": 1,
+      "duplicateReadingsAndDeltas": [
+        "Player.HP",
+        "Player.Mana",
+        "Mira.HP",
+        "Mira.Mana"
+      ],
+      "numericValuesInReadingObjects": []
+    },
+    {
+      "id": "fantasy-rumour-and-plan",
+      "repeat": 0,
+      "duplicateReadingsAndDeltas": [],
+      "numericValuesInReadingObjects": []
+    },
+    {
+      "id": "fantasy-rumour-and-plan",
+      "repeat": 1,
+      "duplicateReadingsAndDeltas": [],
+      "numericValuesInReadingObjects": []
+    }
+  ]
+}

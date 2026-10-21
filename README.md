@@ -115,7 +115,7 @@ To check changes before they take effect, enable **Tracker → Ask Before Applyi
 
 ## How leveling works
 
-At level 1 with `90/100` XP, earning `+20` takes you to level 2 with `10/100` left over. Larger awards can cross several levels.
+At level 1 with `90/100` XP, earning `+20` takes you to level 2 with `10/100` left over. Larger awards can cross several levels. The reader reports the resulting XP total; Castward calculates levels and the remainder, and refuses reader updates that would reduce earned XP.
 
 Choose how many stat points a level earns under **System → Builder → Player progression**. You can assign them yourself or let Castward distribute them randomly. NPC templates can have their own progression too.
 

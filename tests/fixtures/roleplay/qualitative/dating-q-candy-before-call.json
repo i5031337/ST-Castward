@@ -1,0 +1,104 @@
+{
+  "id": "dating-q-candy-before-call",
+  "system": "dating",
+  "title": "A small completed user action survives an unrelated reply",
+  "startPlace": "Apartment desk",
+  "npc": "Sam",
+  "holdout": true,
+  "history": [
+    {
+      "role": "user",
+      "content": "I sit at my apartment desk preparing notes for tomorrow. Sam is at home across town."
+    },
+    {
+      "role": "assistant",
+      "content": "Your notebook is open beside your own phone. Sam has not called or sent a new message. The flat is quiet apart from the refrigerator in the next room."
+    },
+    {
+      "role": "user",
+      "content": "I consider calling him later, once I have sorted the notes."
+    },
+    {
+      "role": "assistant",
+      "content": "The task is ordinary, not urgent. A bag holding the mint candies you brought home earlier rests beside the notebook. You have not opened it yet."
+    }
+  ],
+  "user": "I unwrap and eat a mint candy from my bag, then turn back to the notes. I might call Sam later, but I do not touch the phone yet.",
+  "generationBrief": "Stay focused on the quiet desk scene: Alex continues looking at the notes, distracted a little by an unfinished thought, neither especially refreshed nor exhausted. Do not repeat or undo the completed candy consumption from the player turn. Sam stays absent and there is no call, message or imagined conversation. No new relationship development or completed major task. All consequences must be conveyed through natural prose, with no stat names, ratings, point costs, numerical damage or game notifications. Keep this beat in the current place. Do not add possessions, rewards or completed quests.",
+  "checks": [
+    [
+      "noXp",
+      true
+    ],
+    [
+      "locationFlag",
+      "no",
+      true
+    ],
+    [
+      "itemRemove",
+      "items",
+      "mint candy",
+      1,
+      true
+    ],
+    [
+      "npcAbsent",
+      "Sam",
+      true
+    ],
+    [
+      "playerChangeBetween",
+      "Social Energy",
+      0,
+      1,
+      true
+    ]
+  ],
+  "offstage": true,
+  "energy": "6/10",
+  "items": [
+    {
+      "name": "mint candy",
+      "quantity": 3
+    },
+    {
+      "name": "notebook",
+      "quantity": 1
+    },
+    {
+      "name": "phone",
+      "quantity": 1
+    }
+  ],
+  "text": "The mint is still cool against your tongue when you find the place you lost in the notes. You had underlined a heading and drawn an arrow into the margin; now you cannot quite remember what was meant to go at the end of it. The desk lamp makes the indentation of the pen visible through the page.\n\nFor a moment you think of something Sam said the last time you spoke. It seems connected to the missing thought, but following it brings you back to the same unfinished heading. Outside, a car door shuts. The refrigerator stops humming, making the flat briefly quieter.\n\nThe phone stays dark beside the notebook. There is no new message to answer and no need to decide about the call yet. The mint has made your mouth feel fresher without doing much to change how rested you feel. Tomorrow's notes are still unfinished. You have the same quiet desk, the same open page, and a little time in which to work out what you wanted to say.",
+  "generation": {
+    "model": "/mnt/D/backup_models/gemma-4-31B-it-qat-UD-Q4_K_XL.gguf",
+    "endpoint": "http://127.0.0.1:9931/v1",
+    "generatedAt": "2026-10-21T00:42:32.968Z",
+    "narratorSha256": "ed57edec3be466a732d032b8f9d3b643df8061b72bd285ec506b3fa395444f93",
+    "parameters": {
+      "temperature": 0.8,
+      "top_p": 0.95,
+      "seed": 5031338,
+      "max_tokens": 1800,
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    },
+    "usage": {
+      "completion_tokens": 219,
+      "prompt_tokens": 682,
+      "total_tokens": 901,
+      "prompt_tokens_details": {
+        "cached_tokens": 174
+      }
+    },
+    "finishReason": "stop"
+  },
+  "review": {
+    "status": "reviewed",
+    "note": "Reviewed the generated scene against fresh-turn evidence and starting state; edited for natural prose, continuity, and unambiguous consequences without numerical readings. Removed invented outfit details where present.",
+    "originalText": "The cool, sharp burst of mint lingers on your tongue as you settle back into the chair. The sugar provides a momentary spark of alertness, though it doesn't truly banish the lingering fog of a long day. You refocus your attention on the scattered pages of your notebook, where your handwriting begins to blur together under the steady glow of the desk lamp.\n\nAs you read through your points for tomorrow, your mind drifts. A specific phrase in your notes triggers a fragmented memory—an unfinished thought from a previous conversation that you can't quite piece together. You stare at the ink, trying to reclaim the missing link in your logic, but the thought remains just out of reach, like a word on the tip of your tongue.\n\nThe silence of the apartment feels heavy around you. You remain in this liminal state, neither fully energized nor completely drained, caught between the discipline of your preparation and the quiet pull of distraction. The phone sits motionless on the desk, a dark rectangle of glass reflecting the dim light, waiting for you to decide when the work is finally done."
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "id": "fantasy-courier-rescue",
+  "system": "fantasy",
+  "title": "Success costs something",
+  "startPlace": "Flooded Culvert",
+  "npc": "Mira",
+  "history": [
+    {
+      "role": "user",
+      "content": "I wade into the culvert with Mira. The missing courier must be under the collapsed walkway."
+    },
+    {
+      "role": "assistant",
+      "content": "The courier is pinned beneath a fallen walkway, one boot caught between two beams. Mira lays her lantern on a dry stone and tests the current with her staff. \"He's breathing. We need that upper beam moved before the water rises.\" The courier cannot reach the buckle at his ankle."
+    },
+    {
+      "role": "user",
+      "content": "I wedge my shoulder under the timber. \"Mira, pull him out when it moves.\""
+    },
+    {
+      "role": "assistant",
+      "content": "The timber shifts when you lean into it, but a splintered brace presses against your shoulder. Mira grips the courier under his arms. \"A little more. I've got him.\" Water pushes a floating reed against your knee."
+    }
+  ],
+  "user": "I lift until Mira can drag him clear, even if the beam scrapes me. Then I lower it carefully.",
+  "generationBrief": "Resolve a successful rescue with a painful shallow shoulder scrape. Mira drags the courier onto the existing dry ledge and remains present; the unnamed courier remains too. Convey concrete accomplishment suitable for XP, without numeric awards or levels. No loot or new gear, and stay in the culvert.",
+  "checks": [
+    [
+      "playerDecreased",
+      "HP",
+      true
+    ],
+    [
+      "playerXpIncreased",
+      true
+    ],
+    [
+      "npcPresent",
+      "Mira"
+    ],
+    [
+      "noPlayerInventoryChanges",
+      true
+    ],
+    [
+      "locationFlag",
+      "no",
+      true
+    ]
+  ],
+  "xp": "20/100",
+  "text": "You heave upward with a guttural shout, your muscles straining against the water-logged weight of the beam. As the timber lifts, a jagged shard of wood rips across your shoulder, tearing through your tunic and scraping the skin raw. The sharp sting is immediate, but the gap opens just wide enough. Mira seizes the moment, her face set in a mask of focused determination, and drags the courier backward with a forceful heave.\n\nOnce the courier is safe, you lower the beam slowly to avoid a sudden splash. Mira pulls the man onto the existing dry ledge, her breathing heavy. The courier is a gaunt man with a pale, sweat-slicked face and wide, terrified eyes. He is dressed in a sodden, oversized wool coat that clings to his thin frame, his fingers trembling as he clutches a leather satchel to his chest. \n\nMira wipes a smudge of grime from her cheek, looking at the blood seeping through your shoulder before glancing at the courier. \"You're lucky we found you before the tide turned,\" she says, her voice stern but relieved. You have successfully retrieved the missing man, though the raw scrape on your shoulder pulses with a dull, stinging heat.",
+  "generation": {
+    "model": "/mnt/D/backup_models/gemma-4-31B-it-qat-UD-Q4_K_XL.gguf",
+    "endpoint": "http://127.0.0.1:9931/v1",
+    "generatedAt": "2026-10-20T22:15:35.796Z",
+    "narratorSha256": "ed57edec3be466a732d032b8f9d3b643df8061b72bd285ec506b3fa395444f93",
+    "parameters": {
+      "temperature": 0.8,
+      "top_p": 0.95,
+      "seed": 5031350,
+      "max_tokens": 1800,
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    },
+    "usage": {
+      "completion_tokens": 246,
+      "prompt_tokens": 650,
+      "total_tokens": 896,
+      "prompt_tokens_details": {
+        "cached_tokens": 174
+      }
+    },
+    "finishReason": "stop"
+  }
+}

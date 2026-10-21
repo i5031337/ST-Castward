@@ -4,77 +4,21 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFileSync } from 'node:fs';
 import { progressXp } from '../src/tracker/progression.js';
-import { expandNumericDeltas } from '../src/tracker/extractor/status-extractor-deltas.js';
+import { normalizeModelReadings } from '../src/tracker/extractor/status-extractor-readings.js';
+import { sameStatReading } from '../src/tracker/stat-reading-equality.js';
 
-test('reader deltas become absolute values without changing ceilings or innate stats', () => {
-    const settings = {
-        globalStats: [{ name: 'Heat' }],
-        playerStats: [{ name: 'HP' }, { name: 'XP', type: 'number', defaultValue: '0/100' }, { name: 'Level', type: 'number', defaultValue: '1' }],
-        npcStats: [{ name: 'Energy' }, { name: 'Power', locked: true }],
-    };
-    const state = {
-        global: { Heat: '2' },
-        player: { stats: { HP: '8/10', XP: '90/100', Level: '1' } },
-        characters: [{ name: 'Mira', stats: { Energy: '5/5', Power: '4' } }],
-    };
-    const reply = {
-        global: {}, globalDeltas: { Heat: 1 },
-        player: { stats: { HP: '6/10' }, deltas: { HP: -3, XP: 20, Level: 1 } },
-        characters: [{ name: 'Mira', deltas: { Energy: -2, Power: 3 } }],
-    };
-    expandNumericDeltas(reply, state, settings);
-    assert.deepEqual(reply.global, { Heat: '3' });
-    assert.equal(reply.player.stats.HP, '6/10');
-    assert.equal(reply.player.stats.XP, '110/100');
-    assert.equal(reply.characters[0].Energy, '3/5');
-    assert.equal(reply.characters[0].Power, undefined);
-    assert.equal(reply.player.deltas, undefined);
-});
-
-test('an unchanged duplicate reading does not erase a simultaneous numeric recovery delta', () => {
-    const settings = { globalStats: [], playerStats: [{ name: 'HP', type: 'number' }],
-        npcStats: [{ name: 'HP', type: 'number' }] };
-    const state = { player: { stats: { HP: '3/12' } },
-        characters: [{ name: 'Mira', stats: { HP: '4/12' } }] };
-    const update = { player: { stats: { HP: '3/12' }, deltas: { HP: 1 } },
-        characters: [{ name: 'Mira', stats: { HP: '4/12' }, deltas: { HP: 2 } }] };
-    const warnings = [];
-    expandNumericDeltas(update, state, settings, { warnings });
-    assert.equal(update.player.stats.HP, '4/12');
-    assert.equal(update.characters[0].stats.HP, '6/12');
-    assert.equal(warnings.length, 2);
-    assert.ok(warnings.every(message => message.includes('unchanged absolute reading ignored')));
-});
-
-test('reader XP uses only a positive delta when raw XP is also present', () => {
-    const settings = { globalStats: [], npcStats: [], playerStats: [{ name: 'XP', type: 'number', defaultValue: '0/100' }, { name: 'Level', type: 'number', defaultValue: '1' }] };
-    const state = { global: {}, characters: [], player: { stats: { XP: '90/100', Level: '1' } } };
-    const reply = { player: { stats: { XP: '2' }, deltas: { XP: 2 } }, characters: [] };
-    expandNumericDeltas(reply, state, settings);
-    assert.equal(reply.player.stats.XP, '92/100');
-    assert.equal(progressXp(state.player.stats.XP, reply.player.stats.XP, state.player.stats.Level).xp, '92/100');
-
-    const rollover = { player: { stats: { XP: '2' }, deltas: { XP: 20 } }, characters: [] };
-    expandNumericDeltas(rollover, state, settings);
-    assert.deepEqual(progressXp(state.player.stats.XP, rollover.player.stats.XP, state.player.stats.Level), {
-        xp: '10/100', level: '2', levelsGained: 1,
-    });
-});
-
-test('reader ignores raw-only XP and nonpositive XP deltas', () => {
-    const settings = { globalStats: [], npcStats: [], playerStats: [{ name: 'XP', type: 'number', defaultValue: '0/100' }, { name: 'Level', type: 'number', defaultValue: '1' }] };
-    const state = { global: {}, characters: [], player: { stats: { XP: '90/100', Level: '1' } } };
-    for (const player of [{ stats: { XP: '2' } }, { XP: '2', XP_current: '2' },
-        { stats: { XP: '2' }, deltas: { XP: -2 } },
-        { stats: { XP: '2' }, deltas: { XP: 0 } }]) {
-        const reply = { player, characters: [] };
-        expandNumericDeltas(reply, state, settings);
-        assert.equal(reply.player.stats?.XP, undefined);
-        assert.equal(reply.player.XP, undefined);
+test('reader absolute XP crosses thresholds without adding the old reading twice', () => {
+    const settings = { globalStats: [], npcStats: [], playerStats: [
+        { name: 'XP', type: 'number' }, { name: 'Level', type: 'number' }] };
+    const state = { player: { stats: { XP: '90/100', Level: '1' } } };
+    for (const [incoming, xp, level] of [['92/100', '92/100', '1'], ['110/100', '10/100', '2']]) {
+        const reply = { player: { stats: { XP: incoming } } };
+        const warnings = [];
+        normalizeModelReadings(reply, state, settings, { warnings });
+        assert.deepEqual(warnings, []);
+        assert.deepEqual(progressXp('90/100', reply.player.stats.XP, '1'), { xp, level, levelsGained: Number(level) - 1 });
+        assert.equal(state.player.stats.XP, '90/100');
     }
-    const blank = { player: { stats: { XP: '2' }, deltas: { XP: 2 } }, characters: [] };
-    expandNumericDeltas(blank, { ...state, player: { stats: { XP: '', Level: '1' } } }, settings);
-    assert.equal(blank.player.stats.XP, undefined);
 });
 
 // This module's SillyTavern imports require a browser. Inject those boundaries
@@ -302,22 +246,6 @@ test('configured player and enabled NPC fields roll over identically without mut
     assert.equal(disabled.characters[0].stats.Rank, '3');
 });
 
-test('enabled NPC XP accepts positive deltas; disabled templates keep ordinary stat behavior', () => {
-    const settings = { globalStats: [], playerStats: [], npcStats: [
-        { id: 'earned', name: 'Experience', type: 'number', defaultValue: '0/100' },
-        { id: 'rank', name: 'Rank', type: 'number', defaultValue: '1', locked: true },
-    ], npcTemplates: [{ id: 'fighter', statIds: ['earned', 'rank'],
-        progression: { enabled: true, xpFieldId: 'earned', levelFieldId: 'rank' } }] };
-    const state = { characters: [{ name: 'Mira', npcTemplateId: 'fighter', stats: { Experience: '90/100', Rank: '1' } }] };
-    const update = { characters: [{ name: 'Mira', stats: { Experience: '999/100' }, deltas: { Experience: 20, Rank: 10 } }] };
-    expandNumericDeltas(update, state, settings);
-    assert.deepEqual(update.characters[0].stats, { Experience: '110/100' });
-    const negative = { characters: [{ name: 'Mira', deltas: { Experience: -1 } }] };
-    expandNumericDeltas(negative, state, settings);
-    assert.equal(negative.characters[0].Experience, undefined);
-});
-
-
 test('dry-run collection writes carry preview options for both player and NPC', () => {
     const { deps, calls } = fixture();
     deps.applyUpdate({ player: { collections: { items: { replace: [{ name: 'Key' }] } } },
@@ -338,6 +266,7 @@ test('preview warnings cover unknown and refused stats across actors without mut
     deps.STAT_SYNONYMS = {};
     load('../src/tracker/status-update-parser.js', { debugLog: () => {} });
     load('../src/tracker/status-update-constraints.js', {
+        sameStatReading,
         debugLog: () => {}, constrainNumericStat: (_def, value) => value,
         splitValue: value => { const [current, max] = String(value).split('/'); return { current, max }; },
     });

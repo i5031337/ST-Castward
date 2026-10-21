@@ -1,6 +1,7 @@
 import { debugLog } from '../core/constants.js';
 import { splitValue } from '../core/utils.js';
 import { constrainNumericStat } from './numeric-stat-bounds.js';
+import { sameStatReading } from './stat-reading-equality.js';
 
 export function bind(deps) {
 /** The values a field is allowed to hold, or an empty list when it allows anything. */
@@ -120,6 +121,7 @@ function looksUnfilled(value) {
 }
 
 function constrainToDefinition(def, incoming, existing, onWarning = () => {}) {
+    if (sameStatReading(def, incoming, existing, { allowBarePool: false })) return existing;
     const warn = reason => onWarning(`"${String(incoming)}" skipped: ${reason}; kept "${String(existing ?? '')}".`);
     if (looksUnfilled(incoming)) {
         warn('this is a prompt placeholder, not a value');

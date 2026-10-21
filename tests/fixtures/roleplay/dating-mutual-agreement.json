@@ -1,0 +1,96 @@
+{
+  "id": "dating-mutual-agreement",
+  "system": "dating",
+  "title": "A relationship label supported by both people",
+  "startPlace": "Riverside Bench",
+  "npc": "June",
+  "history": [
+    {
+      "role": "user",
+      "content": "I sit with June on the riverside bench after our fourth date. We've been seeing each other for several weeks."
+    },
+    {
+      "role": "assistant",
+      "content": "June tucks one foot under the bench and watches the lights move on the water. She has been telling you about the studio space she wants to rent. When you ask about next weekend, she reaches for your hand without looking away from the river."
+    },
+    {
+      "role": "user",
+      "content": "\"I'd like to stop calling this just hanging out. How do you feel about us?\""
+    },
+    {
+      "role": "assistant",
+      "content": "June turns toward you. \"I want this to be a relationship. I don't want to keep guessing whether we mean the same thing.\" Her thumb rests against yours. \"Would you want to be my partner?\""
+    }
+  ],
+  "user": "\"Yes. I want to be your partner too.\" I hold her hand and let the answer sit between us.",
+  "generationBrief": "June warmly acknowledges their explicit mutual agreement to be romantic partners and stays beside Alex on the bench. Show relief and happiness, no extra sexual action, gifts, future wedding or travel. Preserve the distinction between agreement now and earlier dating.",
+  "checks": [
+    [
+      "npcStatContains",
+      "June",
+      "Relationship",
+      "partner",
+      true
+    ],
+    [
+      "npcAppliedIncreased",
+      "June",
+      "Affection",
+      true
+    ],
+    [
+      "sameHoldings",
+      true
+    ],
+    [
+      "npcPresent",
+      "June"
+    ],
+    [
+      "locationFlag",
+      "no",
+      true
+    ]
+  ],
+  "npcStats": {
+    "Relationship": "Dating",
+    "Affection": "45",
+    "Trust": "40",
+    "Comfort": "55"
+  },
+  "text": "A visible wave of relief washes over June, and she lets out a breath she seems to have been holding for minutes. A wide, genuine smile breaks across her face, lighting up her hazel eyes. She is dressed in a soft, oversized cream-colored cardigan that slips slightly off one shoulder, and her dark hair is wind-swept from the river breeze, with a few stray curls clinging to her cheeks.\n\nShe doesn't pull away; instead, she squeezes your hand firmly, leaning her shoulder against yours. The tension that had lingered beneath the surface of your last few dates evaporates, replaced by a warm, comfortable stillness. She rests her head on your shoulder for a moment, her expression one of quiet happiness.\n\n\"I'm really glad,\" she whispers, her voice sounding lighter than before. She stays close to you on the wooden slats of the bench, content to simply exist in the new clarity of your arrangement. The distant sound of city traffic hums in the background, but for now, the world feels narrowed down to just the two of you and the steady rhythm of the flowing water.",
+  "generation": {
+    "model": "/mnt/D/backup_models/gemma-4-31B-it-qat-UD-Q4_K_XL.gguf",
+    "endpoint": "http://127.0.0.1:9931/v1",
+    "generatedAt": "2026-10-20T22:14:02.349Z",
+    "narratorSha256": "ed57edec3be466a732d032b8f9d3b643df8061b72bd285ec506b3fa395444f93",
+    "parameters": {
+      "temperature": 0.8,
+      "top_p": 0.95,
+      "seed": 5031342,
+      "max_tokens": 1800,
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    },
+    "usage": {
+      "completion_tokens": 227,
+      "prompt_tokens": 636,
+      "total_tokens": 863,
+      "prompt_tokens_details": {
+        "cached_tokens": 152
+      }
+    },
+    "finishReason": "stop"
+  },
+  "npcCollections": {
+    "clothing": [
+      {
+        "name": "cardigan",
+        "slot": "top",
+        "color": "cream",
+        "details": "soft, oversized"
+      }
+    ]
+  }
+}

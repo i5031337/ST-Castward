@@ -1,0 +1,1539 @@
+{
+  "readerContract": "absolute",
+  "frozenAt": "2026-10-21T00:13:48.319Z",
+  "sourceHashes": {
+    "src/core/builtin-systems.js": "dde9bd0d0ff4fab8b6e5392969d962a97c3c28934dbd7cb843c223a8c4bbc864",
+    "src/core/settings-tracker-defaults.js": "3beb026157e41638c7b7cdf0c5f5268c425f4f8dc0f7d126d426f5caf289b035",
+    "src/core/constants-prompts.js": "1a2dd56e0dabf28cb62d1bab29fedac27e38e31daa74884a5d11f8e8033c2f4e",
+    "src/prompts/prompt-texts-reader.js": "318952e7f760de38629c0da7d4dafe9f89e16afc53dff13e440e9134a28390f6",
+    "src/tracker/extractor/status-extractor-prompt.js": "4ff1dab69e5c79f731208ed3e59d6b625fef192f9f6b0840d1b739e13744728d",
+    "src/tracker/extractor/status-extractor-prompt-state.js": "de71916a4460001bfa05bdcb2bbc5415b1e9eed5783924e5071ab473326c27cb",
+    "src/tracker/extractor/status-extractor-schema.js": "c69eefa1f8087d1a693500ce56475ae1596208a9fec7a602348dd4dde3175372",
+    "src/tracker/stat-prompt-definitions.js": "bacaf313462c645d944853ad399e1948fe79389553b61fcc4774611b1a5a4100",
+    "src/tracker/ui/status-ui-placement.js": "dc5ca86be7f2b3e211ed00d93836faa5571df5aa8e916f6fba27c0b594c480fb",
+    "src/core/npc-templates.js": "83265aa2c57e33e1252443d4e11a14c1d3e40e2d9084d3ec46b3935bdf6e5e0f",
+    "src/core/collection-fields.js": "5b6ad8ffc0d5374e317aa1798164842f1eae08da2ce73ec5067383df30258d6e",
+    "src/locations/location-context.js": "0b414212eaa9d9c11d1c79d09ba1e390fb40f67954c8e62eed7062ae93934b23",
+    "src/locations/location-proposals.js": "0270e412d3fd2841dbed89a682107820f0e1a66543f096ee3ec8cfd032503e71",
+    "src/tracker/status-stat-values.js": "290792240ce3838875015a52469f2da8cb82d504d2bab3caaf4510d0a326532d",
+    "src/tracker/status-collection-updates.js": "3675efbdd1de2a3a8fb96af100ccd23be5cef09c951ea00e9c3a156309f134e1",
+    "src/tracker/status-update-constraints.js": "e3f63de6675b36bf2200c81f739acd1883696c5ccc550d8c221907802c0f11e0",
+    "src/tracker/status-update-parser.js": "c1894cd0836b093c93c64139daebf0f51e3cec846fbf92bb7920d3c838927405",
+    "src/tracker/status-apply-update.js": "8eedf95a4ea7fc33e8c535c87ead072dd8884078f73691d2a0f9736a49c1fee7",
+    "src/tracker/progression.js": "53b41aaa840971d98c0d66bbef3b0e750126fcf8855a428301fa4711a9ef2855",
+    "src/tracker/numeric-stat-bounds.js": "3575f4b00efa2035a0c39a5b0e7235f2f44c8df2e977d160d151ff5eaf23edce",
+    "tests/eval-gemma-tracker.js": "9b10fea1d7244869a6d279f80b20c5f389c9ca6e1d49bee6c54e2425a3268a59",
+    "tests/fixtures/gemma-request-batches.mjs": "fede71a833bcd1102857a26249122911d339afed85538fb8aa59f442635fc4bf",
+    "tests/fixtures/gemma-location-change-scenarios.mjs": "5283cdbd0e65eac16eabc635523438140753481fdd4a818aa3238c88cc65ef6b",
+    "tests/fixtures/gemma-location-check.mjs": "76af4660b73c614ed33f560a7c234e72bf1c310741ce0905ecd1fac910f03dfc",
+    "tests/fixtures/tracker-pool-audit.mjs": "7155e88f600db726f88d34140170f9e5668896f0c8efb932b67a562e0f780c87",
+    "tests/fixtures/gemma-tracker-roleplay-scenarios.mjs": "af92af7b0675523804dd5350496a734cc7153ebdaa53e2401fd5efd16d334e61",
+    "tests/fixtures/gemma-tracker-score.mjs": "01b5b0def6ea9f40567b4764056dd30b9cf2044101511cafff31cd96842e0a06",
+    "tests/fixtures/gemma-tracker-scenarios.mjs": "6e4c80644dc510106461105f54f40531404c42ca40191843dc8c8e87b85bd69e",
+    "tests/fixtures/gemma-tracker-harness.mjs": "66865a61715285d45db9c1c96be940c3bda2d367f29fd680c01897ef0fe8146f",
+    "tests/fixtures/gemma-absolute-contract.mjs": "53c7e125f479e27c7d01c13b3e83085f269f7392215c83a3288f7b59bc982715",
+    "tests/fixtures/gemma-xp-threshold-scenarios.mjs": "d018fafffacf839bd02e087bea1ec050ffadf3207a3063bd941838f38a474047",
+    "src/tracker/extractor/status-extractor-deltas.js": "6fb373a840732d1b3abfaa09b272899307d2ee275a668ed492b4d8c34c6de6d7",
+    "tests/fixtures/roleplay/dating-boundary-respected.json": "0792f763528654928eae794d88d756cc33146fb0641c250abb890f211e4ce8c0",
+    "tests/fixtures/roleplay/dating-coat-off.json": "a9e4799fd4b6b47afede1505be5c37187ece7dd4143860bdf33f4682db0222b0",
+    "tests/fixtures/roleplay/dating-crowded-fundraiser.json": "eba032fd1368dd1b0470e3c1838ca937422b3eebc16abebb9666d88ff6e394e8",
+    "tests/fixtures/roleplay/dating-honest-apology.json": "019c20b4a39b3c1528b9f14e38aee4a86f147eaf91a071ec1e5bc5d3336ee245",
+    "tests/fixtures/roleplay/dating-morning-alone.json": "b2859291af5bb3b37b46430d5f0490b53c0bf8cc9a979bab7834f6b6bb1a96d3",
+    "tests/fixtures/roleplay/dating-mutual-agreement.json": "98d11d971631f707e7611e1083294575394c8fc8ecde7b42c6a63b36bec2eef5",
+    "tests/fixtures/roleplay/dating-quiet-promise.json": "7604dbae139abe8877fe92af0aec89f47707e9107ab0089e82fa682177e701f3",
+    "tests/fixtures/roleplay/dating-rain-check.json": "0bbc0a57d35ef2f50713ed0ca3afa9d98be5118858ae7dd7f9829b2846fb4361",
+    "tests/fixtures/roleplay/dating-remembered-flower.json": "a0a584dd3a954e2948b9977c9dfe37fb23ad987285079cf48173b4a84b0c90ee",
+    "tests/fixtures/roleplay/dating-unwanted-kiss.json": "3e7e6e49469c9aae13f8220b7738ce3b766ebedcd67bee51106799a385214bf9",
+    "tests/fixtures/roleplay/fantasy-blocked-strike.json": "10ebae45a1b3001cf1ccef9e8a0d80f5d3450f08e999e53ecd933a5a725162b5",
+    "tests/fixtures/roleplay/fantasy-bridge-toll.json": "a90e139fa6fc657c344b5c88d138016270af4919bbf0c60dc2646347e604f434",
+    "tests/fixtures/roleplay/fantasy-companion-bandage.json": "77445dabef225d35daf3c6d06074843d7c3151ac5bc1007f7a7c4f3ab319cd95",
+    "tests/fixtures/roleplay/fantasy-courier-rescue.json": "bbc0189c14dfe505029d884c87c331937e7c1754c03d88ce7ff8f01bf7fd868a",
+    "tests/fixtures/roleplay/fantasy-failed-fire.json": "419c3180658dbfb61dee0aa434d52cfad6977898cb0621df1746c98eba732a34",
+    "tests/fixtures/roleplay/fantasy-first-cantrip.json": "7647fa7052a6b24d94df23b05e1000fd7375dfea617644233e14ceff586acc0c",
+    "tests/fixtures/roleplay/fantasy-hand-over-rope.json": "7e032a930c65c4824d0356706ddfa2b0bd4a73832fa1c8e2c71fdd4fcf82e556",
+    "tests/fixtures/roleplay/fantasy-healing-draught.json": "b123ea824ccf0151faee8e3fdde6e14dcec0153a55974ba90d68454956fb76b9",
+    "tests/fixtures/roleplay/fantasy-overnight-rest.json": "e0e81f68dde3938e6289a33a0812312be34f3c3018e3a45aae613349d44c6300",
+    "tests/fixtures/roleplay/fantasy-rumour-and-plan.json": "3453a50a95fe2f48f1bb9146329b4132b3cc3bf5ac890ee5445d7536e906a7ac"
+  },
+  "git": "1dc8e515510c70de4de8189ecdb43977e6ebec9f",
+  "criteria": {
+    "validJsonAndNotTruncated": 1,
+    "overallRequiredCheckRate": 0.9,
+    "perSystemRequiredCheckRate": 0.85,
+    "criticalFailuresAllowed": 0,
+    "suite": "xp-threshold"
+  },
+  "bundles": [
+    {
+      "scenario": {
+        "id": "fantasy-courier-rescue-xp-threshold",
+        "system": "fantasy",
+        "title": "Success costs something",
+        "startPlace": "Flooded Culvert",
+        "npc": "Mira",
+        "history": [
+          {
+            "role": "user",
+            "content": "I wade into the culvert with Mira. The missing courier must be under the collapsed walkway."
+          },
+          {
+            "role": "assistant",
+            "content": "The courier is pinned beneath a fallen walkway, one boot caught between two beams. Mira lays her lantern on a dry stone and tests the current with her staff. \"He's breathing. We need that upper beam moved before the water rises.\" The courier cannot reach the buckle at his ankle."
+          },
+          {
+            "role": "user",
+            "content": "I wedge my shoulder under the timber. \"Mira, pull him out when it moves.\""
+          },
+          {
+            "role": "assistant",
+            "content": "The timber shifts when you lean into it, but a splintered brace presses against your shoulder. Mira grips the courier under his arms. \"A little more. I've got him.\" Water pushes a floating reed against your knee."
+          }
+        ],
+        "user": "I lift until Mira can drag him clear, even if the beam scrapes me. Then I lower it carefully.",
+        "generationBrief": "Resolve a successful rescue with a painful shallow shoulder scrape. Mira drags the courier onto the existing dry ledge and remains present; the unnamed courier remains too. Convey concrete accomplishment suitable for XP, without numeric awards or levels. No loot or new gear, and stay in the culvert.",
+        "checks": [
+          [
+            "playerDecreased",
+            "HP",
+            true
+          ],
+          [
+            "playerXpIncreased",
+            true
+          ],
+          [
+            "npcPresent",
+            "Mira"
+          ],
+          [
+            "noPlayerInventoryChanges",
+            true
+          ],
+          [
+            "locationFlag",
+            "no",
+            true
+          ],
+          [
+            "appliedPlayerValue",
+            "Level",
+            "2",
+            true
+          ]
+        ],
+        "xp": "99/100",
+        "text": "You heave upward with a guttural shout, your muscles straining against the water-logged weight of the beam. As the timber lifts, a jagged shard of wood rips across your shoulder, tearing through your tunic and scraping the skin raw. The sharp sting is immediate, but the gap opens just wide enough. Mira seizes the moment, her face set in a mask of focused determination, and drags the courier backward with a forceful heave.\n\nOnce the courier is safe, you lower the beam slowly to avoid a sudden splash. Mira pulls the man onto the existing dry ledge, her breathing heavy. The courier is a gaunt man with a pale, sweat-slicked face and wide, terrified eyes. He is dressed in a sodden, oversized wool coat that clings to his thin frame, his fingers trembling as he clutches a leather satchel to his chest. \n\nMira wipes a smudge of grime from her cheek, looking at the blood seeping through your shoulder before glancing at the courier. \"You're lucky we found you before the tide turned,\" she says, her voice stern but relieved. You have successfully retrieved the missing man, though the raw scrape on your shoulder pulses with a dull, stinging heat.",
+        "generation": {
+          "model": "/mnt/D/backup_models/gemma-4-31B-it-qat-UD-Q4_K_XL.gguf",
+          "endpoint": "http://127.0.0.1:9931/v1",
+          "generatedAt": "2026-10-20T22:15:35.796Z",
+          "narratorSha256": "ed57edec3be466a732d032b8f9d3b643df8061b72bd285ec506b3fa395444f93",
+          "parameters": {
+            "temperature": 0.8,
+            "top_p": 0.95,
+            "seed": 5031350,
+            "max_tokens": 1800,
+            "chat_template_kwargs": {
+              "enable_thinking": false
+            }
+          },
+          "usage": {
+            "completion_tokens": 246,
+            "prompt_tokens": 650,
+            "total_tokens": 896,
+            "prompt_tokens_details": {
+              "cached_tokens": 174
+            }
+          },
+          "finishReason": "stop"
+        },
+        "earlier": [
+          "[Player (Alex)] I wade into the culvert with Mira. The missing courier must be under the collapsed walkway.",
+          "[Narrator] The courier is pinned beneath a fallen walkway, one boot caught between two beams. Mira lays her lantern on a dry stone and tests the current with her staff. \"He's breathing. We need that upper beam moved before the water rises.\" The courier cannot reach the buckle at his ankle.",
+          "[Player (Alex)] I wedge my shoulder under the timber. \"Mira, pull him out when it moves.\"",
+          "[Narrator] The timber shifts when you lean into it, but a splintered brace presses against your shoulder. Mira grips the courier under his arms. \"A little more. I've got him.\" Water pushes a floating reed against your knee.",
+          "[Player (Alex)] I lift until Mira can drag him clear, even if the beam scrapes me. Then I lower it carefully."
+        ]
+      },
+      "state": {
+        "global": {
+          "Time": "",
+          "Quest": ""
+        },
+        "player": {
+          "stats": {
+            "HP": "12/12",
+            "Mana": "10/10",
+            "Armor": "10",
+            "Strength": "10",
+            "Dexterity": "10",
+            "Constitution": "10",
+            "Intelligence": "10",
+            "Wisdom": "10",
+            "Charisma": "10",
+            "Condition": "Healthy",
+            "Currency": "0",
+            "XP": "99/100",
+            "Level": "1"
+          },
+          "collections": {
+            "equipment": [],
+            "abilities": []
+          }
+        },
+        "characters": [
+          {
+            "name": "Mira",
+            "npcTemplateId": "character",
+            "stats": {
+              "HP": "12/12",
+              "Mana": "10/10",
+              "Armor": "10",
+              "Strength": "10",
+              "Dexterity": "10",
+              "Constitution": "10",
+              "Intelligence": "10",
+              "Wisdom": "10",
+              "Charisma": "10",
+              "Condition": "Healthy",
+              "Currency": "0",
+              "XP": "0/100",
+              "Level": "1"
+            },
+            "collections": {}
+          }
+        ],
+        "locations": {
+          "enabled": true,
+          "currentId": "home",
+          "records": {
+            "home": {
+              "id": "home",
+              "name": "Flooded Culvert",
+              "description": "",
+              "aliases": [],
+              "parentId": ""
+            }
+          }
+        }
+      },
+      "settings": {
+        "enabled": true,
+        "showOnlyAtBottom": false,
+        "globalStats": [
+          {
+            "id": "time",
+            "name": "Time",
+            "type": "text",
+            "defaultValue": "",
+            "format": "{{name}}: {{value}}",
+            "maxStatValue": "",
+            "min": "",
+            "options": [],
+            "maxLength": "",
+            "locked": false,
+            "visible": true,
+            "guidance": "",
+            "purpose": "The time of day or moment in the story.",
+            "isPrimary": false,
+            "color": "",
+            "retired": false,
+            "hint": ""
+          },
+          {
+            "id": "quest",
+            "name": "Quest",
+            "type": "text",
+            "defaultValue": "",
+            "format": "{{name}}: {{value}}",
+            "maxStatValue": "",
+            "min": "",
+            "options": [],
+            "maxLength": "",
+            "locked": false,
+            "visible": true,
+            "guidance": "",
+            "purpose": "The objective or lead the characters are currently pursuing.",
+            "isPrimary": false,
+            "color": "",
+            "retired": false,
+            "hint": ""
+          }
+        ],
+        "showGlobalStats": true,
+        "showPlayerStats": true,
+        "showNpcStats": true,
+        "showRawTrackerOutput": true,
+        "npcStats": [
+          {
+            "id": "hp",
+            "name": "HP",
+            "type": "number",
+            "defaultValue": "12/12",
+            "format": "{{name}}: {{value}}",
+            "maxStatValue": "",
+            "min": "0",
+            "options": [],
+            "maxLength": "",
+            "locked": false,
+            "carryOver": true,
+            "visible": true,
+            "guidance": "",
+            "purpose": "Physical well-being. Wounds lower current HP; healing restores it. Maximum HP reflects lasting resilience.",
+            "isPrimary": true,
+            "color": "#e03131",
+            "retired": false,
+            "targets": [
+              "player",
+              "template:character"
+            ],
+            "hint": ""
+          },
+          {
+            "id": "mana",
+            "name": "Mana",
+            "type": "number",
+            "defaultValue": "10/10",
+            "format": "{{name}}: {{value}}",
+            "maxStatValue": "",
+            "min": "0",
+            "options": [],
+            "maxLength": "",
+            "locked": false,
+            "carryOver": true,
+            "visible": true,
+            "guidance": "",
+            "purpose": "Magical energy. Casting spells spends current Mana; rest or magical recovery restores it. Maximum Mana reflects lasting magical capacity.",
+            "isPrimary": true,
+            "color": "#3b5bdb",
+            "retired": false,
+            "targets": [
+              "player",
+              "template:character"
+            ],
+            "hint": ""
+          },
+          {
+            "id": "armor",
+            "name": "Armor",
+            "type": "number",
+            "defaultValue": "10",
+            "format": "{{name}}: {{value}}",
+            "maxStatValue": "",
+            "min": "0",
+            "options": [],
+            "maxLength": "",
+            "locked": false,
+            "carryOver": true,
+            "visible": true,
+            "guidance": "",
+            "purpose": "Protection from worn gear, natural hide, or magic. Higher values suggest that a blow is less threatening.",
+            "isPrimary": false,
+            "color": "",
+            "retired": false,
+            "targets": [
+              "player",
+              "template:character"
+            ],
+            "hint": ""
+          },
+          {
+            "id": "strength",
+            "name": "Strength",
+            "type": "number",
+            "defaultValue": "10",
+            "format": "{{name}}: {{value}}",
+            "maxStatValue": "",
+            "min": "0",
+            "options": [],
+            "maxLength": "",
+            "locked": false,
+            "carryOver": true,
+            "visible": false,
+            "guidance": "",
+            "purpose": "Physical power used to lift, grapple, break, and strike with force. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.",
+            "isPrimary": false,
+            "color": "",
+            "retired": false,
+            "targets": [
+              "player",
+              "template:character"
+            ],
+            "hint": ""
+          },
+          {
+            "id": "dexterity",
+            "name": "Dexterity",
+            "type": "number",
+            "defaultValue": "10",
+            "format": "{{name}}: {{value}}",
+            "maxStatValue": "",
+            "min": "0",
+            "options": [],
+            "maxLength": "",
+            "locked": false,
+            "carryOver": true,
+            "visible": false,
+            "guidance": "",
+            "purpose": "Agility, balance, quick reactions, and precise movement. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.",
+            "isPrimary": false,
+            "color": "",
+            "retired": false,
+            "targets": [
+              "player",
+              "template:character"
+            ],
+            "hint": ""
+          },
+          {
+            "id": "constitution",
+            "name": "Constitution",
+            "type": "number",
+            "defaultValue": "10",
+            "format": "{{name}}: {{value}}",
+            "maxStatValue": "",
+            "min": "0",
+            "options": [],
+            "maxLength": "",
+            "locked": false,
+            "carryOver": true,
+            "visible": false,
+            "guidance": "",
+            "purpose": "Endurance against exhaustion, illness, harsh conditions, and prolonged effort. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.",
+            "isPrimary": false,
+            "color": "",
+            "retired": false,
+            "targets": [
+              "player",
+              "template:character"
+            ],
+            "hint": ""
+          },
+          {
+            "id": "intelligence",
+            "name": "Intelligence",
+            "type": "number",
+            "defaultValue": "10",
+            "format": "{{name}}: {{value}}",
+            "maxStatValue": "",
+            "min": "0",
+            "options": [],
+            "maxLength": "",
+            "locked": false,
+            "carryOver": true,
+            "visible": false,
+            "guidance": "",
+            "purpose": "Memory, learned knowledge, investigation, and deliberate reasoning. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.",
+            "isPrimary": false,
+            "color": "",
+            "retired": false,
+            "targets": [
+              "player",
+              "template:character"
+            ],
+            "hint": ""
+          },
+          {
+            "id": "wisdom",
+            "name": "Wisdom",
+            "type": "number",
+            "defaultValue": "10",
+            "format": "{{name}}: {{value}}",
+            "maxStatValue": "",
+            "min": "0",
+            "options": [],
+            "maxLength": "",
+            "locked": false,
+            "carryOver": true,
+            "visible": false,
+            "guidance": "",
+            "purpose": "Awareness, intuition, judgment, and attention to subtle details. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.",
+            "isPrimary": false,
+            "color": "",
+            "retired": false,
+            "targets": [
+              "player",
+              "template:character"
+            ],
+            "hint": ""
+          },
+          {
+            "id": "charisma",
+            "name": "Charisma",
+            "type": "number",
+            "defaultValue": "10",
+            "format": "{{name}}: {{value}}",
+            "maxStatValue": "",
+            "min": "0",
+            "options": [],
+            "maxLength": "",
+            "locked": false,
+            "carryOver": true,
+            "visible": false,
+            "guidance": "",
+            "purpose": "Presence and the ability to persuade, inspire, or unsettle others. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.",
+            "isPrimary": false,
+            "color": "",
+            "retired": false,
+            "targets": [
+              "player",
+              "template:character"
+            ],
+            "hint": ""
+          },
+          {
+            "id": "condition",
+            "name": "Condition",
+            "type": "text",
+            "defaultValue": "Healthy",
+            "format": "{{name}}: {{value}}",
+            "maxStatValue": "",
+            "min": "",
+            "options": [],
+            "maxLength": "",
+            "locked": false,
+            "carryOver": false,
+            "visible": true,
+            "guidance": "",
+            "purpose": "Describe injuries, ailments, and other temporary effects in plain words.",
+            "isPrimary": false,
+            "color": "",
+            "retired": false,
+            "targets": [
+              "player",
+              "template:character"
+            ],
+            "hint": ""
+          },
+          {
+            "id": "currency",
+            "name": "Currency",
+            "type": "number",
+            "defaultValue": "0",
+            "format": "{{name}}: {{value}}",
+            "maxStatValue": "",
+            "min": "0",
+            "options": [],
+            "maxLength": "",
+            "locked": false,
+            "carryOver": true,
+            "visible": false,
+            "guidance": "",
+            "purpose": "Money held by this character; change it when the story establishes a gain or expense.",
+            "isPrimary": false,
+            "color": "",
+            "retired": false,
+            "targets": [
+              "player",
+              "template:character"
+            ],
+            "hint": ""
+          },
+          {
+            "id": "xp",
+            "name": "XP",
+            "type": "number",
+            "defaultValue": "0/100",
+            "format": "{{name}}: {{value}}",
+            "maxStatValue": "100",
+            "min": "0",
+            "options": [],
+            "maxLength": "",
+            "locked": false,
+            "carryOver": false,
+            "visible": true,
+            "guidance": "Award only XP supported by events in the story.",
+            "purpose": "Experience earned through meaningful challenges, discoveries, and growth in the story.",
+            "isPrimary": true,
+            "color": "#f59f00",
+            "retired": false,
+            "targets": [
+              "player",
+              "template:character"
+            ],
+            "hint": "Award only XP supported by events in the story."
+          },
+          {
+            "id": "level",
+            "name": "Level",
+            "type": "number",
+            "defaultValue": "1",
+            "format": "{{name}}: {{value}}",
+            "maxStatValue": "",
+            "min": "1",
+            "options": [],
+            "maxLength": "",
+            "locked": true,
+            "carryOver": true,
+            "visible": true,
+            "guidance": "",
+            "purpose": "A broad measure of how much this character has grown through experience.",
+            "isPrimary": true,
+            "color": "",
+            "retired": false,
+            "targets": [
+              "player",
+              "template:character"
+            ],
+            "hint": ""
+          }
+        ],
+        "playerStats": [
+          {
+            "id": "hp",
+            "name": "HP",
+            "type": "number",
+            "defaultValue": "12/12",
+            "format": "{{name}}: {{value}}",
+            "maxStatValue": "",
+            "min": "0",
+            "options": [],
+            "maxLength": "",
+            "locked": false,
+            "carryOver": true,
+            "visible": true,
+            "guidance": "",
+            "purpose": "Physical well-being. Wounds lower current HP; healing restores it. Maximum HP reflects lasting resilience.",
+            "isPrimary": true,
+            "color": "#e03131",
+            "retired": false,
+            "targets": [
+              "player",
+              "template:character"
+            ],
+            "hint": ""
+          },
+          {
+            "id": "mana",
+            "name": "Mana",
+            "type": "number",
+            "defaultValue": "10/10",
+            "format": "{{name}}: {{value}}",
+            "maxStatValue": "",
+            "min": "0",
+            "options": [],
+            "maxLength": "",
+            "locked": false,
+            "carryOver": true,
+            "visible": true,
+            "guidance": "",
+            "purpose": "Magical energy. Casting spells spends current Mana; rest or magical recovery restores it. Maximum Mana reflects lasting magical capacity.",
+            "isPrimary": true,
+            "color": "#3b5bdb",
+            "retired": false,
+            "targets": [
+              "player",
+              "template:character"
+            ],
+            "hint": ""
+          },
+          {
+            "id": "armor",
+            "name": "Armor",
+            "type": "number",
+            "defaultValue": "10",
+            "format": "{{name}}: {{value}}",
+            "maxStatValue": "",
+            "min": "0",
+            "options": [],
+            "maxLength": "",
+            "locked": false,
+            "carryOver": true,
+            "visible": true,
+            "guidance": "",
+            "purpose": "Protection from worn gear, natural hide, or magic. Higher values suggest that a blow is less threatening.",
+            "isPrimary": false,
+            "color": "",
+            "retired": false,
+            "targets": [
+              "player",
+              "template:character"
+            ],
+            "hint": ""
+          },
+          {
+            "id": "strength",
+            "name": "Strength",
+            "type": "number",
+            "defaultValue": "10",
+            "format": "{{name}}: {{value}}",
+            "maxStatValue": "",
+            "min": "0",
+            "options": [],
+            "maxLength": "",
+            "locked": false,
+            "carryOver": true,
+            "visible": false,
+            "guidance": "",
+            "purpose": "Physical power used to lift, grapple, break, and strike with force. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.",
+            "isPrimary": false,
+            "color": "",
+            "retired": false,
+            "targets": [
+              "player",
+              "template:character"
+            ],
+            "hint": ""
+          },
+          {
+            "id": "dexterity",
+            "name": "Dexterity",
+            "type": "number",
+            "defaultValue": "10",
+            "format": "{{name}}: {{value}}",
+            "maxStatValue": "",
+            "min": "0",
+            "options": [],
+            "maxLength": "",
+            "locked": false,
+            "carryOver": true,
+            "visible": false,
+            "guidance": "",
+            "purpose": "Agility, balance, quick reactions, and precise movement. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.",
+            "isPrimary": false,
+            "color": "",
+            "retired": false,
+            "targets": [
+              "player",
+              "template:character"
+            ],
+            "hint": ""
+          },
+          {
+            "id": "constitution",
+            "name": "Constitution",
+            "type": "number",
+            "defaultValue": "10",
+            "format": "{{name}}: {{value}}",
+            "maxStatValue": "",
+            "min": "0",
+            "options": [],
+            "maxLength": "",
+            "locked": false,
+            "carryOver": true,
+            "visible": false,
+            "guidance": "",
+            "purpose": "Endurance against exhaustion, illness, harsh conditions, and prolonged effort. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.",
+            "isPrimary": false,
+            "color": "",
+            "retired": false,
+            "targets": [
+              "player",
+              "template:character"
+            ],
+            "hint": ""
+          },
+          {
+            "id": "intelligence",
+            "name": "Intelligence",
+            "type": "number",
+            "defaultValue": "10",
+            "format": "{{name}}: {{value}}",
+            "maxStatValue": "",
+            "min": "0",
+            "options": [],
+            "maxLength": "",
+            "locked": false,
+            "carryOver": true,
+            "visible": false,
+            "guidance": "",
+            "purpose": "Memory, learned knowledge, investigation, and deliberate reasoning. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.",
+            "isPrimary": false,
+            "color": "",
+            "retired": false,
+            "targets": [
+              "player",
+              "template:character"
+            ],
+            "hint": ""
+          },
+          {
+            "id": "wisdom",
+            "name": "Wisdom",
+            "type": "number",
+            "defaultValue": "10",
+            "format": "{{name}}: {{value}}",
+            "maxStatValue": "",
+            "min": "0",
+            "options": [],
+            "maxLength": "",
+            "locked": false,
+            "carryOver": true,
+            "visible": false,
+            "guidance": "",
+            "purpose": "Awareness, intuition, judgment, and attention to subtle details. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.",
+            "isPrimary": false,
+            "color": "",
+            "retired": false,
+            "targets": [
+              "player",
+              "template:character"
+            ],
+            "hint": ""
+          },
+          {
+            "id": "charisma",
+            "name": "Charisma",
+            "type": "number",
+            "defaultValue": "10",
+            "format": "{{name}}: {{value}}",
+            "maxStatValue": "",
+            "min": "0",
+            "options": [],
+            "maxLength": "",
+            "locked": false,
+            "carryOver": true,
+            "visible": false,
+            "guidance": "",
+            "purpose": "Presence and the ability to persuade, inspire, or unsettle others. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.",
+            "isPrimary": false,
+            "color": "",
+            "retired": false,
+            "targets": [
+              "player",
+              "template:character"
+            ],
+            "hint": ""
+          },
+          {
+            "id": "condition",
+            "name": "Condition",
+            "type": "text",
+            "defaultValue": "Healthy",
+            "format": "{{name}}: {{value}}",
+            "maxStatValue": "",
+            "min": "",
+            "options": [],
+            "maxLength": "",
+            "locked": false,
+            "carryOver": false,
+            "visible": true,
+            "guidance": "",
+            "purpose": "Describe injuries, ailments, and other temporary effects in plain words.",
+            "isPrimary": false,
+            "color": "",
+            "retired": false,
+            "targets": [
+              "player",
+              "template:character"
+            ],
+            "hint": ""
+          },
+          {
+            "id": "currency",
+            "name": "Currency",
+            "type": "number",
+            "defaultValue": "0",
+            "format": "{{name}}: {{value}}",
+            "maxStatValue": "",
+            "min": "0",
+            "options": [],
+            "maxLength": "",
+            "locked": false,
+            "carryOver": true,
+            "visible": false,
+            "guidance": "",
+            "purpose": "Money held by this character; change it when the story establishes a gain or expense.",
+            "isPrimary": false,
+            "color": "",
+            "retired": false,
+            "targets": [
+              "player",
+              "template:character"
+            ],
+            "hint": ""
+          },
+          {
+            "id": "xp",
+            "name": "XP",
+            "type": "number",
+            "defaultValue": "0/100",
+            "format": "{{name}}: {{value}}",
+            "maxStatValue": "100",
+            "min": "0",
+            "options": [],
+            "maxLength": "",
+            "locked": false,
+            "carryOver": false,
+            "visible": true,
+            "guidance": "Award only XP supported by events in the story.",
+            "purpose": "Experience earned through meaningful challenges, discoveries, and growth in the story.",
+            "isPrimary": true,
+            "color": "#f59f00",
+            "retired": false,
+            "targets": [
+              "player",
+              "template:character"
+            ],
+            "hint": "Award only XP supported by events in the story."
+          },
+          {
+            "id": "level",
+            "name": "Level",
+            "type": "number",
+            "defaultValue": "1",
+            "format": "{{name}}: {{value}}",
+            "maxStatValue": "",
+            "min": "1",
+            "options": [],
+            "maxLength": "",
+            "locked": true,
+            "carryOver": true,
+            "visible": true,
+            "guidance": "",
+            "purpose": "A broad measure of how much this character has grown through experience.",
+            "isPrimary": true,
+            "color": "",
+            "retired": false,
+            "targets": [
+              "player",
+              "template:character"
+            ],
+            "hint": ""
+          }
+        ],
+        "collections": [
+          {
+            "id": "equipment",
+            "name": "Equipment",
+            "targets": [
+              "player",
+              "template:character"
+            ],
+            "trackQuantity": true,
+            "includeInImagePrompt": true,
+            "guidance": "Carried gear; change holdings only when the story establishes a transfer.",
+            "retired": false,
+            "fields": [
+              {
+                "id": "name",
+                "name": "name",
+                "label": "Name",
+                "type": "text",
+                "defaultValue": "",
+                "guidance": "",
+                "isPrimary": true,
+                "isMultiline": false,
+                "isStatic": true,
+                "retired": false,
+                "hint": ""
+              },
+              {
+                "id": "quantity",
+                "name": "quantity",
+                "label": "Quantity",
+                "type": "number",
+                "defaultValue": "1",
+                "min": "0",
+                "maxStatValue": "",
+                "guidance": "",
+                "isPrimary": false,
+                "isMultiline": false,
+                "isStatic": false,
+                "retired": false,
+                "hint": ""
+              },
+              {
+                "id": "description",
+                "name": "description",
+                "label": "Description",
+                "type": "text",
+                "defaultValue": "",
+                "guidance": "",
+                "isPrimary": false,
+                "isMultiline": true,
+                "isStatic": true,
+                "retired": false,
+                "hint": ""
+              }
+            ],
+            "levelUpRewards": {
+              "enabled": false,
+              "mode": "guided",
+              "guidance": "",
+              "interval": 1,
+              "schedule": []
+            },
+            "hint": "Carried gear; change holdings only when the story establishes a transfer."
+          },
+          {
+            "id": "abilities",
+            "name": "Abilities and Spells",
+            "targets": [
+              "player",
+              "template:character"
+            ],
+            "trackQuantity": false,
+            "includeInImagePrompt": true,
+            "guidance": "Known abilities, spells, or techniques and any limits established by the story.",
+            "retired": false,
+            "fields": [
+              {
+                "id": "name",
+                "name": "name",
+                "label": "Name",
+                "type": "text",
+                "defaultValue": "",
+                "guidance": "",
+                "isPrimary": true,
+                "isMultiline": false,
+                "isStatic": true,
+                "retired": false,
+                "hint": ""
+              },
+              {
+                "id": "kind",
+                "name": "kind",
+                "label": "Kind",
+                "type": "text",
+                "defaultValue": "",
+                "guidance": "",
+                "isPrimary": false,
+                "isMultiline": false,
+                "isStatic": true,
+                "retired": false,
+                "hint": ""
+              },
+              {
+                "id": "rank",
+                "name": "rank",
+                "label": "Rank",
+                "type": "text",
+                "defaultValue": "",
+                "guidance": "",
+                "isPrimary": false,
+                "isMultiline": false,
+                "isStatic": true,
+                "retired": false,
+                "hint": ""
+              },
+              {
+                "id": "uses",
+                "name": "uses",
+                "label": "Remaining Uses",
+                "type": "text",
+                "defaultValue": "",
+                "guidance": "Optional. Leave blank when the ability has no stated use limit.",
+                "isPrimary": false,
+                "isMultiline": false,
+                "isStatic": false,
+                "retired": false,
+                "hint": "Optional. Leave blank when the ability has no stated use limit."
+              },
+              {
+                "id": "effect",
+                "name": "effect",
+                "label": "Effect",
+                "type": "text",
+                "defaultValue": "",
+                "guidance": "",
+                "isPrimary": false,
+                "isMultiline": true,
+                "isStatic": true,
+                "retired": false,
+                "hint": ""
+              }
+            ],
+            "levelUpRewards": {
+              "enabled": true,
+              "mode": "guided",
+              "guidance": "At a new level, propose a new ability, spell, or technique only when it fits this character’s role, training, and story. Avoid duplicates. Choose no reward when nothing fits; not every character learns magic or gains a new feature at every level.",
+              "interval": 1,
+              "schedule": []
+            },
+            "hint": "Known abilities, spells, or techniques and any limits established by the story."
+          }
+        ],
+        "summaryThreshold": 5,
+        "showNpcPortraits": true,
+        "characterColumns": false,
+        "extractionMode": "extract",
+        "autoGenerateNpcProfiles": false,
+        "extractionProfileId": "",
+        "extractionMaxTokens": 2400,
+        "extractionTemperature": "",
+        "historyNotes": false,
+        "historyNoteSkip": [],
+        "extractionContextMessages": 2,
+        "reviewMode": "off",
+        "maxChangePolicy": "free",
+        "reviewSwingThreshold": 0.6,
+        "scanButtonEnabled": true,
+        "scanDepth": 50,
+        "scanCharBudget": 60000,
+        "scanMaxTokens": 3000,
+        "scanMaxChunks": 0,
+        "scanProfileId": "",
+        "extractionUseSchema": false,
+        "extractionReasons": false,
+        "stripStatusFromHistory": true,
+        "sceneInjectionDepth": 1,
+        "hudEnabled": true,
+        "hudPosition": "top-right",
+        "hudScale": 1,
+        "hudLayout": "plate",
+        "hudMeterWidth": 92,
+        "hudMeterHeight": 14,
+        "hudRingThickness": 5,
+        "hudPortraitSide": "auto",
+        "hudPortraitShape": "circle",
+        "hudPortraitBorder": "",
+        "hud": {
+          "position": {
+            "x": null,
+            "y": null
+          }
+        },
+        "presets": {},
+        "template": "<div class=\"sillynpc-status-box\">\n    <div class=\"sillynpc-status-header\">{{globals}}</div>\n    <div class=\"sillynpc-status-divider\"></div>\n    <div class=\"sillynpc-status-player\">{{player}}</div>\n    <div class=\"sillynpc-status-characters\">\n        {{#characters}}\n        <div class=\"sillynpc-status-char\">{{name}} — {{fields}}</div>\n        {{/characters}}\n    </div>\n</div>",
+        "customCSS": "",
+        "renderPosition": "bottom",
+        "locations": {
+          "enabled": true
+        },
+        "progression": {
+          "player": {
+            "enabled": true,
+            "xpFieldId": "xp",
+            "levelFieldId": "level",
+            "pointsPerLevel": 1,
+            "assignment": "manual",
+            "statIds": [
+              "hp"
+            ]
+          }
+        },
+        "npcTemplates": [
+          {
+            "id": "character",
+            "name": "Character",
+            "description": "People, beasts, companions, and foes share the same stats.",
+            "progression": {
+              "enabled": true,
+              "xpFieldId": "xp",
+              "levelFieldId": "level",
+              "pointsPerLevel": 1,
+              "assignment": "manual",
+              "statIds": [
+                "hp"
+              ]
+            }
+          }
+        ]
+      },
+      "schema": {
+        "type": "object",
+        "required": [
+          "global",
+          "player",
+          "characters",
+          "locationChanged"
+        ],
+        "properties": {
+          "locationChanged": {
+            "type": "boolean"
+          },
+          "global": {
+            "type": "object",
+            "properties": {
+              "Time": {
+                "type": "string"
+              },
+              "Quest": {
+                "type": "string"
+              }
+            }
+          },
+          "player": {
+            "type": "object",
+            "properties": {
+              "stats": {
+                "type": "object",
+                "properties": {
+                  "HP": {
+                    "type": "string"
+                  },
+                  "Mana": {
+                    "type": "string"
+                  },
+                  "Armor": {
+                    "type": "string"
+                  },
+                  "Strength": {
+                    "type": "string"
+                  },
+                  "Dexterity": {
+                    "type": "string"
+                  },
+                  "Constitution": {
+                    "type": "string"
+                  },
+                  "Intelligence": {
+                    "type": "string"
+                  },
+                  "Wisdom": {
+                    "type": "string"
+                  },
+                  "Charisma": {
+                    "type": "string"
+                  },
+                  "Condition": {
+                    "type": "string"
+                  },
+                  "Currency": {
+                    "type": "string"
+                  },
+                  "XP": {
+                    "type": "string"
+                  }
+                }
+              },
+              "collections": {
+                "type": "object",
+                "properties": {
+                  "equipment": {
+                    "type": "object",
+                    "properties": {
+                      "add": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "name"
+                          ],
+                          "properties": {
+                            "name": {
+                              "type": "string"
+                            },
+                            "quantity": {
+                              "type": "number"
+                            },
+                            "description": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "remove": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "name"
+                          ],
+                          "properties": {
+                            "name": {
+                              "type": "string"
+                            },
+                            "quantity": {
+                              "type": "number"
+                            },
+                            "all": {
+                              "type": "boolean"
+                            }
+                          }
+                        }
+                      },
+                      "update": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "name"
+                          ],
+                          "properties": {
+                            "name": {
+                              "type": "string"
+                            },
+                            "quantity": {
+                              "type": "number"
+                            },
+                            "description": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "abilities": {
+                    "type": "object",
+                    "properties": {
+                      "add": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "name"
+                          ],
+                          "properties": {
+                            "name": {
+                              "type": "string"
+                            },
+                            "kind": {
+                              "type": "string"
+                            },
+                            "rank": {
+                              "type": "string"
+                            },
+                            "uses": {
+                              "type": "string"
+                            },
+                            "effect": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "remove": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "update": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "name"
+                          ],
+                          "properties": {
+                            "name": {
+                              "type": "string"
+                            },
+                            "kind": {
+                              "type": "string"
+                            },
+                            "rank": {
+                              "type": "string"
+                            },
+                            "uses": {
+                              "type": "string"
+                            },
+                            "effect": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "characters": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "name"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "offstage": {
+                  "type": "boolean",
+                  "description": "True only for a known NPC who remains outside the scene but has an evidenced update."
+                },
+                "npcTemplateId": {
+                  "type": "string"
+                },
+                "stats": {
+                  "type": "object",
+                  "properties": {
+                    "HP": {
+                      "type": "string"
+                    },
+                    "Mana": {
+                      "type": "string"
+                    },
+                    "Armor": {
+                      "type": "string"
+                    },
+                    "Strength": {
+                      "type": "string"
+                    },
+                    "Dexterity": {
+                      "type": "string"
+                    },
+                    "Constitution": {
+                      "type": "string"
+                    },
+                    "Intelligence": {
+                      "type": "string"
+                    },
+                    "Wisdom": {
+                      "type": "string"
+                    },
+                    "Charisma": {
+                      "type": "string"
+                    },
+                    "Condition": {
+                      "type": "string"
+                    },
+                    "Currency": {
+                      "type": "string"
+                    },
+                    "XP": {
+                      "type": "string",
+                      "description": "Award only XP supported by events in the story."
+                    },
+                    "Level": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "collections": {
+                  "type": "object",
+                  "properties": {
+                    "equipment": {
+                      "type": "object",
+                      "properties": {
+                        "add": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "name"
+                            ],
+                            "properties": {
+                              "name": {
+                                "type": "string"
+                              },
+                              "quantity": {
+                                "type": "number"
+                              },
+                              "description": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        },
+                        "remove": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "name"
+                            ],
+                            "properties": {
+                              "name": {
+                                "type": "string"
+                              },
+                              "quantity": {
+                                "type": "number"
+                              },
+                              "all": {
+                                "type": "boolean"
+                              }
+                            }
+                          }
+                        },
+                        "update": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "name"
+                            ],
+                            "properties": {
+                              "name": {
+                                "type": "string"
+                              },
+                              "quantity": {
+                                "type": "number"
+                              },
+                              "description": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "abilities": {
+                      "type": "object",
+                      "properties": {
+                        "add": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "name"
+                            ],
+                            "properties": {
+                              "name": {
+                                "type": "string"
+                              },
+                              "kind": {
+                                "type": "string"
+                              },
+                              "rank": {
+                                "type": "string"
+                              },
+                              "uses": {
+                                "type": "string"
+                              },
+                              "effect": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        },
+                        "remove": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "update": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "name"
+                            ],
+                            "properties": {
+                              "name": {
+                                "type": "string"
+                              },
+                              "kind": {
+                                "type": "string"
+                              },
+                              "rank": {
+                                "type": "string"
+                              },
+                              "uses": {
+                                "type": "string"
+                              },
+                              "effect": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "Read the latest roleplay exchange and return a JSON tracker update.\nUse configured fields and exact names.\nReport resolved events from the fresh player turn and assistant reply. Use earlier messages as context.\nUse stated amounts. Estimate conservatively when an effect is clear but its amount is unstated.\nList every NPC present after the message.\nFollow the output format in the request."
+        },
+        {
+          "role": "user",
+          "content": "Report changes from the latest exchange and list the present NPCs.\nAlex is the player-controlled character. Put their changes under \"player\".\n\n### EVIDENCE RULES\nUse configured field purposes and rules to interpret resolved events.\nRead the fresh player turn together with the assistant reply.\nInclude completed player actions that the reply leaves standing, even when it does not repeat them.\nTreat intentions, attempts, hypotheticals, and out-of-character instructions as context until resolved.\nUse the assistant's resolution when it blocks, changes, or resolves an attempted outcome.\nA player's declaration of a contested outcome does not establish success.\nCount an event once when both turns describe it.\nApply costs when incurred.\nUse stated amounts.\nEstimate a conservative amount when an effect is clear but its amount is unstated.\nUse the field's current scale for estimates.\nApply configured persistence and reset rules.\nUpdate the listed editable fields.\nAdd physical items when the recipient acquires them.\nUse established possessions for a new NPC's starting items.\nTreat scene props as part of the setting.\nAdd missing abilities or knowledge when demonstrated, including during a failed action.\nReusable entries stay held after use.\n\n### EXPERIENCE\nAward XP once per concrete accomplishment by its recipient.\nMeaningful active progress toward a goal qualifies.\nRest, care, accidents, rumours, and routine conversation leave XP unchanged.\nFor earned XP, add the award to the current reading and report the resulting total as a string.\nKeep the existing XP threshold, even when the total exceeds it. Leave the configured level field unchanged.\nThe application handles level-ups and the XP remainder; report the total before that calculation.\nReport bodily injury as a lower resulting reading in player.stats.HP.\nReport effective wound care or healing as a higher resulting reading in that field.\nInclude any text condition change separately.\nEstimate a conservative improvement and report the resulting reading.\n\n### CONFIGURED FIELDS\nEditable stats:\n- World.Time: text. The time of day or moment in the story.\n- World.Quest: text. The objective or lead the characters are currently pursuing.\n- Player.HP: pool (current/maximum). Physical well-being. Wounds lower current HP; healing restores it. Maximum HP reflects lasting resilience.\n- Player.Mana: pool (current/maximum). Magical energy. Casting spells spends current Mana; rest or magical recovery restores it. Maximum Mana reflects lasting magical capacity.\n- Player.Armor: number. Protection from worn gear, natural hide, or magic. Higher values suggest that a blow is less threatening.\n- Player.Strength: number. Physical power used to lift, grapple, break, and strike with force. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.\n- Player.Dexterity: number. Agility, balance, quick reactions, and precise movement. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.\n- Player.Constitution: number. Endurance against exhaustion, illness, harsh conditions, and prolonged effort. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.\n- Player.Intelligence: number. Memory, learned knowledge, investigation, and deliberate reasoning. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.\n- Player.Wisdom: number. Awareness, intuition, judgment, and attention to subtle details. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.\n- Player.Charisma: number. Presence and the ability to persuade, inspire, or unsettle others. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.\n- Player.Condition: text. Describe injuries, ailments, and other temporary effects in plain words.\n- Player.Currency: number. Money held by this character; change it when the story establishes a gain or expense.\n- Player.XP: earned experience. Experience earned through meaningful challenges, discoveries, and growth in the story.\n- NPC.HP: pool (current/maximum). Physical well-being. Wounds lower current HP; healing restores it. Maximum HP reflects lasting resilience.\n- NPC.Mana: pool (current/maximum). Magical energy. Casting spells spends current Mana; rest or magical recovery restores it. Maximum Mana reflects lasting magical capacity.\n- NPC.Armor: number. Protection from worn gear, natural hide, or magic. Higher values suggest that a blow is less threatening.\n- NPC.Strength: number. Physical power used to lift, grapple, break, and strike with force. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.\n- NPC.Dexterity: number. Agility, balance, quick reactions, and precise movement. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.\n- NPC.Constitution: number. Endurance against exhaustion, illness, harsh conditions, and prolonged effort. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.\n- NPC.Intelligence: number. Memory, learned knowledge, investigation, and deliberate reasoning. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.\n- NPC.Wisdom: number. Awareness, intuition, judgment, and attention to subtle details. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.\n- NPC.Charisma: number. Presence and the ability to persuade, inspire, or unsettle others. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change.\n- NPC.Condition: text. Describe injuries, ailments, and other temporary effects in plain words.\n- NPC.Currency: number. Money held by this character; change it when the story establishes a gain or expense.\n- NPC.XP: earned experience. Experience earned through meaningful challenges, discoveries, and growth in the story.\n\n### NPC INITIALIZATION\nFill blank fields from this list when an NPC enters the scene.\nUse plausible individual values when the story provides no detail.\nWrite initial pool readings as \"current/maximum\" with an individual capacity.\nNPC initialization fields:\n- NPC.HP: pool (current/maximum). Physical well-being. Wounds lower current HP; healing restores it. Maximum HP reflects lasting resilience. Default: 12/12. Minimum: 0.\n- NPC.Mana: pool (current/maximum). Magical energy. Casting spells spends current Mana; rest or magical recovery restores it. Maximum Mana reflects lasting magical capacity. Default: 10/10. Minimum: 0.\n- NPC.Armor: number. Protection from worn gear, natural hide, or magic. Higher values suggest that a blow is less threatening. Default: 10. Minimum: 0.\n- NPC.Strength: number. Physical power used to lift, grapple, break, and strike with force. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change. Default: 10. Minimum: 0.\n- NPC.Dexterity: number. Agility, balance, quick reactions, and precise movement. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change. Default: 10. Minimum: 0.\n- NPC.Constitution: number. Endurance against exhaustion, illness, harsh conditions, and prolonged effort. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change. Default: 10. Minimum: 0.\n- NPC.Intelligence: number. Memory, learned knowledge, investigation, and deliberate reasoning. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change. Default: 10. Minimum: 0.\n- NPC.Wisdom: number. Awareness, intuition, judgment, and attention to subtle details. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change. Default: 10. Minimum: 0.\n- NPC.Charisma: number. Presence and the ability to persuade, inspire, or unsettle others. Higher values mean greater capability here. Change this lasting trait only when the story establishes a meaningful change. Default: 10. Minimum: 0.\n- NPC.Condition: text. Describe injuries, ailments, and other temporary effects in plain words. Default: Healthy.\n- NPC.Currency: number. Money held by this character; change it when the story establishes a gain or expense. Default: 0. Minimum: 0.\n- NPC.XP: earned experience. Experience earned through meaningful challenges, discoveries, and growth in the story. Default: 0/100. Minimum: 0.\n- NPC.Level: number. A broad measure of how much this character has grown through experience. Default: 1. Minimum: 1.\n\n### COLLECTION DEFINITIONS\n- \"equipment\" for player or Character NPCs (npcTemplateId: character) - Carried gear; change holdings only when the story establishes a transfer. Fields: name [identifies the item], quantity (number) [minimum 0], description [include when adding] Quantity field: quantity.\n- \"abilities\" (Abilities and Spells) for player or Character NPCs (npcTemplateId: character) - Known abilities, spells, or techniques and any limits established by the story. Fields: name [identifies the item], kind, rank, uses - Optional. Leave blank when the ability has no stated use limit., effect [include when adding]\nUse the quoted collection ID as the key.\nUse exact field names and declared types.\nThe configured primary field identifies each entry.\nNPC fields: HP, Mana, Armor, Strength, Dexterity, Constitution, Intelligence, Wisdom, Charisma, Condition, Currency, XP, Level. NPC guidance: People, beasts, companions, and foes share the same stats.\n\n### SCENE LOCATION\nCompare the player’s final location with the recorded location.\nPut \"locationChanged\" at the top level as a JSON boolean.\nUse true when the player finishes elsewhere or leaves for an unknown destination.\nEntering a different room counts as changing place.\nUse false when the player finishes in the recorded place, even if another character travels.\nPlans, invitations, rumours, and mentions leave the player’s location unchanged.\nUse false when the recorded location is unknown.\nRecorded location (current place first, then containing places): [{\"name\":\"Flooded Culvert\"}]\n\n### CURRENT STATE\n{\"global\":{\"Time\":\"\",\"Quest\":\"\"},\"player\":{\"stats\":{\"HP\":\"12/12\",\"Mana\":\"10/10\",\"Armor\":\"10\",\"Strength\":\"10\",\"Dexterity\":\"10\",\"Constitution\":\"10\",\"Intelligence\":\"10\",\"Wisdom\":\"10\",\"Charisma\":\"10\",\"Condition\":\"Healthy\",\"Currency\":\"0\",\"XP\":\"99/100\",\"Level\":\"1\"},\"collections\":{\"equipment\":[],\"abilities\":[]}},\"characters\":[{\"name\":\"Mira\",\"npcTemplateId\":\"character\",\"stats\":{\"HP\":\"12/12\",\"Mana\":\"10/10\",\"Armor\":\"10\",\"Strength\":\"10\",\"Dexterity\":\"10\",\"Constitution\":\"10\",\"Intelligence\":\"10\",\"Wisdom\":\"10\",\"Charisma\":\"10\",\"Condition\":\"Healthy\",\"Currency\":\"0\",\"XP\":\"0/100\",\"Level\":\"1\"},\"collections\":{\"equipment\":[],\"abilities\":[]}}]}\nProfiles and filled fields outside the editable list provide context.\n\n### EARLIER MESSAGES (already reflected in state)\n[Player (Alex)] I wade into the culvert with Mira. The missing courier must be under the collapsed walkway.\n---\n[Narrator] The courier is pinned beneath a fallen walkway, one boot caught between two beams. Mira lays her lantern on a dry stone and tests the current with her staff. \"He's breathing. We need that upper beam moved before the water rises.\" The courier cannot reach the buckle at his ankle.\n---\n[Player (Alex)] I wedge my shoulder under the timber. \"Mira, pull him out when it moves.\"\n---\n[Narrator] The timber shifts when you lean into it, but a splintered brace presses against your shoulder. Mira grips the courier under his arms. \"A little more. I've got him.\" Water pushes a floating reed against your knee.\n\n### FRESH PLAYER TURN (not yet reflected in state)\n[Player (Alex)] I lift until Mira can drag him clear, even if the beam scrapes me. Then I lower it carefully.\n\n### LATEST ASSISTANT REPLY\nYou heave upward with a guttural shout, your muscles straining against the water-logged weight of the beam. As the timber lifts, a jagged shard of wood rips across your shoulder, tearing through your tunic and scraping the skin raw. The sharp sting is immediate, but the gap opens just wide enough. Mira seizes the moment, her face set in a mask of focused determination, and drags the courier backward with a forceful heave.\n\nOnce the courier is safe, you lower the beam slowly to avoid a sudden splash. Mira pulls the man onto the existing dry ledge, her breathing heavy. The courier is a gaunt man with a pale, sweat-slicked face and wide, terrified eyes. He is dressed in a sodden, oversized wool coat that clings to his thin frame, his fingers trembling as he clutches a leather satchel to his chest. \n\nMira wipes a smudge of grime from her cheek, looking at the blood seeping through your shoulder before glancing at the courier. \"You're lucky we found you before the tide turned,\" she says, her voice stern but relieved. You have successfully retrieved the missing man, though the raw scrape on your shoulder pulses with a dull, stinging heat.\n\n### OUTPUT FORMAT\nReturn raw JSON with \"global\", \"player\", and \"characters\".\nInclude changed fields and blank NPC initializations.\nUse exact configured names.\n\nPut all stat readings in these objects as JSON strings:\n- World: \"global\".\n- Player: \"player.stats\".\n- NPC: \"characters[].stats\".\nReport the resulting absolute value, not the amount gained or lost.\nQuoted readings include \"17\", \"9/12\", and text values such as \"Calm\".\nFor an existing pool, keep its maximum and report the new \"current/maximum\" reading.\nUse these same stat objects for initial values and changes.\nOmit separate delta objects. Report each field once.\n\n\"characters\" is an array of objects.\nEach object has the NPC's exact \"name\".\nList every present NPC, including those with no changes.\nKnown absent NPC updates also go in this array with \"offstage\": true.\nPlayer changes go under \"player\".\nUse \"characters\": [] when the present cast and offstage updates are both empty.\n\nPut collection changes under \"player.collections\" or \"characters[].collections\".\nKey each collection by its configured ID.\nUse \"add\" for acquisitions.\nUse \"remove\" for consumption or loss.\nUse \"update\" for changes to other item fields.\nInclude the primary field in each add, update, and counted remove object.\nFor uncounted removals, supply identifiers.\nFor counted gains or losses, use the configured quantity field for the amount gained or spent.\nThe default amount is 1.\nUse \"all\": true to remove a whole stack.\nFor transfers, remove from the giver and add to the recipient.\nInclude supported item details using their declared types.\nKeep one entry per identifier.\n\nNo-change example:\n{\"locationChanged\":false,\"global\":{},\"player\":{},\"characters\":[{\"name\":\"Mira\"}]}\n\nChanged-reply example (illustrative changes):\n{\"locationChanged\":false,\"global\":{},\"player\":{\"collections\":{\"equipment\":{\"add\":[{\"name\":\"<item identifier>\",\"quantity\":1}]}},\"stats\":{\"HP\":\"11/12\"}},\"characters\":[{\"name\":\"Mira\",\"collections\":{\"equipment\":{\"remove\":[{\"name\":\"<item identifier>\",\"quantity\":1}]}},\"stats\":{\"HP\":\"11/12\"}}]}\n\nNew NPC example (replace placeholders with initial readings using the field definitions):\n{\n  \"locationChanged\": false,\n  \"global\": {},\n  \"player\": {},\n  \"characters\": [\n    {\n      \"name\": \"<exact NPC name from the story>\",\n      \"stats\": {\n        \"HP\": \"<initial reading>\",\n        \"Mana\": \"<initial reading>\",\n        \"Armor\": \"<initial reading>\",\n        \"Strength\": \"<initial reading>\",\n        \"Dexterity\": \"<initial reading>\",\n        \"Constitution\": \"<initial reading>\",\n        \"Intelligence\": \"<initial reading>\",\n        \"Wisdom\": \"<initial reading>\",\n        \"Charisma\": \"<initial reading>\",\n        \"Condition\": \"<initial reading>\",\n        \"Currency\": \"<initial reading>\",\n        \"XP\": \"<initial reading>\",\n        \"Level\": \"<initial reading>\"\n      }\n    }\n  ]\n}\n\nIndependent collection examples (replace illustrative values with supported typed details):\nAcquired item:\n{\n  \"equipment\": {\n    \"add\": [\n      {\n        \"name\": \"<exact primary field value>\",\n        \"quantity\": 1,\n        \"description\": \"<supported item detail>\"\n      }\n    ]\n  }\n}\n\nLost item:\n{\n  \"equipment\": {\n    \"remove\": [\n      {\n        \"name\": \"<exact primary field value>\",\n        \"quantity\": 1\n      }\n    ]\n  }\n}\n\nWhole stack lost:\n{\n  \"equipment\": {\n    \"remove\": [\n      {\n        \"name\": \"<exact primary field value>\",\n        \"all\": true\n      }\n    ]\n  }\n}\n\nChanged item:\n{\n  \"equipment\": {\n    \"update\": [\n      {\n        \"name\": \"<exact primary field value>\",\n        \"description\": \"<new value>\"\n      }\n    ]\n  }\n}\n\nCheck the JSON structure, present cast, field names, and evidence for each change.\nInclude the top-level boolean \"locationChanged\": true for a changed scene location, false otherwise."
+        }
+      ]
+    }
+  ]
+}

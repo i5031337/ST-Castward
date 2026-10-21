@@ -1,0 +1,106 @@
+{
+  "id": "dating-q-passing-joke",
+  "system": "dating",
+  "title": "A pleasant moment can remain a small moment",
+  "startPlace": "Moonbeam Café",
+  "npc": "June",
+  "holdout": true,
+  "history": [
+    {
+      "role": "user",
+      "content": "I sit opposite June at our usual café table while she checks the crossword in the newspaper."
+    },
+    {
+      "role": "assistant",
+      "content": "She frowns at a clue. \"An elegant bird, apparently. I keep wanting to write pigeon.\" She turns the newspaper so you can see the square she means."
+    },
+    {
+      "role": "user",
+      "content": "I suggest that pigeons probably consider themselves very elegant."
+    },
+    {
+      "role": "assistant",
+      "content": "June looks at the clue again, then at you. \"Especially the ones that steal chips.\" Neither of you seems especially tired or worked up."
+    }
+  ],
+  "user": "I solemnly propose that the café should hire a pigeon as its etiquette instructor.",
+  "generationBrief": "June laughs naturally at the joke and offers a light rejoinder. Keep this a brief pleasant exchange between friends, with no confession, new trust milestone, exhaustion, emotional healing, gift or romance. It is defensible for social ratings to stay unchanged or affection to rise only slightly. They continue the crossword at the same table. All consequences must be conveyed through natural prose, with no stat names, ratings, point costs, numerical damage or game notifications. Keep this beat in the current place. Do not add possessions, rewards or completed quests.",
+  "checks": [
+    [
+      "sameHoldings",
+      true
+    ],
+    [
+      "noXp",
+      true
+    ],
+    [
+      "locationFlag",
+      "no",
+      true
+    ],
+    [
+      "npcPresent",
+      "June"
+    ],
+    [
+      "relationshipUnchanged",
+      "June",
+      true
+    ],
+    [
+      "playerChangeBetween",
+      "Social Energy",
+      -1,
+      0,
+      true
+    ],
+    [
+      "npcChangeBetween",
+      "June",
+      "Affection",
+      0,
+      4,
+      true
+    ],
+    [
+      "npcChangeBetween",
+      "June",
+      "Trust",
+      0,
+      1,
+      true
+    ]
+  ],
+  "energy": "7/10",
+  "text": "June laughs and looks past you at the window ledge. \"There's one outside already,\" she says. \"Clearly waiting for the interview.\" A pigeon turns in a slow circle beyond the glass, then disappears below the sill. June is still smiling when she looks back at the newspaper.\n\n\"I'm not putting pigeon in,\" she says. \"It doesn't fit, and I refuse to have another argument with a crossword.\" She checks the letters from the clue running down through it. For a moment she holds the paper at an angle, as if that might make the answer easier to see. Then she taps a square. \"Swan. That must be it. Though I don't think a swan would improve the service here.\"\n\nShe writes the word and moves on to the next clue. The joke has made the afternoon a little more pleasant, without changing what either of you is asking of it. You are still sitting opposite a friend, helping with a puzzle that has plenty of empty squares left.",
+  "generation": {
+    "model": "/mnt/D/backup_models/gemma-4-31B-it-qat-UD-Q4_K_XL.gguf",
+    "endpoint": "http://127.0.0.1:9931/v1",
+    "generatedAt": "2026-10-21T00:43:30.922Z",
+    "narratorSha256": "ed57edec3be466a732d032b8f9d3b643df8061b72bd285ec506b3fa395444f93",
+    "parameters": {
+      "temperature": 0.8,
+      "top_p": 0.95,
+      "seed": 5031343,
+      "max_tokens": 1800,
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    },
+    "usage": {
+      "completion_tokens": 220,
+      "prompt_tokens": 660,
+      "total_tokens": 880,
+      "prompt_tokens_details": {
+        "cached_tokens": 169
+      }
+    },
+    "finishReason": "stop"
+  },
+  "review": {
+    "status": "reviewed",
+    "note": "Reviewed the generated scene against fresh-turn evidence and starting state; edited for natural prose, continuity, and unambiguous consequences without numerical readings. Removed invented outfit details where present.",
+    "originalText": "June lets out a genuine, melodic laugh that crinkles the corners of her eyes. She leans back in her chair, her light floral blouse fluttering slightly as she shakes her head at your absurdity. \"I can see it now,\" she rejoices, her voice warm and teasing. \"The pigeons would insist on a strict dress code of iridescent neck feathers and a complete ban on crumbs on the upholstery.\"\n\nShe gives you a playful, sidelong glance, her expression soft with amusement before she turns her attention back to the paper. The easy rapport between you lingers in the air, a comfortable silence filling the gap as the bustle of the café continues around your small wooden table.\n\nWith a focused hum, June taps the pen against her chin, her gaze returning to the grid. \"Regardless of the bird's social standing, 'Swan' actually fits the letters,\" she notes, scribbling the word into the boxes with a satisfied flourish. She slides the newspaper back toward the center of the table, inviting you to help her tackle the remaining clues in the bottom half of the puzzle."
+  }
+}

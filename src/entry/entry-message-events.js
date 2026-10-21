@@ -48,8 +48,8 @@ export function onMessageForExtraction(messageId) {
     try {
         const context = getContext();
         const message = context?.chat?.[Number(messageId)];
-        // Only the model's own prose is worth reading; user turns and system notes
-        // describe nothing that changed.
+        // Read after the assistant resolves the exchange; its preceding player turn
+        // is included as fresh evidence by the reader prompt builder.
         if (!message || message.is_user || message.is_system || isImageOnlyMessage(message)) return;
 
         extractStateFromMessage(message.mes, messageId)

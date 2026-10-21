@@ -116,8 +116,9 @@ export function renderTrackerDisplayAndReading({ container, settings, onApply, o
         min: 0,
         max: 6,
         step: 1,
-        help: 'How many earlier messages the reader sees. Needed when a cost is announced '
-            + 'in one message and only paid once a roll succeeds two messages later.',
+        help: 'How many preceding messages to include as context. The fresh player turn '
+            + 'is always included, even at zero. Older context can establish costs '
+            + 'that are only paid when a later reply resolves the action.',
         onChange: onApply
     }));
 

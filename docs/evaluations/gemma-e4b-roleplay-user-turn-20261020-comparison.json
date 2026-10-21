@@ -1,0 +1,1751 @@
+{
+  "identicalScenariosStatesSettingsSchemas": true,
+  "identicalModelsAndSamplingDefaults": true,
+  "inferenceSourceHashesMatchSnapshots": true,
+  "newPromptSourceHashesMatchFinalWorktree": true,
+  "runs": {
+    "roleplay-current-20261020": {
+      "summary": {
+        "checks": 298,
+        "passed": 279,
+        "rate": 0.9362416107382551,
+        "criticalFailures": [
+          "dating-boundary-respected #2: noInventoryChanges ",
+          "dating-coat-off #2: itemRemove clothing blue wool scarf",
+          "dating-coat-off #2: collectionHas player items blue wool scarf",
+          "dating-mutual-agreement #1: noInventoryChanges ",
+          "dating-mutual-agreement #2: npcStatContains June Relationship partner",
+          "dating-mutual-agreement #2: noInventoryChanges ",
+          "dating-rain-check #1: worldContains Occasion breakfast",
+          "dating-rain-check #1: worldContains Occasion Sunday",
+          "dating-rain-check #2: worldContains Occasion breakfast",
+          "dating-rain-check #2: worldContains Occasion Sunday",
+          "fantasy-bridge-toll #1: appliedPlayerValue Currency 17",
+          "fantasy-bridge-toll #2: appliedPlayerValue Currency 17",
+          "fantasy-companion-bandage #1: npcAppliedIncreased Mira HP",
+          "fantasy-companion-bandage #1: locationFlag yes",
+          "fantasy-companion-bandage #2: npcAppliedIncreased Mira HP",
+          "fantasy-companion-bandage #2: locationFlag yes",
+          "fantasy-failed-fire #2: noInventoryChanges ",
+          "fantasy-first-cantrip #1: collectionHas player abilities Wicklight",
+          "fantasy-first-cantrip #2: collectionHas player abilities Wicklight"
+        ],
+        "systems": {
+          "fantasy": 0.9430379746835443,
+          "dating": 0.9285714285714286
+        },
+        "perSystemCounts": {
+          "fantasy": {
+            "checks": 158,
+            "passed": 149,
+            "rate": 0.9430379746835443
+          },
+          "dating": {
+            "checks": 140,
+            "passed": 130,
+            "rate": 0.9285714285714286
+          }
+        },
+        "splits": {
+          "main": {
+            "checks": 298,
+            "passed": 279,
+            "rate": 0.9362416107382551
+          },
+          "originalHoldout": {
+            "checks": 0,
+            "passed": 0,
+            "rate": null
+          }
+        },
+        "auditFailures": [],
+        "endpoints": {
+          "http://127.0.0.1:9931/v1": {
+            "trials": 40,
+            "checks": 298,
+            "passed": 279,
+            "criticalFailures": 19
+          }
+        },
+        "acceptable": false
+      },
+      "fullyPassingReplies": 27,
+      "duplicateReadingAndDeltaTrials": 15,
+      "numericReadingTrials": 16,
+      "diagnostics": [
+        {
+          "id": "dating-boundary-respected",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [
+            "June.Affection",
+            "June.Comfort",
+            "June.Trust"
+          ],
+          "numericValuesInReadingObjects": [
+            "June.Affection",
+            "June.Trust",
+            "June.Comfort"
+          ]
+        },
+        {
+          "id": "dating-boundary-respected",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": [
+            "June.Affection",
+            "June.Trust",
+            "June.Comfort"
+          ]
+        },
+        {
+          "id": "dating-coat-off",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": [
+            "June.Affection",
+            "June.Trust",
+            "June.Comfort"
+          ]
+        },
+        {
+          "id": "dating-coat-off",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": [
+            "June.Affection",
+            "June.Trust",
+            "June.Comfort"
+          ]
+        },
+        {
+          "id": "dating-crowded-fundraiser",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [
+            "Sam.Affection",
+            "Sam.Comfort",
+            "Sam.Trust"
+          ],
+          "numericValuesInReadingObjects": [
+            "Sam.Affection",
+            "Sam.Trust",
+            "Sam.Comfort"
+          ]
+        },
+        {
+          "id": "dating-crowded-fundraiser",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [
+            "Player.Social Energy"
+          ],
+          "numericValuesInReadingObjects": [
+            "Sam.Affection"
+          ]
+        },
+        {
+          "id": "dating-honest-apology",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "dating-honest-apology",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [
+            "Sam.Affection"
+          ],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "dating-morning-alone",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "dating-morning-alone",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "dating-mutual-agreement",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": [
+            "June.Affection",
+            "June.Trust",
+            "June.Comfort"
+          ]
+        },
+        {
+          "id": "dating-mutual-agreement",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": [
+            "June.Affection",
+            "June.Trust",
+            "June.Comfort"
+          ]
+        },
+        {
+          "id": "dating-quiet-promise",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [
+            "Sam.Affection",
+            "Sam.Trust"
+          ],
+          "numericValuesInReadingObjects": [
+            "Sam.Affection",
+            "Sam.Trust",
+            "Sam.Comfort"
+          ]
+        },
+        {
+          "id": "dating-quiet-promise",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": [
+            "Sam.Affection",
+            "Sam.Trust",
+            "Sam.Comfort"
+          ]
+        },
+        {
+          "id": "dating-rain-check",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [
+            "June.Affection",
+            "June.Comfort",
+            "June.Trust"
+          ],
+          "numericValuesInReadingObjects": [
+            "June.Affection",
+            "June.Trust",
+            "June.Comfort"
+          ]
+        },
+        {
+          "id": "dating-rain-check",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": [
+            "June.Affection",
+            "June.Trust",
+            "June.Comfort"
+          ]
+        },
+        {
+          "id": "dating-remembered-flower",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [
+            "June.Affection",
+            "June.Comfort",
+            "June.Trust"
+          ],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "dating-remembered-flower",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": [
+            "June.Affection",
+            "June.Trust",
+            "June.Comfort"
+          ]
+        },
+        {
+          "id": "dating-unwanted-kiss",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [
+            "Player.Social Energy",
+            "June.Affection",
+            "June.Comfort",
+            "June.Trust"
+          ],
+          "numericValuesInReadingObjects": [
+            "June.Affection",
+            "June.Trust",
+            "June.Comfort"
+          ]
+        },
+        {
+          "id": "dating-unwanted-kiss",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [
+            "Player.Social Energy",
+            "June.Affection",
+            "June.Comfort",
+            "June.Trust"
+          ],
+          "numericValuesInReadingObjects": [
+            "June.Affection",
+            "June.Trust",
+            "June.Comfort"
+          ]
+        },
+        {
+          "id": "fantasy-blocked-strike",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-blocked-strike",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-bridge-toll",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-bridge-toll",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-companion-bandage",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-companion-bandage",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-courier-rescue",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [
+            "Player.HP"
+          ],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-courier-rescue",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": [
+            "Mira.Armor",
+            "Mira.Strength",
+            "Mira.Dexterity",
+            "Mira.Constitution",
+            "Mira.Intelligence",
+            "Mira.Wisdom",
+            "Mira.Charisma",
+            "Mira.Currency",
+            "Mira.Level",
+            "Courier.Armor",
+            "Courier.Strength",
+            "Courier.Dexterity",
+            "Courier.Constitution",
+            "Courier.Intelligence",
+            "Courier.Wisdom",
+            "Courier.Charisma",
+            "Courier.Currency",
+            "Courier.Level"
+          ]
+        },
+        {
+          "id": "fantasy-failed-fire",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-failed-fire",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [
+            "Player.Mana"
+          ],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-first-cantrip",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [
+            "Player.Mana",
+            "Player.XP"
+          ],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-first-cantrip",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-hand-over-rope",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-hand-over-rope",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-healing-draught",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [
+            "Player.HP"
+          ],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-healing-draught",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-overnight-rest",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [
+            "Player.HP",
+            "Player.Mana",
+            "Mira.HP",
+            "Mira.Mana"
+          ],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-overnight-rest",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [
+            "Player.HP",
+            "Player.Mana",
+            "Mira.HP",
+            "Mira.Mana"
+          ],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-rumour-and-plan",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-rumour-and-plan",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": []
+        }
+      ]
+    },
+    "roleplay-current-rescored-20261020": {
+      "summary": {
+        "checks": 298,
+        "passed": 289,
+        "rate": 0.9697986577181208,
+        "criticalFailures": [
+          "dating-coat-off #2: itemRemove clothing blue wool scarf",
+          "dating-coat-off #2: collectionHas player items blue wool scarf",
+          "dating-mutual-agreement #2: npcStatContains June Relationship partner",
+          "fantasy-bridge-toll #1: appliedPlayerValue Currency 17",
+          "fantasy-bridge-toll #2: appliedPlayerValue Currency 17",
+          "fantasy-companion-bandage #1: locationFlag yes",
+          "fantasy-companion-bandage #2: locationFlag yes",
+          "fantasy-first-cantrip #1: collectionHas player abilities Wicklight",
+          "fantasy-first-cantrip #2: collectionHas player abilities Wicklight"
+        ],
+        "systems": {
+          "fantasy": 0.9620253164556962,
+          "dating": 0.9785714285714285
+        },
+        "perSystemCounts": {
+          "fantasy": {
+            "checks": 158,
+            "passed": 152,
+            "rate": 0.9620253164556962
+          },
+          "dating": {
+            "checks": 140,
+            "passed": 137,
+            "rate": 0.9785714285714285
+          }
+        },
+        "splits": {
+          "main": {
+            "checks": 298,
+            "passed": 289,
+            "rate": 0.9697986577181208
+          },
+          "originalHoldout": {
+            "checks": 0,
+            "passed": 0,
+            "rate": null
+          }
+        },
+        "auditFailures": [],
+        "endpoints": {
+          "http://127.0.0.1:9931/v1": {
+            "trials": 40,
+            "checks": 298,
+            "passed": 289,
+            "criticalFailures": 9
+          }
+        },
+        "acceptable": false
+      },
+      "fullyPassingReplies": 32,
+      "duplicateReadingAndDeltaTrials": 15,
+      "numericReadingTrials": 16,
+      "diagnostics": [
+        {
+          "id": "dating-boundary-respected",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [
+            "June.Affection",
+            "June.Comfort",
+            "June.Trust"
+          ],
+          "numericValuesInReadingObjects": [
+            "June.Affection",
+            "June.Trust",
+            "June.Comfort"
+          ]
+        },
+        {
+          "id": "dating-boundary-respected",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": [
+            "June.Affection",
+            "June.Trust",
+            "June.Comfort"
+          ]
+        },
+        {
+          "id": "dating-coat-off",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": [
+            "June.Affection",
+            "June.Trust",
+            "June.Comfort"
+          ]
+        },
+        {
+          "id": "dating-coat-off",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": [
+            "June.Affection",
+            "June.Trust",
+            "June.Comfort"
+          ]
+        },
+        {
+          "id": "dating-crowded-fundraiser",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [
+            "Sam.Affection",
+            "Sam.Comfort",
+            "Sam.Trust"
+          ],
+          "numericValuesInReadingObjects": [
+            "Sam.Affection",
+            "Sam.Trust",
+            "Sam.Comfort"
+          ]
+        },
+        {
+          "id": "dating-crowded-fundraiser",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [
+            "Player.Social Energy"
+          ],
+          "numericValuesInReadingObjects": [
+            "Sam.Affection"
+          ]
+        },
+        {
+          "id": "dating-honest-apology",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "dating-honest-apology",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [
+            "Sam.Affection"
+          ],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "dating-morning-alone",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "dating-morning-alone",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "dating-mutual-agreement",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": [
+            "June.Affection",
+            "June.Trust",
+            "June.Comfort"
+          ]
+        },
+        {
+          "id": "dating-mutual-agreement",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": [
+            "June.Affection",
+            "June.Trust",
+            "June.Comfort"
+          ]
+        },
+        {
+          "id": "dating-quiet-promise",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [
+            "Sam.Affection",
+            "Sam.Trust"
+          ],
+          "numericValuesInReadingObjects": [
+            "Sam.Affection",
+            "Sam.Trust",
+            "Sam.Comfort"
+          ]
+        },
+        {
+          "id": "dating-quiet-promise",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": [
+            "Sam.Affection",
+            "Sam.Trust",
+            "Sam.Comfort"
+          ]
+        },
+        {
+          "id": "dating-rain-check",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [
+            "June.Affection",
+            "June.Comfort",
+            "June.Trust"
+          ],
+          "numericValuesInReadingObjects": [
+            "June.Affection",
+            "June.Trust",
+            "June.Comfort"
+          ]
+        },
+        {
+          "id": "dating-rain-check",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": [
+            "June.Affection",
+            "June.Trust",
+            "June.Comfort"
+          ]
+        },
+        {
+          "id": "dating-remembered-flower",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [
+            "June.Affection",
+            "June.Comfort",
+            "June.Trust"
+          ],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "dating-remembered-flower",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": [
+            "June.Affection",
+            "June.Trust",
+            "June.Comfort"
+          ]
+        },
+        {
+          "id": "dating-unwanted-kiss",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [
+            "Player.Social Energy",
+            "June.Affection",
+            "June.Comfort",
+            "June.Trust"
+          ],
+          "numericValuesInReadingObjects": [
+            "June.Affection",
+            "June.Trust",
+            "June.Comfort"
+          ]
+        },
+        {
+          "id": "dating-unwanted-kiss",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [
+            "Player.Social Energy",
+            "June.Affection",
+            "June.Comfort",
+            "June.Trust"
+          ],
+          "numericValuesInReadingObjects": [
+            "June.Affection",
+            "June.Trust",
+            "June.Comfort"
+          ]
+        },
+        {
+          "id": "fantasy-blocked-strike",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-blocked-strike",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-bridge-toll",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-bridge-toll",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-companion-bandage",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-companion-bandage",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-courier-rescue",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [
+            "Player.HP"
+          ],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-courier-rescue",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": [
+            "Mira.Armor",
+            "Mira.Strength",
+            "Mira.Dexterity",
+            "Mira.Constitution",
+            "Mira.Intelligence",
+            "Mira.Wisdom",
+            "Mira.Charisma",
+            "Mira.Currency",
+            "Mira.Level",
+            "Courier.Armor",
+            "Courier.Strength",
+            "Courier.Dexterity",
+            "Courier.Constitution",
+            "Courier.Intelligence",
+            "Courier.Wisdom",
+            "Courier.Charisma",
+            "Courier.Currency",
+            "Courier.Level"
+          ]
+        },
+        {
+          "id": "fantasy-failed-fire",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-failed-fire",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [
+            "Player.Mana"
+          ],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-first-cantrip",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [
+            "Player.Mana",
+            "Player.XP"
+          ],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-first-cantrip",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-hand-over-rope",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-hand-over-rope",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-healing-draught",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [
+            "Player.HP"
+          ],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-healing-draught",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-overnight-rest",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [
+            "Player.HP",
+            "Player.Mana",
+            "Mira.HP",
+            "Mira.Mana"
+          ],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-overnight-rest",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [
+            "Player.HP",
+            "Player.Mana",
+            "Mira.HP",
+            "Mira.Mana"
+          ],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-rumour-and-plan",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-rumour-and-plan",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": []
+        }
+      ]
+    },
+    "roleplay-corrected-baseline-20261020": {
+      "summary": {
+        "checks": 298,
+        "passed": 282,
+        "rate": 0.9463087248322147,
+        "criticalFailures": [
+          "dating-boundary-respected #1: sameHoldings ",
+          "dating-coat-off #1: collectionHas player items blue wool scarf",
+          "dating-honest-apology #1: npcUnchanged Sam Trust",
+          "dating-remembered-flower #1: itemRemove items sunflower 1",
+          "dating-remembered-flower #1: npcItemAdd June items sunflower 1",
+          "dating-unwanted-kiss #1: relationshipUnchanged June",
+          "fantasy-blocked-strike #1: noXp ",
+          "fantasy-bridge-toll #1: appliedPlayerValue Currency 17",
+          "fantasy-bridge-toll #2: appliedPlayerValue Currency 17",
+          "fantasy-companion-bandage #1: itemRemove equipment clean bandage 1",
+          "fantasy-companion-bandage #1: locationFlag yes",
+          "fantasy-companion-bandage #2: locationFlag yes",
+          "fantasy-courier-rescue #1: playerXpIncreased ",
+          "fantasy-courier-rescue #2: playerXpIncreased ",
+          "fantasy-first-cantrip #1: collectionHas player abilities Wicklight",
+          "fantasy-overnight-rest #2: noXp "
+        ],
+        "systems": {
+          "fantasy": 0.9367088607594937,
+          "dating": 0.9571428571428572
+        },
+        "perSystemCounts": {
+          "fantasy": {
+            "checks": 158,
+            "passed": 148,
+            "rate": 0.9367088607594937
+          },
+          "dating": {
+            "checks": 140,
+            "passed": 134,
+            "rate": 0.9571428571428572
+          }
+        },
+        "splits": {
+          "main": {
+            "checks": 298,
+            "passed": 282,
+            "rate": 0.9463087248322147
+          },
+          "originalHoldout": {
+            "checks": 0,
+            "passed": 0,
+            "rate": null
+          }
+        },
+        "auditFailures": [],
+        "endpoints": {
+          "http://127.0.0.1:9931/v1": {
+            "trials": 40,
+            "checks": 298,
+            "passed": 282,
+            "criticalFailures": 16
+          }
+        },
+        "acceptable": false
+      },
+      "fullyPassingReplies": 26,
+      "duplicateReadingAndDeltaTrials": 20,
+      "numericReadingTrials": 15,
+      "diagnostics": [
+        {
+          "id": "dating-boundary-respected",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [
+            "June.Affection",
+            "June.Comfort",
+            "June.Trust"
+          ],
+          "numericValuesInReadingObjects": [
+            "June.Affection",
+            "June.Trust",
+            "June.Comfort"
+          ]
+        },
+        {
+          "id": "dating-boundary-respected",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": [
+            "June.Affection",
+            "June.Trust",
+            "June.Comfort"
+          ]
+        },
+        {
+          "id": "dating-coat-off",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": [
+            "June.Affection",
+            "June.Trust",
+            "June.Comfort"
+          ]
+        },
+        {
+          "id": "dating-coat-off",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": [
+            "June.Affection",
+            "June.Trust",
+            "June.Comfort"
+          ]
+        },
+        {
+          "id": "dating-crowded-fundraiser",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [
+            "Sam.Affection",
+            "Sam.Comfort",
+            "Sam.Trust"
+          ],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "dating-crowded-fundraiser",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [
+            "Player.Social Energy"
+          ],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "dating-honest-apology",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [
+            "Sam.Affection",
+            "Sam.Comfort",
+            "Sam.Trust"
+          ],
+          "numericValuesInReadingObjects": [
+            "Sam.Affection",
+            "Sam.Trust",
+            "Sam.Comfort"
+          ]
+        },
+        {
+          "id": "dating-honest-apology",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": [
+            "Sam.Affection",
+            "Sam.Trust",
+            "Sam.Comfort"
+          ]
+        },
+        {
+          "id": "dating-morning-alone",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [
+            "Player.Social Energy"
+          ],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "dating-morning-alone",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "dating-mutual-agreement",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [
+            "June.Affection",
+            "June.Comfort",
+            "June.Trust"
+          ],
+          "numericValuesInReadingObjects": [
+            "June.Affection",
+            "June.Trust",
+            "June.Comfort"
+          ]
+        },
+        {
+          "id": "dating-mutual-agreement",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [
+            "June.Affection",
+            "June.Comfort",
+            "June.Trust"
+          ],
+          "numericValuesInReadingObjects": [
+            "June.Affection",
+            "June.Trust",
+            "June.Comfort"
+          ]
+        },
+        {
+          "id": "dating-quiet-promise",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [
+            "Sam.Affection",
+            "Sam.Comfort",
+            "Sam.Trust"
+          ],
+          "numericValuesInReadingObjects": [
+            "Sam.Affection",
+            "Sam.Trust",
+            "Sam.Comfort"
+          ]
+        },
+        {
+          "id": "dating-quiet-promise",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [
+            "Sam.Affection"
+          ],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "dating-rain-check",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [
+            "June.Affection",
+            "June.Comfort",
+            "June.Trust"
+          ],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "dating-rain-check",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "dating-remembered-flower",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [
+            "June.Affection",
+            "June.Comfort",
+            "June.Trust"
+          ],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "dating-remembered-flower",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": [
+            "June.Affection",
+            "June.Trust",
+            "June.Comfort"
+          ]
+        },
+        {
+          "id": "dating-unwanted-kiss",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [
+            "Player.Social Energy",
+            "June.Affection",
+            "June.Comfort",
+            "June.Trust"
+          ],
+          "numericValuesInReadingObjects": [
+            "June.Affection",
+            "June.Trust",
+            "June.Comfort"
+          ]
+        },
+        {
+          "id": "dating-unwanted-kiss",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": [
+            "June.Affection",
+            "June.Trust",
+            "June.Comfort"
+          ]
+        },
+        {
+          "id": "fantasy-blocked-strike",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [
+            "Player.XP"
+          ],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-blocked-strike",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-bridge-toll",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-bridge-toll",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": [
+            "Rowan.Level"
+          ]
+        },
+        {
+          "id": "fantasy-companion-bandage",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-companion-bandage",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [
+            "Mira.HP"
+          ],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-courier-rescue",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-courier-rescue",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-failed-fire",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": [
+            "Mira.Armor",
+            "Mira.Strength",
+            "Mira.Dexterity",
+            "Mira.Constitution",
+            "Mira.Intelligence",
+            "Mira.Wisdom",
+            "Mira.Charisma",
+            "Mira.Currency",
+            "Mira.Level"
+          ]
+        },
+        {
+          "id": "fantasy-failed-fire",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [
+            "Player.Mana"
+          ],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-first-cantrip",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-first-cantrip",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [
+            "Player.Mana",
+            "Player.XP"
+          ],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-hand-over-rope",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-hand-over-rope",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-healing-draught",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [
+            "Player.HP"
+          ],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-healing-draught",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [
+            "Player.HP"
+          ],
+          "numericValuesInReadingObjects": [
+            "Mira.Level"
+          ]
+        },
+        {
+          "id": "fantasy-overnight-rest",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [
+            "Player.HP",
+            "Player.Mana",
+            "Mira.HP",
+            "Mira.Mana"
+          ],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-overnight-rest",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [
+            "Player.HP",
+            "Player.Mana",
+            "Mira.HP"
+          ],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-rumour-and-plan",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-rumour-and-plan",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": []
+        }
+      ]
+    },
+    "roleplay-user-turn-20261020": {
+      "summary": {
+        "checks": 298,
+        "passed": 286,
+        "rate": 0.959731543624161,
+        "criticalFailures": [
+          "dating-coat-off #2: collectionHas player items blue wool scarf",
+          "dating-rain-check #1: worldExcludes Occasion breakfast",
+          "dating-rain-check #1: worldExcludes Occasion Sunday",
+          "dating-remembered-flower #1: npcItemAdd June items sunflower 1",
+          "dating-unwanted-kiss #1: relationshipUnchanged June",
+          "fantasy-companion-bandage #1: locationFlag yes",
+          "fantasy-companion-bandage #2: locationFlag yes",
+          "fantasy-courier-rescue #1: noPlayerInventoryChanges ",
+          "fantasy-courier-rescue #2: noPlayerInventoryChanges ",
+          "fantasy-failed-fire #2: sameHoldings ",
+          "fantasy-first-cantrip #1: collectionHas player abilities Wicklight",
+          "fantasy-first-cantrip #2: collectionHas player abilities Wicklight"
+        ],
+        "systems": {
+          "fantasy": 0.9556962025316456,
+          "dating": 0.9642857142857143
+        },
+        "perSystemCounts": {
+          "fantasy": {
+            "checks": 158,
+            "passed": 151,
+            "rate": 0.9556962025316456
+          },
+          "dating": {
+            "checks": 140,
+            "passed": 135,
+            "rate": 0.9642857142857143
+          }
+        },
+        "splits": {
+          "main": {
+            "checks": 298,
+            "passed": 286,
+            "rate": 0.959731543624161
+          },
+          "originalHoldout": {
+            "checks": 0,
+            "passed": 0,
+            "rate": null
+          }
+        },
+        "auditFailures": [],
+        "endpoints": {
+          "http://127.0.0.1:9931/v1": {
+            "trials": 40,
+            "checks": 298,
+            "passed": 286,
+            "criticalFailures": 12
+          }
+        },
+        "acceptable": false
+      },
+      "fullyPassingReplies": 29,
+      "duplicateReadingAndDeltaTrials": 20,
+      "numericReadingTrials": 17,
+      "diagnostics": [
+        {
+          "id": "dating-boundary-respected",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": [
+            "June.Affection",
+            "June.Trust",
+            "June.Comfort"
+          ]
+        },
+        {
+          "id": "dating-boundary-respected",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "dating-coat-off",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": [
+            "June.Affection",
+            "June.Trust",
+            "June.Comfort"
+          ]
+        },
+        {
+          "id": "dating-coat-off",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": [
+            "June.Affection",
+            "June.Trust",
+            "June.Comfort"
+          ]
+        },
+        {
+          "id": "dating-crowded-fundraiser",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [
+            "Player.Social Energy",
+            "Sam.Affection"
+          ],
+          "numericValuesInReadingObjects": [
+            "Sam.Affection",
+            "Sam.Trust",
+            "Sam.Comfort"
+          ]
+        },
+        {
+          "id": "dating-crowded-fundraiser",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [
+            "Player.Social Energy",
+            "Sam.Affection"
+          ],
+          "numericValuesInReadingObjects": [
+            "Sam.Affection",
+            "Sam.Trust",
+            "Sam.Comfort"
+          ]
+        },
+        {
+          "id": "dating-honest-apology",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": [
+            "Sam.Affection",
+            "Sam.Trust",
+            "Sam.Comfort"
+          ]
+        },
+        {
+          "id": "dating-honest-apology",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "dating-morning-alone",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [
+            "Player.Social Energy"
+          ],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "dating-morning-alone",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "dating-mutual-agreement",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [
+            "June.Affection",
+            "June.Comfort",
+            "June.Trust"
+          ],
+          "numericValuesInReadingObjects": [
+            "June.Affection",
+            "June.Trust",
+            "June.Comfort"
+          ]
+        },
+        {
+          "id": "dating-mutual-agreement",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [
+            "June.Affection",
+            "June.Comfort",
+            "June.Trust"
+          ],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "dating-quiet-promise",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [
+            "Sam.Affection"
+          ],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "dating-quiet-promise",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [
+            "Sam.Affection"
+          ],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "dating-rain-check",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": [
+            "June.Affection",
+            "June.Trust",
+            "June.Comfort"
+          ]
+        },
+        {
+          "id": "dating-rain-check",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [
+            "June.Affection",
+            "June.Comfort",
+            "June.Trust"
+          ],
+          "numericValuesInReadingObjects": [
+            "June.Affection",
+            "June.Trust",
+            "June.Comfort"
+          ]
+        },
+        {
+          "id": "dating-remembered-flower",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": [
+            "June.Affection",
+            "June.Trust",
+            "June.Comfort"
+          ]
+        },
+        {
+          "id": "dating-remembered-flower",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": [
+            "June.Affection",
+            "June.Trust",
+            "June.Comfort"
+          ]
+        },
+        {
+          "id": "dating-unwanted-kiss",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": [
+            "June.Affection",
+            "June.Trust",
+            "June.Comfort"
+          ]
+        },
+        {
+          "id": "dating-unwanted-kiss",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [
+            "Player.Social Energy",
+            "June.Affection",
+            "June.Comfort",
+            "June.Trust"
+          ],
+          "numericValuesInReadingObjects": [
+            "June.Affection",
+            "June.Trust",
+            "June.Comfort"
+          ]
+        },
+        {
+          "id": "fantasy-blocked-strike",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-blocked-strike",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-bridge-toll",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [
+            "Player.Currency"
+          ],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-bridge-toll",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [
+            "Player.Currency"
+          ],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-companion-bandage",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-companion-bandage",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-courier-rescue",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [
+            "Player.HP"
+          ],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-courier-rescue",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [
+            "Player.HP"
+          ],
+          "numericValuesInReadingObjects": [
+            "Mira.Level",
+            "The Courier.Level"
+          ]
+        },
+        {
+          "id": "fantasy-failed-fire",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [
+            "Player.Mana"
+          ],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-failed-fire",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [
+            "Player.Mana"
+          ],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-first-cantrip",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [
+            "Player.HP",
+            "Player.Mana"
+          ],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-first-cantrip",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [
+            "Player.Mana"
+          ],
+          "numericValuesInReadingObjects": [
+            "Mira.Armor",
+            "Mira.Strength",
+            "Mira.Dexterity",
+            "Mira.Constitution",
+            "Mira.Intelligence",
+            "Mira.Wisdom",
+            "Mira.Charisma",
+            "Mira.Currency",
+            "Mira.Level"
+          ]
+        },
+        {
+          "id": "fantasy-hand-over-rope",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-hand-over-rope",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-healing-draught",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": [
+            "Mira.Level"
+          ]
+        },
+        {
+          "id": "fantasy-healing-draught",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [
+            "Player.HP"
+          ],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-overnight-rest",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [
+            "Player.HP",
+            "Player.Mana",
+            "Mira.HP"
+          ],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-overnight-rest",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [
+            "Player.HP",
+            "Player.Mana",
+            "Mira.HP",
+            "Mira.Mana"
+          ],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-rumour-and-plan",
+          "repeat": 0,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": []
+        },
+        {
+          "id": "fantasy-rumour-and-plan",
+          "repeat": 1,
+          "duplicateReadingsAndDeltas": [],
+          "numericValuesInReadingObjects": [
+            "Mira.Armor",
+            "Mira.Strength",
+            "Mira.Dexterity",
+            "Mira.Constitution",
+            "Mira.Intelligence",
+            "Mira.Wisdom",
+            "Mira.Charisma",
+            "Mira.Currency",
+            "Mira.Level"
+          ]
+        }
+      ]
+    }
+  }
+}

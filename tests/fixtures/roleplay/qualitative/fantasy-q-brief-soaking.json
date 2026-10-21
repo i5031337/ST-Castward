@@ -1,0 +1,111 @@
+{
+  "id": "fantasy-q-brief-soaking",
+  "system": "fantasy",
+  "title": "Uncomfortable weather need not deal damage",
+  "startPlace": "Mill porch",
+  "npc": "Mira",
+  "holdout": true,
+  "history": [
+    {
+      "role": "user",
+      "content": "I reach the mill porch with Mira just as the rain thickens. We stop under its roof."
+    },
+    {
+      "role": "assistant",
+      "content": "Water drips from the porch eaves. You have both escaped the worst of it, though your sleeves are wet. Mira checks the clouds from beneath the shelter."
+    },
+    {
+      "role": "user",
+      "content": "I step to the edge of the porch to see whether the path is flooding."
+    },
+    {
+      "role": "assistant",
+      "content": "A gust sweeps rain across the boards. The path is muddy but open. Mira stays back under the roof, holding the mill door closed against the wind."
+    }
+  ],
+  "user": "I lean out to get a better look, then step back under the roof when the rain catches me.",
+  "generationBrief": "A brief gust drenches Alex's existing cloak. Alex returns to shelter cold, damp and annoyed but explicitly unhurt, with no prolonged exposure or exhaustion. Mira stays dry and unhurt. The cloak is still worn, not a newly acquired wet cloak. They do not leave the porch. All consequences must be conveyed through natural prose, with no stat names, ratings, point costs, numerical damage or game notifications. Keep this beat in the current place. Do not add possessions, rewards or completed quests.",
+  "checks": [
+    [
+      "sameHoldings",
+      true
+    ],
+    [
+      "noXp",
+      true
+    ],
+    [
+      "locationFlag",
+      "no",
+      true
+    ],
+    [
+      "npcPresent",
+      "Mira"
+    ],
+    [
+      "noNpcXp",
+      "Mira",
+      true
+    ],
+    [
+      "playerUnchanged",
+      "HP",
+      true
+    ],
+    [
+      "playerUnchanged",
+      "Mana",
+      true
+    ],
+    [
+      "playerStatMatches",
+      "Condition",
+      "wet|damp|chill|cold",
+      true
+    ],
+    [
+      "npcUnchanged",
+      "Mira",
+      "HP",
+      true
+    ]
+  ],
+  "items": [
+    {
+      "name": "travel cloak",
+      "quantity": 1,
+      "description": "Worn wool cloak"
+    }
+  ],
+  "text": "The next gust comes straight beneath the eaves. Rain strikes your face and soaks the shoulders of your cloak before you can draw back. You return to the sheltered part of the porch with cold water running down the back of your neck.\n\nMira looks at the patch of boards you have just left. \"That answered one question,\" she says. She stays beside the mill door, dry under the roof. The wind pushes another sheet of rain across the path, and the edge of the muddy track disappears behind it.\n\nNothing hurts except the unpleasant cold against your skin. Your hands are steady, your breathing normal; you have been caught by a brief gust, not stranded in the weather. Still, the damp cloak clings at your shoulders and every drop finding its way under the collar is irritating. Mira keeps a hand against the door so it does not bang. \"Give it a moment,\" she says. Neither of you steps off the porch while the rain is driving sideways.",
+  "generation": {
+    "model": "/mnt/D/backup_models/gemma-4-31B-it-qat-UD-Q4_K_XL.gguf",
+    "endpoint": "http://127.0.0.1:9931/v1",
+    "generatedAt": "2026-10-21T00:44:17.690Z",
+    "narratorSha256": "ed57edec3be466a732d032b8f9d3b643df8061b72bd285ec506b3fa395444f93",
+    "parameters": {
+      "temperature": 0.8,
+      "top_p": 0.95,
+      "seed": 5031347,
+      "max_tokens": 1800,
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    },
+    "usage": {
+      "completion_tokens": 238,
+      "prompt_tokens": 667,
+      "total_tokens": 905,
+      "prompt_tokens_details": {
+        "cached_tokens": 165
+      }
+    },
+    "finishReason": "stop"
+  },
+  "review": {
+    "status": "reviewed",
+    "note": "Reviewed the generated scene against fresh-turn evidence and starting state; edited for natural prose, continuity, and unambiguous consequences without numerical readings. Removed invented outfit details where present.",
+    "originalText": "As you lean out to survey the path, a sudden, violent gust of wind whips the rain sideways. A freezing spray drenches the heavy fabric of your cloak, soaking through to your shoulders in an instant. You recoil quickly, stepping back into the dry safety of the porch, shivering as the damp chill clings to your skin. You are unhurt, but the annoyance of the cold water seeping into your clothes makes you bristle.\n\nMira watches you with a faint, sympathetic smile, though she remains perfectly dry. She is a lean woman with sharp, observant eyes and a restlessness that shows in the way she constantly shifts her weight. She wears a practical, high-collared tunic of waxed linen and sturdy leather boots that have seen years of hard travel. Her hair is pulled back in a severe, tight braid that reveals the high line of her cheekbones and a small, jagged scar running along her jawline.\n\nShe leans against the weathered wood of the mill door, her demeanor calm yet alert. \"The path is a slurry of mud now,\" she notes, her voice crisp and devoid of sentiment. \"We aren't going anywhere until this burst passes.\""
+  }
+}

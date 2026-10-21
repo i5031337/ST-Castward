@@ -1,0 +1,102 @@
+{
+  "id": "fantasy-q-loose-scree",
+  "system": "fantasy",
+  "title": "Both travelers pay for a slip",
+  "startPlace": "Scree ledge",
+  "npc": "Mira",
+  "holdout": true,
+  "history": [
+    {
+      "role": "user",
+      "content": "I pause beside Mira on the narrow scree ledge. The slope beyond the bend is hidden by mist."
+    },
+    {
+      "role": "assistant",
+      "content": "Loose stones shift under your boots. Mira stands within reach, her hand against the rock face. \"We should test the footing before we go around.\" Neither of you is hurt."
+    },
+    {
+      "role": "user",
+      "content": "I ask her to stay close while I test the patch of gravel at the bend."
+    },
+    {
+      "role": "assistant",
+      "content": "She moves beside you without passing the bend. The gravel makes a soft sliding noise when you press your heel down."
+    }
+  ],
+  "user": "I carefully shift my weight onto the gravel, ready to grab the rock if it moves.",
+  "generationBrief": "The gravel slips. Alex scrapes a knee and Mira scrapes her forearm while they catch themselves on the rock face. Both have small painful injuries, remain mobile, and end on the same ledge before the bend. The crossing is still unresolved. Nothing falls from their possessions and neither uses magic. Describe differing minor wounds without numeric damage. All consequences must be conveyed through natural prose, with no stat names, ratings, point costs, numerical damage or game notifications. Keep this beat in the current place. Do not add possessions, rewards or completed quests.",
+  "checks": [
+    [
+      "sameHoldings",
+      true
+    ],
+    [
+      "noXp",
+      true
+    ],
+    [
+      "locationFlag",
+      "no",
+      true
+    ],
+    [
+      "npcPresent",
+      "Mira"
+    ],
+    [
+      "noNpcXp",
+      "Mira",
+      true
+    ],
+    [
+      "playerChangeBetween",
+      "HP",
+      -4,
+      -1,
+      true
+    ],
+    [
+      "npcChangeBetween",
+      "Mira",
+      "HP",
+      -4,
+      -1,
+      true
+    ],
+    [
+      "playerUnchanged",
+      "Mana",
+      true
+    ]
+  ],
+  "text": "The gravel moves beneath your boot with a dry rush. You catch the rock face, but your knee strikes a rough projection before you can steady yourself. Beside you, Mira reaches for the same patch of stone. Her forearm drags against the rock as she stops her own slip.\n\nFor a moment you both stay still, letting the loose fragments settle below the ledge. Your knee stings, and bending it makes the scrape pull. Mira turns her arm to inspect a line of broken skin. \"That's going to be sore,\" she says. There is a little blood on her forearm, but she can move her hand and elbow normally.\n\nYou are both still before the bend, close to the wall. Nothing has come loose from your belongings. The mist hides the next part of the path just as thoroughly as before. Mira tests her footing without advancing. You can still stand and move, but the fresh scrape in your knee and the way she keeps her arm clear of the stone make further haste unappealing.",
+  "generation": {
+    "model": "/mnt/D/backup_models/gemma-4-31B-it-qat-UD-Q4_K_XL.gguf",
+    "endpoint": "http://127.0.0.1:9931/v1",
+    "generatedAt": "2026-10-21T00:45:04.627Z",
+    "narratorSha256": "ed57edec3be466a732d032b8f9d3b643df8061b72bd285ec506b3fa395444f93",
+    "parameters": {
+      "temperature": 0.8,
+      "top_p": 0.95,
+      "seed": 5031351,
+      "max_tokens": 1800,
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    },
+    "usage": {
+      "completion_tokens": 237,
+      "prompt_tokens": 669,
+      "total_tokens": 906,
+      "prompt_tokens_details": {
+        "cached_tokens": 161
+      }
+    },
+    "finishReason": "stop"
+  },
+  "review": {
+    "status": "reviewed",
+    "note": "Reviewed the generated scene against fresh-turn evidence and starting state; edited for natural prose, continuity, and unambiguous consequences without numerical readings. Removed invented outfit details where present.",
+    "originalText": "As you shift your weight, the shale beneath your boot gives way with a sudden, grating screech. The ground vanishes from under you, and you slide violently toward the edge. You lunge for the rock face, your fingers clawing at the cold stone, but the momentum jerks you sideways. Your knee slams hard into a jagged outcrop, tearing through your trousers and scraping the skin raw.\n\nThe sudden movement catches Mira off guard. As she reaches out to steady you, her foot slips on the shifting debris. She lets out a sharp gasp and falls forward, her forearm scraping harshly against the abrasive rock wall. She catches herself just in time, her breathing heavy and ragged.\n\nYou both scramble back, panting, and find yourselves huddled together on the same narrow ledge just before the bend. You feel a hot, stinging throb in your knee, while Mira winces, glancing down at the angry red streaks and beads of blood lining her forearm. Despite the pain, you are both still mobile, though the crossing remains an unresolved threat. The mist continues to swirl around the bend, hiding the path ahead while the scent of damp stone and iron fills the air."
+  }
+}

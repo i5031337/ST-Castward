@@ -1,0 +1,121 @@
+{
+  "id": "fantasy-q-pain-easing-spell",
+  "system": "fantasy",
+  "title": "Relieving pain is distinct from healing damage",
+  "startPlace": "Tunnel alcove",
+  "npc": "Mira",
+  "holdout": true,
+  "history": [
+    {
+      "role": "user",
+      "content": "I stop with Mira in the tunnel alcove when her injured ankle starts trembling."
+    },
+    {
+      "role": "assistant",
+      "content": "She rests her heel on the stone ledge. \"The cut is closed, but the cramp is awful.\" She can put weight on it only carefully. Your own hands are steady."
+    },
+    {
+      "role": "user",
+      "content": "I tell her I know a soothing charm that might ease the cramp without mending the injury."
+    },
+    {
+      "role": "assistant",
+      "content": "\"Then try it,\" she says. \"Just enough to let the muscle settle.\" She remains seated with her boot on, waiting for your gesture."
+    }
+  ],
+  "user": "I cast Stillwater over the cramped muscle, stopping once I feel the charm take hold.",
+  "generationBrief": "Stillwater works: the cramp releases and Mira's pain eases, but the underlying ankle injury is explicitly unchanged and still limits her. The spell noticeably drains Alex's magical reserves without harming Alex physically. No full healing, learned ability, quest completion or travel. All consequences must be conveyed through natural prose, with no stat names, ratings, point costs, numerical damage or game notifications. Keep this beat in the current place. Do not add possessions, rewards or completed quests.",
+  "checks": [
+    [
+      "sameHoldings",
+      true
+    ],
+    [
+      "noXp",
+      true
+    ],
+    [
+      "locationFlag",
+      "no",
+      true
+    ],
+    [
+      "npcPresent",
+      "Mira"
+    ],
+    [
+      "noNpcXp",
+      "Mira",
+      true
+    ],
+    [
+      "playerChangeBetween",
+      "Mana",
+      -5,
+      -1,
+      true
+    ],
+    [
+      "playerUnchanged",
+      "HP",
+      true
+    ],
+    [
+      "npcUnchanged",
+      "Mira",
+      "HP",
+      true
+    ],
+    [
+      "npcStatMatches",
+      "Mira",
+      "Condition",
+      "ankle|injur|sore|tender",
+      true
+    ]
+  ],
+  "npcStats": {
+    "HP": "7/12",
+    "Condition": "Injured ankle; painful cramp"
+  },
+  "playerStats": {
+    "Mana": "8/10"
+  },
+  "abilities": [
+    {
+      "name": "Stillwater",
+      "kind": "Spell",
+      "effect": "Eases muscle cramps and pain without healing injuries."
+    }
+  ],
+  "text": "The Stillwater charm settles over Mira's ankle, and the trembling begins to ease. You hold the gesture until the muscle stops pulling against itself. By then the familiar reserve you draw on for magic feels noticeably thinner. There is still power left, but calling on it again would take more effort than it did a moment ago.\n\nMira lets out the breath she has been holding. \"That's better.\" She moves her foot cautiously. The cramp has released, and she no longer has to brace against each spasm, but putting weight on the injured ankle still hurts. The charm has not repaired what was damaged.\n\nShe leaves her heel on the ledge and stays seated in the alcove. \"Give me a moment before we try walking,\" she says. Her face has lost some of its strain. You are physically unhurt, though the spell has left you needing to gather your concentration. For now the tunnel remains quiet around you, and neither of you attempts to leave the shelter of the recess.",
+  "generation": {
+    "model": "/mnt/D/backup_models/gemma-4-31B-it-qat-UD-Q4_K_XL.gguf",
+    "endpoint": "http://127.0.0.1:9931/v1",
+    "generatedAt": "2026-10-21T00:45:16.270Z",
+    "narratorSha256": "ed57edec3be466a732d032b8f9d3b643df8061b72bd285ec506b3fa395444f93",
+    "parameters": {
+      "temperature": 0.8,
+      "top_p": 0.95,
+      "seed": 5031352,
+      "max_tokens": 1800,
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    },
+    "usage": {
+      "completion_tokens": 241,
+      "prompt_tokens": 664,
+      "total_tokens": 905,
+      "prompt_tokens_details": {
+        "cached_tokens": 160
+      }
+    },
+    "finishReason": "stop"
+  },
+  "review": {
+    "status": "reviewed",
+    "note": "Reviewed the generated scene against fresh-turn evidence and starting state; edited for natural prose, continuity, and unambiguous consequences without numerical readings. Removed invented outfit details where present.",
+    "originalText": "You focus your intent, channeling the cool, rhythmic energy of the Stillwater charm into Mira’s leg. As the magic flows, you feel a sudden, heavy tug in your chest, as if a reservoir inside you has been rapidly drained. The effort leaves you feeling momentarily hollow and fatigued, though your physical body remains unharmed.\n\nMira lets out a long, shuddering sigh of relief. The violent trembling in her ankle ceases, and the tension in her face softens as the agonizing spasm finally releases its grip. She flexes her foot tentatively, a small smile of gratitude touching her lips. However, as she attempts to shift her weight, she winces and stiffens. The underlying injury—the structural damage to the joint—remains stubbornly intact.\n\nShe looks up at you, her eyes reflecting the dim light of the tunnel. \"The pain is manageable now, but it's still broken,\" she admits, her voice tight. She leans back against the cold stone wall, her breathing shallow. Despite the relief from the cramp, she is still unable to stand without significant support, leaving you both stranded in the alcove with the silence of the tunnels pressing in around you."
+  }
+}

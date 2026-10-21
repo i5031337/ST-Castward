@@ -3,6 +3,7 @@ import { npcStatsFor, proposedNpcTemplate } from '../core/npc-templates.js';
 import { getSettings } from '../core/settings.js';
 import { splitValue, ceilingFromValue } from '../core/utils.js';
 import { configuredNumericMaximum, keepNumericMaximum, isPoolStat } from './numeric-stat-bounds.js';
+import { sameStatReading } from './stat-reading-equality.js';
 
 export function bind(deps) {
 
@@ -90,6 +91,14 @@ function sanitizeModelUpdate(update, state, trackerSettings = getSettings().stat
     const clean = (stats, defs, stored, { npc = false, player = false, cardStats = {}, progression = {}, owner = 'World' } = {}) => {
         if (!stats || typeof stats !== 'object') return;
         for (const key of Object.keys(stats)) {
+            const def = (defs || []).find(d => String(d?.name).toLowerCase() === key.toLowerCase());
+            const held = stored?.[deps.findMatchingStatKey(stored || {}, key) || key];
+            const cardHeld = cardStats?.[deps.findMatchingStatKey(cardStats || {}, key) || key];
+            const existing = String(held ?? '').trim() ? held : cardHeld ?? held;
+            if (def && sameStatReading(def, stats[key], existing)) {
+                delete stats[key];
+                continue;
+            }
             const reject = reason => {
                 warnings.push(`${owner} · ${key}: "${String(stats[key])}" skipped: ${reason}.`);
                 delete stats[key];
@@ -102,7 +111,6 @@ function sanitizeModelUpdate(update, state, trackerSettings = getSettings().stat
                 || String(levelHeld ?? '').trim() || String(levelCardHeld ?? '').trim())) {
                 reject('Level is managed by XP progression'); continue;
             }
-            const def = (defs || []).find(d => String(d?.name).toLowerCase() === key.toLowerCase());
             const maxFragment = key.match(/^(.*)_(?:maximum|max|total|cap)$/i);
             if (!def && maxFragment && (defs || []).some(d => d?.name?.toLowerCase() === maxFragment[1].toLowerCase()
                 && isNumericStat(d))) {
@@ -113,8 +121,6 @@ function sanitizeModelUpdate(update, state, trackerSettings = getSettings().stat
             if (levelField && (!Number.isSafeInteger(Number(stats[key])) || Number(stats[key]) < 1)) {
                 reject('initial Level must be a positive whole number'); continue;
             }
-            const held = stored?.[deps.findMatchingStatKey(stored || {}, key) || key];
-            const cardHeld = cardStats?.[deps.findMatchingStatKey(cardStats || {}, key) || key];
             if (def.locked) {
                 // A locked NPC stat may be seeded once, but a value already on its
                 // card must also protect it while the character is off stage.

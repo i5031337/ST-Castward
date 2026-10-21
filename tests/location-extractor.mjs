@@ -74,7 +74,7 @@ function fixture({ enabled = true, afterRequest, afterLocationRequest, reviewMod
             await afterRequest?.(context, state, output);
             return structuredClone(output);
         },
-        coerceToUpdate: value => value, expandNumericDeltas: () => {}, prepareGrantReview: () => {},
+        coerceToUpdate: value => value, normalizeModelReadings: () => {}, prepareGrantReview: () => {},
         validateReviewedTransitions: () => ({ invalid: new Set() }),
         prepareLevelReading: async () => ({ reading: { personaId: 'persona-a' }, transitions: [], rows: [], failures: [] }),
         saveLevelReading: () => {}, retryLevelReading: () => {}, LEVEL_READING_KEY: 'level-reading',

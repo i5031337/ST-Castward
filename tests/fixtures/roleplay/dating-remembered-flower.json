@@ -1,0 +1,103 @@
+{
+  "id": "dating-remembered-flower",
+  "system": "dating",
+  "title": "A small gift without a relationship promotion",
+  "startPlace": "Moonbeam Café",
+  "npc": "June",
+  "history": [
+    {
+      "role": "user",
+      "content": "I meet June at Moonbeam Café after her studio class. We've been friends since the start of term."
+    },
+    {
+      "role": "assistant",
+      "content": "June sits by the fogged window in a green cardigan, rubbing a spot of dried clay off her thumb. \"Everyone had something to say about the handles.\" She laughs, but the crease between her brows stays. Her sketchbook lies shut beside her cup."
+    },
+    {
+      "role": "user",
+      "content": "I set my tote beside the chair. \"How did the critique go?\""
+    },
+    {
+      "role": "assistant",
+      "content": "\"I should have made vases,\" June says. She notices the yellow petals sticking out of your tote and her expression softens. \"You remembered I like those.\" There are three sunflowers wrapped together in the bag."
+    }
+  ],
+  "user": "I take one sunflower out of my tote and give it to her. \"For surviving the handles committee.\"",
+  "generationBrief": "June accepts and keeps one sunflower, clearly touched by Alex remembering her preference. Warmth increases, but they remain friends, no romantic agreement, no immediate fatigue or big time skip. Do not re-count flowers in narration or invent a vase acquisition.",
+  "checks": [
+    [
+      "itemRemove",
+      "items",
+      "sunflower",
+      1,
+      true
+    ],
+    [
+      "npcItemAdd",
+      "June",
+      "items",
+      "sunflower",
+      1,
+      true
+    ],
+    [
+      "npcAppliedIncreased",
+      "June",
+      "Affection",
+      true
+    ],
+    [
+      "relationshipUnchanged",
+      "June",
+      true
+    ],
+    [
+      "noMovement",
+      true
+    ]
+  ],
+  "items": [
+    {
+      "name": "sunflower",
+      "quantity": 3
+    }
+  ],
+  "text": "June takes the sunflower by its wrapped stem and laughs before she can answer. \"The handles committee. I'm calling them that from now on.\" She turns the bloom toward the window, inspecting the broad yellow petals. The crease between her eyebrows has gone.\n\n\"Thank you. Really.\" She shifts her sketchbook farther from the edge of the table and lays the flower beside it, with the head clear of her cup. Then she puts a hand back on the stem, as though making sure it cannot roll away. \"I thought you'd forgotten that conversation. I went on about my grandmother's garden for ages.\"\n\nShe settles back in her chair. For the first time since you arrived, she is looking at you rather than at the clay under her nails.\n\n\"One of the tutors did like the glaze,\" she says. \"I should probably have led with that instead of making the whole afternoon sound awful.\" Her smile returns when she glances at the flower. She begins describing the blue she managed to get along the rim, drawing its shape in the air with her free hand.",
+  "generation": {
+    "model": "/mnt/D/backup_models/gemma-4-31B-it-qat-UD-Q4_K_XL.gguf",
+    "endpoint": "http://127.0.0.1:9931/v1",
+    "generatedAt": "2026-10-20T22:14:37.910Z",
+    "narratorSha256": "ed57edec3be466a732d032b8f9d3b643df8061b72bd285ec506b3fa395444f93",
+    "parameters": {
+      "temperature": 0.8,
+      "top_p": 0.95,
+      "seed": 5031345,
+      "max_tokens": 1800,
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    },
+    "usage": {
+      "completion_tokens": 234,
+      "prompt_tokens": 631,
+      "total_tokens": 865,
+      "prompt_tokens_details": {
+        "cached_tokens": 150
+      }
+    },
+    "finishReason": "stop"
+  },
+  "review": {
+    "note": "Edited the generated reply for continuity, natural prose, and scene focus; removed unnecessary arrivals and unsupported actions.",
+    "originalText": "June reaches out, her fingers still dusted with a faint grey residue from the studio, and carefully takes the sunflower from you. A genuine, warm smile breaks across her face, erasing the tension from her critique. She holds the bloom close to her face, inhaling the scent, and looks up at you with eyes that glimmer with gratitude. \"You're a lifesaver, Alex,\" she says softly.\n\nShe keeps the flower tucked securely beside her sketchbook, refusing to let it go. The atmosphere between you shifts, the previous academic stress replaced by a comfortable, humming warmth. While the friendship remains steady and platonic, there is a newfound lightness in the way she leans toward you.\n\nAs you both settle into the rhythm of the afternoon, a waiter approaches your table to clear away the empty cups. He is a tall, wiry man named Tristan, wearing a starch-white apron over a faded black t-shirt. He has a sharp, hawk-like nose and a silver hoop piercing his left nostril. He moves with a frantic, kinetic energy, glancing at his watch with an expression of perpetual urgency as he reaches for the table."
+  },
+  "npcCollections": {
+    "clothing": [
+      {
+        "name": "green cardigan",
+        "slot": "top",
+        "color": "green"
+      }
+    ]
+  }
+}

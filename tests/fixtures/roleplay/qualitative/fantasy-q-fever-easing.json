@@ -1,0 +1,116 @@
+{
+  "id": "fantasy-q-fever-easing",
+  "system": "fantasy",
+  "title": "Improving illness still leaves someone weak",
+  "startPlace": "Wayside shelter",
+  "npc": "Mira",
+  "holdout": true,
+  "history": [
+    {
+      "role": "user",
+      "content": "I lie on the cot in the wayside shelter, trying to stop my teeth chattering."
+    },
+    {
+      "role": "assistant",
+      "content": "Mira sits nearby, listening to the rain on the shingles. \"You were burning up earlier. You haven't been asleep long.\" Your coat is folded beneath your head."
+    },
+    {
+      "role": "user",
+      "content": "I ask her to stay close while I try to sleep a little more."
+    },
+    {
+      "role": "assistant",
+      "content": "\"I'm here.\" She stays in the chair while you settle. There is no medicine left in the shelter, and she makes no promise of a quick cure."
+    }
+  ],
+  "user": "I drift off again, waking later to see whether the chills have passed.",
+  "generationBrief": "Later Alex's fever has visibly eased: no chills now, clearer thoughts, easier breathing, modest physical recovery. Alex remains weak, tired and not fully recovered, and Mira advises more rest. No magical cure or medicine, no full night of recovery. Mira stays well and beside the cot. All consequences must be conveyed through natural prose, with no stat names, ratings, point costs, numerical damage or game notifications. Keep this beat in the current place. Do not add possessions, rewards or completed quests.",
+  "checks": [
+    [
+      "sameHoldings",
+      true
+    ],
+    [
+      "noXp",
+      true
+    ],
+    [
+      "locationFlag",
+      "no",
+      true
+    ],
+    [
+      "npcPresent",
+      "Mira"
+    ],
+    [
+      "noNpcXp",
+      "Mira",
+      true
+    ],
+    [
+      "playerChangeBetween",
+      "HP",
+      1,
+      3,
+      true
+    ],
+    [
+      "playerBelowCapacity",
+      "HP",
+      true
+    ],
+    [
+      "playerStatMatches",
+      "Condition",
+      "weak|recover|tired|fever.*(?:eas|break|gone)",
+      true
+    ],
+    [
+      "npcUnchanged",
+      "Mira",
+      "HP",
+      true
+    ]
+  ],
+  "hp": "4/12",
+  "playerStats": {
+    "Condition": "Feverish; chills and weakness"
+  },
+  "text": "When you wake again, the sound of the rain is easier to follow. You are no longer shivering, and the room stays still when you turn your head toward Mira. She is in the same chair beside the cot, looking up as she hears you move.\n\n\"Better?\" she asks. You have enough strength to shift your shoulders without needing to stop halfway. The movement still takes effort, but the worst of the fever has eased. Your thoughts are clearer, your breathing easier. Sweat has cooled at your neck, and the coat beneath your head is still folded into an uneven pillow.\n\nMira touches your forehead, then sits back. \"You're not burning like before. Stay there a little longer.\" She does not offer medicine or try to get you on your feet. Your limbs remain weak and heavy; standing would be a different task from turning over on the cot. Still, you feel physically better than when you drifted off. Mira stays beside you while the rain continues against the roof.",
+  "generation": {
+    "model": "/mnt/D/backup_models/gemma-4-31B-it-qat-UD-Q4_K_XL.gguf",
+    "endpoint": "http://127.0.0.1:9931/v1",
+    "generatedAt": "2026-10-21T00:44:53.016Z",
+    "narratorSha256": "ed57edec3be466a732d032b8f9d3b643df8061b72bd285ec506b3fa395444f93",
+    "parameters": {
+      "temperature": 0.8,
+      "top_p": 0.95,
+      "seed": 5031350,
+      "max_tokens": 1800,
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    },
+    "usage": {
+      "completion_tokens": 248,
+      "prompt_tokens": 665,
+      "total_tokens": 913,
+      "prompt_tokens_details": {
+        "cached_tokens": 162
+      }
+    },
+    "finishReason": "stop"
+  },
+  "items": [
+    {
+      "name": "travel coat",
+      "quantity": 1
+    }
+  ],
+  "review": {
+    "status": "reviewed",
+    "note": "Reviewed the generated scene against fresh-turn evidence and starting state; edited for natural prose, continuity, and unambiguous consequences without numerical readings. Removed invented outfit details where present.",
+    "originalText": "You stir slowly, the heavy fog in your mind finally beginning to lift. As you open your eyes, you realize the violent shivering that had racked your body has ceased. Your breathing is shallower and easier, no longer a labored struggle against the weight of the fever. While your limbs still feel like lead and a lingering exhaustion clings to your bones, the sharp, jagged edge of the illness has softened into a dull ache.\n\nMira is still there, watching you with a guarded expression. She is dressed in a sturdy, charcoal-grey tunic of rough-spun wool, cinched at the waist by a wide leather belt that holds several small pouches. Her silver hair is pulled back in a tight, practical braid that reaches her shoulder, and her pale eyes are framed by deep lines of concern. She leans forward, her movement fluid and quiet, and presses the back of her hand to your forehead.\n\n\"The fire has gone out of you,\" she observes, her voice low and steady. Despite the improvement, she doesn't move to help you stand. \"You are far from well, Alex. Your strength is gone. You must stay on the cot and rest longer, or the fever will simply find its way back.\""
+  }
+}

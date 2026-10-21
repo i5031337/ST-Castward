@@ -14,7 +14,7 @@ function harness() {
         getContext: () => context, getSettings: () => ({ enabled: calls.enabled !== false, statusTracker: { enabled: true, extractionMode: calls.mode || 'inline' } }),
         getAllCharacters: () => [], loadStateFromMetadata: () => state, getCurrentPersonaKey: () => 'persona',
         parseMessageForUpdates: text => ({ cleanedText: text }),
-        sanitizeModelUpdate: update => update, expandNumericDeltas: update => update,
+        sanitizeModelUpdate: update => update, normalizeModelReadings: update => update,
         normalizeCollectionUpdates: () => [], rememberSwipeBase: () => {}, refreshTurnBase: () => {},
         trackerMessageIndex: chat => chat.length - 1,
         applyUpdate: (update, options) => { if (!options.dryRun) calls.applied.push({ update, options }); return state; },

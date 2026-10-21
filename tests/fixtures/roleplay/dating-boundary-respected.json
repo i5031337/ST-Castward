@@ -1,0 +1,94 @@
+{
+  "id": "dating-boundary-respected",
+  "system": "dating",
+  "title": "A declined photograph and a respected boundary",
+  "startPlace": "Glasshouse",
+  "npc": "June",
+  "history": [
+    {
+      "role": "user",
+      "content": "I walk beside June in the Glasshouse. The orchids are open and I have my phone ready for pictures."
+    },
+    {
+      "role": "assistant",
+      "content": "June stops by a window streaked with condensation. Light catches the amber frames of her glasses. You have been comparing the orchids to the drawings in her notebook, and she has been talking more freely than she did outside."
+    },
+    {
+      "role": "user",
+      "content": "\"Could I take one of you by that window?\" I ask, leaving the camera pointed at the floor."
+    },
+    {
+      "role": "assistant",
+      "content": "June shakes her head. \"Please don't. I don't like having pictures taken.\" She folds her hands over the notebook against her chest and waits, watching your phone rather than the orchids."
+    }
+  ],
+  "user": "I put my phone back in my pocket. \"Of course. We can just look.\" I leave the camera closed and wait for her to choose the next plant.",
+  "generationBrief": "June notices Alex respecting her request, relaxes visibly, and thanks Alex. Comfort or trust may rise; no photo is created, phone stays owned, no inferred romance or dating status. Keep them in the Glasshouse by the same window without a time jump.",
+  "checks": [
+    [
+      "sameHoldings",
+      true
+    ],
+    [
+      "relationshipUnchanged",
+      "June",
+      true
+    ],
+    [
+      "npcAppliedIncreased",
+      "June",
+      "Comfort",
+      true
+    ],
+    [
+      "npcPresent",
+      "June"
+    ],
+    [
+      "locationFlag",
+      "no",
+      true
+    ]
+  ],
+  "items": [
+    {
+      "name": "phone",
+      "quantity": 1
+    }
+  ],
+  "text": "As you slide the phone back into your pocket, the tension in June’s shoulders vanishes. She lets out a slow, audible sigh of relief, and the guarded expression she had been wearing softens. A small, genuine smile touches her lips, and she looks at you with a newfound sense of ease, her eyes brightening behind her glasses.\n\n\"Thank you,\" she says softly. \"I appreciate you respecting that.\" She finally lets the notebook drop from her chest, holding it loosely by her side. Her demeanor shifts from defensive to enthusiastic as she turns back toward the flora.\n\nJune gestures with a slender finger toward a cluster of deep violet petals clinging to a trellis nearby. She is dressed in a heavy, oversized wool cardigan of a muted moss green that swallows her frame, and her fingers are stained with a faint smudge of charcoal. \"Look at this one,\" she whispers, leaning closer to the glass. \"The veins in the leaves are almost iridescent under this specific light. I've been trying to capture that exact shade of purple in my sketches for weeks, but the graphite just doesn't do it justice.\"",
+  "generation": {
+    "model": "/mnt/D/backup_models/gemma-4-31B-it-qat-UD-Q4_K_XL.gguf",
+    "endpoint": "http://127.0.0.1:9931/v1",
+    "generatedAt": "2026-10-20T22:13:08.780Z",
+    "narratorSha256": "ed57edec3be466a732d032b8f9d3b643df8061b72bd285ec506b3fa395444f93",
+    "parameters": {
+      "temperature": 0.8,
+      "top_p": 0.95,
+      "seed": 5031337,
+      "max_tokens": 1800,
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    },
+    "usage": {
+      "completion_tokens": 228,
+      "prompt_tokens": 642,
+      "total_tokens": 870,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "finishReason": "stop"
+  },
+  "npcCollections": {
+    "clothing": [
+      {
+        "name": "heavy, oversized wool cardigan",
+        "slot": "upper_body",
+        "color": "muted moss green",
+        "details": "Heavy, oversized wool, fingers stained with faint smudge of charcoal"
+      }
+    ]
+  }
+}

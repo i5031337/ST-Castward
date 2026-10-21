@@ -9,9 +9,9 @@ import { describeReaderStats } from '../stat-prompt-definitions.js';
 import { strangerValues } from './status-extractor-schema.js';
 import { describeCollections, buildDeltaExample, describeCurrentState, describeLimits } from './status-extractor-prompt-state.js';
 import { describeAbsentButNamed } from './status-extractor-prompt-offstage.js';
-import { describeNumericDeltas, numericDeltaNames, progressionXpName } from './status-extractor-deltas.js';
 import { isPoolStat } from '../numeric-stat-bounds.js';
 import { isReaderStat } from '../stat-update-policy.js';
+import { isImageOnlyMessage } from '../ui/status-ui-placement.js';
 import { getCurrentPersonaName } from '../status-logic.js';
 import { progressionFields } from '../progression-fields.js';
 
@@ -58,7 +58,7 @@ function describeExtractionNotes(state, messageText) {
     return sections.join('\n');
 }
 
-/** Show recovery amounts for live pools while keeping progression out of restorative effects. */
+/** Show final recovery readings for live pools while keeping progression out of restorative effects. */
 function describePoolRecovery(state, settings) {
     const owners = [
         { label: 'World', stats: state?.global, definitions: settings.globalStats || [] },
@@ -77,14 +77,14 @@ function describePoolRecovery(state, settings) {
         if (!reading) return [];
         const current = Number(reading[1]), maximum = Number(reading[2]);
         if (!(maximum > current && current >= 0)) return [];
-        return [`${owner.label}.${stat.name} ${current}/${maximum} needs +${Number((maximum - current).toPrecision(12))} to reach capacity.`];
+        return [`${owner.label}.${stat.name} ${current}/${maximum} can recover to ${maximum}/${maximum}.`];
     }));
     if (!entries.length) return '';
-    return 'For complete recovery, report the full missing amount for each affected pool.\n'
+    return 'For complete recovery, report each affected pool at its existing maximum.\n'
         + 'Sound sleep followed by waking refreshed, effective healing, or recharging can establish complete recovery when field rules permit.\n'
         + 'Match recovery to the affected owner and pools.\n'
-        + 'Use a smaller gain for partial recovery.\n'
-        + 'Missing amounts:\n' + entries.join('\n');
+        + 'Report an intermediate final reading for partial recovery.\n'
+        + 'Affected pools:\n' + entries.join('\n');
 }
 
 /** Keep narrated harm and healing aligned with a configured health pool. */
@@ -92,41 +92,30 @@ function describeInjuryConsequence(settings) {
     const health = (settings.playerStats || []).find(stat => isReaderStat(stat)
         && ['number', 'bar'].includes(stat.type) && isPoolStat(stat)
         && /\b(?:hp|health|hit points|vitality)\b/i.test(`${stat.name || ''} ${stat.purpose || ''} ${stat.guidance || ''}`));
-    return health ? `Report bodily injury as a decrease in player.deltas.${health.name}.\nReport effective wound care or healing as an increase in that field.\nInclude any text condition change separately.\nEstimate a conservative amount for partial healing.` : '';
+    return health ? `Report bodily injury as a lower resulting reading in player.stats.${health.name}.\nReport effective wound care or healing as a higher resulting reading in that field.\nInclude any text condition change separately.\nEstimate a conservative improvement and report the resulting reading.` : '';
 }
 
-/**
- * Builds the extraction prompt.
- *
- * The lead-up matters. Tabletop play routinely announces a cost in one message, takes
- * the roll in the next and resolves in a third - and a character card that forbids
- * numbers in its prose means the resolving message says only that the spell landed.
- * Neither message alone is enough: the first names a cost nobody has paid yet, the last
- * shows the spend with no figure attached.
- *
- * Earlier messages are therefore supplied as context, explicitly marked as already
- * accounted for, so a cost can be attributed to the message that actually spent it
- * without being applied twice.
- *
- * @param {object} state
- * @param {string} messageText The message being extracted.
- * @param {object} trackerSettings
- * @param {string[]} [leadUp] Preceding messages, oldest first.
- */
-/**
- * Builds the extraction prompt from the current state, recent messages and reader notes.
- */
-// Exported for the tests: what reaches the model on every message is worth holding to
-// a shape, and the vocabulary in it is the whole point of this function.
+/** Separate the unresolved player turn from history already accounted for. */
+function readerEvidence(leadUp) {
+    let freshStart = leadUp.length;
+    while (freshStart > 0 && String(leadUp[freshStart - 1]).startsWith('[Player (')) freshStart--;
+    return {
+        earlier: leadUp.slice(0, freshStart).join('\n---\n'),
+        userTurn: leadUp.slice(freshStart).join('\n---\n'),
+    };
+}
+
+/** Builds the reader request from state, the fresh exchange and older context. */
 function readerValues(state, messageText, trackerSettings, leadUp = [], { strangers = [] } = {}) {
+    const evidence = readerEvidence(leadUp);
+    const exchangeText = [evidence.userTurn, messageText].filter(Boolean).join('\n');
     return {
         playerName: getCurrentPersonaName(),
         state: describeCurrentState(state, trackerSettings) || '(empty)',
-        offstage: describeAbsentButNamed(state, messageText, trackerSettings),
+        offstage: describeAbsentButNamed(state, exchangeText, trackerSettings),
         limits: describeLimits(trackerSettings, state),
         npcFields: describeReaderStats(trackerSettings, { initializeNpc: true }),
-        numericDeltas: describeNumericDeltas(state, trackerSettings),
-        xpProgression: progressionXpName(trackerSettings, state)
+        xpProgression: progressionFields(trackerSettings, { isPlayer: true }).enabled
             || (trackerSettings.npcTemplates || []).some(template => template.progression?.enabled) ? 'on' : '',
         // Whatever else has asked to be told to the reader - see registerExtractionNotes.
         notes: [describeNpcTemplates(), describeExtractionNotes(state, messageText),
@@ -141,7 +130,7 @@ function readerValues(state, messageText, trackerSettings, leadUp = [], { strang
         minimalReply: buildMinimalExample(state, trackerSettings),
         changedReply: buildChangedExample(state, trackerSettings),
         newNpcReply: buildNewNpcExample(trackerSettings, state?.locations?.enabled),
-        earlier: leadUp.join('\n---\n'),
+        ...evidence,
         message: messageText,
         reasons: trackerSettings.extractionReasons === false ? '' : 'on',
     };
@@ -152,24 +141,30 @@ export function buildUserPrompt(state, messageText, trackerSettings, leadUp = []
 }
 
 /**
- * The few messages before this one, trimmed so a long reply cannot dominate the prompt.
- * @param {string|number} messageId
- * @param {number} count How many preceding messages to include.
- * @returns {string[]} Oldest first, each labelled by speaker.
+ * Collect bounded history and the fresh player turn preceding this assistant reply.
+ * Fresh user prose is retained in full, even with older context disabled. An earlier
+ * assistant reply closes the exchange; its user turn must never be charged again.
  */
 export function collectLeadUp(messageId, count) {
-    if (!count || count <= 0) return [];
     const chat = getContext()?.chat || [];
     const index = Number(messageId);
-    if (!Number.isInteger(index) || index <= 0) return [];
-
-    const out = [];
-    for (let i = Math.max(0, index - count); i < index; i++) {
+    if (!Number.isInteger(index) || index <= 0 || index >= chat.length) return [];
+    const readable = message => message && !message.is_system && !isImageOnlyMessage(message)
+        && typeof message.mes === 'string' && message.mes.trim();
+    let freshStart = index;
+    for (let i = index - 1; i >= 0; i--) {
         const message = chat[i];
-        if (!message || typeof message.mes !== 'string' || !message.mes.trim()) continue;
+        if (!readable(message)) continue;
+        if (!message.is_user) break;
+        freshStart = i;
+    }
+    const budget = Number.isFinite(count) ? Math.max(0, Math.floor(count)) : 0;
+    const out = [];
+    for (let i = Math.max(0, Math.min(index - budget, freshStart)); i < index; i++) {
+        const message = chat[i];
+        if (!readable(message)) continue;
         const who = message.is_user ? `Player (${message.name || getCurrentPersonaName()})` : 'Narrator';
-        // Enough for a cost line or a roll result without pulling a whole scene back in.
-        const text = message.mes.length > 1200 ? message.mes.slice(-1200) : message.mes;
+        const text = i >= freshStart ? message.mes : message.mes.slice(-1200);
         out.push(`[${who}] ${text}`);
     }
     return out;
@@ -216,17 +211,27 @@ export function buildNewNpcExample(trackerSettings = {}, locationsEnabled = fals
 
 /** Show a changed value only when this system has a stat to name in the example. */
 function buildChangedExample(state, trackerSettings) {
-    const playerStat = numericDeltaNames(trackerSettings.playerStats, state?.player?.stats,
-        progressionFields(trackerSettings, { isPlayer: true }))[0];
-    const xpName = progressionXpName(trackerSettings, state);
     const cast = (state?.characters || []).filter(c => c?.name);
     const npc = cast[0];
-    const npcStat = npc && numericDeltaNames(npcStatsFor(npc, trackerSettings), npc.stats,
-        progressionFields(trackerSettings, { actor: npc }))[0];
-    const npcProgression = npc && progressionFields(trackerSettings, { actor: npc });
-    const npcXpName = npcProgression?.enabled ? npcProgression.xpName : null;
-    const firstTurnStat = list => (list || []).find(stat => stat?.name && isReaderStat(stat) && !stat.locked
-        && !['xp', 'level', 'level bonus'].includes(stat.name.toLowerCase()))?.name;
+    const changedStat = (definitions, values, progression) => {
+        const editable = (definitions || []).filter(stat => stat?.name && isReaderStat(stat)
+            && (!progression?.enabled || stat.name !== progression.levelName)
+            && stat.name.toLowerCase() !== 'level bonus');
+        for (const stat of editable) {
+            const held = Object.entries(values || {}).find(([name]) => name.toLowerCase() === stat.name.toLowerCase())?.[1];
+            const match = String(held ?? '').match(/^\s*(-?\d+(?:\.\d+)?)(?:\s*\/\s*(-?\d+(?:\.\d+)?))?\s*$/);
+            if (!match) continue;
+            const current = Number(match[1]);
+            const earnedXp = progression?.enabled && stat.name === progression.xpName;
+            const next = earnedXp ? current + 1 : current > 0 ? current - 1 : current + 1;
+            return { [stat.name]: `${Number(next.toPrecision(12))}${match[2] === undefined ? '' : `/${match[2]}`}` };
+        }
+        return editable.length ? { [editable[0].name]: '<new value>' } : null;
+    };
+    const playerStats = changedStat(trackerSettings.playerStats, state?.player?.stats,
+        progressionFields(trackerSettings, { isPlayer: true }));
+    const npcStats = npc && changedStat(npcStatsFor(npc, trackerSettings), npc.stats,
+        progressionFields(trackerSettings, { actor: npc }));
     const collectionFor = target => (trackerSettings.collections || [])
         .find(c => c?.id && (collectionAppliesTo(c, target, target === 'npc' ? npc || {} : undefined)));
     const collectionChange = (col, verb) => {
@@ -240,23 +245,17 @@ function buildChangedExample(state, trackerSettings) {
             : { remove: [quantity ? { [primary]: identifier, [quantity.name]: 1 } : identifier] } };
     };
     const player = {};
-    if (playerStat) player.deltas = { [playerStat]: playerStat.toLowerCase() === xpName?.toLowerCase() ? 1 : -1 };
-    else if (firstTurnStat(trackerSettings.playerStats)) {
-        player.stats = { [firstTurnStat(trackerSettings.playerStats)]: '<new value>' };
-    }
+    if (playerStats) player.stats = playerStats;
     const playerCollection = collectionChange(collectionFor('player'), 'add');
     if (playerCollection) player.collections = playerCollection;
     const characters = cast.map(actor => ({ name: actor.name }));
-    if (npcStat) characters[0].deltas = { [npcStat]: npcStat === npcXpName ? 1 : -1 };
-    else if (characters.length && firstTurnStat(trackerSettings.npcStats)) {
-        characters[0].stats = { [firstTurnStat(trackerSettings.npcStats)]: '<new value>' };
-    }
+    if (npcStats) characters[0].stats = npcStats;
     const npcCollection = collectionChange(collectionFor('npc'), 'remove');
     if (npcCollection && characters.length) characters[0].collections = npcCollection;
-    if (!Object.keys(player).length && !characters.some(c => c.deltas || c.collections)) return '';
+    if (!Object.keys(player).length && !characters.some(c => c.stats || c.collections)) return '';
     return JSON.stringify({
         ...(trackerSettings.extractionReasons === false ? {} : {
-            why: playerStat ? { [`Player.${playerStat}`]: '<short quote from the latest message>' } : {},
+            why: playerStats ? { [`Player.${Object.keys(playerStats)[0]}`]: '<short quote from the latest message>' } : {},
         }),
         ...(state?.locations?.enabled ? { locationChanged: false } : {}),
         global: {},

@@ -1,0 +1,2434 @@
+{
+  "deltas": {
+    "label": "qualitative-deltas-20261020",
+    "counts": {
+      "boundedChecks": 96,
+      "boundedPassed": 81,
+      "trials": 60,
+      "warningReplies": 46,
+      "warningEntries": 144,
+      "strictJsonValid": 60,
+      "recovered": 0,
+      "parsedObjects": 60,
+      "requestErrors": 0,
+      "normalizationErrors": 0,
+      "truncated": 0,
+      "allPass": 45,
+      "stateAllPass": 45,
+      "checks": 609,
+      "passed": 588,
+      "nonSyntaxChecks": 549,
+      "nonSyntaxPassed": 528,
+      "numericStatReplies": 16,
+      "nonStringStatReplies": 16,
+      "duplicateStatReplies": 34,
+      "deltaKeyReplies": 40
+    },
+    "summary": {
+      "checks": 609,
+      "passed": 588,
+      "rate": 0.9655172413793104,
+      "criticalFailures": [
+        "dating-q-accepted-boundary #1: playerChangeBetween Social Energy -4 -1",
+        "dating-q-accepted-boundary #2: npcChangeBetween Sam Trust -1 0",
+        "dating-q-accepted-boundary #3: sameHoldings ",
+        "dating-q-misplaced-confidence #1: npcChangeBetween Sam Trust -6 -1",
+        "dating-q-misplaced-confidence #2: npcChangeBetween Sam Trust -6 -1",
+        "dating-q-misplaced-confidence #3: sameHoldings ",
+        "dating-q-misplaced-confidence #3: npcChangeBetween Sam Trust -6 -1",
+        "dating-q-passing-joke #2: playerChangeBetween Social Energy -1 0",
+        "dating-q-quiet-company #3: npcChangeBetween June Comfort 1 8",
+        "dating-q-unwelcome-notification #2: npcChangeBetween June Comfort -1 1",
+        "dating-q-unwelcome-notification #3: npcChangeBetween June Comfort -1 1",
+        "dating-q-unwelcome-notification #3: npcUnchanged June Trust",
+        "dating-q-unwelcome-notification #3: npcStatMatches June Mood anx|tense|unsett|worri|uneas|alarm|stress",
+        "fantasy-q-cleaned-cut #1: sameHoldings ",
+        "fantasy-q-cleaned-cut #3: sameHoldings ",
+        "fantasy-q-loose-scree #2: playerChangeBetween HP -4 -1",
+        "fantasy-q-loose-scree #2: npcChangeBetween Mira HP -4 -1",
+        "fantasy-q-sheltered-breather #1: playerChangeBetween HP 1 3",
+        "fantasy-q-sheltered-breather #1: npcChangeBetween Mira HP 1 3",
+        "fantasy-q-sheltered-breather #3: playerChangeBetween HP 1 3",
+        "fantasy-q-sheltered-breather #3: npcChangeBetween Mira HP 1 3"
+      ],
+      "systems": {
+        "fantasy": 0.9750778816199377,
+        "dating": 0.9548611111111112
+      },
+      "perSystemCounts": {
+        "fantasy": {
+          "checks": 321,
+          "passed": 313,
+          "rate": 0.9750778816199377
+        },
+        "dating": {
+          "checks": 288,
+          "passed": 275,
+          "rate": 0.9548611111111112
+        }
+      },
+      "splits": {
+        "main": {
+          "checks": 0,
+          "passed": 0,
+          "rate": null
+        },
+        "originalHoldout": {
+          "checks": 609,
+          "passed": 588,
+          "rate": 0.9655172413793104
+        }
+      },
+      "auditFailures": [],
+      "endpoints": {
+        "http://127.0.0.1:9931/v1": {
+          "trials": 60,
+          "checks": 609,
+          "passed": 588,
+          "criticalFailures": 21
+        }
+      },
+      "acceptable": false
+    },
+    "numberPaths": [
+      {
+        "id": "dating-q-accepted-boundary",
+        "repeat": 3,
+        "fields": [
+          "Sam.Affection=15",
+          "Sam.Trust=6",
+          "Sam.Comfort=12"
+        ]
+      },
+      {
+        "id": "dating-q-closing-shift",
+        "repeat": 2,
+        "fields": [
+          "Sam.Affection=16",
+          "Sam.Trust=11",
+          "Sam.Comfort=21"
+        ]
+      },
+      {
+        "id": "dating-q-kept-confidence",
+        "repeat": 1,
+        "fields": [
+          "June.Affection=16",
+          "June.Trust=16",
+          "June.Comfort=20"
+        ]
+      },
+      {
+        "id": "dating-q-kept-confidence",
+        "repeat": 3,
+        "fields": [
+          "June.Affection=15",
+          "June.Trust=17",
+          "June.Comfort=23"
+        ]
+      },
+      {
+        "id": "dating-q-misplaced-confidence",
+        "repeat": 1,
+        "fields": [
+          "Sam.Affection=22",
+          "Sam.Trust=12",
+          "Sam.Comfort=20"
+        ]
+      },
+      {
+        "id": "dating-q-misplaced-confidence",
+        "repeat": 2,
+        "fields": [
+          "Sam.Affection=22",
+          "Sam.Trust=12",
+          "Sam.Comfort=20"
+        ]
+      },
+      {
+        "id": "dating-q-misplaced-confidence",
+        "repeat": 3,
+        "fields": [
+          "Sam.Affection=25",
+          "Sam.Trust=12",
+          "Sam.Comfort=25"
+        ]
+      },
+      {
+        "id": "dating-q-ordinary-pause",
+        "repeat": 1,
+        "fields": [
+          "Sam.Affection=15",
+          "Sam.Trust=10",
+          "Sam.Comfort=20"
+        ]
+      },
+      {
+        "id": "dating-q-passing-joke",
+        "repeat": 1,
+        "fields": [
+          "June.Affection=16",
+          "June.Trust=10",
+          "June.Comfort=22"
+        ]
+      },
+      {
+        "id": "dating-q-passing-joke",
+        "repeat": 2,
+        "fields": [
+          "June.Affection=16",
+          "June.Trust=11",
+          "June.Comfort=21"
+        ]
+      },
+      {
+        "id": "dating-q-pressure-lifted",
+        "repeat": 1,
+        "fields": [
+          "June.Affection=17",
+          "June.Trust=11",
+          "June.Comfort=21"
+        ]
+      },
+      {
+        "id": "dating-q-pressure-lifted",
+        "repeat": 3,
+        "fields": [
+          "June.Affection=17"
+        ]
+      },
+      {
+        "id": "dating-q-quiet-company",
+        "repeat": 2,
+        "fields": [
+          "June.Affection=16",
+          "June.Trust=11",
+          "June.Comfort=17"
+        ]
+      },
+      {
+        "id": "dating-q-quiet-company",
+        "repeat": 3,
+        "fields": [
+          "June.Affection=17",
+          "June.Trust=10",
+          "June.Comfort=16"
+        ]
+      },
+      {
+        "id": "fantasy-q-falling-plaster",
+        "repeat": 1,
+        "fields": [
+          "Mira.Level=1"
+        ]
+      },
+      {
+        "id": "fantasy-q-fever-easing",
+        "repeat": 3,
+        "fields": [
+          "Mira.Armor=10",
+          "Mira.Strength=10",
+          "Mira.Dexterity=10",
+          "Mira.Constitution=10",
+          "Mira.Intelligence=10",
+          "Mira.Wisdom=10",
+          "Mira.Charisma=10",
+          "Mira.Currency=0",
+          "Mira.Level=1"
+        ]
+      }
+    ],
+    "duplicates": [
+      {
+        "id": "dating-q-accepted-boundary",
+        "repeat": 2,
+        "fields": [
+          "player.Social Energy"
+        ]
+      },
+      {
+        "id": "dating-q-accepted-boundary",
+        "repeat": 3,
+        "fields": [
+          "Sam.Comfort"
+        ]
+      },
+      {
+        "id": "dating-q-closing-shift",
+        "repeat": 1,
+        "fields": [
+          "player.Social Energy",
+          "Sam.Affection",
+          "Sam.Trust",
+          "Sam.Comfort"
+        ]
+      },
+      {
+        "id": "dating-q-closing-shift",
+        "repeat": 2,
+        "fields": [
+          "player.Social Energy"
+        ]
+      },
+      {
+        "id": "dating-q-closing-shift",
+        "repeat": 3,
+        "fields": [
+          "player.Social Energy",
+          "Sam.Affection",
+          "Sam.Trust",
+          "Sam.Comfort"
+        ]
+      },
+      {
+        "id": "dating-q-kept-confidence",
+        "repeat": 1,
+        "fields": [
+          "player.Social Energy"
+        ]
+      },
+      {
+        "id": "dating-q-kept-confidence",
+        "repeat": 2,
+        "fields": [
+          "player.Social Energy",
+          "June.Affection",
+          "June.Trust",
+          "June.Comfort"
+        ]
+      },
+      {
+        "id": "dating-q-misplaced-confidence",
+        "repeat": 1,
+        "fields": [
+          "player.Social Energy",
+          "Sam.Affection"
+        ]
+      },
+      {
+        "id": "dating-q-misplaced-confidence",
+        "repeat": 2,
+        "fields": [
+          "player.Social Energy"
+        ]
+      },
+      {
+        "id": "dating-q-passing-joke",
+        "repeat": 1,
+        "fields": [
+          "June.Affection",
+          "June.Comfort"
+        ]
+      },
+      {
+        "id": "dating-q-passing-joke",
+        "repeat": 2,
+        "fields": [
+          "player.Social Energy",
+          "June.Affection",
+          "June.Trust",
+          "June.Comfort"
+        ]
+      },
+      {
+        "id": "dating-q-passing-joke",
+        "repeat": 3,
+        "fields": [
+          "June.Affection"
+        ]
+      },
+      {
+        "id": "dating-q-pressure-lifted",
+        "repeat": 1,
+        "fields": [
+          "player.Social Energy",
+          "player.Mood",
+          "June.Affection",
+          "June.Trust",
+          "June.Comfort"
+        ]
+      },
+      {
+        "id": "dating-q-pressure-lifted",
+        "repeat": 3,
+        "fields": [
+          "player.Social Energy"
+        ]
+      },
+      {
+        "id": "dating-q-quiet-company",
+        "repeat": 3,
+        "fields": [
+          "player.Social Energy"
+        ]
+      },
+      {
+        "id": "dating-q-unwelcome-notification",
+        "repeat": 2,
+        "fields": [
+          "June.Affection",
+          "June.Comfort"
+        ]
+      },
+      {
+        "id": "dating-q-unwelcome-notification",
+        "repeat": 3,
+        "fields": [
+          "June.Affection",
+          "June.Trust",
+          "June.Comfort"
+        ]
+      },
+      {
+        "id": "fantasy-q-cleaned-cut",
+        "repeat": 2,
+        "fields": [
+          "player.HP"
+        ]
+      },
+      {
+        "id": "fantasy-q-falling-plaster",
+        "repeat": 1,
+        "fields": [
+          "Mira.HP"
+        ]
+      },
+      {
+        "id": "fantasy-q-falling-plaster",
+        "repeat": 2,
+        "fields": [
+          "Mira.HP"
+        ]
+      },
+      {
+        "id": "fantasy-q-falling-plaster",
+        "repeat": 3,
+        "fields": [
+          "Mira.HP"
+        ]
+      },
+      {
+        "id": "fantasy-q-fever-easing",
+        "repeat": 1,
+        "fields": [
+          "player.HP"
+        ]
+      },
+      {
+        "id": "fantasy-q-fever-easing",
+        "repeat": 2,
+        "fields": [
+          "player.HP"
+        ]
+      },
+      {
+        "id": "fantasy-q-loose-scree",
+        "repeat": 1,
+        "fields": [
+          "player.HP",
+          "Mira.HP"
+        ]
+      },
+      {
+        "id": "fantasy-q-loose-scree",
+        "repeat": 3,
+        "fields": [
+          "player.HP",
+          "Mira.HP"
+        ]
+      },
+      {
+        "id": "fantasy-q-pain-easing-spell",
+        "repeat": 1,
+        "fields": [
+          "player.Mana"
+        ]
+      },
+      {
+        "id": "fantasy-q-pain-easing-spell",
+        "repeat": 2,
+        "fields": [
+          "player.Mana"
+        ]
+      },
+      {
+        "id": "fantasy-q-pain-easing-spell",
+        "repeat": 3,
+        "fields": [
+          "player.Mana"
+        ]
+      },
+      {
+        "id": "fantasy-q-practice-impact",
+        "repeat": 1,
+        "fields": [
+          "player.HP"
+        ]
+      },
+      {
+        "id": "fantasy-q-practice-impact",
+        "repeat": 2,
+        "fields": [
+          "player.HP"
+        ]
+      },
+      {
+        "id": "fantasy-q-practice-impact",
+        "repeat": 3,
+        "fields": [
+          "player.HP"
+        ]
+      },
+      {
+        "id": "fantasy-q-sheltered-breather",
+        "repeat": 2,
+        "fields": [
+          "player.HP",
+          "Mira.HP"
+        ]
+      },
+      {
+        "id": "fantasy-q-sustained-ward",
+        "repeat": 1,
+        "fields": [
+          "player.Mana"
+        ]
+      },
+      {
+        "id": "fantasy-q-sustained-ward",
+        "repeat": 3,
+        "fields": [
+          "player.Mana"
+        ]
+      }
+    ],
+    "failures": {
+      "dating-q-accepted-boundary": [
+        {
+          "repeat": 1,
+          "check": "playerChangeBetween Social Energy -4 -1"
+        },
+        {
+          "repeat": 2,
+          "check": "npcChangeBetween Sam Trust -1 0"
+        },
+        {
+          "repeat": 3,
+          "check": "sameHoldings "
+        }
+      ],
+      "dating-q-misplaced-confidence": [
+        {
+          "repeat": 1,
+          "check": "npcChangeBetween Sam Trust -6 -1"
+        },
+        {
+          "repeat": 2,
+          "check": "npcChangeBetween Sam Trust -6 -1"
+        },
+        {
+          "repeat": 3,
+          "check": "sameHoldings "
+        },
+        {
+          "repeat": 3,
+          "check": "npcChangeBetween Sam Trust -6 -1"
+        }
+      ],
+      "dating-q-passing-joke": [
+        {
+          "repeat": 2,
+          "check": "playerChangeBetween Social Energy -1 0"
+        }
+      ],
+      "dating-q-quiet-company": [
+        {
+          "repeat": 3,
+          "check": "npcChangeBetween June Comfort 1 8"
+        }
+      ],
+      "dating-q-unwelcome-notification": [
+        {
+          "repeat": 2,
+          "check": "npcChangeBetween June Comfort -1 1"
+        },
+        {
+          "repeat": 3,
+          "check": "npcChangeBetween June Comfort -1 1"
+        },
+        {
+          "repeat": 3,
+          "check": "npcUnchanged June Trust"
+        },
+        {
+          "repeat": 3,
+          "check": "npcStatMatches June Mood anx|tense|unsett|worri|uneas|alarm|stress"
+        }
+      ],
+      "fantasy-q-cleaned-cut": [
+        {
+          "repeat": 1,
+          "check": "sameHoldings "
+        },
+        {
+          "repeat": 3,
+          "check": "sameHoldings "
+        }
+      ],
+      "fantasy-q-loose-scree": [
+        {
+          "repeat": 2,
+          "check": "playerChangeBetween HP -4 -1"
+        },
+        {
+          "repeat": 2,
+          "check": "npcChangeBetween Mira HP -4 -1"
+        }
+      ],
+      "fantasy-q-sheltered-breather": [
+        {
+          "repeat": 1,
+          "check": "playerChangeBetween HP 1 3"
+        },
+        {
+          "repeat": 1,
+          "check": "npcChangeBetween Mira HP 1 3"
+        },
+        {
+          "repeat": 3,
+          "check": "playerChangeBetween HP 1 3"
+        },
+        {
+          "repeat": 3,
+          "check": "npcChangeBetween Mira HP 1 3"
+        }
+      ]
+    },
+    "boundedFailures": [
+      {
+        "id": "dating-q-accepted-boundary",
+        "repeat": 1,
+        "owner": "player",
+        "field": "Social Energy",
+        "before": "6/10",
+        "after": "6/10",
+        "change": 0.0,
+        "range": [
+          -4,
+          -1
+        ],
+        "category": "unchanged despite expected change"
+      },
+      {
+        "id": "dating-q-accepted-boundary",
+        "repeat": 2,
+        "owner": "Sam",
+        "field": "Trust",
+        "before": "6",
+        "after": "7",
+        "change": 1.0,
+        "range": [
+          -1,
+          0
+        ],
+        "category": "magnitude"
+      },
+      {
+        "id": "dating-q-misplaced-confidence",
+        "repeat": 1,
+        "owner": "Sam",
+        "field": "Trust",
+        "before": "12",
+        "after": "12",
+        "change": 0.0,
+        "range": [
+          -6,
+          -1
+        ],
+        "category": "unchanged despite expected change"
+      },
+      {
+        "id": "dating-q-misplaced-confidence",
+        "repeat": 2,
+        "owner": "Sam",
+        "field": "Trust",
+        "before": "12",
+        "after": "12",
+        "change": 0.0,
+        "range": [
+          -6,
+          -1
+        ],
+        "category": "unchanged despite expected change"
+      },
+      {
+        "id": "dating-q-misplaced-confidence",
+        "repeat": 3,
+        "owner": "Sam",
+        "field": "Trust",
+        "before": "12",
+        "after": "12",
+        "change": 0.0,
+        "range": [
+          -6,
+          -1
+        ],
+        "category": "unchanged despite expected change"
+      },
+      {
+        "id": "dating-q-passing-joke",
+        "repeat": 2,
+        "owner": "player",
+        "field": "Social Energy",
+        "before": "7/10",
+        "after": "8/10",
+        "change": 1.0,
+        "range": [
+          -1,
+          0
+        ],
+        "category": "magnitude"
+      },
+      {
+        "id": "dating-q-quiet-company",
+        "repeat": 3,
+        "owner": "June",
+        "field": "Comfort",
+        "before": "16",
+        "after": "16",
+        "change": 0.0,
+        "range": [
+          1,
+          8
+        ],
+        "category": "unchanged despite expected change"
+      },
+      {
+        "id": "dating-q-unwelcome-notification",
+        "repeat": 2,
+        "owner": "June",
+        "field": "Comfort",
+        "before": "28",
+        "after": "25",
+        "change": -3.0,
+        "range": [
+          -1,
+          1
+        ],
+        "category": "magnitude"
+      },
+      {
+        "id": "dating-q-unwelcome-notification",
+        "repeat": 3,
+        "owner": "June",
+        "field": "Comfort",
+        "before": "28",
+        "after": "25",
+        "change": -3.0,
+        "range": [
+          -1,
+          1
+        ],
+        "category": "magnitude"
+      },
+      {
+        "id": "fantasy-q-loose-scree",
+        "repeat": 2,
+        "owner": "player",
+        "field": "HP",
+        "before": "12/12",
+        "after": "12/12",
+        "change": 0.0,
+        "range": [
+          -4,
+          -1
+        ],
+        "category": "unchanged despite expected change"
+      },
+      {
+        "id": "fantasy-q-loose-scree",
+        "repeat": 2,
+        "owner": "Mira",
+        "field": "HP",
+        "before": "12/12",
+        "after": "12/12",
+        "change": 0.0,
+        "range": [
+          -4,
+          -1
+        ],
+        "category": "unchanged despite expected change"
+      },
+      {
+        "id": "fantasy-q-sheltered-breather",
+        "repeat": 1,
+        "owner": "player",
+        "field": "HP",
+        "before": "5/12",
+        "after": "5/12",
+        "change": 0.0,
+        "range": [
+          1,
+          3
+        ],
+        "category": "unchanged despite expected change"
+      },
+      {
+        "id": "fantasy-q-sheltered-breather",
+        "repeat": 1,
+        "owner": "Mira",
+        "field": "HP",
+        "before": "6/12",
+        "after": "6/12",
+        "change": 0.0,
+        "range": [
+          1,
+          3
+        ],
+        "category": "unchanged despite expected change"
+      },
+      {
+        "id": "fantasy-q-sheltered-breather",
+        "repeat": 3,
+        "owner": "player",
+        "field": "HP",
+        "before": "5/12",
+        "after": "5/12",
+        "change": 0.0,
+        "range": [
+          1,
+          3
+        ],
+        "category": "unchanged despite expected change"
+      },
+      {
+        "id": "fantasy-q-sheltered-breather",
+        "repeat": 3,
+        "owner": "Mira",
+        "field": "HP",
+        "before": "6/12",
+        "after": "6/12",
+        "change": 0.0,
+        "range": [
+          1,
+          3
+        ],
+        "category": "unchanged despite expected change"
+      }
+    ],
+    "warnings": [
+      {
+        "message": "Mira \u00b7 XP: \"0/100\" skipped: earned XP must be reported as a positive delta.",
+        "count": 25
+      },
+      {
+        "message": "Mira \u00b7 Level: \"1\" skipped: Level is managed by XP progression.",
+        "count": 25
+      },
+      {
+        "message": "Player \u00b7 XP: \"0/100\" skipped: earned XP must be reported as a positive delta.",
+        "count": 15
+      },
+      {
+        "message": "Player \u00b7 Level: \"1\" skipped: Level is managed by XP progression.",
+        "count": 15
+      },
+      {
+        "message": "Mira \u00b7 HP delta \"-1\" skipped: the reply also provided an absolute value.",
+        "count": 5
+      },
+      {
+        "message": "Player \u00b7 HP delta \"-1\" skipped: the reply also provided an absolute value.",
+        "count": 5
+      },
+      {
+        "message": "Player \u00b7 Social Energy delta \"-1\" skipped: the reply also provided an absolute value.",
+        "count": 4
+      },
+      {
+        "message": "Player \u00b7 Social Energy delta \"-2\" skipped: the reply also provided an absolute value.",
+        "count": 4
+      },
+      {
+        "message": "Sam \u00b7 Affection delta \"2\" skipped: the reply also provided an absolute value.",
+        "count": 3
+      },
+      {
+        "message": "June \u00b7 Affection delta \"1\" skipped: the reply also provided an absolute value.",
+        "count": 3
+      },
+      {
+        "message": "Player \u00b7 Mana delta \"-2\" skipped: the reply also provided an absolute value.",
+        "count": 3
+      },
+      {
+        "message": "Rowan \u00b7 XP: \"0/100\" skipped: earned XP must be reported as a positive delta.",
+        "count": 3
+      },
+      {
+        "message": "Rowan \u00b7 Level: \"1\" skipped: Level is managed by XP progression.",
+        "count": 3
+      },
+      {
+        "message": "Sam \u00b7 Trust delta \"1\" skipped: the reply also provided an absolute value.",
+        "count": 2
+      },
+      {
+        "message": "Player \u00b7 Social Energy delta \"1\" skipped: the reply also provided an absolute value.",
+        "count": 2
+      },
+      {
+        "message": "June \u00b7 Trust delta \"1\" skipped: the reply also provided an absolute value.",
+        "count": 2
+      },
+      {
+        "message": "June \u00b7 Comfort delta \"1\" skipped: the reply also provided an absolute value.",
+        "count": 2
+      },
+      {
+        "message": "Player \u00b7 Social Energy delta \"3\" skipped: the reply also provided an absolute value.",
+        "count": 2
+      },
+      {
+        "message": "June \u00b7 Affection delta \"-2\" skipped: the reply also provided an absolute value.",
+        "count": 2
+      },
+      {
+        "message": "June \u00b7 Comfort delta \"-3\" skipped: the reply also provided an absolute value.",
+        "count": 2
+      },
+      {
+        "message": "Player \u00b7 HP delta \"2\" skipped: the reply also provided an absolute value.",
+        "count": 2
+      },
+      {
+        "message": "Sam \u00b7 Comfort delta \"2\" skipped: the reply also provided an absolute value.",
+        "count": 1
+      },
+      {
+        "message": "Sam \u00b7 Comfort delta \"3\" skipped: the reply also provided an absolute value.",
+        "count": 1
+      },
+      {
+        "message": "Sam \u00b7 Comfort delta \"1\" skipped: the reply also provided an absolute value.",
+        "count": 1
+      },
+      {
+        "message": "June \u00b7 Affection delta \"5\" skipped: the reply also provided an absolute value.",
+        "count": 1
+      },
+      {
+        "message": "June \u00b7 Trust delta \"4\" skipped: the reply also provided an absolute value.",
+        "count": 1
+      },
+      {
+        "message": "June \u00b7 Comfort delta \"3\" skipped: the reply also provided an absolute value.",
+        "count": 1
+      },
+      {
+        "message": "June \u00b7 Comfort delta \"2\" skipped: the reply also provided an absolute value.",
+        "count": 1
+      },
+      {
+        "message": "Player \u00b7 Mood delta \"Calm\" skipped: the reply also provided an absolute value.",
+        "count": 1
+      },
+      {
+        "message": "June \u00b7 Affection delta \"2\" skipped: the reply also provided an absolute value.",
+        "count": 1
+      },
+      {
+        "message": "June \u00b7 Trust delta \"-1\" skipped: the reply also provided an absolute value.",
+        "count": 1
+      },
+      {
+        "message": "Player \u00b7 HP: unchanged absolute reading ignored in favor of the numeric delta.",
+        "count": 1
+      },
+      {
+        "message": "Player \u00b7 HP delta \"1\" skipped: the reply also provided an absolute value.",
+        "count": 1
+      },
+      {
+        "message": "Mira \u00b7 HP delta \"1\" skipped: the reply also provided an absolute value.",
+        "count": 1
+      },
+      {
+        "message": "Player \u00b7 Mana delta \"-1\" skipped: the reply also provided an absolute value.",
+        "count": 1
+      },
+      {
+        "message": "Player \u00b7 Mana delta \"-3\" skipped: the reply also provided an absolute value.",
+        "count": 1
+      }
+    ]
+  },
+  "absolute": {
+    "label": "qualitative-absolute-20261020",
+    "counts": {
+      "boundedChecks": 96,
+      "boundedPassed": 73,
+      "trials": 60,
+      "warningReplies": 25,
+      "warningEntries": 45,
+      "strictJsonValid": 60,
+      "recovered": 0,
+      "parsedObjects": 60,
+      "requestErrors": 0,
+      "normalizationErrors": 0,
+      "truncated": 0,
+      "allPass": 39,
+      "stateAllPass": 39,
+      "checks": 609,
+      "passed": 580,
+      "nonSyntaxChecks": 549,
+      "nonSyntaxPassed": 520,
+      "numericStatReplies": 1,
+      "nonStringStatReplies": 1,
+      "duplicateStatReplies": 0,
+      "deltaKeyReplies": 0
+    },
+    "summary": {
+      "checks": 609,
+      "passed": 580,
+      "rate": 0.9523809523809523,
+      "criticalFailures": [
+        "dating-q-accepted-boundary #1: npcChangeBetween Sam Trust -1 0",
+        "dating-q-accepted-boundary #1: npcChangeBetween Sam Comfort 0 4",
+        "dating-q-accepted-boundary #2: playerChangeBetween Social Energy -4 -1",
+        "dating-q-accepted-boundary #3: npcChangeBetween Sam Comfort 0 4",
+        "dating-q-accepted-boundary #3: playerChangeBetween Social Energy -4 -1",
+        "dating-q-closing-shift #1: npcChangeBetween Sam Affection 1 7",
+        "dating-q-closing-shift #3: playerChangeBetween Social Energy -5 -1",
+        "dating-q-misplaced-confidence #1: npcChangeBetween Sam Trust -6 -1",
+        "dating-q-misplaced-confidence #2: sameHoldings ",
+        "dating-q-misplaced-confidence #2: npcChangeBetween Sam Trust -6 -1",
+        "dating-q-misplaced-confidence #3: sameHoldings ",
+        "dating-q-misplaced-confidence #3: npcChangeBetween Sam Trust -6 -1",
+        "dating-q-quiet-company #1: playerChangeBetween Social Energy 1 4",
+        "dating-q-quiet-company #2: playerChangeBetween Social Energy 1 4",
+        "dating-q-quiet-company #2: npcChangeBetween June Comfort 1 8",
+        "dating-q-unwelcome-notification #3: npcChangeBetween June Comfort -1 1",
+        "fantasy-q-brief-soaking #2: playerStatMatches Condition wet|damp|chill|cold",
+        "fantasy-q-brief-soaking #3: playerStatMatches Condition wet|damp|chill|cold",
+        "fantasy-q-cleaned-cut #1: sameHoldings ",
+        "fantasy-q-falling-plaster #1: npcChangeBetween Mira HP -4 -1",
+        "fantasy-q-falling-plaster #3: npcChangeBetween Mira HP -4 -1",
+        "fantasy-q-fever-easing #1: playerChangeBetween HP 1 3",
+        "fantasy-q-pain-easing-spell #3: sameHoldings ",
+        "fantasy-q-sheltered-breather #1: playerChangeBetween HP 1 3",
+        "fantasy-q-sheltered-breather #1: npcChangeBetween Mira HP 1 3",
+        "fantasy-q-sheltered-breather #2: playerChangeBetween HP 1 3",
+        "fantasy-q-sheltered-breather #2: npcChangeBetween Mira HP 1 3",
+        "fantasy-q-sheltered-breather #3: playerChangeBetween HP 1 3",
+        "fantasy-q-sheltered-breather #3: npcChangeBetween Mira HP 1 3"
+      ],
+      "systems": {
+        "fantasy": 0.9595015576323987,
+        "dating": 0.9444444444444444
+      },
+      "perSystemCounts": {
+        "fantasy": {
+          "checks": 321,
+          "passed": 308,
+          "rate": 0.9595015576323987
+        },
+        "dating": {
+          "checks": 288,
+          "passed": 272,
+          "rate": 0.9444444444444444
+        }
+      },
+      "splits": {
+        "main": {
+          "checks": 0,
+          "passed": 0,
+          "rate": null
+        },
+        "originalHoldout": {
+          "checks": 609,
+          "passed": 580,
+          "rate": 0.9523809523809523
+        }
+      },
+      "auditFailures": [],
+      "endpoints": {
+        "http://127.0.0.1:9931/v1": {
+          "trials": 60,
+          "checks": 609,
+          "passed": 580,
+          "criticalFailures": 29
+        }
+      },
+      "acceptable": false
+    },
+    "numberPaths": [
+      {
+        "id": "dating-q-misplaced-confidence",
+        "repeat": 3,
+        "fields": [
+          "Sam.Affection=25",
+          "Sam.Trust=12",
+          "Sam.Comfort=25"
+        ]
+      }
+    ],
+    "duplicates": [],
+    "failures": {
+      "dating-q-accepted-boundary": [
+        {
+          "repeat": 1,
+          "check": "npcChangeBetween Sam Trust -1 0"
+        },
+        {
+          "repeat": 1,
+          "check": "npcChangeBetween Sam Comfort 0 4"
+        },
+        {
+          "repeat": 2,
+          "check": "playerChangeBetween Social Energy -4 -1"
+        },
+        {
+          "repeat": 3,
+          "check": "npcChangeBetween Sam Comfort 0 4"
+        },
+        {
+          "repeat": 3,
+          "check": "playerChangeBetween Social Energy -4 -1"
+        }
+      ],
+      "dating-q-closing-shift": [
+        {
+          "repeat": 1,
+          "check": "npcChangeBetween Sam Affection 1 7"
+        },
+        {
+          "repeat": 3,
+          "check": "playerChangeBetween Social Energy -5 -1"
+        }
+      ],
+      "dating-q-misplaced-confidence": [
+        {
+          "repeat": 1,
+          "check": "npcChangeBetween Sam Trust -6 -1"
+        },
+        {
+          "repeat": 2,
+          "check": "sameHoldings "
+        },
+        {
+          "repeat": 2,
+          "check": "npcChangeBetween Sam Trust -6 -1"
+        },
+        {
+          "repeat": 3,
+          "check": "sameHoldings "
+        },
+        {
+          "repeat": 3,
+          "check": "npcChangeBetween Sam Trust -6 -1"
+        }
+      ],
+      "dating-q-quiet-company": [
+        {
+          "repeat": 1,
+          "check": "playerChangeBetween Social Energy 1 4"
+        },
+        {
+          "repeat": 2,
+          "check": "playerChangeBetween Social Energy 1 4"
+        },
+        {
+          "repeat": 2,
+          "check": "npcChangeBetween June Comfort 1 8"
+        }
+      ],
+      "dating-q-unwelcome-notification": [
+        {
+          "repeat": 3,
+          "check": "npcChangeBetween June Comfort -1 1"
+        }
+      ],
+      "fantasy-q-brief-soaking": [
+        {
+          "repeat": 2,
+          "check": "playerStatMatches Condition wet|damp|chill|cold"
+        },
+        {
+          "repeat": 3,
+          "check": "playerStatMatches Condition wet|damp|chill|cold"
+        }
+      ],
+      "fantasy-q-cleaned-cut": [
+        {
+          "repeat": 1,
+          "check": "sameHoldings "
+        }
+      ],
+      "fantasy-q-falling-plaster": [
+        {
+          "repeat": 1,
+          "check": "npcChangeBetween Mira HP -4 -1"
+        },
+        {
+          "repeat": 3,
+          "check": "npcChangeBetween Mira HP -4 -1"
+        }
+      ],
+      "fantasy-q-fever-easing": [
+        {
+          "repeat": 1,
+          "check": "playerChangeBetween HP 1 3"
+        }
+      ],
+      "fantasy-q-pain-easing-spell": [
+        {
+          "repeat": 3,
+          "check": "sameHoldings "
+        }
+      ],
+      "fantasy-q-sheltered-breather": [
+        {
+          "repeat": 1,
+          "check": "playerChangeBetween HP 1 3"
+        },
+        {
+          "repeat": 1,
+          "check": "npcChangeBetween Mira HP 1 3"
+        },
+        {
+          "repeat": 2,
+          "check": "playerChangeBetween HP 1 3"
+        },
+        {
+          "repeat": 2,
+          "check": "npcChangeBetween Mira HP 1 3"
+        },
+        {
+          "repeat": 3,
+          "check": "playerChangeBetween HP 1 3"
+        },
+        {
+          "repeat": 3,
+          "check": "npcChangeBetween Mira HP 1 3"
+        }
+      ]
+    },
+    "boundedFailures": [
+      {
+        "id": "dating-q-accepted-boundary",
+        "repeat": 1,
+        "owner": "Sam",
+        "field": "Trust",
+        "before": "6",
+        "after": "9",
+        "change": 3.0,
+        "range": [
+          -1,
+          0
+        ],
+        "category": "magnitude"
+      },
+      {
+        "id": "dating-q-accepted-boundary",
+        "repeat": 1,
+        "owner": "Sam",
+        "field": "Comfort",
+        "before": "10",
+        "after": "30",
+        "change": 20.0,
+        "range": [
+          0,
+          4
+        ],
+        "category": "magnitude"
+      },
+      {
+        "id": "dating-q-accepted-boundary",
+        "repeat": 2,
+        "owner": "player",
+        "field": "Social Energy",
+        "before": "6/10",
+        "after": "6/10",
+        "change": 0.0,
+        "range": [
+          -4,
+          -1
+        ],
+        "category": "unchanged despite expected change"
+      },
+      {
+        "id": "dating-q-accepted-boundary",
+        "repeat": 3,
+        "owner": "Sam",
+        "field": "Comfort",
+        "before": "10",
+        "after": "15",
+        "change": 5.0,
+        "range": [
+          0,
+          4
+        ],
+        "category": "magnitude"
+      },
+      {
+        "id": "dating-q-accepted-boundary",
+        "repeat": 3,
+        "owner": "player",
+        "field": "Social Energy",
+        "before": "6/10",
+        "after": "6/10",
+        "change": 0.0,
+        "range": [
+          -4,
+          -1
+        ],
+        "category": "unchanged despite expected change"
+      },
+      {
+        "id": "dating-q-closing-shift",
+        "repeat": 1,
+        "owner": "Sam",
+        "field": "Affection",
+        "before": "15",
+        "after": "15",
+        "change": 0.0,
+        "range": [
+          1,
+          7
+        ],
+        "category": "unchanged despite expected change"
+      },
+      {
+        "id": "dating-q-closing-shift",
+        "repeat": 3,
+        "owner": "player",
+        "field": "Social Energy",
+        "before": "8/10",
+        "after": "8/10",
+        "change": 0.0,
+        "range": [
+          -5,
+          -1
+        ],
+        "category": "unchanged despite expected change"
+      },
+      {
+        "id": "dating-q-misplaced-confidence",
+        "repeat": 1,
+        "owner": "Sam",
+        "field": "Trust",
+        "before": "12",
+        "after": "12",
+        "change": 0.0,
+        "range": [
+          -6,
+          -1
+        ],
+        "category": "unchanged despite expected change"
+      },
+      {
+        "id": "dating-q-misplaced-confidence",
+        "repeat": 2,
+        "owner": "Sam",
+        "field": "Trust",
+        "before": "12",
+        "after": "15",
+        "change": 3.0,
+        "range": [
+          -6,
+          -1
+        ],
+        "category": "opposite direction"
+      },
+      {
+        "id": "dating-q-misplaced-confidence",
+        "repeat": 3,
+        "owner": "Sam",
+        "field": "Trust",
+        "before": "12",
+        "after": "12",
+        "change": 0.0,
+        "range": [
+          -6,
+          -1
+        ],
+        "category": "unchanged despite expected change"
+      },
+      {
+        "id": "dating-q-quiet-company",
+        "repeat": 1,
+        "owner": "player",
+        "field": "Social Energy",
+        "before": "3/10",
+        "after": "3/10",
+        "change": 0.0,
+        "range": [
+          1,
+          4
+        ],
+        "category": "unchanged despite expected change"
+      },
+      {
+        "id": "dating-q-quiet-company",
+        "repeat": 2,
+        "owner": "player",
+        "field": "Social Energy",
+        "before": "3/10",
+        "after": "3/10",
+        "change": 0.0,
+        "range": [
+          1,
+          4
+        ],
+        "category": "unchanged despite expected change"
+      },
+      {
+        "id": "dating-q-quiet-company",
+        "repeat": 2,
+        "owner": "June",
+        "field": "Comfort",
+        "before": "16",
+        "after": "16",
+        "change": 0.0,
+        "range": [
+          1,
+          8
+        ],
+        "category": "unchanged despite expected change"
+      },
+      {
+        "id": "dating-q-unwelcome-notification",
+        "repeat": 3,
+        "owner": "June",
+        "field": "Comfort",
+        "before": "28",
+        "after": "25",
+        "change": -3.0,
+        "range": [
+          -1,
+          1
+        ],
+        "category": "magnitude"
+      },
+      {
+        "id": "fantasy-q-falling-plaster",
+        "repeat": 1,
+        "owner": "Mira",
+        "field": "HP",
+        "before": "12/12",
+        "after": "12/12",
+        "change": 0.0,
+        "range": [
+          -4,
+          -1
+        ],
+        "category": "unchanged despite expected change"
+      },
+      {
+        "id": "fantasy-q-falling-plaster",
+        "repeat": 3,
+        "owner": "Mira",
+        "field": "HP",
+        "before": "12/12",
+        "after": "12/12",
+        "change": 0.0,
+        "range": [
+          -4,
+          -1
+        ],
+        "category": "unchanged despite expected change"
+      },
+      {
+        "id": "fantasy-q-fever-easing",
+        "repeat": 1,
+        "owner": "player",
+        "field": "HP",
+        "before": "4/12",
+        "after": "4/12",
+        "change": 0.0,
+        "range": [
+          1,
+          3
+        ],
+        "category": "unchanged despite expected change"
+      },
+      {
+        "id": "fantasy-q-sheltered-breather",
+        "repeat": 1,
+        "owner": "player",
+        "field": "HP",
+        "before": "5/12",
+        "after": "5/12",
+        "change": 0.0,
+        "range": [
+          1,
+          3
+        ],
+        "category": "unchanged despite expected change"
+      },
+      {
+        "id": "fantasy-q-sheltered-breather",
+        "repeat": 1,
+        "owner": "Mira",
+        "field": "HP",
+        "before": "6/12",
+        "after": "6/12",
+        "change": 0.0,
+        "range": [
+          1,
+          3
+        ],
+        "category": "unchanged despite expected change"
+      },
+      {
+        "id": "fantasy-q-sheltered-breather",
+        "repeat": 2,
+        "owner": "player",
+        "field": "HP",
+        "before": "5/12",
+        "after": "5/12",
+        "change": 0.0,
+        "range": [
+          1,
+          3
+        ],
+        "category": "unchanged despite expected change"
+      },
+      {
+        "id": "fantasy-q-sheltered-breather",
+        "repeat": 2,
+        "owner": "Mira",
+        "field": "HP",
+        "before": "6/12",
+        "after": "6/12",
+        "change": 0.0,
+        "range": [
+          1,
+          3
+        ],
+        "category": "unchanged despite expected change"
+      },
+      {
+        "id": "fantasy-q-sheltered-breather",
+        "repeat": 3,
+        "owner": "player",
+        "field": "HP",
+        "before": "5/12",
+        "after": "5/12",
+        "change": 0.0,
+        "range": [
+          1,
+          3
+        ],
+        "category": "unchanged despite expected change"
+      },
+      {
+        "id": "fantasy-q-sheltered-breather",
+        "repeat": 3,
+        "owner": "Mira",
+        "field": "HP",
+        "before": "6/12",
+        "after": "6/12",
+        "change": 0.0,
+        "range": [
+          1,
+          3
+        ],
+        "category": "unchanged despite expected change"
+      }
+    ],
+    "warnings": [
+      {
+        "message": "Mira \u00b7 Level: \"1\" skipped: Level is managed by XP progression.",
+        "count": 22
+      },
+      {
+        "message": "Player \u00b7 Level: \"1\" skipped: Level is managed by XP progression.",
+        "count": 20
+      },
+      {
+        "message": "Rowan \u00b7 Level: \"1\" skipped: Level is managed by XP progression.",
+        "count": 3
+      }
+    ]
+  },
+  "schema": {
+    "label": "qualitative-absolute-schema-20261020",
+    "counts": {
+      "boundedChecks": 96,
+      "boundedPassed": 76,
+      "trials": 60,
+      "warningReplies": 21,
+      "warningEntries": 25,
+      "strictJsonValid": 60,
+      "recovered": 0,
+      "parsedObjects": 60,
+      "requestErrors": 0,
+      "normalizationErrors": 0,
+      "truncated": 0,
+      "allPass": 44,
+      "stateAllPass": 44,
+      "checks": 609,
+      "passed": 587,
+      "nonSyntaxChecks": 549,
+      "nonSyntaxPassed": 527,
+      "numericStatReplies": 0,
+      "nonStringStatReplies": 0,
+      "duplicateStatReplies": 0,
+      "deltaKeyReplies": 0,
+      "schemaValidReplies": 60
+    },
+    "summary": {
+      "checks": 609,
+      "passed": 587,
+      "rate": 0.9638752052545156,
+      "criticalFailures": [
+        "dating-q-accepted-boundary #1: npcChangeBetween Sam Comfort 0 4",
+        "dating-q-accepted-boundary #1: playerChangeBetween Social Energy -4 -1",
+        "dating-q-accepted-boundary #2: playerChangeBetween Social Energy -4 -1",
+        "dating-q-misplaced-confidence #1: npcChangeBetween Sam Trust -6 -1",
+        "dating-q-misplaced-confidence #2: npcChangeBetween Sam Trust -6 -1",
+        "dating-q-misplaced-confidence #3: npcChangeBetween Sam Trust -6 -1",
+        "dating-q-misplaced-confidence #3: npcChangeBetween Sam Affection 1 5",
+        "dating-q-quiet-company #1: playerChangeBetween Social Energy 1 4",
+        "dating-q-quiet-company #2: playerChangeBetween Social Energy 1 4",
+        "dating-q-quiet-company #3: playerChangeBetween Social Energy 1 4",
+        "dating-q-quiet-company #3: npcChangeBetween June Comfort 1 8",
+        "fantasy-q-brief-soaking #1: playerStatMatches Condition wet|damp|chill|cold",
+        "fantasy-q-falling-plaster #3: npcChangeBetween Mira HP -4 -1",
+        "fantasy-q-fever-easing #3: playerChangeBetween HP 1 3",
+        "fantasy-q-loose-scree #2: playerChangeBetween HP -4 -1",
+        "fantasy-q-loose-scree #2: npcChangeBetween Mira HP -4 -1",
+        "fantasy-q-practice-impact #2: preservedPoolMaxima",
+        "fantasy-q-sheltered-breather #1: playerChangeBetween HP 1 3",
+        "fantasy-q-sheltered-breather #1: npcChangeBetween Mira HP 1 3",
+        "fantasy-q-sheltered-breather #2: playerChangeBetween HP 1 3",
+        "fantasy-q-sheltered-breather #2: npcChangeBetween Mira HP 1 3",
+        "fantasy-q-sheltered-breather #3: npcChangeBetween Mira HP 1 3"
+      ],
+      "systems": {
+        "fantasy": 0.9657320872274143,
+        "dating": 0.9618055555555556
+      },
+      "perSystemCounts": {
+        "fantasy": {
+          "checks": 321,
+          "passed": 310,
+          "rate": 0.9657320872274143
+        },
+        "dating": {
+          "checks": 288,
+          "passed": 277,
+          "rate": 0.9618055555555556
+        }
+      },
+      "splits": {
+        "main": {
+          "checks": 0,
+          "passed": 0,
+          "rate": null
+        },
+        "originalHoldout": {
+          "checks": 609,
+          "passed": 587,
+          "rate": 0.9638752052545156
+        }
+      },
+      "auditFailures": [],
+      "endpoints": {
+        "http://127.0.0.1:9931/v1": {
+          "trials": 60,
+          "checks": 609,
+          "passed": 587,
+          "criticalFailures": 22
+        }
+      },
+      "acceptable": false
+    },
+    "numberPaths": [],
+    "duplicates": [],
+    "failures": {
+      "dating-q-accepted-boundary": [
+        {
+          "repeat": 1,
+          "check": "npcChangeBetween Sam Comfort 0 4"
+        },
+        {
+          "repeat": 1,
+          "check": "playerChangeBetween Social Energy -4 -1"
+        },
+        {
+          "repeat": 2,
+          "check": "playerChangeBetween Social Energy -4 -1"
+        }
+      ],
+      "dating-q-misplaced-confidence": [
+        {
+          "repeat": 1,
+          "check": "npcChangeBetween Sam Trust -6 -1"
+        },
+        {
+          "repeat": 2,
+          "check": "npcChangeBetween Sam Trust -6 -1"
+        },
+        {
+          "repeat": 3,
+          "check": "npcChangeBetween Sam Trust -6 -1"
+        },
+        {
+          "repeat": 3,
+          "check": "npcChangeBetween Sam Affection 1 5"
+        }
+      ],
+      "dating-q-quiet-company": [
+        {
+          "repeat": 1,
+          "check": "playerChangeBetween Social Energy 1 4"
+        },
+        {
+          "repeat": 2,
+          "check": "playerChangeBetween Social Energy 1 4"
+        },
+        {
+          "repeat": 3,
+          "check": "playerChangeBetween Social Energy 1 4"
+        },
+        {
+          "repeat": 3,
+          "check": "npcChangeBetween June Comfort 1 8"
+        }
+      ],
+      "fantasy-q-brief-soaking": [
+        {
+          "repeat": 1,
+          "check": "playerStatMatches Condition wet|damp|chill|cold"
+        }
+      ],
+      "fantasy-q-falling-plaster": [
+        {
+          "repeat": 3,
+          "check": "npcChangeBetween Mira HP -4 -1"
+        }
+      ],
+      "fantasy-q-fever-easing": [
+        {
+          "repeat": 3,
+          "check": "playerChangeBetween HP 1 3"
+        }
+      ],
+      "fantasy-q-loose-scree": [
+        {
+          "repeat": 2,
+          "check": "playerChangeBetween HP -4 -1"
+        },
+        {
+          "repeat": 2,
+          "check": "npcChangeBetween Mira HP -4 -1"
+        }
+      ],
+      "fantasy-q-practice-impact": [
+        {
+          "repeat": 2,
+          "check": "preservedPoolMaxima"
+        }
+      ],
+      "fantasy-q-sheltered-breather": [
+        {
+          "repeat": 1,
+          "check": "playerChangeBetween HP 1 3"
+        },
+        {
+          "repeat": 1,
+          "check": "npcChangeBetween Mira HP 1 3"
+        },
+        {
+          "repeat": 2,
+          "check": "playerChangeBetween HP 1 3"
+        },
+        {
+          "repeat": 2,
+          "check": "npcChangeBetween Mira HP 1 3"
+        },
+        {
+          "repeat": 3,
+          "check": "npcChangeBetween Mira HP 1 3"
+        }
+      ]
+    },
+    "boundedFailures": [
+      {
+        "id": "dating-q-accepted-boundary",
+        "repeat": 1,
+        "owner": "Sam",
+        "field": "Comfort",
+        "before": "10",
+        "after": "20",
+        "change": 10.0,
+        "range": [
+          0,
+          4
+        ],
+        "category": "magnitude"
+      },
+      {
+        "id": "dating-q-accepted-boundary",
+        "repeat": 1,
+        "owner": "player",
+        "field": "Social Energy",
+        "before": "6/10",
+        "after": "6/10",
+        "change": 0.0,
+        "range": [
+          -4,
+          -1
+        ],
+        "category": "unchanged despite expected change"
+      },
+      {
+        "id": "dating-q-accepted-boundary",
+        "repeat": 2,
+        "owner": "player",
+        "field": "Social Energy",
+        "before": "6/10",
+        "after": "6/10",
+        "change": 0.0,
+        "range": [
+          -4,
+          -1
+        ],
+        "category": "unchanged despite expected change"
+      },
+      {
+        "id": "dating-q-misplaced-confidence",
+        "repeat": 1,
+        "owner": "Sam",
+        "field": "Trust",
+        "before": "12",
+        "after": "12",
+        "change": 0.0,
+        "range": [
+          -6,
+          -1
+        ],
+        "category": "unchanged despite expected change"
+      },
+      {
+        "id": "dating-q-misplaced-confidence",
+        "repeat": 2,
+        "owner": "Sam",
+        "field": "Trust",
+        "before": "12",
+        "after": "14",
+        "change": 2.0,
+        "range": [
+          -6,
+          -1
+        ],
+        "category": "opposite direction"
+      },
+      {
+        "id": "dating-q-misplaced-confidence",
+        "repeat": 3,
+        "owner": "Sam",
+        "field": "Trust",
+        "before": "12",
+        "after": "12",
+        "change": 0.0,
+        "range": [
+          -6,
+          -1
+        ],
+        "category": "unchanged despite expected change"
+      },
+      {
+        "id": "dating-q-misplaced-confidence",
+        "repeat": 3,
+        "owner": "Sam",
+        "field": "Affection",
+        "before": "20",
+        "after": "20",
+        "change": 0.0,
+        "range": [
+          1,
+          5
+        ],
+        "category": "unchanged despite expected change"
+      },
+      {
+        "id": "dating-q-quiet-company",
+        "repeat": 1,
+        "owner": "player",
+        "field": "Social Energy",
+        "before": "3/10",
+        "after": "3/10",
+        "change": 0.0,
+        "range": [
+          1,
+          4
+        ],
+        "category": "unchanged despite expected change"
+      },
+      {
+        "id": "dating-q-quiet-company",
+        "repeat": 2,
+        "owner": "player",
+        "field": "Social Energy",
+        "before": "3/10",
+        "after": "3/10",
+        "change": 0.0,
+        "range": [
+          1,
+          4
+        ],
+        "category": "unchanged despite expected change"
+      },
+      {
+        "id": "dating-q-quiet-company",
+        "repeat": 3,
+        "owner": "player",
+        "field": "Social Energy",
+        "before": "3/10",
+        "after": "3/10",
+        "change": 0.0,
+        "range": [
+          1,
+          4
+        ],
+        "category": "unchanged despite expected change"
+      },
+      {
+        "id": "dating-q-quiet-company",
+        "repeat": 3,
+        "owner": "June",
+        "field": "Comfort",
+        "before": "16",
+        "after": "16",
+        "change": 0.0,
+        "range": [
+          1,
+          8
+        ],
+        "category": "unchanged despite expected change"
+      },
+      {
+        "id": "fantasy-q-falling-plaster",
+        "repeat": 3,
+        "owner": "Mira",
+        "field": "HP",
+        "before": "12/12",
+        "after": "12/12",
+        "change": 0.0,
+        "range": [
+          -4,
+          -1
+        ],
+        "category": "unchanged despite expected change"
+      },
+      {
+        "id": "fantasy-q-fever-easing",
+        "repeat": 3,
+        "owner": "player",
+        "field": "HP",
+        "before": "4/12",
+        "after": "4/12",
+        "change": 0.0,
+        "range": [
+          1,
+          3
+        ],
+        "category": "unchanged despite expected change"
+      },
+      {
+        "id": "fantasy-q-loose-scree",
+        "repeat": 2,
+        "owner": "player",
+        "field": "HP",
+        "before": "12/12",
+        "after": "12/12",
+        "change": 0.0,
+        "range": [
+          -4,
+          -1
+        ],
+        "category": "unchanged despite expected change"
+      },
+      {
+        "id": "fantasy-q-loose-scree",
+        "repeat": 2,
+        "owner": "Mira",
+        "field": "HP",
+        "before": "12/12",
+        "after": "12/12",
+        "change": 0.0,
+        "range": [
+          -4,
+          -1
+        ],
+        "category": "unchanged despite expected change"
+      },
+      {
+        "id": "fantasy-q-sheltered-breather",
+        "repeat": 1,
+        "owner": "player",
+        "field": "HP",
+        "before": "5/12",
+        "after": "5/12",
+        "change": 0.0,
+        "range": [
+          1,
+          3
+        ],
+        "category": "unchanged despite expected change"
+      },
+      {
+        "id": "fantasy-q-sheltered-breather",
+        "repeat": 1,
+        "owner": "Mira",
+        "field": "HP",
+        "before": "6/12",
+        "after": "6/12",
+        "change": 0.0,
+        "range": [
+          1,
+          3
+        ],
+        "category": "unchanged despite expected change"
+      },
+      {
+        "id": "fantasy-q-sheltered-breather",
+        "repeat": 2,
+        "owner": "player",
+        "field": "HP",
+        "before": "5/12",
+        "after": "5/12",
+        "change": 0.0,
+        "range": [
+          1,
+          3
+        ],
+        "category": "unchanged despite expected change"
+      },
+      {
+        "id": "fantasy-q-sheltered-breather",
+        "repeat": 2,
+        "owner": "Mira",
+        "field": "HP",
+        "before": "6/12",
+        "after": "6/12",
+        "change": 0.0,
+        "range": [
+          1,
+          3
+        ],
+        "category": "unchanged despite expected change"
+      },
+      {
+        "id": "fantasy-q-sheltered-breather",
+        "repeat": 3,
+        "owner": "Mira",
+        "field": "HP",
+        "before": "6/12",
+        "after": "6/12",
+        "change": 0.0,
+        "range": [
+          1,
+          3
+        ],
+        "category": "unchanged despite expected change"
+      }
+    ],
+    "schemaValidation": [
+      {
+        "id": "dating-q-accepted-boundary",
+        "repeat": 1,
+        "valid": true,
+        "errors": []
+      },
+      {
+        "id": "dating-q-accepted-boundary",
+        "repeat": 2,
+        "valid": true,
+        "errors": []
+      },
+      {
+        "id": "dating-q-accepted-boundary",
+        "repeat": 3,
+        "valid": true,
+        "errors": []
+      },
+      {
+        "id": "dating-q-candy-before-call",
+        "repeat": 1,
+        "valid": true,
+        "errors": []
+      },
+      {
+        "id": "dating-q-candy-before-call",
+        "repeat": 2,
+        "valid": true,
+        "errors": []
+      },
+      {
+        "id": "dating-q-candy-before-call",
+        "repeat": 3,
+        "valid": true,
+        "errors": []
+      },
+      {
+        "id": "dating-q-closing-shift",
+        "repeat": 1,
+        "valid": true,
+        "errors": []
+      },
+      {
+        "id": "dating-q-closing-shift",
+        "repeat": 2,
+        "valid": true,
+        "errors": []
+      },
+      {
+        "id": "dating-q-closing-shift",
+        "repeat": 3,
+        "valid": true,
+        "errors": []
+      },
+      {
+        "id": "dating-q-kept-confidence",
+        "repeat": 1,
+        "valid": true,
+        "errors": []
+      },
+      {
+        "id": "dating-q-kept-confidence",
+        "repeat": 2,
+        "valid": true,
+        "errors": []
+      },
+      {
+        "id": "dating-q-kept-confidence",
+        "repeat": 3,
+        "valid": true,
+        "errors": []
+      },
+      {
+        "id": "dating-q-misplaced-confidence",
+        "repeat": 1,
+        "valid": true,
+        "errors": []
+      },
+      {
+        "id": "dating-q-misplaced-confidence",
+        "repeat": 2,
+        "valid": true,
+        "errors": []
+      },
+      {
+        "id": "dating-q-misplaced-confidence",
+        "repeat": 3,
+        "valid": true,
+        "errors": []
+      },
+      {
+        "id": "dating-q-ordinary-pause",
+        "repeat": 1,
+        "valid": true,
+        "errors": []
+      },
+      {
+        "id": "dating-q-ordinary-pause",
+        "repeat": 2,
+        "valid": true,
+        "errors": []
+      },
+      {
+        "id": "dating-q-ordinary-pause",
+        "repeat": 3,
+        "valid": true,
+        "errors": []
+      },
+      {
+        "id": "dating-q-passing-joke",
+        "repeat": 1,
+        "valid": true,
+        "errors": []
+      },
+      {
+        "id": "dating-q-passing-joke",
+        "repeat": 2,
+        "valid": true,
+        "errors": []
+      },
+      {
+        "id": "dating-q-passing-joke",
+        "repeat": 3,
+        "valid": true,
+        "errors": []
+      },
+      {
+        "id": "dating-q-pressure-lifted",
+        "repeat": 1,
+        "valid": true,
+        "errors": []
+      },
+      {
+        "id": "dating-q-pressure-lifted",
+        "repeat": 2,
+        "valid": true,
+        "errors": []
+      },
+      {
+        "id": "dating-q-pressure-lifted",
+        "repeat": 3,
+        "valid": true,
+        "errors": []
+      },
+      {
+        "id": "dating-q-quiet-company",
+        "repeat": 1,
+        "valid": true,
+        "errors": []
+      },
+      {
+        "id": "dating-q-quiet-company",
+        "repeat": 2,
+        "valid": true,
+        "errors": []
+      },
+      {
+        "id": "dating-q-quiet-company",
+        "repeat": 3,
+        "valid": true,
+        "errors": []
+      },
+      {
+        "id": "dating-q-unwelcome-notification",
+        "repeat": 1,
+        "valid": true,
+        "errors": []
+      },
+      {
+        "id": "dating-q-unwelcome-notification",
+        "repeat": 2,
+        "valid": true,
+        "errors": []
+      },
+      {
+        "id": "dating-q-unwelcome-notification",
+        "repeat": 3,
+        "valid": true,
+        "errors": []
+      },
+      {
+        "id": "fantasy-q-brief-soaking",
+        "repeat": 1,
+        "valid": true,
+        "errors": []
+      },
+      {
+        "id": "fantasy-q-brief-soaking",
+        "repeat": 2,
+        "valid": true,
+        "errors": []
+      },
+      {
+        "id": "fantasy-q-brief-soaking",
+        "repeat": 3,
+        "valid": true,
+        "errors": []
+      },
+      {
+        "id": "fantasy-q-cleaned-cut",
+        "repeat": 1,
+        "valid": true,
+        "errors": []
+      },
+      {
+        "id": "fantasy-q-cleaned-cut",
+        "repeat": 2,
+        "valid": true,
+        "errors": []
+      },
+      {
+        "id": "fantasy-q-cleaned-cut",
+        "repeat": 3,
+        "valid": true,
+        "errors": []
+      },
+      {
+        "id": "fantasy-q-falling-plaster",
+        "repeat": 1,
+        "valid": true,
+        "errors": []
+      },
+      {
+        "id": "fantasy-q-falling-plaster",
+        "repeat": 2,
+        "valid": true,
+        "errors": []
+      },
+      {
+        "id": "fantasy-q-falling-plaster",
+        "repeat": 3,
+        "valid": true,
+        "errors": []
+      },
+      {
+        "id": "fantasy-q-fever-easing",
+        "repeat": 1,
+        "valid": true,
+        "errors": []
+      },
+      {
+        "id": "fantasy-q-fever-easing",
+        "repeat": 2,
+        "valid": true,
+        "errors": []
+      },
+      {
+        "id": "fantasy-q-fever-easing",
+        "repeat": 3,
+        "valid": true,
+        "errors": []
+      },
+      {
+        "id": "fantasy-q-loose-scree",
+        "repeat": 1,
+        "valid": true,
+        "errors": []
+      },
+      {
+        "id": "fantasy-q-loose-scree",
+        "repeat": 2,
+        "valid": true,
+        "errors": []
+      },
+      {
+        "id": "fantasy-q-loose-scree",
+        "repeat": 3,
+        "valid": true,
+        "errors": []
+      },
+      {
+        "id": "fantasy-q-pain-easing-spell",
+        "repeat": 1,
+        "valid": true,
+        "errors": []
+      },
+      {
+        "id": "fantasy-q-pain-easing-spell",
+        "repeat": 2,
+        "valid": true,
+        "errors": []
+      },
+      {
+        "id": "fantasy-q-pain-easing-spell",
+        "repeat": 3,
+        "valid": true,
+        "errors": []
+      },
+      {
+        "id": "fantasy-q-practice-impact",
+        "repeat": 1,
+        "valid": true,
+        "errors": []
+      },
+      {
+        "id": "fantasy-q-practice-impact",
+        "repeat": 2,
+        "valid": true,
+        "errors": []
+      },
+      {
+        "id": "fantasy-q-practice-impact",
+        "repeat": 3,
+        "valid": true,
+        "errors": []
+      },
+      {
+        "id": "fantasy-q-sheltered-breather",
+        "repeat": 1,
+        "valid": true,
+        "errors": []
+      },
+      {
+        "id": "fantasy-q-sheltered-breather",
+        "repeat": 2,
+        "valid": true,
+        "errors": []
+      },
+      {
+        "id": "fantasy-q-sheltered-breather",
+        "repeat": 3,
+        "valid": true,
+        "errors": []
+      },
+      {
+        "id": "fantasy-q-sustained-ward",
+        "repeat": 1,
+        "valid": true,
+        "errors": []
+      },
+      {
+        "id": "fantasy-q-sustained-ward",
+        "repeat": 2,
+        "valid": true,
+        "errors": []
+      },
+      {
+        "id": "fantasy-q-sustained-ward",
+        "repeat": 3,
+        "valid": true,
+        "errors": []
+      },
+      {
+        "id": "fantasy-q-unspent-threat",
+        "repeat": 1,
+        "valid": true,
+        "errors": []
+      },
+      {
+        "id": "fantasy-q-unspent-threat",
+        "repeat": 2,
+        "valid": true,
+        "errors": []
+      },
+      {
+        "id": "fantasy-q-unspent-threat",
+        "repeat": 3,
+        "valid": true,
+        "errors": []
+      }
+    ],
+    "warnings": [
+      {
+        "message": "Mira \u00b7 Level: \"1\" skipped: Level is managed by XP progression.",
+        "count": 18
+      },
+      {
+        "message": "Rowan \u00b7 Level: \"1\" skipped: Level is managed by XP progression.",
+        "count": 2
+      },
+      {
+        "message": "Sam \u00b7 Affection: \", 23\" adjusted or refused: outside the numeric bounds or not a valid numeric reading; using \"20\".",
+        "count": 1
+      },
+      {
+        "message": "Sam \u00b7 Trust: \", 12\" adjusted or refused: outside the numeric bounds or not a valid numeric reading; using \"12\".",
+        "count": 1
+      },
+      {
+        "message": "Sam \u00b7 Comfort: \", 20\" adjusted or refused: outside the numeric bounds or not a valid numeric reading; using \"20\".",
+        "count": 1
+      },
+      {
+        "message": "Player \u00b7 XP: maximum \"100000\" skipped: the reader keeps the existing maximum (using \"0/100\").",
+        "count": 1
+      },
+      {
+        "message": "Rowan \u00b7 XP: maximum \"100000\" skipped: the reader keeps the existing maximum (using \"0/100\").",
+        "count": 1
+      }
+    ]
+  }
+}

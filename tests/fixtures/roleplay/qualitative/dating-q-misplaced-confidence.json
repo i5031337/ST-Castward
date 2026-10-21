@@ -1,0 +1,111 @@
+{
+  "id": "dating-q-misplaced-confidence",
+  "system": "dating",
+  "title": "A friendly laugh does not repair a breach of confidence",
+  "startPlace": "Paper Crane",
+  "npc": "Sam",
+  "holdout": true,
+  "history": [
+    {
+      "role": "user",
+      "content": "I sit opposite Sam at the Paper Crane reading table. He has just realized I repeated a private story he told me."
+    },
+    {
+      "role": "assistant",
+      "content": "\"I asked you not to tell anyone,\" he says quietly. He moves his notebook closer to his side of the table. The shop is otherwise empty."
+    },
+    {
+      "role": "user",
+      "content": "I admit I told Leah because I thought she would understand."
+    },
+    {
+      "role": "assistant",
+      "content": "Sam exhales. \"That wasn't yours to decide.\" He stays at the table, but his answers have become careful."
+    }
+  ],
+  "user": "I say I understand, then try a gentle joke about my inability to keep my own plants alive.",
+  "generationBrief": "Sam involuntarily laughs at the plant joke and retains warmth and fondness, but clearly becomes less willing than before this exchange to confide in Alex. He explicitly distinguishes liking Alex from trusting Alex with private matters. A mixed outcome: mild fondness increase alongside a real small trust decrease. No forgiveness, relationship promotion or departure. All consequences must be conveyed through natural prose, with no stat names, ratings, point costs, numerical damage or game notifications. Keep this beat in the current place. Do not add possessions, rewards or completed quests.",
+  "checks": [
+    [
+      "sameHoldings",
+      true
+    ],
+    [
+      "noXp",
+      true
+    ],
+    [
+      "locationFlag",
+      "no",
+      true
+    ],
+    [
+      "npcPresent",
+      "Sam"
+    ],
+    [
+      "relationshipUnchanged",
+      "Sam",
+      true
+    ],
+    [
+      "npcChangeBetween",
+      "Sam",
+      "Trust",
+      -6,
+      -1,
+      true
+    ],
+    [
+      "npcChangeBetween",
+      "Sam",
+      "Affection",
+      1,
+      5,
+      true
+    ]
+  ],
+  "npcStats": {
+    "Trust": "12",
+    "Affection": "20",
+    "Mood": "Hurt"
+  },
+  "text": "Sam laughs before he can stop himself. \"You watered that thing when the soil was already wet,\" he says. For a moment the familiar amusement is back. He looks at you more warmly, then glances at the notebook he has drawn to his side of the table.\n\n\"I still like talking to you,\" he says. \"The plants, the terrible films, all of that. But I think I'm going to keep the personal things to myself for a while.\" He closes the notebook. \"I thought maybe you understood why I was upset. Trying to joke past it makes me less sure.\"\n\nThe laughter has made his voice gentler without making the decision less definite. He rests a hand on the closed cover, leaving the empty part of the table between you. \"We can sit here,\" he adds. \"I don't want a fight. I just need you to understand that enjoying your company doesn't mean I'm ready to tell you everything.\" He stays in his chair, waiting to see whether you will let that stand.",
+  "generation": {
+    "model": "/mnt/D/backup_models/gemma-4-31B-it-qat-UD-Q4_K_XL.gguf",
+    "endpoint": "http://127.0.0.1:9931/v1",
+    "generatedAt": "2026-10-21T00:43:08.714Z",
+    "narratorSha256": "ed57edec3be466a732d032b8f9d3b643df8061b72bd285ec506b3fa395444f93",
+    "parameters": {
+      "temperature": 0.8,
+      "top_p": 0.95,
+      "seed": 5031341,
+      "max_tokens": 1800,
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    },
+    "usage": {
+      "completion_tokens": 241,
+      "prompt_tokens": 664,
+      "total_tokens": 905,
+      "prompt_tokens_details": {
+        "cached_tokens": 171
+      }
+    },
+    "finishReason": "stop"
+  },
+  "review": {
+    "status": "reviewed",
+    "note": "Reviewed the generated scene against fresh-turn evidence and starting state; edited for natural prose, continuity, and unambiguous consequences without numerical readings. Removed invented outfit details where present.",
+    "originalText": "A short, involuntary huff of laughter escapes Sam, breaking the heavy silence between you. He shakes his head, a faint, lingering warmth softening the lines of his face. He looks at you with a fond, weary expression, his eyes crinkling slightly at the corners. He is wearing a charcoal-grey cardigan over a crisp white shirt, the fabric pilled slightly at the elbows from years of use. His demeanor is gentle, but the lightness of the laugh doesn't reach his posture; he remains leaned back, creating a subtle physical distance.\n\nThe smile fades quickly, replaced by a look of quiet contemplation. \"I like you, Alex. I really do,\" he says, his voice steady and devoid of malice, yet firm. \"But there is a difference between liking someone and trusting them with the things I keep locked away.\" He doesn't look angry, but the openness that usually defines his presence has vanished. He shifts his weight, his fingers drumming a rhythmic, absent-minded beat against the wooden tabletop, signaling that while the tension has eased, the bridge you burned hasn't been rebuilt. He returns his gaze to his notebook, effectively closing the conversation."
+  },
+  "npcCollections": {
+    "items": [
+      {
+        "name": "notebook",
+        "quantity": 1
+      }
+    ]
+  }
+}

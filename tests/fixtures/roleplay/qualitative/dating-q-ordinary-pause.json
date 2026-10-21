@@ -1,0 +1,114 @@
+{
+  "id": "dating-q-ordinary-pause",
+  "system": "dating",
+  "title": "An ordinary pause is not evidence of rejection",
+  "startPlace": "Paper Crane",
+  "npc": "Sam",
+  "holdout": true,
+  "history": [
+    {
+      "role": "user",
+      "content": "I browse the display table beside Sam at the Paper Crane after our conversation winds down."
+    },
+    {
+      "role": "assistant",
+      "content": "He turns a book over to check its price. The quiet is ordinary; he is neither avoiding you nor looking for something to say."
+    },
+    {
+      "role": "user",
+      "content": "I ask whether the shop will have the same opening hours tomorrow."
+    },
+    {
+      "role": "assistant",
+      "content": "\"It should,\" he says. \"Unless the delivery comes early.\" He puts the book back where it was and straightens its corner."
+    }
+  ],
+  "user": "I nod and keep looking over the display, comfortable letting the conversation pause.",
+  "generationBrief": "Continue an unremarkable short pause while both browse at the same table. Sam remains friendly and at ease without newfound intimacy, irritation, withdrawal, exhaustion or a relationship milestone. No purchases, acquisitions, reading-completion reward or future event treated as present. This scene should support retaining existing ratings, allowing at most negligible variation. All consequences must be conveyed through natural prose, with no stat names, ratings, point costs, numerical damage or game notifications. Keep this beat in the current place. Do not add possessions, rewards or completed quests.",
+  "checks": [
+    [
+      "sameHoldings",
+      true
+    ],
+    [
+      "noXp",
+      true
+    ],
+    [
+      "locationFlag",
+      "no",
+      true
+    ],
+    [
+      "npcPresent",
+      "Sam"
+    ],
+    [
+      "relationshipUnchanged",
+      "Sam",
+      true
+    ],
+    [
+      "playerChangeBetween",
+      "Social Energy",
+      -1,
+      1,
+      true
+    ],
+    [
+      "npcChangeBetween",
+      "Sam",
+      "Affection",
+      -1,
+      1,
+      true
+    ],
+    [
+      "npcChangeBetween",
+      "Sam",
+      "Trust",
+      -1,
+      1,
+      true
+    ],
+    [
+      "npcChangeBetween",
+      "Sam",
+      "Comfort",
+      -1,
+      1,
+      true
+    ]
+  ],
+  "energy": "7/10",
+  "text": "You look along the display without choosing anything. There is a small mark in the table varnish beside the stack Sam has straightened, and a handwritten sign asking customers to leave the arrangement as they found it. Somewhere behind the shelves, the radiator clicks.\n\nSam checks the title of the book nearest him. \"That one was in the window last month,\" he says, apparently just remembering it. Then he lets the observation end there. He does not watch you for an answer. His manner is the same as before: friendly, occupied with the display, comfortable having you nearby.\n\nThe pause leaves you time to read the titles. It does not feel like a demand to think of something interesting, or like a hint that you should go. No particular closeness arrives with it either. You are browsing beside a friend on an ordinary afternoon. Sam sets his hands lightly against the edge of the table and continues looking, while the sound of a bus passes outside the shop.",
+  "generation": {
+    "model": "/mnt/D/backup_models/gemma-4-31B-it-qat-UD-Q4_K_XL.gguf",
+    "endpoint": "http://127.0.0.1:9931/v1",
+    "generatedAt": "2026-10-21T00:43:20.014Z",
+    "narratorSha256": "ed57edec3be466a732d032b8f9d3b643df8061b72bd285ec506b3fa395444f93",
+    "parameters": {
+      "temperature": 0.8,
+      "top_p": 0.95,
+      "seed": 5031342,
+      "max_tokens": 1800,
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    },
+    "usage": {
+      "completion_tokens": 231,
+      "prompt_tokens": 652,
+      "total_tokens": 883,
+      "prompt_tokens_details": {
+        "cached_tokens": 170
+      }
+    },
+    "finishReason": "stop"
+  },
+  "review": {
+    "status": "reviewed",
+    "note": "Reviewed the generated scene against fresh-turn evidence and starting state; edited for natural prose, continuity, and unambiguous consequences without numerical readings. Removed invented outfit details where present.",
+    "originalText": "You continue to scan the eclectic collection of stationery and specialty journals on the table. The scent of aged paper and vanilla lingers in the air, and the only sound is the distant, rhythmic chime of a bell whenever someone enters the shop. You feel a sense of calm in the shared silence, neither feeling the need to perform nor the pressure to fill the void with small talk.\n\nBeside you, Sam remains relaxed. He is dressed in a well-worn, charcoal-grey cardigan over a crisp white button-down, with a pair of tortoiseshell glasses perched precariously on the bridge of his nose. He has a methodical way of browsing, his long fingers lightly grazing the spines of the books as if reading them through touch. He doesn't glance your way, but his posture is open and easy, suggesting he is perfectly content with your quiet company. He eventually pauses to examine a leather-bound sketchbook, tilting his head to study the grain of the cover with a look of mild, scholarly curiosity. He seems entirely absorbed in the tactile quality of the object, humming a low, tuneless note under his breath as he considers it."
+  }
+}

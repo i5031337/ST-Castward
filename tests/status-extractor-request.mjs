@@ -17,6 +17,7 @@ function build(context) {
     return { request, events, usage };
 }
 const schema = { type: 'object' };
+const namedSchema = { name: 'castward_reader', value: schema, strict: true };
 const rawReply = { choices: [{ message: { content: '{"player":{}}' } }] };
 
 for (const usageKind of ['extraction', 'scan']) {
@@ -30,7 +31,7 @@ for (const usageKind of ['extraction', 'scan']) {
         await request('Prompt', schema, { extractionProfileId: 'custom', extractionTemperature: '0.2',
             extractionUseSchema: true, extractionMaxTokens: 400 }, 'System', { usageKind });
         assert.equal(received[2], 400);
-        assert.deepEqual(received[4], { temperature: 0.2, json_schema: schema,
+        assert.deepEqual(received[4], { temperature: 0.2, json_schema: namedSchema,
             custom_include_body: 'temperature: 0.9\nmax_tokens: 800', custom_exclude_body: '- temperature',
             custom_include_headers: 'X-Model: fixture-model' });
     });
@@ -56,7 +57,7 @@ test('successful selected connection preserves its configuration without warning
     assert.equal(received[0], 'reader');
     assert.equal(received[2], 500);
     assert.deepEqual(received[3], { extractData: true, includePreset: false });
-    assert.deepEqual(received[4], { json_schema: schema, temperature: 0.2 });
+    assert.deepEqual(received[4], { json_schema: namedSchema, temperature: 0.2 });
     assert.deepEqual(events, []);
     assert.equal(usage.length, 1);
 });
@@ -96,3 +97,44 @@ test('a failing main API still propagates its error after the fallback warning',
     assert.equal(events.length, 1);
     assert.equal(usage.length, 0);
 });
+
+for (const enabled of [false, true]) {
+    test(`schema toggle ${enabled} forwards the host wrapper consistently through profile and main API`, async () => {
+        let profilePayload, mainPayload;
+        const { request } = build({
+            ConnectionManagerRequestService: {
+                sendRequest: async (...args) => { profilePayload = args[4]; return { content: { player: {} } }; },
+            },
+            generateRawData: async payload => { mainPayload = payload; return enabled ? { player: {} } : rawReply; },
+        });
+        const settings = { extractionUseSchema: enabled };
+        await request('Prompt', schema, { ...settings, extractionProfileId: 'reader' });
+        await request('Prompt', schema, settings);
+        assert.deepEqual(profilePayload.json_schema, enabled ? namedSchema : undefined);
+        assert.deepEqual(mainPayload.jsonSchema, enabled ? namedSchema : null);
+        assert.deepEqual(schema, { type: 'object' });
+    });
+}
+
+test('selected connection fallback preserves the wrapped schema', async () => {
+    let received;
+    const { request } = build({
+        ConnectionManagerRequestService: { sendRequest: async () => { throw Error('Unavailable'); } },
+        generateRawData: async payload => { received = payload; return { player: {} }; },
+    });
+    await request('Prompt', schema, { extractionProfileId: 'reader', extractionUseSchema: true });
+    assert.deepEqual(received.jsonSchema, namedSchema);
+});
+
+for (const profileId of ['', 'reader']) {
+    test(`schema toggle without a schema sends no wrapper via ${profileId || 'main API'}`, async () => {
+        let payload;
+        const { request } = build({
+            ConnectionManagerRequestService: { sendRequest: async (...args) => { payload = args[4]; return { content: '{}' }; } },
+            generateRawData: async value => { payload = value; return rawReply; },
+        });
+        await request('Prompt', null, { extractionProfileId: profileId, extractionUseSchema: true });
+        assert.equal(payload.json_schema, undefined);
+        if (!profileId) assert.equal(payload.jsonSchema, null);
+    });
+}

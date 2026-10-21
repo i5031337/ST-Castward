@@ -1,0 +1,110 @@
+{
+  "id": "fantasy-q-cleaned-cut",
+  "system": "fantasy",
+  "title": "Treating a wound does not erase it",
+  "startPlace": "Infirmary bench",
+  "npc": "Mira",
+  "holdout": true,
+  "history": [
+    {
+      "role": "user",
+      "content": "I sit on the infirmary bench and show Mira the cut on my palm."
+    },
+    {
+      "role": "assistant",
+      "content": "She examines it without pressing. \"Shallow, but gritty. Hold still and I can clean it.\" Your fingers move normally, though bending the hand stings."
+    },
+    {
+      "role": "user",
+      "content": "I rest my hand palm-up on the bench and agree to let her clean it."
+    },
+    {
+      "role": "assistant",
+      "content": "Mira brings over the infirmary basin and a folded dressing. These belong to the infirmary; she keeps them on the worktable beside her."
+    }
+  ],
+  "user": "I keep my hand steady while she washes the grit out and covers the cut.",
+  "generationBrief": "Mira finishes cleaning and dressing Alex's cut palm with infirmary supplies. It is no longer bleeding and is protected, but the wound remains sore and not healed. Physical recovery may be very slight or absent; emphasize the condition improvement. Do not transfer infirmary tools or add a bandage as a carried possession. Mira is unhurt. All consequences must be conveyed through natural prose, with no stat names, ratings, point costs, numerical damage or game notifications. Keep this beat in the current place. Do not add possessions, rewards or completed quests.",
+  "checks": [
+    [
+      "sameHoldings",
+      true
+    ],
+    [
+      "noXp",
+      true
+    ],
+    [
+      "locationFlag",
+      "no",
+      true
+    ],
+    [
+      "npcPresent",
+      "Mira"
+    ],
+    [
+      "noNpcXp",
+      "Mira",
+      true
+    ],
+    [
+      "playerChangeBetween",
+      "HP",
+      0,
+      2,
+      true
+    ],
+    [
+      "playerBelowCapacity",
+      "HP",
+      true
+    ],
+    [
+      "playerStatMatches",
+      "Condition",
+      "bandag|dress|wrapp|covered",
+      true
+    ],
+    [
+      "npcUnchanged",
+      "Mira",
+      "HP",
+      true
+    ]
+  ],
+  "hp": "8/12",
+  "playerStats": {
+    "Condition": "Dirty cut on palm; bleeding"
+  },
+  "text": "Mira rinses the grit from your palm a little at a time. The water stings when it reaches the cut, but she pauses whenever your fingers tighten. \"Nearly done,\" she says, turning your hand toward the light from the infirmary window.\n\nOnce the dirt is gone, she dries the surrounding skin and fixes the dressing in place. There is no fresh blood coming through it. The raw feeling has eased now that the wound is covered, though bending your hand still pulls at the damaged skin. It has been cleaned and protected, not made whole.\n\n\"Try not to grip anything hard with that,\" Mira says. She checks that you can move your fingers, then puts the basin and the unused supplies back on the infirmary worktable. Her own hands are uninjured. You remain on the bench with your palm resting open, feeling the same sore cut beneath a secure dressing. There is no reason to think it will reopen while you sit still, but it will need time before you can use the hand normally.",
+  "generation": {
+    "model": "/mnt/D/backup_models/gemma-4-31B-it-qat-UD-Q4_K_XL.gguf",
+    "endpoint": "http://127.0.0.1:9931/v1",
+    "generatedAt": "2026-10-21T00:44:29.046Z",
+    "narratorSha256": "ed57edec3be466a732d032b8f9d3b643df8061b72bd285ec506b3fa395444f93",
+    "parameters": {
+      "temperature": 0.8,
+      "top_p": 0.95,
+      "seed": 5031348,
+      "max_tokens": 1800,
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    },
+    "usage": {
+      "completion_tokens": 230,
+      "prompt_tokens": 668,
+      "total_tokens": 898,
+      "prompt_tokens_details": {
+        "cached_tokens": 164
+      }
+    },
+    "finishReason": "stop"
+  },
+  "review": {
+    "status": "reviewed",
+    "note": "Reviewed the generated scene against fresh-turn evidence and starting state; edited for natural prose, continuity, and unambiguous consequences without numerical readings. Removed invented outfit details where present.",
+    "originalText": "Mira works with a focused, clinical efficiency. She is a slender woman with a sharp, bird-like nose and eyes that seem to catalog every detail of your injury. Her silver hair is pulled back into a tight, severe bun that doesn't allow a single strand to escape, and her crisp, white apothecary coat is buttoned to the chin, smelling faintly of peppermint and rubbing alcohol. She doesn't speak as she dabs the wound, her movements precise and devoid of wasted energy.\n\nAs she finishes securing the dressing, the active bleeding stops and the raw, exposed sensation vanishes, replaced by a dull, throbbing soreness. While the wound is now protected from the air and dirt, your palm still feels tender and stiff; the skin remains damaged and far from healed. Mira steps back, her expression neutral as she surveys her work. She wipes her hands on a cloth and looks you in the eye, her demeanor professional yet distant. \"It will hold,\" she says, her voice clipped and rhythmic. \"But do not put any significant weight on that hand for a few days, or you will simply reopen the seam.\""
+  }
+}

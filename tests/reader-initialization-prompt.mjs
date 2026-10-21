@@ -4,29 +4,27 @@ import { readFileSync } from 'node:fs';
 import { describeReaderStats } from '../src/tracker/stat-prompt-definitions.js';
 import { promptText } from '../src/prompts/prompt-texts.js';
 import { progressionFields } from '../src/tracker/progression-fields.js';
-import { numericDeltaNames, progressionXpName } from '../src/tracker/extractor/status-extractor-deltas.js';
 import { collectionQuantityField } from '../src/core/collection-fields.js';
 import { collectionAppliesTo } from '../src/core/collection-targets.js';
+import { isImageOnlyMessage } from '../src/tracker/ui/status-ui-placement.js';
 import { isPoolStat } from '../src/tracker/numeric-stat-bounds.js';
 import { SYSTEM_PROMPT } from '../src/core/constants-prompts.js';
 import { defaultPromptText, PROMPT_TEXTS } from '../src/prompts/prompt-texts.js';
 
-// Replace host-dependent imports while exercising the actual prompt builder.
+// Stub host imports, keeping the production prompt builder.
 const source = readFileSync(new URL('../src/tracker/extractor/status-extractor-prompt.js', import.meta.url), 'utf8')
     .replace(/^import\s+[\s\S]*?\s+from\s+['"][^'"]+['"];\s*/gm, '')
     .replaceAll('export function ', 'function ');
 function builder(templates, context = { chat: [] }, personaName = 'Alex', descriptions = {}) {
     const empty = () => '';
     return new Function('npcTemplates', 'npcStatsFor', 'describeReaderStats', 'promptText',
-        'describeCurrentState', 'describeAbsentButNamed', 'describeLimits', 'describeNumericDeltas',
-        'progressionXpName', 'describeNpcTemplates', 'strangerValues', 'describeCollections',
-        'buildDeltaExample', 'numericDeltaNames', 'isReaderStat', 'getCurrentPersonaName', 'getContext',
-        'progressionFields', 'collectionAppliesTo', 'collectionQuantityField', 'isPoolStat',
+        'describeCurrentState', 'describeAbsentButNamed', 'describeLimits', 'describeNpcTemplates', 'strangerValues', 'describeCollections',
+        'buildDeltaExample', 'isReaderStat', 'getCurrentPersonaName', 'getContext',
+        'progressionFields', 'collectionAppliesTo', 'collectionQuantityField', 'isPoolStat', 'isImageOnlyMessage',
         `${source}\nreturn { buildNewNpcExample, buildUserPrompt, collectLeadUp };`)(
         () => templates, (_actor, settings) => settings.npcStats || [], describeReaderStats, promptText,
-        descriptions.state || empty, empty, empty, descriptions.numericDeltas || empty,
-        progressionXpName, empty, () => ({}), descriptions.collections || (settings => settings.collections?.length ? 'Configured collections' : ''), empty, numericDeltaNames,
-        stat => !stat.locked, () => personaName, () => context, progressionFields, collectionAppliesTo, collectionQuantityField, isPoolStat);
+        descriptions.state || empty, empty, empty, empty, () => ({}), descriptions.collections || (settings => settings.collections?.length ? 'Configured collections' : ''), empty,
+        stat => !stat.locked, () => personaName, () => context, progressionFields, collectionAppliesTo, collectionQuantityField, isPoolStat, isImageOnlyMessage);
 }
 
 test('reader initialization includes locked field purposes, ranges and text choices', () => {
@@ -45,7 +43,7 @@ test('reader initialization includes locked field purposes, ranges and text choi
     assert.match(prompt, /filled fields outside the editable list provide context/);
 });
 
-test('battle reader permits prose-derived damage and records demonstrated abilities for existing NPCs', () => {
+test('reader infers damage and demonstrated NPC abilities', () => {
     const settings = { npcStats: [
         { name: 'HP', type: 'bar', defaultValue: '10/10', purpose: 'Health remaining' },
         { name: 'ATK', type: 'number', locked: true },
@@ -60,22 +58,21 @@ test('battle reader permits prose-derived damage and records demonstrated abilit
         + 'then uses Tackle, painfully knocking Mudkip onto the grass.';
     const prompt = builder([], { chat: [] }, 'Redd', {
         state: value => JSON.stringify(value),
-        numericDeltas: () => 'Mudkip: HP\nPoochyena: HP',
         collections: () => '- "moves" (Moves) for NPCs. Fields: Name [identifies the item]',
     }).buildUserPrompt(state, message, settings);
     assert.ok(prompt.includes(message));
     assert.match(prompt, /effect is clear but its amount is unstated/);
     assert.match(prompt, /Use the field's current scale for estimates/);
-    assert.match(prompt, /"characters\[\]\.deltas"/);
+    assert.match(prompt, /"characters\[\]\.stats"/);
     assert.match(prompt, /Add missing abilities or knowledge when demonstrated, including during a failed action/);
     assert.match(prompt, /Reusable entries stay held after use/);
     assert.match(prompt, /interpret resolved events/);
     assert.match(prompt, /Keep one entry per identifier/);
-    assert.match(prompt, /For a pool, report the change to its current amount/);
+    assert.match(prompt, /For an existing pool, keep its maximum/);
     assert.match(prompt, /Label estimated amounts and NPC initial estimates/);
 });
 
-test('system and inline prompts share general inference and ability discovery guidance', () => {
+test('system and inline inference guidance agrees', () => {
     assert.match(SYSTEM_PROMPT, /Report resolved events/);
     assert.match(SYSTEM_PROMPT, /Use earlier messages as context/);
     assert.match(SYSTEM_PROMPT, /Follow the output format in the request/);
@@ -86,9 +83,12 @@ test('system and inline prompts share general inference and ability discovery gu
     assert.match(inline, /Add missing abilities or knowledge when demonstrated, including during a failed action/);
     assert.match(inline, /Reusable entries stay held after use/);
     for (const text of [defaultPromptText('reader'), inline]) {
-        for (const path of ['global', 'globalDeltas', 'player.stats', 'player.deltas', 'characters[].stats', 'characters[].deltas']) {
+        for (const path of ['global', 'player.stats', 'characters[].stats']) {
             assert.ok(text.includes(`"${path}"`), path);
         }
+        assert.match(text, /Put all stat readings in these objects as JSON strings/);
+        assert.match(text, /Report the resulting absolute value, not the amount gained or lost/);
+        assert.doesNotMatch(text, /globalDeltas|player\.deltas|characters\[\]\.deltas|ELIGIBLE NUMERIC DELTAS/);
         assert.doesNotMatch(text, /level-up code|capacity growth|growth capacity limit|calculates remaining/);
     }
     for (const text of [SYSTEM_PROMPT, defaultPromptText('reader'), defaultPromptText('storyBlock')]) {
@@ -141,7 +141,7 @@ test('reader identifies the active player and labels history with player names',
     assert.match(renamed.buildUserPrompt({ characters: [] }, 'Hello.', {}), /Rhea is the player-controlled character/);
 });
 
-test('NPC example awards positive XP and excludes the automatic Level field', () => {
+test('NPC example adds earned XP to its absolute reading and excludes the automatic Level field', () => {
     const template = { id: 'fighter', statIds: ['xp', 'rank'], progression: {
         enabled: true, xpFieldId: 'xp', levelFieldId: 'rank',
     } };
@@ -152,12 +152,18 @@ test('NPC example awards positive XP and excludes the automatic Level field', ()
     const state = { characters: [{ name: 'Mira', npcTemplateId: 'fighter', stats: { Rank: '2', Experience: '20/100' } }] };
     const prompt = builder([template]).buildUserPrompt(state, 'Mira wins.', settings);
     const example = JSON.parse(prompt.split('Changed-reply example (illustrative changes):\n')[1].split('\n')[0]);
-    assert.deepEqual(example.characters[0].deltas, { Experience: 1 });
+    assert.deepEqual(example.characters[0].stats, { Experience: '21/100' });
     assert.match(prompt, /Player: "player\.stats"/);
-    assert.match(prompt, /World: "globalDeltas"/);
+    assert.match(prompt, /World: "global"/);
     assert.match(prompt, /New NPC example/);
     assert.match(prompt, /rumours, and routine conversation leave XP unchanged/);
     assert.match(prompt, /once per concrete accomplishment/);
+    for (const text of [prompt, promptText('storyBlock', { xpProgression: 'on' })]) {
+        assert.match(text, /report the total before that calculation/);
+        assert.match(text, /Keep the existing XP threshold, even when the total exceeds it/);
+        assert.match(text, /Omit existing configured level and level-bonus fields/);
+        assert.match(text, /A blank NPC level field may be initialized/);
+    }
     assert.match(promptText('storyBlock', { status: '{}', rules: '', xpProgression: 'on' }), /rumours, and routine conversation leave XP unchanged/);
     assert.doesNotMatch(prompt, /NPC INITIALIZATION TEMPLATE|a plain number stays a plain number/);
 });
@@ -174,7 +180,7 @@ test('new NPC example does not seed unsupported collection entries', () => {
     assert.match(prompt, /Use established possessions for a new NPC's starting items/);
 });
 
-test('recovery guidance covers every live player and NPC pool except progression counters', () => {
+test('recovery covers live pools, excluding progression', () => {
     const settings = { globalStats: [{ name: 'Ward Charge', type: 'number' }], playerStats: [
         { name: 'Social Energy', type: 'bar' }, { name: 'HP', type: 'number' },
         { name: 'Mana', type: 'bar' }, { name: 'XP', type: 'number' },
@@ -185,8 +191,8 @@ test('recovery guidance covers every live player and NPC pool except progression
         Mana: '1/6', XP: '90/100', Armor: '10', 'Locked Pool': '1/5' } },
     characters: [{ name: 'Mira', stats: { HP: '4/12', Mana: '3/6', Experience: '20/100' } }] };
     const prompt = builder([]).buildUserPrompt(state, 'Alex and Mira sleep soundly and wake refreshed.', settings);
-    for (const reading of ['World.Ward Charge 2/8 needs +6', 'Player.Social Energy 2/10 needs +8', 'Player.HP 5/12 needs +7',
-        'Player.Mana 1/6 needs +5', 'Mira.HP 4/12 needs +8', 'Mira.Mana 3/6 needs +3']) {
+    for (const reading of ['World.Ward Charge 2/8 can recover to 8/8', 'Player.Social Energy 2/10 can recover to 10/10', 'Player.HP 5/12 can recover to 12/12',
+        'Player.Mana 1/6 can recover to 6/6', 'Mira.HP 4/12 can recover to 12/12', 'Mira.Mana 3/6 can recover to 6/6']) {
         assert.ok(prompt.includes(reading), reading);
     }
     for (const excluded of ['Player.XP 90/100', 'Mira.Experience 20/100', 'Player.Armor', 'Player.Locked Pool']) {
@@ -194,7 +200,7 @@ test('recovery guidance covers every live player and NPC pool except progression
     }
     assert.match(prompt, /Match recovery to the affected owner and pools/);
     assert.match(prompt, /Sound sleep followed by waking refreshed/);
-    assert.match(prompt, /Use a smaller gain for partial recovery/);
+    assert.match(prompt, /Report an intermediate final reading for partial recovery/);
     const unrelated = builder([]).buildUserPrompt({ player: { stats: { Focus: '2' } }, characters: [] },
         'Alex rests.', { playerStats: [{ name: 'Focus', type: 'number' }] });
     assert.doesNotMatch(unrelated, /Sound sleep followed by waking refreshed/);
@@ -209,20 +215,20 @@ test('renamed XP thresholds are not mistaken for restorative pools', () => {
     const prompt = builder([]).buildUserPrompt({ player: { stats: {
         Insight: '3/9', Rank: '1', 'Spell Reserve': '1/6',
     } }, characters: [] }, 'Alex is renewed after sleep.', settings);
-    assert.match(prompt, /Player\.Spell Reserve 1\/6 needs \+5/);
-    assert.doesNotMatch(prompt, /Player\.Insight 3\/9 needs/);
+    assert.match(prompt, /Player\.Spell Reserve 1\/6 can recover to 6\/6/);
+    assert.doesNotMatch(prompt, /Player\.Insight 3\/9 can recover/);
 });
 
 test('configured health pools keep narrated injury from becoming only a text condition', () => {
     const settings = { playerStats: [{ name: 'Health', type: 'bar', purpose: 'Remaining bodily health' }] };
     const prompt = builder([]).buildUserPrompt({ player: { stats: { Health: '10/10' } }, characters: [] },
         'Alex falls and bruises a shoulder.', settings);
-    assert.match(prompt, /Report bodily injury as a decrease in player\.deltas\.Health/);
-    assert.match(prompt, /Report effective wound care or healing as an increase in that field/);
+    assert.match(prompt, /Report bodily injury as a lower resulting reading in player\.stats\.Health/);
+    assert.match(prompt, /Report effective wound care or healing as a higher resulting reading in that field/);
     assert.match(prompt, /Include any text condition change separately/);
 });
 
-test('current state includes filled locked readings as strings while omitting retired fields', () => {
+test('state preserves locked string readings, omits retired fields', () => {
     const stateSource = readFileSync(new URL('../src/tracker/extractor/status-extractor-prompt-state.js', import.meta.url), 'utf8')
         .replace(/^import\s+[\s\S]*?\s+from\s+['"][^'"]+['"];\s*/gm, '')
         .replaceAll('export function ', 'function ');
@@ -238,12 +244,12 @@ test('current state includes filled locked readings as strings while omitting re
 });
 
 
-test('reader groups definitions and state before evidence, with examples after the output contract', () => {
+test('reader orders definitions, state, evidence, output, examples', () => {
     const settings = { npcStats: [{ name: 'HP', type: 'number', defaultValue: '5/5' }] };
     const prompt = builder([], { chat: [] }, 'Alex', { state: () => '{}' }).buildUserPrompt(
         { characters: [] }, 'Mira arrives.', settings, ['Earlier context.']);
     const sections = ['### EVIDENCE RULES', '### CONFIGURED FIELDS', '### CURRENT STATE',
-        '### EARLIER MESSAGES', '### LATEST MESSAGE', '### OUTPUT FORMAT', 'No-change example:', 'New NPC example'];
+        '### EARLIER MESSAGES', '### LATEST ASSISTANT REPLY', '### OUTPUT FORMAT', 'No-change example:', 'New NPC example'];
     const positions = sections.map(section => prompt.indexOf(section));
     assert.ok(positions.every(index => index >= 0));
     assert.deepEqual(positions, [...positions].sort((a, b) => a - b));
@@ -258,7 +264,7 @@ test('changed reply uses the configured counted removal key and typed identifier
     assert.deepEqual(example.characters[0].collections.gear.remove, [{ code: 1, qty: 1 }]);
 });
 
-test('inline example uses numeric deltas and typed counted collection removals', () => {
+test('inline example uses absolute string readings and typed counted collection removals', () => {
     const inlineSource = readFileSync(new URL('../src/tracker/status-scene-prompt.js', import.meta.url), 'utf8')
         .replace(/^import\s+[\s\S]*?\s+from\s+['"][^'"]+['"];\s*/gm, '')
         .replaceAll('export function ', 'function ');
@@ -274,15 +280,15 @@ test('inline example uses numeric deltas and typed counted collection removals',
         collectionAppliesTo, collectionQuantityField, promptText)(deps);
     const example = JSON.parse(deps.getStatusExample().match(/<status_update>(.*)<\/status_update>/)[1]);
     assert.deepEqual(example.global, {});
-    assert.deepEqual(example.player, { deltas: { HP: -1 } });
+    assert.deepEqual(example.player, { stats: { HP: '4/10' } });
     assert.deepEqual(example.characters[0].collections.gear.remove, [{ code: 1, count: 1 }]);
 });
 
 
-test('injury guidance recognizes current numeric pools and respects reader permissions', () => {
+test('injury guidance respects pool types and permissions', () => {
     const prompt = stat => builder([]).buildUserPrompt({ player: { stats: { Health: '10/10' } }, characters: [] },
         'Alex is injured.', { playerStats: [{ name: 'Health', ...stat }] });
-    assert.match(prompt({ type: 'number', defaultValue: '10/10' }), /Report bodily injury as a decrease in player\.deltas\.Health/);
-    assert.doesNotMatch(prompt({ type: 'number', defaultValue: '10' }), /Report bodily injury as a decrease/);
-    assert.doesNotMatch(prompt({ type: 'number', defaultValue: '10/10', locked: true }), /Report bodily injury as a decrease/);
+    assert.match(prompt({ type: 'number', defaultValue: '10/10' }), /Report bodily injury as a lower resulting reading in player\.stats\.Health/);
+    assert.doesNotMatch(prompt({ type: 'number', defaultValue: '10' }), /Report bodily injury as a lower resulting reading/);
+    assert.doesNotMatch(prompt({ type: 'number', defaultValue: '10/10', locked: true }), /Report bodily injury as a lower resulting reading/);
 });

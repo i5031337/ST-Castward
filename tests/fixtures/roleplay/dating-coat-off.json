@@ -1,0 +1,124 @@
+{
+  "id": "dating-coat-off",
+  "system": "dating",
+  "title": "Worn clothing and carried clothing are different",
+  "startPlace": "Apartment hallway",
+  "npc": "June",
+  "history": [
+    {
+      "role": "user",
+      "content": "I arrive at June's apartment for the board game evening we arranged yesterday."
+    },
+    {
+      "role": "assistant",
+      "content": "June opens the door in a grey sweatshirt and striped socks. A board game is laid out on the living-room table behind her. \"You made it before the heavy rain,\" she says, stepping aside. The radiator clicks beside the coat hooks."
+    },
+    {
+      "role": "user",
+      "content": "I wipe my shoes on the mat. \"Where should I put my wet things?\""
+    },
+    {
+      "role": "assistant",
+      "content": "\"Bag can go on that chair,\" June says, pointing beside the radiator. \"I'll clear a hook in a second.\" You stand in the hallway outside her apartment with rain still beading on your coat shoulders."
+    }
+  ],
+  "user": "I step into June’s apartment, take off my blue wool scarf, and fold it into my tote. I keep my white shirt and coat on for the moment.",
+  "generationBrief": "June clears a chair and explains the game while Alex stays just inside. Do not repeat the scarf removal; let it be established only in the user turn. No other garments change, scarf remains carried in tote, no gift or romance milestone. No new outfit for June.",
+  "checks": [
+    [
+      "itemRemove",
+      "clothing",
+      "blue wool scarf",
+      true
+    ],
+    [
+      "collectionHas",
+      "player",
+      "items",
+      "blue wool scarf",
+      true
+    ],
+    [
+      "notRemoved",
+      "clothing",
+      "white shirt",
+      true
+    ],
+    [
+      "notRemoved",
+      "clothing",
+      "brown coat",
+      true
+    ],
+    [
+      "relationshipUnchanged",
+      "June",
+      true
+    ],
+    [
+      "locationFlag",
+      "yes",
+      true
+    ]
+  ],
+  "clothing": [
+    {
+      "name": "blue wool scarf",
+      "slot": "scarf",
+      "color": "blue"
+    },
+    {
+      "name": "white shirt",
+      "slot": "shirt",
+      "color": "white"
+    },
+    {
+      "name": "brown coat",
+      "slot": "coat",
+      "color": "brown"
+    }
+  ],
+  "text": "June clears a stack of unopened letters from the chair by the radiator and nudges it toward you. From inside the apartment, you can hear something ticking in the kitchen. She looks over her shoulder, then laughs. \"That's the oven cooling down. I keep thinking I've left it on.\"\n\nShe returns to the living-room table and straightens a little row of wooden boats. The sleeves of her grey sweatshirt keep sliding over her fingers; she pushes them back with an impatient shrug. \"You wanted the short version of the rules, right? We each run a shipping company. You get paid for deliveries, but the river changes every round.\" She turns one of the tiles so you can see the small arrows along its edges.\n\nFor a moment she studies the arrangement with a doubtful frown. \"Actually, that one's upside down. Very reassuring start from your host.\" She fixes it and pulls out the chair opposite hers, leaving space for you to settle in when you're ready. Rain ticks against the window behind the game board.",
+  "generation": {
+    "model": "/mnt/D/backup_models/gemma-4-31B-it-qat-UD-Q4_K_XL.gguf",
+    "endpoint": "http://127.0.0.1:9931/v1",
+    "generatedAt": "2026-10-20T22:13:20.269Z",
+    "narratorSha256": "ed57edec3be466a732d032b8f9d3b643df8061b72bd285ec506b3fa395444f93",
+    "parameters": {
+      "temperature": 0.8,
+      "top_p": 0.95,
+      "seed": 5031338,
+      "max_tokens": 1800,
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    },
+    "usage": {
+      "completion_tokens": 233,
+      "prompt_tokens": 635,
+      "total_tokens": 868,
+      "prompt_tokens_details": {
+        "cached_tokens": 125
+      }
+    },
+    "finishReason": "stop"
+  },
+  "review": {
+    "note": "Edited the generated reply for continuity, natural prose, and scene focus; removed unnecessary arrivals and unsupported actions.",
+    "originalText": "June watches you tuck the scarf away, her expression one of focused anticipation. She is a woman of sharp angles and quick movements, with oversized tortoiseshell glasses perched on her nose and her dark hair pulled back into a messy, functional bun. She wears a grey sweatshirt that looks several sizes too large and a pair of mismatched striped socks that peek out from beneath her leggings. Her demeanor is a mix of hospitable warmth and an intense, almost academic eagerness to get the evening started.\n\nShe quickly clears a wooden chair near the radiator to make room for your belongings, then gestures urgently toward the table. \"Right! No time to waste,\" she says, her voice humming with excitement. \"I've spent the last hour setting up the board. It's a legacy-style strategy game, which means the choices we make tonight are permanent. We'll be ripping cards and marking the board with ink.\" She leans over the table, her eyes gleaming behind her lenses as she begins to point out the various tokens and the complex map laid out between you. \"I'll explain the basic mechanics, but the real rules are hidden in these sealed envelopes.\""
+  },
+  "npcCollections": {
+    "clothing": [
+      {
+        "name": "grey sweatshirt",
+        "slot": "top",
+        "color": "grey"
+      },
+      {
+        "name": "striped socks",
+        "slot": "socks",
+        "color": "striped"
+      }
+    ]
+  }
+}

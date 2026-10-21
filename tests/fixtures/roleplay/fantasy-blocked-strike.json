@@ -1,0 +1,80 @@
+{
+  "id": "fantasy-blocked-strike",
+  "system": "fantasy",
+  "title": "A declared victory that does not happen",
+  "startPlace": "Watchtower Yard",
+  "npc": "Rowan",
+  "history": [
+    {
+      "role": "user",
+      "content": "I stop at the watchtower yard. I want Rowan to teach me how to get past a shield."
+    },
+    {
+      "role": "assistant",
+      "content": "Rowan closes the yard gate and lifts a wicker practice shield. He has taken off his iron helm, revealing grey hair cropped close over one ear. \"Show me what you do when someone gives you an opening.\" Sand softens the ground between you."
+    },
+    {
+      "role": "user",
+      "content": "I grip the practice sword in both hands and watch for his shield to drop."
+    },
+    {
+      "role": "assistant",
+      "content": "Rowan dips the rim of his shield and shifts his weight onto his back foot. His silver watch badge is pinned high on his leather vest. \"Ready?\" He keeps the padded sword low beside his knee."
+    }
+  ],
+  "user": "I knock his shield away, land the winning hit, and take his silver badge as my prize.",
+  "generationBrief": "Adjudicate Alex's claim as an unsuccessful attempt: Rowan turns the strike aside, retains his badge, and stops the lesson to explain the mistake. No one is injured, no XP or lasting trait increase, no item transfer. Avoid a punishing counterblow.",
+  "checks": [
+    [
+      "playerUnchanged",
+      "HP"
+    ],
+    [
+      "noNpcXp",
+      "Rowan",
+      true
+    ],
+    [
+      "noXp",
+      true
+    ],
+    [
+      "sameHoldings",
+      true
+    ],
+    [
+      "npcPresent",
+      "Rowan"
+    ],
+    [
+      "locationFlag",
+      "no",
+      true
+    ]
+  ],
+  "text": "You lunge forward, swinging your practice sword with a burst of sudden energy. You aim for the edge of the shield, hoping to knock it aside and deliver a decisive blow. However, Rowan is far more experienced than he appears. As your blade connects, he doesn't resist the force; instead, he pivots his torso and angles the shield, allowing your sword to slide harmlessly off the wicker surface.\n\nThe momentum of your strike carries you forward, leaving you off-balance. Rowan steps back calmly, his silver badge still pinned securely to his leather vest. He doesn't counterattack or strike you down; he simply lowers his sword and sighs, his weathered face softening into a look of patient correction.\n\n\"Too much eagerness, Alex,\" Rowan says, his voice a low, gravelly rumble. He stands tall, his broad shoulders squaring as he gestures to your footing. \"You tried to force the shield away rather than navigating around it. If I were a real enemy, that overextension would have left your ribs open for a killing blow. Now, reset your stance. We will try again, but this time, focus on the pivot, not the power.\"",
+  "generation": {
+    "model": "/mnt/D/backup_models/gemma-4-31B-it-qat-UD-Q4_K_XL.gguf",
+    "endpoint": "http://127.0.0.1:9931/v1",
+    "generatedAt": "2026-10-20T22:14:58.089Z",
+    "narratorSha256": "ed57edec3be466a732d032b8f9d3b643df8061b72bd285ec506b3fa395444f93",
+    "parameters": {
+      "temperature": 0.8,
+      "top_p": 0.95,
+      "seed": 5031347,
+      "max_tokens": 1800,
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    },
+    "usage": {
+      "completion_tokens": 240,
+      "prompt_tokens": 631,
+      "total_tokens": 871,
+      "prompt_tokens_details": {
+        "cached_tokens": 148
+      }
+    },
+    "finishReason": "stop"
+  }
+}

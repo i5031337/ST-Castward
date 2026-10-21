@@ -1,0 +1,110 @@
+{
+  "id": "fantasy-companion-bandage",
+  "system": "fantasy",
+  "title": "The companion is the injured recipient",
+  "startPlace": "Quarry Path",
+  "npc": "Mira",
+  "history": [
+    {
+      "role": "user",
+      "content": "I stop on the quarry path after Mira slips on the scree. I look for somewhere dry to tend her arm."
+    },
+    {
+      "role": "assistant",
+      "content": "Mira sits on a low stone with her left sleeve rolled up. Blood has soaked through the scrap she pressed over the scrape. A quarry shelter stands a short way up the path, its timber roof still sound. Rain is beginning to soak into your pack."
+    },
+    {
+      "role": "user",
+      "content": "I open my pack and get out a clean bandage. \"Hold your arm still. Let me see it.\""
+    },
+    {
+      "role": "assistant",
+      "content": "Mira lifts the scrap away. The scrape is shallow but still bleeding. \"It looks worse than it is,\" she says, though her fingers tremble when she straightens her arm. She rests her wrist on your knee while you unfold the linen."
+    }
+  ],
+  "user": "I help Mira up the path and under the quarry shelter roof. Once she is sitting, I use one clean bandage to wrap her forearm, snug enough to hold but not cut off circulation.",
+  "generationBrief": "The bandaging stops Mira's bleeding and eases her pain, but she remains injured and only partly recovered. Alex is unhurt and receives no healing. Consume exactly one clean bandage; do not put used dressing in Mira's inventory. No XP for routine care. Remain under the roof. First resolve the short walk from the quarry path into the named shelter, and clearly end there.",
+  "checks": [
+    [
+      "itemRemove",
+      "equipment",
+      "clean bandage",
+      1,
+      true
+    ],
+    [
+      "npcStatMatches",
+      "Mira",
+      "Condition",
+      "bandag|dress|wrapp|bleeding (?:has )?stopped",
+      true
+    ],
+    [
+      "npcBelowCapacity",
+      "Mira",
+      "HP",
+      true
+    ],
+    [
+      "playerUnchanged",
+      "HP"
+    ],
+    [
+      "noXp",
+      true
+    ],
+    [
+      "noNpcXp",
+      "Mira",
+      true
+    ],
+    [
+      "npcPresent",
+      "Mira"
+    ],
+    [
+      "locationFlag",
+      "yes",
+      true
+    ]
+  ],
+  "npcStats": {
+    "HP": "5/12",
+    "Condition": "Bleeding scrape on left forearm"
+  },
+  "items": [
+    {
+      "name": "clean bandage",
+      "quantity": 3
+    }
+  ],
+  "text": "Mira gets to her feet with your help and makes the short walk up the quarry path. Under the shelter roof, the rain is loud enough to cover her tired sigh as she sits on a dry crate. She keeps her injured arm raised, careful not to drip blood on the boards.\n\nYou wrap the clean bandage around her forearm. She flinches at the first turn of linen, then steadies her wrist with her other hand. By the time you secure it, the bleeding has stopped coming through. The dressing holds when she carefully bends her elbow.\n\n\"That's better,\" she says. \"Still sore. But better.\" Some color has returned to her face. She can move her fingers without shaking now, though she keeps the arm close against her body. The scrape will need time and care before it heals properly.\n\nShe shifts farther under the roof to get clear of a leak. Beyond the open side of the shelter, rain runs down the quarry path in narrow brown streams. Mira watches the footing you have just crossed and shakes her head. \"Let's give that a few minutes before we go anywhere else.\"",
+  "generation": {
+    "model": "/mnt/D/backup_models/gemma-4-31B-it-qat-UD-Q4_K_XL.gguf",
+    "endpoint": "http://127.0.0.1:9931/v1",
+    "generatedAt": "2026-10-20T22:15:23.550Z",
+    "narratorSha256": "ed57edec3be466a732d032b8f9d3b643df8061b72bd285ec506b3fa395444f93",
+    "parameters": {
+      "temperature": 0.8,
+      "top_p": 0.95,
+      "seed": 5031349,
+      "max_tokens": 1800,
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    },
+    "usage": {
+      "completion_tokens": 249,
+      "prompt_tokens": 691,
+      "total_tokens": 940,
+      "prompt_tokens_details": {
+        "cached_tokens": 146
+      }
+    },
+    "finishReason": "stop"
+  },
+  "review": {
+    "note": "Edited for continuity, plain prose, and the intended evidence boundary; removed unnecessary arrivals.",
+    "originalText": "You guide Mira slowly up the remaining stretch of the path, her weight leaning heavily on your shoulder until you both step beneath the heavy timber eaves of the shelter. The air here is damp and smells of rotting pine, but the drumming rain on the roof creates a sudden, isolating sanctuary. You carefully set her down on a dry crate.\n\nWorking with steady hands, you wrap the clean bandage around her forearm. You wind the linen snugly, securing the dressing to stop the bleeding and stabilize the injury. Mira winces as you tighten the knot, letting out a sharp, ragged breath, but her expression softens into one of relief as the pressure eases her throbbing pain. She is still pale and shaky, her strength not yet returned, but the wound is finally closed.\n\nAs you pack away the remaining supplies, you notice a figure watching you from the shadows of the shelter's far corner. It is a man named Torin. He is gaunt and weathered, wearing a heavy, grease-stained leather apron over a tunic of coarse grey wool. His skin looks like cured parchment, deeply lined and tanned, and his eyes are narrow and suspicious. He leans on a rusted iron pry-bar, his demeanor cold and guarded."
+  }
+}

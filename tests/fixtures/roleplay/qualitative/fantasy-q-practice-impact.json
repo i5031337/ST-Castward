@@ -1,0 +1,114 @@
+{
+  "id": "fantasy-q-practice-impact",
+  "system": "fantasy",
+  "title": "A blocked blow can still leave a bruise",
+  "startPlace": "Keep practice room",
+  "npc": "Rowan",
+  "holdout": true,
+  "history": [
+    {
+      "role": "user",
+      "content": "I meet Rowan in the keep practice room for a lesson in holding a shield."
+    },
+    {
+      "role": "assistant",
+      "content": "Rowan takes a padded staff from the rack. \"Keep your elbow loose. We stop as soon as you need to.\" The practice room door is shut against the morning cold."
+    },
+    {
+      "role": "user",
+      "content": "I raise the wooden practice shield already strapped to my arm and ask him to try a slow strike."
+    },
+    {
+      "role": "assistant",
+      "content": "He taps the rim, checking your stance rather than attacking. The shield holds steady. \"Ready?\" he asks, stepping back onto the worn chalk line."
+    }
+  ],
+  "user": "I nod and brace for the next strike, trying to keep the shield level.",
+  "generationBrief": "Rowan lands a controlled but poorly absorbed practice strike on the shield. The rim knocks Alex painfully against the upper arm, leaving a fresh bruise and lingering soreness, but Alex can still move the arm normally. Rowan stops immediately. He is unhurt. This is an interrupted lesson, not a victory. The shield remains strapped on. All consequences must be conveyed through natural prose, with no stat names, ratings, point costs, numerical damage or game notifications. Keep this beat in the current place. Do not add possessions, rewards or completed quests.",
+  "checks": [
+    [
+      "sameHoldings",
+      true
+    ],
+    [
+      "noXp",
+      true
+    ],
+    [
+      "locationFlag",
+      "no",
+      true
+    ],
+    [
+      "npcPresent",
+      "Rowan"
+    ],
+    [
+      "noNpcXp",
+      "Rowan",
+      true
+    ],
+    [
+      "playerChangeBetween",
+      "HP",
+      -4,
+      -1,
+      true
+    ],
+    [
+      "npcUnchanged",
+      "Rowan",
+      "HP",
+      true
+    ],
+    [
+      "playerUnchanged",
+      "Mana",
+      true
+    ],
+    [
+      "playerBelowCapacity",
+      "HP",
+      true
+    ]
+  ],
+  "items": [
+    {
+      "name": "wooden practice shield",
+      "quantity": 1
+    }
+  ],
+  "npcStats": {
+    "Condition": "Healthy"
+  },
+  "text": "Rowan brings the padded staff down toward the shield. You catch the strike, but the angle is wrong: the rim tips inward and knocks hard against your upper arm. The pain is sharp enough to make you draw a breath through your teeth.\n\nHe stops at once and lowers the staff. \"That's enough for now. Let me see how you're holding it.\" The shield is still strapped to your arm. When you move it, you can feel a sore patch forming where the edge struck, and a bruise is beginning to show. You can bend the elbow and lift the hand normally, but the impact has left a painful reminder.\n\nRowan stays on his side of the chalk line, unharmed. \"I should have slowed that down,\" he says. He waits rather than offering another strike. The practice room has gone quiet again. You are still standing where you began, with the shield on your arm and a fresh ache that makes the prospect of resuming the lesson less appealing.",
+  "generation": {
+    "model": "/mnt/D/backup_models/gemma-4-31B-it-qat-UD-Q4_K_XL.gguf",
+    "endpoint": "http://127.0.0.1:9931/v1",
+    "generatedAt": "2026-10-21T00:45:27.999Z",
+    "narratorSha256": "ed57edec3be466a732d032b8f9d3b643df8061b72bd285ec506b3fa395444f93",
+    "parameters": {
+      "temperature": 0.8,
+      "top_p": 0.95,
+      "seed": 5031353,
+      "max_tokens": 1800,
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    },
+    "usage": {
+      "completion_tokens": 237,
+      "prompt_tokens": 673,
+      "total_tokens": 910,
+      "prompt_tokens_details": {
+        "cached_tokens": 159
+      }
+    },
+    "finishReason": "stop"
+  },
+  "review": {
+    "status": "reviewed",
+    "note": "Reviewed the generated scene against fresh-turn evidence and starting state; edited for natural prose, continuity, and unambiguous consequences without numerical readings. Removed invented outfit details where present.",
+    "originalText": "Rowan lunges forward, his movements a blur of disciplined grace. He delivers a controlled strike with the padded staff, but you aren't quite positioned to absorb the impact. The rim of the wooden shield catches the blow at an awkward angle, jarring your entire frame. The force knocks the shield backward, slamming the hard edge painfully against your upper arm. \n\nA sharp sting radiates through your shoulder, and you feel a dull, lingering soreness bloom beneath your tunic. Though your arm still moves and the shield remains strapped tight, the shock leaves you momentarily breathless. Rowan stops instantly, pulling his staff back with a look of concern.\n\nHe stands before you, his lean frame poised and alert. He is dressed in a simple, sweat-stained linen tunic and dark trousers tucked into worn leather boots. His eyes, sharp and observant, narrow as he assesses your reaction. Rowan’s demeanor is that of a perfectionist; he doesn't offer a platitude, but his voice is calm as he waits to see if you can recover your footing. This was meant to be a lesson in endurance, but the strike was clumsy, leaving you nursing a fresh bruise."
+  }
+}

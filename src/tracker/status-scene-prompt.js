@@ -70,12 +70,17 @@ function getStatusExample() {
 
     const statExample = (definitions, values, progression) => {
         const stat = (definitions || []).find(def => def?.name && isReaderStat(def)
-            && (!progression.enabled || def.name !== progression.levelName));
+            && (!progression.enabled || def.name !== progression.levelName)
+            && def.name.toLowerCase() !== 'level bonus');
         if (!stat) return {};
-        if (progression.enabled && stat.name === progression.xpName) return { deltas: { [stat.name]: 1 } };
-        const numeric = ['number', 'bar'].includes(stat.type);
-        return numeric && String(values?.[stat.name] ?? '').trim()
-            ? { deltas: { [stat.name]: -1 } } : { stats: { [stat.name]: '<new value>' } };
+        const held = Object.entries(values || {}).find(([name]) => name.toLowerCase() === stat.name.toLowerCase())?.[1];
+        const match = String(held ?? '').match(/^\s*(-?\d+(?:\.\d+)?)(?:\s*\/\s*(-?\d+(?:\.\d+)?))?\s*$/);
+        if (!match) return { stats: { [stat.name]: '<new value>' } };
+        const current = Number(match[1]);
+        const earnedXp = progression.enabled && stat.name === progression.xpName;
+        const next = earnedXp ? current + 1 : current > 0 ? current - 1 : current + 1;
+        const reading = `${Number(next.toPrecision(12))}${match[2] === undefined ? '' : `/${match[2]}`}`;
+        return { stats: { [stat.name]: reading } };
     };
     const player = statExample(settings.playerStats, state.player?.stats,
         progressionFields(settings, { isPlayer: true }));

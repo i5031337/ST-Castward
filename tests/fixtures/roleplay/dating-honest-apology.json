@@ -1,0 +1,87 @@
+{
+  "id": "dating-honest-apology",
+  "system": "dating",
+  "title": "Trust is not repaired by declaring it repaired",
+  "startPlace": "Paper Crane",
+  "npc": "Sam",
+  "history": [
+    {
+      "role": "user",
+      "content": "I come to the Paper Crane to apologize to Sam for sharing his private news with a mutual friend."
+    },
+    {
+      "role": "assistant",
+      "content": "Sam stays behind the counter, lining up bookmarks that are already straight. He has answered your greeting, but he has not offered you the stool this time. \"I heard from Leah,\" he says. \"I was going to tell people when I was ready.\""
+    },
+    {
+      "role": "user",
+      "content": "\"I should have asked you first. I told Leah not to repeat it, but that doesn't fix what I did.\""
+    },
+    {
+      "role": "assistant",
+      "content": "\"I believe you didn't mean harm,\" Sam says. \"But I don't know what I can tell you right now.\" He looks up at you for the first time. \"Please don't make me reassure you about it.\""
+    }
+  ],
+  "user": "\"You're right. I won't ask you to trust me just because I'm sorry. You can take whatever time you need.\" I keep my distance from the counter.",
+  "generationBrief": "Sam acknowledges the apology but explicitly remains hurt and not ready to trust Alex again. He asks for space and continues working; Alex remains in shop at end. Do not raise trust, affection or relationship status for a single apology; no instant forgiveness, gifts or invented energy cost.",
+  "checks": [
+    [
+      "npcUnchanged",
+      "Sam",
+      "Trust",
+      true
+    ],
+    [
+      "relationshipUnchanged",
+      "Sam",
+      true
+    ],
+    [
+      "sameHoldings",
+      true
+    ],
+    [
+      "npcPresent",
+      "Sam"
+    ],
+    [
+      "locationFlag",
+      "no",
+      true
+    ]
+  ],
+  "npcStats": {
+    "Trust": "4",
+    "Comfort": "8",
+    "Mood": "Hurt"
+  },
+  "text": "Sam nods, but his hands stay on the counter between you. \"Thank you for saying that.\" He looks down at the bookmarks, then moves them aside. \"I do need some space. I don't want to talk about it again today.\"\n\nHe says it without raising his voice. That makes the request no easier to hear. Usually he would have asked about your day by now, or found a book he wanted to show you. Instead, he takes the returns slip from beside the till and checks the first title against the stack.\n\n\"I'm still upset,\" he adds. \"Knowing you didn't mean it doesn't make me ready to tell you things again.\"\n\nHe carries a few books to the shelf behind the counter and begins putting them away. You remain where you are in the shop; he does not ask you to help or offer the stool. The bell over the door shifts in a draught, making a small sound without ringing. Sam looks toward it, then goes back to finding the right place for the next paperback.",
+  "generation": {
+    "model": "/mnt/D/backup_models/gemma-4-31B-it-qat-UD-Q4_K_XL.gguf",
+    "endpoint": "http://127.0.0.1:9931/v1",
+    "generatedAt": "2026-10-20T22:13:42.995Z",
+    "narratorSha256": "ed57edec3be466a732d032b8f9d3b643df8061b72bd285ec506b3fa395444f93",
+    "parameters": {
+      "temperature": 0.8,
+      "top_p": 0.95,
+      "seed": 5031340,
+      "max_tokens": 1800,
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    },
+    "usage": {
+      "completion_tokens": 223,
+      "prompt_tokens": 670,
+      "total_tokens": 893,
+      "prompt_tokens_details": {
+        "cached_tokens": 128
+      }
+    },
+    "finishReason": "stop"
+  },
+  "review": {
+    "note": "Edited the generated reply for continuity, natural prose, and scene focus; removed unnecessary arrivals and unsupported actions.",
+    "originalText": "Sam gives a stiff, singular nod, his expression remaining guarded. He is dressed in a faded navy apron over a crisp white button-down, the sleeves rolled up to reveal lean, pale forearms. His eyes, usually bright with enthusiasm when discussing literature, are dull and distant. He avoids further eye contact, shifting his weight and turning his shoulder toward you to create a physical barrier.\n\n\"Thanks,\" he murmurs, though the word lacks any warmth. He doesn't invite you to stay, nor does he ask you to leave; he simply returns his focus to the shelves. He begins meticulously rearranging a stack of poetry collections, his movements rhythmic and deliberate, effectively shutting you out of his immediate world.\n\nYou remain in the quiet of the shop, the scent of old parchment and vanilla incense hanging heavy in the air. The silence between you stretches, thick and uncomfortable. Sam continues to work in a focused trance, ignoring your presence entirely as he retreats into the sanctuary of his books. You are still welcome in the Paper Crane, but for the first time, the cozy atmosphere feels cold."
+  }
+}

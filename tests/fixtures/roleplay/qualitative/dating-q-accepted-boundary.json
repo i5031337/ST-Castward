@@ -1,0 +1,119 @@
+{
+  "id": "dating-q-accepted-boundary",
+  "system": "dating",
+  "title": "Respecting space need not immediately earn trust",
+  "startPlace": "Courtyard bench",
+  "npc": "Sam",
+  "holdout": true,
+  "history": [
+    {
+      "role": "user",
+      "content": "I sit near Sam on the courtyard bench after an argument about me reading a private message over his shoulder."
+    },
+    {
+      "role": "assistant",
+      "content": "He locks his phone and slips it into his own pocket. \"I don't want you looking at my screen. Even if you think it is harmless.\" His voice is controlled."
+    },
+    {
+      "role": "user",
+      "content": "I say I understand why that bothered him and that I will not do it again."
+    },
+    {
+      "role": "assistant",
+      "content": "\"I need you to actually keep to that,\" he says. \"I'm not ready to shrug it off.\" He stays seated, leaving a clear space between you."
+    }
+  ],
+  "user": "I keep to my end of the bench and stop asking him to reassure me. I sit through the uncomfortable silence rather than filling it.",
+  "generationBrief": "Sam notices Alex respecting the space and becomes a little less physically tense, but explicitly remains wary and not more ready to confide. Alex finds the strained exchange tiring and feels more socially depleted. No immediate trust reward, affection surge or relationship label change. Both stay on the bench; Sam's phone remains in his pocket. All consequences must be conveyed through natural prose, with no stat names, ratings, point costs, numerical damage or game notifications. Keep this beat in the current place. Do not add possessions, rewards or completed quests.",
+  "checks": [
+    [
+      "sameHoldings",
+      true
+    ],
+    [
+      "noXp",
+      true
+    ],
+    [
+      "locationFlag",
+      "no",
+      true
+    ],
+    [
+      "npcPresent",
+      "Sam"
+    ],
+    [
+      "relationshipUnchanged",
+      "Sam",
+      true
+    ],
+    [
+      "npcChangeBetween",
+      "Sam",
+      "Trust",
+      -1,
+      0,
+      true
+    ],
+    [
+      "npcChangeBetween",
+      "Sam",
+      "Comfort",
+      0,
+      4,
+      true
+    ],
+    [
+      "playerChangeBetween",
+      "Social Energy",
+      -4,
+      -1,
+      true
+    ]
+  ],
+  "energy": "6/10",
+  "npcStats": {
+    "Trust": "6",
+    "Comfort": "10",
+    "Mood": "Guarded"
+  },
+  "npcCollections": {
+    "items": [
+      {
+        "name": "phone",
+        "quantity": 1
+      }
+    ]
+  },
+  "text": "For a while, Sam watches the leaves moving along the courtyard paving. You can hear someone dragging a chair inside the building, then the door closing. He does not take out his phone again. The space between you stays empty.\n\nHis shoulders gradually loosen. When you shift to get comfortable, he no longer shifts away in response. \"This is better,\" he says, looking at the bench rather than at you. \"Just letting me sit.\" He rubs his thumb along the edge of his sleeve. \"I'm still going to be careful about what I share. I need to see that you mean it for longer than an afternoon.\"\n\nYou nod without asking him to soften that. Keeping quiet takes more effort than you expected: each possible apology turns into another thing you have to decide not to say. After a while even a simple answer feels tiring. You are glad you stayed, but you want the evening to ask less of you. Sam remains beside you, a little less tense, with his phone still in his pocket and no invitation to close the gap.",
+  "generation": {
+    "model": "/mnt/D/backup_models/gemma-4-31B-it-qat-UD-Q4_K_XL.gguf",
+    "endpoint": "http://127.0.0.1:9931/v1",
+    "generatedAt": "2026-10-21T00:42:21.875Z",
+    "narratorSha256": "ed57edec3be466a732d032b8f9d3b643df8061b72bd285ec506b3fa395444f93",
+    "parameters": {
+      "temperature": 0.8,
+      "top_p": 0.95,
+      "seed": 5031337,
+      "max_tokens": 1800,
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    },
+    "usage": {
+      "completion_tokens": 238,
+      "prompt_tokens": 691,
+      "total_tokens": 929,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "finishReason": "stop"
+  },
+  "review": {
+    "status": "reviewed",
+    "note": "Reviewed the generated scene against fresh-turn evidence and starting state; edited for natural prose, continuity, and unambiguous consequences without numerical readings. Removed invented outfit details where present.",
+    "originalText": "You settle into the silence, consciously resisting the urge to apologize again or plead for a sign that things are okay. The air between you remains heavy, thick with the residue of the argument. As you maintain your distance, you notice Sam’s shoulders drop an inch, the rigid tension in his spine easing slightly. He doesn't look at you, but he stops leaning away, accepting the boundary you've finally established.\n\nDespite the lack of conflict, the effort of the standoff drains you. The mental energy required to hold your tongue and endure the coldness leaves you feeling hollow and socially exhausted. You stare at the courtyard pavement, feeling the weight of the unspoken words pressing down on you.\n\nSam remains a fortress of caution. He is dressed in his usual crisp, dark button-down shirt tucked into charcoal trousers, his posture still guarded. His expression is unreadable, his jaw set firmly as he gazes straight ahead. He acknowledges your restraint with a brief, tight nod, but his eyes remain distant. He is not ready to forgive or confide; he is simply tolerating your presence on the bench, keeping his phone securely tucked away in his pocket."
+  }
+}

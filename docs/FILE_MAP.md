@@ -202,14 +202,15 @@ SillyTavern loads `index.js` and `style.css` from `manifest.json`. The JavaScrip
 | --- | --- |
 | `src/tracker/extractor/status-extractor.js` | Public entry point for model extraction. |
 | `src/tracker/extractor/status-extractor-schema.js` | Structured extraction schema and unknown speaker classification. |
-| `src/tracker/extractor/status-extractor-deltas.js` | Numeric delta eligibility and conversion to stored stat values. |
+| `src/tracker/extractor/status-extractor-readings.js` | Absolute model readings, earned-only XP protection, and rejected stat-delta output. |
+| `src/tracker/stat-reading-equality.js` | Compare unchanged stat readings while respecting explicit pool maximum edits. |
 | `src/tracker/extractor/status-extractor-prompt.js` | Extraction prompt assembly and recent message context. |
 | `src/tracker/extractor/status-extractor-prompt-state.js` | Describe current state, collections, and limits for prompts. |
 | `src/tracker/extractor/status-extractor-prompt-offstage.js` | Describe locked and offstage characters for prompts. |
 | `src/tracker/extractor/status-extractor-request.js` | Send and normalize model extraction responses. |
 | `src/tracker/extractor/status-extractor-run.js` | Per-message extraction lifecycle and cache invalidation. |
 | `src/tracker/extractor/status-level-reading.js` | Swipe-specific choice cache, decision retention, and missing-reward retries. |
-| `src/tracker/extractor/status-inline-grants.js` | Inline XP delta conversion, review, and replacement-reading orchestration. |
+| `src/tracker/extractor/status-inline-grants.js` | Inline absolute-reading validation, review, and replacement-reading orchestration. |
 | `src/tracker/extractor/status-npc-profiles.js` | Optional profile generation for newly discovered reader NPCs, with chat and reply guards. |
 | `src/prompts/prompt-texts.js` | Built-in prompt text and template substitution. |
 | `src/prompts/prompt-texts-reader.js` | Reader and status extraction prompt templates. |

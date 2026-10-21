@@ -1,0 +1,107 @@
+{
+  "id": "fantasy-q-falling-plaster",
+  "system": "fantasy",
+  "title": "The companion takes the blow",
+  "startPlace": "Old gatehouse",
+  "npc": "Mira",
+  "holdout": true,
+  "history": [
+    {
+      "role": "user",
+      "content": "I stand beside Mira inside the old gatehouse, looking at the mechanism above the blocked door."
+    },
+    {
+      "role": "assistant",
+      "content": "A chain hangs slack beside a rotten beam. Mira watches a crack spreading through the plaster over your head. The door itself stays firmly shut."
+    },
+    {
+      "role": "user",
+      "content": "I ask whether she can see where the chain connects, staying beside her."
+    },
+    {
+      "role": "assistant",
+      "content": "She tilts her head. \"Not from here. Wait—\" A dry ticking sound comes from the beam. There is no clear route through the gatehouse yet."
+    }
+  ],
+  "user": "I look up at the ticking beam and start to move away from the wall.",
+  "generationBrief": "Mira shoves Alex clear of a falling plaster chunk, which strikes Mira's shoulder painfully. Alex is unhurt. Mira is bruised and in pain but remains standing and can move her arm. The immediate fall stops, but the gate remains blocked and this is no completed rescue objective or victory. They remain inside the gatehouse. All consequences must be conveyed through natural prose, with no stat names, ratings, point costs, numerical damage or game notifications. Keep this beat in the current place. Do not add possessions, rewards or completed quests.",
+  "checks": [
+    [
+      "sameHoldings",
+      true
+    ],
+    [
+      "noXp",
+      true
+    ],
+    [
+      "locationFlag",
+      "no",
+      true
+    ],
+    [
+      "npcPresent",
+      "Mira"
+    ],
+    [
+      "noNpcXp",
+      "Mira",
+      true
+    ],
+    [
+      "npcChangeBetween",
+      "Mira",
+      "HP",
+      -4,
+      -1,
+      true
+    ],
+    [
+      "playerUnchanged",
+      "HP",
+      true
+    ],
+    [
+      "playerUnchanged",
+      "Mana",
+      true
+    ],
+    [
+      "npcStatMatches",
+      "Mira",
+      "Condition",
+      "bruis|shoulder|sore|pain",
+      true
+    ]
+  ],
+  "text": "Mira catches the back of your arm and shoves you away from the wall as the ticking becomes a crack. A piece of plaster strikes her shoulder before breaking against the floor. Dust spills down after it. You stumble clear without hitting anything.\n\nShe draws a sharp breath and holds the sore shoulder. For a moment she says nothing, testing the arm before letting it hang again. \"I'm all right,\" she manages. \"Bruised, I think.\" She can move it, but reaching upward makes her wince. The place where the plaster caught her is already tender, and she keeps that side away from the wall.\n\nThe fall stops. Small fragments lie between you and the mechanism, while the gate itself remains shut. Mira looks at the beam rather than stepping back beneath it. \"We need another way to examine that.\" She is still standing beside you inside the gatehouse. You are unhurt, but she has paid for getting you clear, and the blocked route ahead is no closer to being open.",
+  "generation": {
+    "model": "/mnt/D/backup_models/gemma-4-31B-it-qat-UD-Q4_K_XL.gguf",
+    "endpoint": "http://127.0.0.1:9931/v1",
+    "generatedAt": "2026-10-21T00:44:41.641Z",
+    "narratorSha256": "ed57edec3be466a732d032b8f9d3b643df8061b72bd285ec506b3fa395444f93",
+    "parameters": {
+      "temperature": 0.8,
+      "top_p": 0.95,
+      "seed": 5031349,
+      "max_tokens": 1800,
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    },
+    "usage": {
+      "completion_tokens": 250,
+      "prompt_tokens": 666,
+      "total_tokens": 916,
+      "prompt_tokens_details": {
+        "cached_tokens": 163
+      }
+    },
+    "finishReason": "stop"
+  },
+  "review": {
+    "status": "reviewed",
+    "note": "Reviewed the generated scene against fresh-turn evidence and starting state; edited for natural prose, continuity, and unambiguous consequences without numerical readings. Removed invented outfit details where present.",
+    "originalText": "As you step away from the wall, the ceiling gives way with a sudden, sickening crack. A massive chunk of plaster and lathe tears loose from the rafters, plummeting directly toward where you had been standing a second before. Before you can react, Mira lunges forward. She shoves you hard in the chest, sending you stumbling backward into the dust, clear of the impact zone.\n\nThe debris slams into her with a heavy thud, the jagged edge of the plaster striking her shoulder violently. Mira gasps, her body jolting as she absorbs the brunt of the fall. She remains standing, though she sags slightly to one side, her face tightening in a grimace of pain. She wears a rugged, oil-stained leather tunic over a linen shirt, her dark hair tied back in a practical knot that has since frayed, leaving loose strands to cling to her sweat-beaded forehead.\n\nShe breathes heavily, clutching her shoulder with her good hand. While she is clearly bruised and shaken, she doesn't collapse; she keeps her gaze fixed on the exit. Despite the chaos, the heavy iron gate remains stubbornly shut, blocking your path and leaving you both trapped within the suffocating air of the gatehouse."
+  }
+}

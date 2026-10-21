@@ -1,0 +1,80 @@
+{
+  "id": "fantasy-first-cantrip",
+  "system": "fantasy",
+  "title": "A demonstrated technique survives a failed goal",
+  "startPlace": "Sunken Archive",
+  "npc": "Mira",
+  "history": [
+    {
+      "role": "user",
+      "content": "I ask Mira to show me how to make a light without using a torch."
+    },
+    {
+      "role": "assistant",
+      "content": "Mira sets her lantern beside the sealed archive door. \"Wicklight first. No heat, just enough light to read by.\" She draws a circle with two fingers. A pale bead hangs over her knuckle. \"Yours will be unsteady until you learn where to stop breathing out.\""
+    },
+    {
+      "role": "user",
+      "content": "I copy the small circle she draws in the air and try to hold the last note steady."
+    },
+    {
+      "role": "assistant",
+      "content": "A dim point flickers above your finger, then goes out. Mira shakes her head. \"Slower. Let the light settle before you move it.\" The inscription is badly weathered; even her lantern cannot pick out the central line."
+    }
+  ],
+  "user": "I try Wicklight again, holding it over the inscription so we can read the name worn off the stone.",
+  "generationBrief": "Alex successfully learns and demonstrates a steady Wicklight, but the inscription is too eroded to decipher. Show the acquired reusable light technique, no numeric mechanics, no item light orb, no free trait increase. Mana may decrease conservatively. Learning can earn modest XP; do not assert an exact award.",
+  "checks": [
+    [
+      "collectionHas",
+      "player",
+      "abilities",
+      "Wicklight",
+      true
+    ],
+    [
+      "noInventoryAddsOrRemovesIn",
+      "equipment",
+      true
+    ],
+    [
+      "playerUnchanged",
+      "Intelligence"
+    ],
+    [
+      "npcPresent",
+      "Mira"
+    ],
+    [
+      "locationFlag",
+      "no",
+      true
+    ]
+  ],
+  "abilities": [],
+  "text": "You close your eyes for a heartbeat, recalling Mira's advice. You draw the circle with a slow, deliberate motion, carefully timing your breath to steady the flow of energy. A soft, pearlescent glow blossoms above your fingertip, humming with a quiet intensity. It doesn't flicker this time; the light remains constant and cool, casting a focused beam across the stone. You feel a slight drain on your reserves, a lingering fatigue in your chest, but the technique holds.\n\nYou lean in, holding the steady light directly against the weathered surface of the archive door. The brilliance reveals every hairline fracture and pit in the rock, but the result is frustrating. The inscription has been eroded by centuries of dampness and decay, leaving behind only ghostly, jagged indentations. The name you seek has been scrubbed away by time, leaving a void where the identity of the architect should be.\n\nMira sighs, her shoulders slouching beneath her heavy, charcoal-grey wool cloak. She looks at you with a mixture of pride for your progress and disappointment in the stone. \"The magic is there, but the history is gone,\" she murmurs, her voice echoing in the hollow chamber.",
+  "generation": {
+    "model": "/mnt/D/backup_models/gemma-4-31B-it-qat-UD-Q4_K_XL.gguf",
+    "endpoint": "http://127.0.0.1:9931/v1",
+    "generatedAt": "2026-10-20T22:15:58.714Z",
+    "narratorSha256": "ed57edec3be466a732d032b8f9d3b643df8061b72bd285ec506b3fa395444f93",
+    "parameters": {
+      "temperature": 0.8,
+      "top_p": 0.95,
+      "seed": 5031352,
+      "max_tokens": 1800,
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      }
+    },
+    "usage": {
+      "completion_tokens": 243,
+      "prompt_tokens": 647,
+      "total_tokens": 890,
+      "prompt_tokens_details": {
+        "cached_tokens": 172
+      }
+    },
+    "finishReason": "stop"
+  }
+}

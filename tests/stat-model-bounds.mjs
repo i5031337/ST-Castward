@@ -1,23 +1,11 @@
-import { progressionFields } from '../src/tracker/progression-fields.js';
-import { npcStatsFor, npcTemplateFor, proposedNpcTemplate } from '../src/core/npc-templates.js';
 import assert from 'node:assert/strict';
 import test, { describe } from 'node:test';
 import { readFileSync } from 'node:fs';
-import { configuredNumericMaximum, constrainNumericStat, keepNumericMaximum, isPoolStat } from '../src/tracker/numeric-stat-bounds.js';
-import { isReaderStat } from '../src/tracker/stat-update-policy.js';
-import { expandNumericDeltas } from '../src/tracker/extractor/status-extractor-deltas.js';
+import { configuredNumericMaximum, constrainNumericStat, keepNumericMaximum } from '../src/tracker/numeric-stat-bounds.js';
+import { normalizeModelReadings } from '../src/tracker/extractor/status-extractor-readings.js';
+import { sameStatReading } from '../src/tracker/stat-reading-equality.js';
 
-// The browser-facing module is loaded with only the dependencies this path uses.
-const source = readFileSync(new URL('../src/tracker/status-stat-values.js', import.meta.url), 'utf8')
-    .replace(/^import\s+[\s\S]*?\s+from\s+['"][^'"]+['"];\s*/gm, '')
-    .replace('export function bind', 'function bind');
-const bind = new Function('npcStatsFor', 'proposedNpcTemplate', 'keepNumericMaximum', 'configuredNumericMaximum',
-    'isReaderStat', 'progressionFields', 'isPoolStat',
-    'ceilingFromValue', 'splitValue',
-    `${source}\nreturn bind;`)(npcStatsFor, proposedNpcTemplate, keepNumericMaximum, configuredNumericMaximum,
-    isReaderStat, progressionFields, isPoolStat,
-    value => { const cap = String(value ?? '').split('/')[1]; return cap && Number.isFinite(Number(cap)) ? Number(cap) : null; },
-    value => { const [current, max] = String(value ?? '').split('/'); return { current, max }; });
+import { bind } from './fixtures/stat-values-bind.mjs';
 
 test('ordinary model updates keep existing and starting maxima across actors', () => {
     const deps = {
@@ -65,7 +53,7 @@ test('inline updates cannot author level-derived locked growth', () => {
     assert.equal(update.player.stats.XP, '110/100');
 });
 
-test('Standing deltas on plain ratings stay within configured bounds across scopes', () => {
+test('Standing absolute readings on plain ratings stay within configured bounds across scopes', () => {
     const deps = { findMatchingStatKey: (stats, name) => Object.keys(stats || {})
         .find(key => key.toLowerCase() === name.toLowerCase()), findCardForName: () => null };
     bind(deps);
@@ -73,15 +61,15 @@ test('Standing deltas on plain ratings stay within configured bounds across scop
     const settings = { globalStats: [standing], playerStats: [standing], npcStats: [standing] };
     const state = { global: { Standing: '4' }, player: { stats: { Standing: '-4' } },
         characters: [{ name: 'Mira', stats: { Standing: '5' } }] };
-    const update = { globalDeltas: { Standing: 3 }, player: { deltas: { Standing: -3 } },
-        characters: [{ name: 'Mira', deltas: { standing: 1 } }] };
-    expandNumericDeltas(update, state, settings);
+    const update = { global: { Standing: '7' }, player: { stats: { Standing: '-7' } },
+        characters: [{ name: 'Mira', stats: { Standing: '6' } }] };
+    normalizeModelReadings(update, state, settings);
     deps.sanitizeModelUpdate(update, state, settings);
     const apply = (incoming, existing) => constrainNumericStat(standing,
         deps.mergeStatValue(existing, incoming), existing);
     assert.equal(apply(update.global.Standing, state.global.Standing), '5');
-    assert.equal(apply(update.player.Standing, state.player.stats.Standing), '-5');
-    assert.equal(apply(update.characters[0].Standing, state.characters[0].stats.Standing), '5');
+    assert.equal(apply(update.player.stats.Standing, state.player.stats.Standing), '-5');
+    assert.equal(apply(update.characters[0].stats.Standing, state.characters[0].stats.Standing), '5');
     assert.equal(deps.promptCeiling(standing, '5'), '5');
     assert.equal(deps.promptCeiling(standing, '7/10'), '10');
 });
@@ -230,7 +218,7 @@ describe('stat rejection warnings', () => {
     const source = readFileSync(new URL('../src/tracker/status-update-constraints.js', import.meta.url), 'utf8')
         .replace(/^import .*;\n/gm, '').replace('export function bind', 'function bind');
     const deps = {};
-    new Function('debugLog', 'constrainNumericStat', `${source}\nreturn bind;`)(() => {}, constrainNumericStat)(deps);
+    new Function('debugLog', 'constrainNumericStat', 'sameStatReading', `${source}\nreturn bind;`)(() => {}, constrainNumericStat, sameStatReading)(deps);
 
     test('definition refusals and adjustments explain the reason and retained value', () => {
         for (const [def, incoming, existing, expected, reason] of [
@@ -251,27 +239,24 @@ describe('stat rejection warnings', () => {
         assert.deepEqual(warnings, []);
     });
 
-    test('each rejected delta and absolute XP has an explanation while valid deltas survive', () => {
-        const settings = { globalStats: [], npcStats: [], playerStats: [
-            { name: 'XP', purpose: 'xp', type: 'number' }, { name: 'Level', purpose: 'level', type: 'number' },
-            { name: 'Power', locked: true }, { name: 'HP', type: 'number' },
-            { name: 'Blank' }, { name: 'Huge' },
-        ] };
-        const state = { player: { stats: { XP: '10/100', Level: '1', Power: '2', HP: '5', Huge: '1' } } };
-        const update = { player: { stats: { XP: '20', HP: '4' },
-            deltas: { XP: -2, Level: 1, Power: 2, HP: -1, Missing: 1, Blank: 1, Huge: 1e30 } } };
+    test('repeated saved values remain quiet after definitions narrow, while attempted changes still warn', () => {
         const warnings = [];
-        expandNumericDeltas(update, state, settings, { warnings });
-        assert.equal(warnings.length, 8);
-        for (const reason of ['positive delta', 'progression', 'locked', 'absolute value', 'no configured stat',
-            'no numeric current value', 'too large']) assert.ok(warnings.some(line => line.includes(reason)), reason);
-        assert.ok(warnings.every(line => line.startsWith('Player ·')));
+        assert.equal(deps.constrainToDefinition({ name: 'Mood', options: ['Happy'] }, 'Calm', 'Calm', w => warnings.push(w)), 'Calm');
+        assert.equal(deps.constrainToDefinition({ name: 'Note', maxLength: 3 }, 'Long existing note', 'Long existing note', w => warnings.push(w)), 'Long existing note');
+        assert.deepEqual(warnings, []);
+        assert.equal(deps.constrainToDefinition({ name: 'Mood', options: ['Happy'] }, 'Tense', 'Calm', w => warnings.push(w)), 'Calm');
+        assert.equal(warnings.length, 1);
+        deps.constrainToDefinition({ name: 'Rating', type: 'number', maxStatValue: '5' }, '10', '5', w => warnings.push(w));
+        assert.equal(warnings.length, 2);
+    });
+
+    test('unsupported delta objects cannot compete with an absolute reading', () => {
+        const settings = { globalStats: [], npcStats: [], playerStats: [{ name: 'HP', type: 'number' }] };
+        const update = { player: { stats: { HP: '4' }, deltas: { HP: -1 } } };
+        const warnings = [];
+        normalizeModelReadings(update, { player: { stats: { HP: '5' } } }, settings, { warnings });
         assert.deepEqual(update.player.stats, { HP: '4' });
-        const accepted = { player: { deltas: { XP: 2, HP: -1 } } };
-        const clean = [];
-        expandNumericDeltas(accepted, state, settings, { warnings: clean });
-        assert.deepEqual(clean, []);
-        assert.equal(accepted.player.XP, '12/100');
-        assert.equal(accepted.player.HP, '4');
+        assert.equal(update.player.deltas, undefined);
+        assert.equal(warnings.length, 1);
     });
 });
