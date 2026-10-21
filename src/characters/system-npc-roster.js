@@ -7,7 +7,7 @@ const CARDS = 'sillynpc_npcs';
 const READS = 'sillynpc_roster_reads';
 const SEEDED = 'sillynpc_roster_seeded';
 const fields = ['name', 'color', 'category', 'aliases', 'profile', 'npcTemplateId',
-    'imageUrl', 'images', 'imageFit', 'defaultPortrait', 'presentation', 'lorebook'];
+    'imageUrl', 'images', 'imageFolder', 'imageTags', 'imageFit', 'defaultPortrait', 'presentation', 'lorebook'];
 
 /** Local reuse preferences and saved NPCs are separate from exportable System rules. */
 export function npcRoster(settings, name = settings.activeSystem) {

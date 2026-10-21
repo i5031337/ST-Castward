@@ -74,6 +74,31 @@ test('older unchanged copies do not undo roster edits; changed copies publish fo
     assert.equal(context.chatMetadata.sillynpc_npcs[0].statusOverrides.Level, '5');
 });
 
+test('reused renamed NPCs retain their gallery folder and independent portrait tags', () => {
+    const { settings, context, makeId } = fixture();
+    const original = context.chatMetadata.sillynpc_npcs[0];
+    original.name = 'Captain Mira';
+    original.imageFolder = 'Mira';
+    original.images = ['/user/images/Mira/portrait.png'];
+    original.imageTags = { [original.images[0]]: { Mood: 'Happy' } };
+    setNpcRosterEnabled(settings, context, 'A', true);
+    const [source] = rosterCharacters(settings);
+    assert.equal(source.imageFolder, 'Mira');
+    assert.deepEqual(source.imageTags, original.imageTags);
+    original.imageTags[original.images[0]].Mood = 'Angry';
+    assert.equal(source.imageTags[source.images[0]].Mood, 'Happy');
+
+    context.chatMetadata = { sillynpc_system: 'A' };
+    seedNpcRoster(settings, context, makeId);
+    const copy = context.chatMetadata.sillynpc_npcs[0];
+    assert.equal(copy.name, 'Captain Mira');
+    assert.equal(copy.imageFolder, 'Mira');
+    assert.deepEqual(copy.images, source.images);
+    assert.deepEqual(copy.imageTags, source.imageTags);
+    copy.imageTags[copy.images[0]].Mood = 'Sad';
+    assert.equal(source.imageTags[source.images[0]].Mood, 'Happy');
+});
+
 test('rosters respect System, started chat, disabled mode and closed chat boundaries', () => {
     const { settings, context, makeId } = fixture();
     setNpcRosterEnabled(settings, context, 'A', true);
