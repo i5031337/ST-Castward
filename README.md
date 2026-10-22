@@ -40,21 +40,17 @@ You can read the [full session and reader outputs](docs/evaluations/fantasy-adve
 
 Profiles are filled on click by default. Turn on **Tracker → Generate Profiles For New NPCs** to fill them as you meet people. Portraits need a configured SillyTavern Image Generation service.
 
-With a supported Chat Completion model and SillyTavern's **Enable function calling** switched on, the narrator can use **Create NPC** before introducing a new supporting character. Castward generates a profile and initial stats for your active System, asks for eight varied names, and randomly chooses an unused candidate. The tool returns the saved name and character details before the narrator continues. Returning characters should use their existing cards.
+The narrator can create NPCs with fresh names, distinct personalities, stats, and suitable starting belongings and abilities before introducing them into the story. Previously mentioned or canon characters can keep their established names.
 
-Control this under **Writing → Let The Narrator Create NPCs** (enabled by default). Creation uses the **Lore Connection** and **Lore Reply Budget**, with at most one repair request for invalid output. Collections start empty; portraits follow the automatic Fill portrait setting and run in the background. NPCs belong to the current chat and remain available across swipes and regeneration; creating a card does not itself put someone in the scene. Tool support and the model's decision to call it depend on your chat connection. Failed or cancelled generation does not save a partial NPC; a lorebook failure leaves the completed card available for retry with Fill.
+To use this, enable SillyTavern's **Enable function calling** with a supported Chat Completion model. Find the feature under **Writing → Let The Narrator Create NPCs** (on by default). Profiles use your **Lore Connection**. An optional [tool-enabled Narrator card](examples/narrator-tools.json) includes prompts for this feature.
 
 ## What it does
 
 Each speaker gets a portrait and their own color, with narration between their lines. Click a portrait to open their sheet. NPCs belong to the chat where you meet them, so another adventure can have its own version of the same character.
 
-To reuse a cast, enable **System → Manager → Reuse NPCs in new chats** for that System. Castward saves a roster from your current NPC cards and subsequent creations and edits. New chats receive independent copies with profiles, portraits, and carryover stats; adventure stats and inventory reset. Existing chats keep their own NPCs. Linked lorebook entries remain shared references.
+Keep building on a familiar world: NPCs, places, and NPC memories can each carry over automatically to new chats, with separate controls for each in your System's settings. Alternatively, start fresh each time.
 
-Linked profiles automatically participate in SillyTavern's lore scan for the active cast, including carried-over NPCs. Mention a profile's name or alias to trigger its entry under the usual lore rules. Existing chat/global lorebook selections stay intact; other entries from the source books are not added. Newly generated profiles use the same activation path. Fill still creates and attaches a chat book when no chat/default book was chosen.
-
-Under **System → Builder → Profile fields → NPC memories**, enable **Carry over NPC memories** to include active and archived memories in character export/import and reused NPC copies. Like stat carryover, this belongs to the System and works independently of automatic memory reading. It defaults to off.
-
-The Manager's **Carry over Places** option copies your known map, descriptions, aliases, parent relationships, and lore references, independently of NPC reuse; the new chat's current location starts unset. It also defaults to off. Copies belong to the new chat, and later edits update the saved data for future chats. **Clear saved roster** removes saved NPCs, Places, and memories without deleting existing chat data.
+Character profiles connect to SillyTavern's lorebooks, helping the narrator remember who people are when they appear in the story.
 
 The tracker beneath the latest reply keeps the current state in view. Let the reader apply changes automatically or review them first. You can also edit values on the character sheets.
 
@@ -109,7 +105,7 @@ git clone https://github.com/i5031337/ST-Castward.git
 
 ## Your first adventure
 
-Connect your model, pick a persona and a Narrator card, then start chatting. You can use the included [Narrator card](examples/narrator.json) with my prompts for solo roleplay. A name and a short description of who you want to play are enough to begin. Fantasy Adventure and automatic tracking are already enabled.
+Connect your model, pick a persona and a Narrator card, then start chatting. You can use the included [Narrator card](examples/narrator.json) with my prompts for solo roleplay; no tool calling is needed. A name and a short description of who you want to play are enough to begin. Fantasy Adventure and automatic tracking are already enabled.
 
 To use the included Narrator, save the JSON file and import it through SillyTavern's character menu. Enable **Prefer Char. Prompt** and **Prefer Char. Instructions** to use its prompts. It has no opening message, so start by describing your character and what they want to do.
 

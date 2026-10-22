@@ -11,7 +11,9 @@ SillyTavern loads `index.js` and `style.css` from `manifest.json`. The JavaScrip
 | `src/api/` | Lore and image generation and file operations. |
 | `src/generation/` | Staged System generation, canonical schema fragments, validation, requests, and isolated drafts. |
 | `src/npc/` | Narrator Create NPC tool, System-aware creation contract, randomized name selection, validation, guarded chat-owned saves and background portraits. |
-| `tests/npc-creation.mjs`, `tests/ui-npc-creation.py` | Creation contracts, name randomness and collisions, stat bounds, retries, cancellation, duplicate prevention and unsaved host tool/UI checks. |
+| `src/npc/npc-naming.js` | Randomized naming briefs: adjustable syllable/stress weights, four distinct initials favoring unused cast initials, and uniform selection. Cultural fit overrides the hints. |
+| `src/npc/npc-collection-generation.js` | Template-scoped starting collections, reader-style initialization guidance, typed entry contracts, defaults, bounds and identifier validation. |
+| `tests/npc-creation.mjs`, `tests/npc-creation-name.mjs`, `tests/npc-creation-template.mjs`, `tests/npc-collection-creation.mjs`, `tests/ui-npc-creation.py` | Creation contracts, randomized and exact names, template selection, alias reuse, starting collections, held-state preservation, stat bounds, retries, cancellation, duplicate prevention and unsaved host tool/UI checks. |
 | `src/characters/` | Character records, ownership, portraits, and transfer. |
 | `src/chat/` | Chat ownership, message decoration, and reprocessing. |
 | `src/expressions/` | NPC sprite packs, per-line expression cache, static dialogue portraits, and full-size speech sprites. |

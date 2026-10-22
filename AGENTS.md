@@ -25,3 +25,9 @@
 - No source file should exceed 20kB, for agentic efficiency. Keep code clear and concise. When appropriate, recommend a refactor strategy. 
 - This project is a prototype. Never make something more complicated for the sake of legacy compatibility. The new way is the only way.
 - Comments describe purpose and function, not everything needs an explanation.
+
+# Documentation
+
+- Write the README for the average SillyTavern user. Keep it understandable and appealing: lead with what a feature lets them do and how it improves their roleplay, using plain language and brief, concrete examples where helpful.
+- Include only the setup, controls, and important limitations users need to get started or make a meaningful choice. The README is not a complete feature reference; omit API arguments, internal algorithms, persistence mechanics, validation, retry behavior, and exhaustive edge cases.
+- Put detailed technical explanations and troubleshooting in `docs/` or relevant code documentation, linking from the README when useful. Update the relevant existing text instead of appending a detailed account of every implementation change.

@@ -108,6 +108,7 @@ export const removeActiveCharacter = deps.removeActiveCharacter;
 export const addItem = deps.addItem;
 export const removeItem = deps.removeItem;
 export const syncOverrideToActiveState = deps.syncOverrideToActiveState;
+export const getMergedItem = deps.getMergedItem;
 export const updateMasterItem = deps.updateMasterItem;
 export const renameMasterItem = deps.renameMasterItem;
 export const deleteMasterItem = deps.deleteMasterItem;

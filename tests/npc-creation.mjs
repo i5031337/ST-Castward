@@ -1,52 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { npcGenerationContract, validateGeneratedNpc, npcGenerationPrompt, randomIndex } from '../src/npc/npc-generation.js';
-import { createNpcCreationService } from '../src/npc/npc-creation.js';
+import { request, settingsFixture, generated, fixture } from './helpers/npc-creation.mjs';
 import { setProfileSettingsProvider } from '../src/core/profile-fields.js';
-
-const request = { requestKey: 'dock-ferryman', role: 'ferryman', situation: 'A flooded river crossing',
-    requirements: 'Knows about the missing caravan', nameStyle: 'Short river-town names' };
-function settingsFixture() {
-    const stats = [
-        { id: 'health', name: 'Health', type: 'number', defaultValue: '10/10', min: '0', maxStatValue: '50', targets: ['npc'] },
-        { id: 'strength', name: 'Strength', type: 'number', defaultValue: '5', min: '1', maxStatValue: '10', targets: ['npc'] },
-        { id: 'level', name: 'Level', type: 'number', defaultValue: '1', min: '1', locked: true, targets: ['npc'] },
-        { id: 'xp', name: 'XP', type: 'number', defaultValue: '0/100', min: '0', maxStatValue: '100', targets: ['npc'] },
-        { id: 'mood', name: 'Mood', type: 'text', options: ['Calm', 'Worried'], targets: ['npc'] },
-    ];
-    const template = { id: 'human', name: 'Human', progression: { enabled: true, xpFieldId: 'xp', levelFieldId: 'level' } };
-    return { enabled: true, npcCreationToolEnabled: true, activeSystem: 'River', loreProfileId: '', loreMaxTokens: 2048,
-        statusTracker: { npcStats: stats, npcTemplates: [template], presets: { River: { definition: {
-            profiles: [{ id: 'appearance', label: 'Appearance', targets: ['npc'] },
-                { id: 'motive', label: 'Motive', targets: ['npc'] },
-                { id: 'player-only', label: 'Player secret', targets: ['player'] }],
-            stats: { character: stats }, npcTemplates: [template],
-        } } } } };
-}
-function generated() {
-    return { nameCandidates: ['Tovin Reed', 'Beska Venn', 'Orrel Pike', 'Nessa Marr', 'Perrin Holt', 'Ulla Fen', 'Daro Rusk', 'Hessa Quill'],
-        npcTemplateId: 'human', profile: { appearance: 'A compact figure in patched oilskins.', motive: 'They want to buy back a family boat.' },
-        stats: { Health: '12/12', Strength: '6', Level: '2', XP: '0/100', Mood: 'Calm' } };
-}
-function fixture() {
-    const settings = settingsFixture();
-    let context = { getCurrentChatId: () => 'chat', chatMetadata: {}, chat: [{ is_user: true, mes: 'Cross the river.' }] };
-    const cards = [], calls = [];
-    let generate = async () => generated();
-    let afterCommit = async () => {};
-    const service = createNpcCreationService({
-        getSettings: () => settings, getContext: () => context,
-        getCards: () => cards, getChatCards: () => cards,
-        getForbiddenNames: () => ['Tovin Reed', ...cards.map(card => card.name)],
-        buildContext: () => ({ story: 'A river crossing.' }),
-        requestFor: () => async options => { calls.push(options); return generate(options); },
-        commit: draft => { const card = { id: `card-${cards.length}`, ...draft }; cards.push(card); return card; },
-        afterCommit: (...args) => afterCommit(...args), pick: length => length - 1,
-    });
-    return { settings, cards, calls, service, get context() { return context; },
-        switchChat: () => { context = { ...context, getCurrentChatId: () => 'other', chatMetadata: {} }; },
-        setGenerate: fn => { generate = fn; }, setAfterCommit: fn => { afterCommit = fn; } };
-}
 
 test('names are randomly selected from distinct unused candidates and returned with a complete saved profile', async () => {
     const f = fixture();
@@ -75,16 +31,16 @@ test('contract excludes player fields and validates the selected template', () =
 test('the candidate choice varies independently of the model ordering', () => {
     const contract = npcGenerationContract(settingsFixture());
     assert.equal(validateGeneratedNpc(generated(), contract, [], () => 0).name, 'Tovin Reed');
-    assert.equal(validateGeneratedNpc(generated(), contract, [], () => 7).name, 'Hessa Quill');
-    for (let index = 0; index < 40; index++) assert.ok(randomIndex(8) >= 0 && randomIndex(8) < 8);
+    assert.equal(validateGeneratedNpc(generated(), contract, [], () => 3).name, 'Hessa Quill');
+    for (let index = 0; index < 40; index++) assert.ok(randomIndex(4) >= 0 && randomIndex(4) < 4);
     assert.throws(() => randomIndex(0));
 });
 
 test('duplicate, normalized, conflicting and unusable names cannot crowd out fresh candidates', () => {
     const contract = npcGenerationContract(settingsFixture());
-    const raw = generated(); raw.nameCandidates = [' Tovin Reed ', 'tovin reed', 'Ｔｏｖｉｎ Reed', 'Narrator', 'Nessa Marr', 'Beska Venn', 'Ulla Fen', 'Hessa Quill'];
+    const raw = generated(); raw.nameCandidates = [' Tovin Reed ', 'tovin reed', 'Ｔｏｖｉｎ Reed', 'Nessa Marr'];
     assert.equal(validateGeneratedNpc(raw, contract, ['Tovin Reed', 'Narrator'], () => 0).name, 'Nessa Marr');
-    assert.throws(() => validateGeneratedNpc(raw, contract, ['Tovin Reed', 'Narrator', 'Nessa Marr'], () => 0), /four distinct/);
+    assert.throws(() => validateGeneratedNpc(raw, contract, ['Tovin Reed', 'Narrator', 'Nessa Marr'], () => 0), /No usable/);
 });
 
 test('initial pools, ratings, level, XP and options are enforced before persistence', () => {
@@ -215,7 +171,7 @@ test('a System without templates uses default NPC fields and no invented templat
     assert.deepEqual(contract.schema.properties.npcTemplateId.enum, ['']);
     assert.ok(contract.choices[0].fields.some(field => field.id === 'speech'));
     const raw = { nameCandidates: generated().nameCandidates, npcTemplateId: '',
-        profile: Object.fromEntries(contract.choices[0].fields.map(field => [field.id, 'A useful detail.'])), stats: {} };
+        profile: Object.fromEntries(contract.choices[0].fields.map(field => [field.id, 'A useful detail.'])), stats: {}, collections: {} };
     assert.equal(validateGeneratedNpc(raw, contract, [], () => 1).name, 'Beska Venn');
     assert.match(npcGenerationPrompt(request, contract, {}, () => 0), /creativeNudge/);
 });

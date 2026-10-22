@@ -26,11 +26,13 @@ export function renderWritingRulesView(view, onReprocessMessages) {
         key: 'npcCreationToolEnabled',
         label: 'Let The Narrator Create NPCs',
         help: 'Offers a Create NPC tool before a new supporting character enters the story. '
-            + 'Generates a structured profile and initial stats, then randomly selects an unused name from eight candidates. '
+            + 'Generates a profile, stats and appropriate starting belongings and abilities, then chooses a fresh name with randomized naming hints. '
+            + 'An optional exact name preserves a previously mentioned or canon character; matching cards are reused. '
+            + 'The narrator selects the character type when your System has multiple NPC templates. '
             + 'Requires a Chat Completion model with SillyTavern function calling enabled. '
             + 'Uses the Lore Connection and Lore Reply Budget; each creation makes one generation request, with one repair if needed. '
             + 'Cards belong to this chat and remain available across swipes and regeneration. '
-            + 'Collections start empty. Missing portraits follow the automatic Fill portrait setting.',
+            + 'Uses your System’s collection guidance for starting entries; named NPCs keep already tracked stats and belongings. Missing portraits follow the automatic Fill portrait setting.',
         onChange: () => npcCreationService.invalidate(),
     }));
 
