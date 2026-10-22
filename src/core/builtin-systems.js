@@ -140,10 +140,11 @@ const dating = {
     },
     collections: [
         entry('clothing', 'Clothing', ['player', 'template:character'],
-            'Garments currently being worn. Preserve their color and details until the story changes the outfit; remove garments when taken off.', [
-                field('slot', 'Garment Type'), field('color', 'Color'),
-                field('details', 'Appearance', 'text', { isMultiline: true }),
-            ], { includeInImagePrompt: true }),
+            'Garments currently being worn; remove garments when taken off.', [],
+            { includeInImagePrompt: true, fields: [
+                field('name', 'Name', 'text', { isPrimary: true, isStatic: true,
+                    guidance: 'Name the garment in a few words, including distinctive visual details when established by the story. A simple name such as "White polo shirt" or "brown leather boots" is often enough.' }),
+            ] }),
         entry('items', 'Items', ['player', 'template:character'],
             'Carried belongings, gifts, keepsakes, and useful objects. Change holdings only when the story establishes a transfer.', [
                 field('quantity', 'Quantity', 'number', { defaultValue: 1, min: '0', isStatic: false }),
