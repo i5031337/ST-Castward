@@ -60,12 +60,13 @@ function migratePreset(name, preset) {
     clean.metadata = clean.metadata || {
         name: name || clean.name || 'System', description: '', author: 'User',
     };
-    clean.metadata = { ...clean.metadata, name };
+    const displayName = clean.metadata.name || name;
+    clean.metadata = { ...clean.metadata, name: displayName };
     if (clean.config) {
         clean.config = copyExcept(clean.config, new Set(['characters', 'personaData', 'master_items', 'systemWorldArchive', 'systemNpcRosters']));
         if (clean.config.statusTracker) clean.config.statusTracker = copyExcept(clean.config.statusTracker, SYSTEM_EXCLUDED_TRACKER);
     }
-    clean.definition = normalizeSystemDefinition(preset.definition || preset, { name });
+    clean.definition = normalizeSystemDefinition(preset.definition || preset, { name: displayName });
     clean.config ||= {};
     if (clean.config.statusTracker) clean.config.statusTracker = copyExcept(clean.config.statusTracker, PROJECTED_TRACKER_KEYS);
     else clean.config = copyExcept(clean.config, PROJECTED_TRACKER_KEYS);
@@ -129,9 +130,46 @@ function systemSignature(source) {
     ]);
 }
 
-function unusedSystemName(presets, base) {
-    if (!presets[base]) return base;
-    for (let i = 2; ; i++) if (!presets[`${base} ${i}`]) return `${base} ${i}`;
+function unusedSystemName(base) {
+    if (!systemNameTaken(base)) return base;
+    for (let i = 2; ; i++) if (!systemNameTaken(`${base} ${i}`)) return `${base} ${i}`;
+}
+
+function systemNameTaken(name, exceptKey) {
+    return Object.hasOwn(Object.prototype, name)
+        || Object.entries(getSettings().statusTracker.presets || {}).some(([key, profile]) =>
+            key !== exceptKey && (key === name || profile?.metadata?.name === name));
+}
+
+/** Library keys remain stable so existing chats and local rosters keep their owner. */
+function editSystemDetails(key, name, subtitle) {
+    name = String(name || '').trim();
+    migrateSavedPresets(getSettings());
+    const profile = getSettings().statusTracker.presets?.[key];
+    if (!profile || !name || systemNameTaken(name, key)) return false;
+    profile.metadata = { ...profile.metadata, name, description: String(subtitle || '').trim() };
+    profile.definition.name = name;
+    profile.definition.metadata = { ...profile.definition.metadata, description: profile.metadata.description };
+    saveSettings();
+    return true;
+}
+
+/** Copy rules, including unsaved active controls, without selecting another System. */
+function duplicateSystem(key) {
+    const settings = getSettings();
+    if (!settings.statusTracker.presets?.[key]) return null;
+    if (key === settings.activeSystem) captureActiveSystem();
+    const source = settings.statusTracker.presets[key];
+    const name = unusedSystemName(`${source.metadata?.name || key} (copy)`);
+    const copy = migratePreset(name, structuredClone(source));
+    copy.metadata.name = name;
+    copy.definition.name = name;
+    copy.definition.id = crypto.randomUUID();
+    settings.statusTracker.presets[name] = copy;
+    const roster = settings.systemNpcRosters?.[key];
+    if (roster) settings.systemNpcRosters[name] = structuredClone(roster);
+    saveSettings();
+    return copy;
 }
 
 /**
@@ -158,7 +196,7 @@ function migrateToActiveSystem() {
     // Two systems that define the same stats cannot be told apart, so neither is claimed.
     const name = matches.length === 1
         ? matches[0]
-        : unusedSystemName(presets, 'Default System');
+        : unusedSystemName('Default System');
 
     const existing = presets[name];
     saveSystemPreset(name,
@@ -206,7 +244,7 @@ function setActiveSystem(name) {
 function createSystem(name) {
     const settings = getSettings();
     const st = settings.statusTracker;
-    if (!name || st.presets?.[name]) return false;
+    if (!name || systemNameTaken(name)) return false;
     if (deps.chatHasStarted?.()) return false;
 
     captureActiveSystem();
@@ -239,10 +277,11 @@ function saveSystemPreset(name, description = '', author = 'User') {
     const st = settings.statusTracker;
     
     const previous = st.presets?.[name];
+    const displayName = previous?.metadata?.name || name;
     const profile = {
         version: '3.0.0',
         metadata: {
-            name,
+            name: displayName,
             description,
             author
         },
@@ -261,7 +300,7 @@ function saveSystemPreset(name, description = '', author = 'User') {
             showNpcPortraits: st.showNpcPortraits ?? liveDefinition.hud.showNpcPortraits,
         },
         metadata: { description, author },
-    }, { name });
+    }, { name: displayName });
 
     profile.config.statusTracker = copyExcept(profile.config.statusTracker, PROJECTED_TRACKER_KEYS);
     if (!st.presets) st.presets = {};
@@ -349,8 +388,10 @@ function importSystemPreset(jsonText) {
     if (!settings.statusTracker.presets) settings.statusTracker.presets = {};
     const requested = profile.metadata?.name || profile.name;
     let name = requested;
-    for (let number = 2; settings.statusTracker.presets[name]; number++) name = `${requested} (${number})`;
-    settings.statusTracker.presets[name] = deps.migratePreset(name, profile);
+    for (let number = 2; systemNameTaken(name); number++) name = `${requested} (${number})`;
+    settings.statusTracker.presets[name] = deps.migratePreset(name, {
+        ...profile, metadata: { ...profile.metadata, name },
+    });
     saveSettings();
     return settings.statusTracker.presets[name];
 }
@@ -364,6 +405,8 @@ Object.defineProperties(deps, {
     migrateToActiveSystem: { enumerable: true, configurable: true, get: () => migrateToActiveSystem },
     setActiveSystem: { enumerable: true, configurable: true, get: () => setActiveSystem },
     createSystem: { enumerable: true, configurable: true, get: () => createSystem },
+    editSystemDetails: { enumerable: true, configurable: true, get: () => editSystemDetails },
+    duplicateSystem: { enumerable: true, configurable: true, get: () => duplicateSystem },
     saveSystemPreset: { enumerable: true, configurable: true, get: () => saveSystemPreset },
     applySystemPreset: { enumerable: true, configurable: true, get: () => applySystemPreset },
     deleteSystemPreset: { enumerable: true, configurable: true, get: () => deleteSystemPreset },

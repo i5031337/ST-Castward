@@ -111,3 +111,67 @@
 .sillynpc-system-generation .gen-editor { margin-top: 16px; min-width: 0; }
 .sillynpc-system-generation .gen-draft-details label { display: block; margin: 8px 0; }
 .sillynpc-system-generation .gen-draft-details textarea { display: block; width: 100%; }
+
+/* Let the Manager's library fill the available window height. */
+#sillynpc-systems-view:has(.sillynpc-system-manager),
+.sillynpc-systems-body:has(.sillynpc-system-manager),
+.sillynpc-system-manager {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    min-width: 0;
+}
+.sillynpc-system-manager { gap: 16px; }
+#sillynpc-systems-view > .sillynpc-charview-tabs { flex-shrink: 0; }
+.sillynpc-system-list {
+    flex: 1;
+    min-height: 180px;
+    overflow: auto;
+    border: 1px solid var(--sillynpc-border);
+    border-radius: 5px;
+}
+.sillynpc-system-manager > :not(.sillynpc-system-list) { flex-shrink: 0; }
+.sillynpc-system-details { display: flex; flex-direction: column; }
+.sillynpc-system-manager .sillynpc-system-details .text_pole {
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    color: inherit;
+    font: inherit;
+    line-height: inherit;
+    outline: none;
+}
+.sillynpc-system-manager .sillynpc-system-details .text_pole:hover,
+.sillynpc-system-manager .sillynpc-system-details .text_pole:focus-visible {
+    box-shadow: 0 1px var(--sillynpc-border);
+}
+.sillynpc-system-manager .sillynpc-system-details .sillynpc-system-name { font-weight: bold; }
+.sillynpc-system-manager .sillynpc-system-details .sillynpc-system-description {
+    font-size: smaller;
+    opacity: .6;
+    resize: none;
+    field-sizing: content;
+}
+.sillynpc-system-manager .sillynpc-system-details .text_pole::placeholder { color: inherit; opacity: 1; }
+.sillynpc-system-actions-cell { width: 1%; padding: 8px; vertical-align: top; }
+.sillynpc-system-reuse-cell { padding: 0 8px 8px 40px; }
+.sillynpc-system-reuse { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; }
+.sillynpc-system-reuse label { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
+.sillynpc-system-reuse .menu_button { margin: 0; white-space: nowrap; }
+.sillynpc-system-reuse-note { flex-basis: 100%; order: 1; opacity: .6; }
+.sillynpc-system-tools { display: flex; justify-content: flex-end; gap: 4px; }
+.sillynpc-system-tools .menu_button { margin: 0; }
+.popup-content:has(.sillynpc-system-manager) {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+.popup-content > div:has(.sillynpc-system-manager) { flex: 1; min-height: 0; }

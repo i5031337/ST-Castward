@@ -380,6 +380,7 @@ function renderSystemsView(view) {
     view.append(tabs);
 
     const body = document.createElement('div');
+    body.className = 'sillynpc-systems-body';
     view.append(body);
 
     try {

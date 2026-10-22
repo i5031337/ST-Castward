@@ -181,7 +181,7 @@ SillyTavern loads `index.js` and `style.css` from `manifest.json`. The JavaScrip
 | `src/tracker/status-scene-presence.js` | Reconcile scene presence and active characters. |
 | `src/tracker/status-collection-updates.js` | Add, remove, and update tracked items. |
 | `src/tracker/status-collection-schema.js` | Rename collection fields and stat schema references. |
-| `src/tracker/status-system-presets.js` | Active System, reusable definitions, chat locking, and System import. |
+| `src/tracker/status-system-presets.js` | Active System, reusable definitions, chat locking, import, detail edits, and independent duplication of rules and local carryover rosters. Renames update display metadata and definition names while retaining library keys used by chats and rosters. |
 | `src/tracker/npc-memories.js` | Store NPC memories in chat-owned or reusable character records. |
 | `src/memory/memory-batch.js`, `memory-prompt.js` | Bound transcript batches, validate sourced NPC additions, and build the separate memory request. |
 | `src/memory/memory-service.js`, `memory-reader.js` | Persist reading progress, guard asynchronous requests, schedule occasional reads, and invalidate changed sources. |
@@ -352,6 +352,9 @@ SillyTavern loads `index.js` and `style.css` from `manifest.json`. The JavaScrip
 | `tests/fixtures/system-generation.mjs` | Shared staged-generation plan and mock responses; excluded from the test entry glob. |
 | `tests/fixtures/generated-expedition-system.json` | Canonical generated example with targeted progression and scheduled technique rewards. |
 | `src/ui/system/ui-system-manager.js` | Reusable System manager, starter selection, import, export, and activation. |
+| `src/ui/system/ui-system-details.js` | Inline System name/subtitle editing and duplicate action. |
+| `tests/ui-system-manager.py` | Unsaved live Manager layout, inline editing, keyboard controls, and roster action placement checks. |
+| `tests/system-library-actions.mjs` | Rename persistence, stable chat ownership, name conflicts, current-rule capture, and independent duplication of NPC, Place, and memory carryover. |
 | `src/ui/shared/ui-template-tidy.js` | Prompt template cleanup UI. |
 | `src/ui/shared/ui-theme.js` | Apply themes and portrait/speech display options. |
 | `src/ui/tracker/ui-tracker-settings.js` | Tracker settings entry point. |

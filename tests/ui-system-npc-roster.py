@@ -20,10 +20,12 @@ with browser_session() as browser:
           const controls = [...panel.querySelectorAll('input[aria-label^="Reuse NPCs"]')];
           if (controls.length !== Object.keys(settings.statusTracker.presets).length) throw Error('Missing roster controls');
           for (const control of controls) {
-            const name = control.getAttribute('aria-label').replace('Reuse NPCs in new chats with ', '');
+            const displayName = control.getAttribute('aria-label').replace('Reuse NPCs with ', '');
+            const name = Object.keys(settings.statusTracker.presets).find(key =>
+              (settings.statusTracker.presets[key].metadata?.name || key) === displayName);
             if (control.checked !== (settings.systemNpcRosters?.[name]?.enabled === true)) throw Error('Wrong checkbox state');
             const row = control.closest('.sillynpc-system-reuse');
-            const places = row.querySelector('input[aria-label^="Carry over Places"]');
+            const places = row.querySelector('input[aria-label^="Reuse Places"]');
             if (!places || row.querySelector('input[aria-label^="Carry over NPC memories"]')) throw Error('Memory carryover belongs in Builder');
             if (places.checked !== (settings.systemNpcRosters?.[name]?.reusePlaces === true)) throw Error('Wrong carryover state');
           }

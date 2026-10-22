@@ -1,4 +1,5 @@
 import { buildSystemGeneration } from './ui-system-generation.js';
+import { buildSystemDetailActions, buildSystemDetailFields } from './ui-system-details.js';
 import { getSettings, defaultSettings } from '../../core/settings.js';
 import { buildSystemReuseControls } from './ui-system-reuse.js';
 import { offerDownload } from '../../core/utils.js';
@@ -26,22 +27,19 @@ function exportSystem(name) {
     if (!profile) return;
     
     offerDownload(profile.definition || normalizeSystemDefinition(profile, { name }),
-        `${name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_system.json`);
+        `${(profile.metadata?.name || name).replace(/[^a-z0-9]/gi, '_').toLowerCase()}_system.json`);
 }
 
 export function buildSystemManager(onRefresh) {
     const wrap = document.createElement('div');
+    wrap.className = 'sillynpc-system-manager';
     const settings = getSettings();
     const presets = settings.statusTracker.presets || {};
     const presetNames = Object.keys(presets);
     const chatSystem = chatHasStarted() ? (getChatSystem() || getActiveSystem()) : null;
 
     const listWrap = document.createElement('div');
-    listWrap.style.marginBottom = '20px';
-    listWrap.style.maxHeight = '300px';
-    listWrap.style.overflowY = 'auto';
-    listWrap.style.border = '1px solid var(--sillynpc-border)';
-    listWrap.style.borderRadius = '5px';
+    listWrap.className = 'sillynpc-system-list';
 
     if (presetNames.length === 0) {
         listWrap.innerHTML = `<div style="padding:15px; text-align:center; opacity:0.5;">No systems in library.</div>`;
@@ -52,21 +50,16 @@ export function buildSystemManager(onRefresh) {
         
         presetNames.forEach(name => {
             const profile = presets[name];
+            const displayName = profile.metadata?.name || name;
             const row = document.createElement('tr');
-            row.style.borderBottom = '1px solid var(--sillynpc-border)';
             
             const nameCell = document.createElement('td');
             nameCell.style.padding = '8px';
-            const detail = profile.metadata?.description || 'reusable rules';
-            nameCell.innerHTML = `<div style="font-weight:bold">${escapeHtml(name)}`
-                + (name === getActiveSystem() ? ' <small style="opacity:0.6">(in use)</small>' : '')
-                + `</div><small style="opacity:0.6">${escapeHtml(detail)}</small>`;
-            nameCell.append(buildSystemReuseControls(name, onRefresh));
+            nameCell.append(buildSystemDetailFields(name));
+            const reuseControls = buildSystemReuseControls(name, onRefresh);
             
             const actionsCell = document.createElement('td');
-            actionsCell.style.padding = '8px';
-            actionsCell.style.textAlign = 'right';
-            actionsCell.style.whiteSpace = 'nowrap';
+            actionsCell.className = 'sillynpc-system-actions-cell';
             
             // Which system you are in used to be unknowable: the library listed four and
             // marked none. The radio both shows it and is how you change it.
@@ -77,8 +70,8 @@ export function buildSystemManager(onRefresh) {
             radio.name = 'sillynpc-active-system';
             radio.checked = name === getActiveSystem();
             radio.disabled = Boolean(chatSystem && chatSystem !== name);
-            radio.title = radio.disabled ? `This chat belongs to "${chatSystem}"`
-                : radio.checked ? 'In use' : `Switch to "${name}"`;
+            radio.title = radio.disabled ? `This chat belongs to "${presets[chatSystem]?.metadata?.name || chatSystem}"`
+                : radio.checked ? 'In use' : `Switch to "${displayName}"`;
             radio.addEventListener('change', () => {
                 if (!radio.checked) return;
                 // Save the active rules before selecting another System.
@@ -95,20 +88,22 @@ export function buildSystemManager(onRefresh) {
 
             const expBtn = document.createElement('button');
             expBtn.className = 'menu_button';
-            expBtn.title = 'Export to JSON';
-            expBtn.innerHTML = '<i class="fa-solid fa-file-export"></i>';
+            expBtn.title = 'Export this System’s rules to a JSON file for backup or sharing.';
+            expBtn.setAttribute('aria-label', 'Export System');
+            expBtn.innerHTML = '<i class="fa-solid fa-file-export" aria-hidden="true"></i>';
             expBtn.addEventListener('click', () => exportSystem(name));
 
             const charsBtn = document.createElement('button');
             charsBtn.className = 'menu_button';
-            charsBtn.textContent = 'Export World Characters';
+            charsBtn.textContent = 'Export roster';
             charsBtn.title = 'Export reusable cards and NPCs in every chat assigned to this System.';
             charsBtn.addEventListener('click', async () => {
+                const displayName = presets[name]?.metadata?.name || name;
                 charsBtn.disabled = true;
                 try {
                     const payload = await exportWorldCharacters(name);
                     if (!payload.characters.length) {
-                        toastr.info(`No characters found for "${name}".`, 'Castward');
+                        toastr.info(`No characters found for "${displayName}".`, 'Castward');
                         return;
                     }
                     const defs = name === getActiveSystem()
@@ -123,7 +118,7 @@ export function buildSystemManager(onRefresh) {
                         + 'Turn stats, conditions and inventory reset on import. Export this file?');
                     if (!confirmed) return;
                     offerDownload(payload,
-                        `${name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_characters.json`);
+                        `${displayName.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_characters.json`);
                     toastr.success(`Exported ${payload.characters.length} characters.`, 'Castward');
                 } catch (err) {
                     toastr.error(String(err?.message || err), 'Castward');
@@ -134,24 +129,37 @@ export function buildSystemManager(onRefresh) {
 
             const delBtn = document.createElement('button');
             delBtn.className = 'menu_button';
-            delBtn.title = 'Delete';
+            delBtn.title = 'Delete this System and its saved carryover roster from the library. Switch to another System first if this one is selected.';
+            delBtn.setAttribute('aria-label', 'Delete System');
             delBtn.style.color = 'var(--red)';
-            delBtn.innerHTML = '<i class="fa-solid fa-trash"></i>';
+            delBtn.innerHTML = '<i class="fa-solid fa-trash" aria-hidden="true"></i>';
             delBtn.addEventListener('click', async () => {
+                const displayName = presets[name]?.metadata?.name || name;
                 // The active configuration still needs its System.
                 if (name === getActiveSystem()) {
                     toastr.info('Switch to another system before deleting this one.', 'Castward');
                     return;
                 }
-                if (await Popup.show.confirm('Delete system', `Delete the saved system "${name}"?`)) {
+                if (await Popup.show.confirm('Delete system', `Delete the saved system "${escapeHtml(displayName)}"?`)) {
                     deleteSystemPreset(name);
                     onRefresh();
                 }
             });
 
-            actionsCell.append(expBtn, charsBtn, delBtn);
+            const tools = document.createElement('div');
+            tools.className = 'sillynpc-system-tools';
+            tools.append(buildSystemDetailActions(name, onRefresh), expBtn, delBtn);
+            reuseControls.insertBefore(charsBtn, reuseControls.querySelector('button'));
+            actionsCell.append(tools);
             row.append(activeCell, nameCell, actionsCell);
-            table.appendChild(row);
+            const reuseRow = document.createElement('tr');
+            reuseRow.style.borderBottom = '1px solid var(--sillynpc-border)';
+            const reuseCell = document.createElement('td');
+            reuseCell.colSpan = 3;
+            reuseCell.className = 'sillynpc-system-reuse-cell';
+            reuseCell.append(reuseControls);
+            reuseRow.append(reuseCell);
+            table.append(row, reuseRow);
         });
         listWrap.appendChild(table);
     }
