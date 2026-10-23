@@ -61,9 +61,8 @@ test('the contract includes only active NPC collections and exposes typed entry 
 test('the same generation request receives collection meanings, field guidance and general starting instructions', () => {
     const f = setup();
     const body = JSON.parse(npcGenerationPrompt(request, npcGenerationContract(f.settings), {}, () => 0));
-    const clothes = body.templates[0].collections.find(collection => collection.id === 'clothes');
-    assert.match(clothes.guidance, /Garments currently worn/);
-    assert.equal(clothes.fields.find(field => field.name === 'description').guidance, 'Describe fabric and cut.');
+    assert.match(body.templates[0].collections, /Garments currently worn/);
+    assert.match(body.templates[0].collections, /Describe fabric and cut/);
     assert.match(NPC_GENERATION_INSTRUCTIONS, /worn clothing, ordinary equipment/);
     assert.match(NPC_GENERATION_INSTRUCTIONS, /innate or learned abilities\/knowledge/);
     assert.match(NPC_GENERATION_INSTRUCTIONS, /scene props as part of the setting/);

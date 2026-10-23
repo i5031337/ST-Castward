@@ -51,7 +51,7 @@ test('initial pools, ratings, level, XP and options are enforced before persiste
         assert.throws(() => validateGeneratedNpc(raw, contract, [], () => 0), undefined, `${stat}: ${reading}`);
     }
     const raw = generated(); raw.stats.Health = 12;
-    assert.throws(() => validateGeneratedNpc(raw, contract, [], () => 0), /expected string/);
+    assert.throws(() => validateGeneratedNpc(raw, contract, [], () => 0), /Invalid pool/);
 });
 
 test('pool defaults do not cap individual NPC capacity without an explicit growth ceiling', () => {

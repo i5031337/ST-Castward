@@ -45,9 +45,7 @@ function buildContext(cards, request) {
         story: buildLoreExcerpt(context.chat || []).text,
         establishedActor: request.name ? knownActor(request.name) : null,
         namingUsedNames: castNames(cards),
-        unavailableNames: forbiddenNames(),
-        recentCast: cards.slice(-20).map(card => ({ name: card.name,
-            profile: Object.fromEntries(Object.entries(card.profile || {}).map(([id, value]) => [id, String(value).slice(0, 400)])) })) };
+        unavailableNames: forbiddenNames() };
 }
 
 /** Portraits are optional background work; a failed portrait never blocks the scene. */
@@ -96,7 +94,7 @@ export function initNpcCreationTool() {
     const parameters = npcToolParameters(getSettings());
     context.registerFunctionTool({
         name: 'castward_create_npc', displayName: 'Create NPC',
-        description: 'Before introducing a substantial NPC without a card, commission a complete profile, initial stats and appropriate starting belongings and abilities. Choose npcTemplateId from the offered types when the System has multiple NPC templates; the generator receives only that template. Omit name for a new person with a randomized fresh name. Supply name to preserve the exact identity of a previously mentioned or canon character, and put established facts and canon constraints in requirements. Existing matching cards are returned unchanged; never use this to rename a card or change its assigned template. Supply the role, scene and optional naming culture. Wait for the result, then narrate using the returned name, facts and holdings. Prefer the existing cast for returning people; anonymous extras do not need cards. Reuse requestKey for retries of the same person; different people require different keys. Creation saves a chat-owned card but does not put them on stage. If creation fails, do not claim success or keep retrying this turn.',
+        description: 'Create a profile, stats and starting belongings for one substantial NPC before introducing them. Supply their role, situation and established facts. Use one call and a distinct requestKey per character, including shared relationships in requirements. Choose an offered npcTemplateId when required. Supply a name only when it is clear from context. Continue narration with the returned name and details. Use existing cards for returning characters and introduce anonymous extras directly. On failure, continue with the existing cast or anonymous extras.',
         parameters,
         shouldRegister: () => {
             // The host calls this before serializing each request, including after a System edit or switch.
@@ -108,7 +106,7 @@ export function initNpcCreationTool() {
             catch (error) {
                 console.warn(LOG_PREFIX, 'NPC creation tool failed', error);
                 return JSON.stringify({ ok: false, error: error.message || String(error),
-                    instruction: 'Do not claim an NPC was created. Do not retry automatically this turn.' });
+                    instruction: 'Continue with the existing cast or anonymous extras for this turn.' });
             }
         },
         formatMessage: () => 'Creating a new NPC…',

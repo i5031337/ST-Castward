@@ -71,5 +71,16 @@ export function seedKnownNpcCollections(state, card) {
     return true;
 }
 
-export const NPC_COLLECTION_INSTRUCTIONS = `Initialize the selected template's applicable collections as starting holdings in this same response. Use collection IDs as keys and full arrays of typed entry objects, not add/remove/update operations. Include every applicable collection; use [] where the person has no appropriate entries. Use configured field names, identifiers, defaults, allowed choices, bounds and collection/field guidance. Stat readings are strings, but collection numbers and booleans are native JSON numbers and booleans.
-Starting entries describe what this person already wears, carries, owns or knows. Use established possessions and capabilities first. For a newly invented person, give them a small, plausible starting set consistent with the profile, role, species, level and setting: worn clothing, ordinary equipment, and innate or learned abilities/knowledge should have suitable entries where applicable. Include useful supported details, including shared descriptions when adding entries. Keep appearance and clothing consistent. Treat scene props as part of the setting, not automatically as possessions. Reusable abilities and knowledge remain held after use. Use one entry per identifier; quantity is the total held, not a delta, and must be positive. This is initialization, not an acquisition, transfer, XP award or level-up reward. Do not backfill reward schedules or invent unsupported collection types, fields, rules, events or accomplishments. Leave inapplicable or event-dependent collections empty. For previously mentioned or canon people, preserve established facts; do not claim speculative possessions or abilities are established. For collections already present in establishedActor.collections, return []: code restores those exact held entries, including intentionally empty arrays, without adding or removing anything.`;
+export const NPC_COLLECTION_INSTRUCTIONS = `Describe what this character already wears, carries, owns or knows.
+Use established possessions and capabilities first.
+For a new character, choose a small, plausible starting set fitting their profile, role, species, level and setting.
+Include worn clothing, ordinary equipment, and innate or learned abilities/knowledge where applicable.
+Keep clothing consistent with the profile. Treat scene props as part of the setting.
+Leave inapplicable or event-dependent collections empty.
+For collections already in establishedActor.collections, return []; their held entries are preserved.
+
+Use each applicable collection ID as a key with a full array of entry objects, or [] when empty.
+Use configured field names, identifiers, defaults, allowed choices, bounds and field guidance.
+Include supported details and shared descriptions.
+Use native JSON numbers and booleans for collection fields of those types.
+Keep one entry per identifier, with a positive total quantity for counted entries.`;

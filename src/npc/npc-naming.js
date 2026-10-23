@@ -40,12 +40,10 @@ export function buildNpcNamingBrief(usedNames = [], pick = randomIndex) {
     }
     return {
         syllables,
-        length: `Aim for ${syllables} syllable${syllables === 1 ? '' : 's'} in the given or primary name, not the whole name with surnames or titles.`,
+        length: `Aim for ${syllables} syllable${syllables === 1 ? '' : 's'} in the given or primary name.`,
         rhythm: syllables === 1 ? 'One clear beat.' : `Aim for emphasis on the ${emphasis} syllable.`,
         candidateInitials,
-        guidance: 'Use candidateInitials in order, one per alternative primary name written in the Latin alphabet. '
-            + 'These are creative hints, not strict requirements. Natural names for the setting, culture and requested nameStyle '
-            + 'take precedence over length, rhythm and initials. Do not force Latin initials or an anglicized stress pattern '
-            + 'onto another naming tradition. Do not explain the brief in the response.',
+        guidance: 'For names written in the Latin alphabet, use candidateInitials in order, one per alternative primary name. '
+            + 'Natural names for the culture, setting and requested nameStyle take precedence over these length, rhythm and initial hints.',
     };
 }

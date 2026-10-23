@@ -71,7 +71,7 @@ test('the generated prompt supplies one brief and leaves cultural fit authoritat
     assert.equal(body.namingBrief.syllables, 4);
     assert.deepEqual(body.namingBrief.candidateInitials, ['Y', 'X', 'W', 'V']);
     assert.match(body.namingBrief.guidance, /take precedence/);
-    assert.match(body.namingBrief.guidance, /Do not force Latin initials/);
+    assert.match(body.namingBrief.guidance, /Natural names for the culture/);
     assert.equal(body.request.nameStyle, 'Traditional Chinese names');
     assert.equal(body.context.story, 'A Chinese village.');
     assert.equal(body.context.namingUsedNames, undefined);
@@ -105,4 +105,37 @@ test('an exhausted candidate list gets one repair with the same naming brief', a
     assert.equal(f.calls.length, 2);
     assert.ok(f.calls[1].userPrompt.startsWith(f.calls[0].userPrompt));
     assert.match(f.calls[1].userPrompt, /No usable unused name candidates/);
+});
+
+test('generator context includes creative inputs and relevant state while leaving bookkeeping to code', () => {
+    const settings = settingsFixture();
+    settings.statusTracker.collections = [{ id: 'clothes', name: 'Clothes', targets: ['npc'],
+        fields: [{ name: 'piece', type: 'text', isPrimary: true }] }];
+    const context = {
+        story: 'A river crossing.', namingUsedNames: ['Zera'], unavailableNames: ['Zera'],
+        recentCast: [{ name: 'Zera', profile: { motive: 'Collects tolls.' } }],
+        establishedActor: { name: 'Éowyn', npcTemplateId: 'human', offstage: true,
+            stats: { Health: '8/12', 'Unrelated stat': 'secret' },
+            collections: { clothes: [], otherTemplateCollection: [{ name: 'Unrelated item' }] } },
+    };
+    const before = structuredClone(context);
+    const named = JSON.parse(npcGenerationPrompt({ ...request, name: 'Éowyn' },
+        npcGenerationContract(settings, { name: 'Éowyn' }), context));
+    assert.equal(named.request.requestKey, undefined);
+    assert.equal(named.request.nameStyle, undefined);
+    assert.equal(named.request.requirements, request.requirements);
+    assert.equal(named.context.recentCast, undefined);
+    assert.equal(named.context.unavailableNames, undefined);
+    assert.deepEqual(named.context.establishedActor, {
+        name: 'Éowyn', stats: { Health: '8/12' }, collections: { clothes: [] },
+    });
+    assert.match(named.templates[0].progression, /Initialize Level.*XP.*0\/100/);
+    const unnamed = JSON.parse(npcGenerationPrompt(request, npcGenerationContract(settings),
+        { ...context, establishedActor: undefined }, () => 0));
+    assert.equal(unnamed.context.recentCast, undefined);
+    assert.doesNotMatch(JSON.stringify(unnamed), /Collects tolls/);
+    assert.deepEqual(unnamed.context.unavailableNames, ['Zera']);
+    assert.equal(unnamed.request.nameStyle, request.nameStyle);
+    assert.equal(unnamed.request.requestKey, undefined);
+    assert.deepEqual(context, before);
 });

@@ -11,9 +11,10 @@ SillyTavern loads `index.js` and `style.css` from `manifest.json`. The JavaScrip
 | `src/api/` | Lore and image generation and file operations. |
 | `src/generation/` | Staged System generation, canonical schema fragments, validation, requests, and isolated drafts. |
 | `src/npc/` | Narrator Create NPC tool, System-aware creation contract, randomized name selection, validation, guarded chat-owned saves and background portraits. |
+| `src/npc/npc-generation-format.js` | Reader-compatible JSON repair, numeric stat string normalization, and concise model-facing template definitions. |
 | `src/npc/npc-naming.js` | Randomized naming briefs: adjustable syllable/stress weights, four distinct initials favoring unused cast initials, and uniform selection. Cultural fit overrides the hints. |
 | `src/npc/npc-collection-generation.js` | Template-scoped starting collections, reader-style initialization guidance, typed entry contracts, defaults, bounds and identifier validation. |
-| `tests/npc-creation.mjs`, `tests/npc-creation-name.mjs`, `tests/npc-creation-template.mjs`, `tests/npc-collection-creation.mjs`, `tests/ui-npc-creation.py` | Creation contracts, randomized and exact names, template selection, alias reuse, starting collections, held-state preservation, stat bounds, retries, cancellation, duplicate prevention and unsaved host tool/UI checks. |
+| `tests/npc-creation.mjs`, `tests/npc-creation-name.mjs`, `tests/npc-creation-template.mjs`, `tests/npc-collection-creation.mjs`, `tests/npc-generation-format.mjs`, `tests/ui-npc-creation.py` | Creation contracts, randomized and exact names, template selection, alias reuse, starting collections, held-state preservation, JSON recovery, numeric stat normalization, compact prompt definitions, stat bounds, retries, cancellation, duplicate prevention and unsaved host tool/UI checks. |
 | `src/characters/` | Character records, ownership, portraits, and transfer. |
 | `src/chat/` | Chat ownership, message decoration, and reprocessing. |
 | `src/expressions/` | NPC sprite packs, per-line expression cache, static dialogue portraits, and full-size speech sprites. |
@@ -162,6 +163,7 @@ SillyTavern loads `index.js` and `style.css` from `manifest.json`. The JavaScrip
 | `src/ui/characters/ui-manual-level-up.js` | Card Edit button and pending manual level-up reward controls. |
 | `tests/manual-level-ups.mjs`, `tests/ui-manual-level-ups.py` | Explicit level-up lifecycle, generic pool growth, persistence, context guards, and live card review checks. |
 | `src/tracker/numeric-stat-bounds.js` | Enforce numeric minimums and pool ceilings. |
+| `src/tracker/collection-prompt-definitions.js` | Shared readable collection definitions for the Tracker and NPC generator, with initialization defaults when needed. |
 | `src/tracker/stat-prompt-definitions.js` | Format stat purposes and rules for reader and inline prompts. |
 | `src/tracker/stat-persistence.js` | Rules for NPC stat persistence. |
 | `src/tracker/stat-update-policy.js` | Reader locking and migration of retired stat policies. |

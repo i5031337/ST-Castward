@@ -12,7 +12,7 @@ test('optional exact name skips candidate generation and preserves spelling and 
     assert.equal(f.calls[0].schema.properties.nameCandidates, undefined);
     const prompt = JSON.parse(f.calls[0].userPrompt);
     assert.equal(prompt.request.name, result.name);
-    assert.match(prompt.creativeNudge, /Preserve the named person/);
+    assert.equal(prompt.creativeNudge, undefined);
     assert.match(f.calls[0].systemPrompt, /canon/);
 });
 

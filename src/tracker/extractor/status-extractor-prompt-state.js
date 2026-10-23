@@ -1,80 +1,14 @@
 import { collectionQuantityField } from '../../core/collection-fields.js';
-import { collectionAppliesTo, collectionTargetLabel } from '../../core/collection-targets.js';
+import { collectionAppliesTo } from '../../core/collection-targets.js';
 import { npcTemplateFor } from '../../core/npc-templates.js';
-import { isStaticField } from '../../core/constants.js';
 import { profileFieldValue, profileFieldsForCard as fieldsForCard } from '../../core/profile-fields.js';
 import { statsInSystem, getPlayerCard, findCardForName } from '../status-logic.js';
 import { describeReaderStats } from '../stat-prompt-definitions.js';
+import { describeCollections as describeCollectionDefinitions } from '../collection-prompt-definitions.js';
 
-/**
- * Renders the current state in the envelope the reply must use.
- *
- * Two lessons are baked in here. A prose summary invited the model to reply in that
- * shape ({"World":..., "Miller":...}), so the state is shown as JSON in the target
- * shape instead. And listing every field of every collection item made the exchange
- * long enough that replies were truncated before the "characters" array, so
- * collections are summarised as item names with quantities.
- */
-/**
- * The collections and their fields, so a reply can use the right ones.
- *
- * Lived in the history scan, whose own comment explains why it exists: given only a prose
- * description, a 3B model invented its own keys and returned nothing usable. The
- * per-message extractor never had it, which is why the collections it produced were the
- * weakest part of its reply and why a newly created item arrived holding nothing but a
- * name - `name` was the only field it had ever been shown.
- *
- * @param {object} trackerSettings
- * @returns {string}
- */
-/** A note, ending in a full stop, however the person who wrote it left it. */
-function endsSentence(text) {
-    const trimmed = String(text ?? '').trim();
-    return /[.!?]$/.test(trimmed) ? trimmed : `${trimmed}.`;
-}
-
+/** Shared model-facing collection meanings and typed fields. */
 export function describeCollections(trackerSettings) {
-    const lines = [];
-    for (const col of trackerSettings.collections || []) {
-        const fields = (col.fields || []).map((f) => {
-            const type = f.type && f.type !== 'text' ? ` (${f.type})` : '';
-            const choices = f.type !== 'number' && (f.options || []).length ? ` [one of ${f.options.join(', ')}]` : '';
-            // Said out loud, because the state no longer shows these on anything that is
-            // already held. Without it a model could reasonably conclude they are not
-            // wanted at all and stop supplying one when adding - and the first time an item
-            // is added is the only chance the library gets to learn its description.
-            const range = f.type === 'number' ? [
-                String(f.min ?? '').trim() ? `minimum ${f.min}` : '',
-                String(f.maxStatValue ?? '').trim() ? `maximum ${f.maxStatValue}` : '',
-            ].filter(Boolean).join(', ') : '';
-            const library = !f.isPrimary && f.isMultiline && isStaticField(f)
-                ? ' [include when adding]' : '';
-            /* What the field is for, in the owner's words. A collection could say what it
-               held and a stat could say how it was written, and a collection's fields had
-               nowhere to say anything at all - so "value (number)" reached the reader as a
-               number called Cost with nothing saying what it costs. */
-            const says = String(f.hint ?? '').trim();
-            return `${f.name}${type}${choices}${range ? ` [${range}]` : ''}`
-                + `${f.isPrimary ? ' [identifies the item]' : ''}${library}`
-                + `${says ? ` - ${endsSentence(says)}` : ''}`;
-        }).join(', ');
-
-        /* The label and the note, not just the id. An id is a key - "pictures" tells the
-           model as little as a column name does, and the prompt used to send nothing else,
-           which is why guidance about inventories had to stand in for saying what a
-           collection actually holds. The label is already on every collection and was
-           simply never sent; the note is optional and blank until somebody writes one. */
-        const label = String(col.name ?? '').trim();
-        const title = label && label.toLowerCase() !== String(col.id).toLowerCase()
-            ? `"${col.id}" (${label})` : `"${col.id}"`;
-        const note = String(col.hint ?? '').trim();
-
-        lines.push(`- ${title} for ${collectionTargetLabel(col)}`
-            + `${note ? ` - ${endsSentence(note)}` : ''}`
-            + ` Fields: ${fields || 'name'}`
-            + (collectionQuantityField(col) ? ` Quantity field: ${collectionQuantityField(col).name}.` : ''));
-    }
-    return lines.join('\n');
+    return describeCollectionDefinitions(trackerSettings);
 }
 
 /**

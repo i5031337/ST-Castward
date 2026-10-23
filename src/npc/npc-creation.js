@@ -6,7 +6,7 @@ export function npcToolResult(card, reused = false) {
     return JSON.stringify({ ok: true, reused, id: card.id, name: card.name,
         npcTemplateId: card.npcTemplateId, profile: card.profile,
         stats: card.statusOverrides, collections: card.statusCollections,
-        instruction: 'Use this exact name and profile when introducing this NPC. Creation alone does not place them in the scene. Their card remains available if this reply is swiped or regenerated.' });
+        instruction: 'Use this exact name and the returned profile, stats and belongings when narrating this NPC.' });
 }
 
 /** One request per identity, with no live writes until generation and validation finish. */
@@ -54,7 +54,7 @@ export function createNpcCreationService({ getContext, getSettings, getCards, ge
         if (existing) {
             assertTemplateMatches(existing);
             if (nameKey && !findNamedNpc([existing], request.name)) {
-                throw new Error(`This requestKey already belongs to ${existing.name}. Use another key for another person.`);
+                throw new Error(`This requestKey already belongs to ${existing.name}. Use another key for another character.`);
             }
             return npcToolResult(existing, true);
         }
