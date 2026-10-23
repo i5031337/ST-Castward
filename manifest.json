@@ -7,7 +7,7 @@
     "generate_interceptor": "sillyNpcHistoryNotes",
     "css": "style.css",
     "author": "i5031337 (based on SillyNPC by BrutalKoala)",
-    "version": "0.9.0",
+    "version": "0.10.0",
     "homePage": "https://github.com/i5031337/ST-Castward",
     "auto_update": false,
     "description": "Character profiles, portraits, voices, memories, and RPG progression for your player and NPC cast."

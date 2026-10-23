@@ -29,7 +29,7 @@ export const BUILT_IN_DEFAULT_AVATAR = 'data:image/svg+xml;charset=utf-8,' + enc
 );
 
 /** Informational version; keep in sync with manifest.json. */
-export const EXTENSION_VERSION = '0.9.0';
+export const EXTENSION_VERSION = '0.10.0';
 
 /** Built-in theme IDs; other IDs use native theme classes. @type {readonly string[]} */
 export const SILLYNPC_THEMES = Object.freeze([
