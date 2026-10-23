@@ -236,6 +236,8 @@ SillyTavern loads `index.js` and `style.css` from `manifest.json`. The JavaScrip
 | `src/characters/character-repository.js` | Route character reads and writes among chat, world, and library records. |
 | `src/characters/character-scope.js` | Visible character selection and pattern signatures. |
 | `src/characters/character-transfer.js` | Character transfer file import and export. |
+| `src/characters/character-transfer-media.js` | Embed and restore portraits, picture tags, and expression packs in character files. |
+| `tests/character-transfer-complete.mjs`, `tests/ui-character-transfer.cjs` | Character export/import boundaries and a read-only running-host export check. |
 | `src/characters/character-images.js` | Character image folders, listing, and migration. |
 | `src/characters/character-image-migration.js` | Copy and migrate images between character folders. |
 | `src/characters/character-fill.js` | Audit missing character data and fill profile, stats, and items. |

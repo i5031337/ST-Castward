@@ -44,11 +44,11 @@ test('inactive System exports shared cards, its saved roster and chat NPCs using
         profileStrings, async () => null, () => {}, normalizeNpcPresentation, portableMemories, readNpcMemories);
     const exportWorldCharacters = new Function('getSettings', 'getWorldCharacters',
         'getChatCharacters', 'getContext', 'listChatHeaders', 'chatNpcSources', 'CHAT_NPCS_KEY',
-        'serialiseCharacter', 'TRANSFER_FORMAT', 'TRANSFER_VERSION',
+        'serialiseCharacter', 'TRANSFER_FORMAT', 'TRANSFER_VERSION', 'captureCharacterMedia',
         'normaliseStatUpdatePolicies', 'normaliseNpcPersistence', 'npcRoster',
         `${exportSource}\nreturn exportWorldCharacters;`)(
         () => settings, () => cards, () => [], () => ({}), async () => headers,
-        chatNpcSources, CHAT_NPCS_KEY, serialiseCharacter, 'sillynpc-characters', 2,
+        chatNpcSources, CHAT_NPCS_KEY, serialiseCharacter, 'sillynpc-characters', 3, async (char, record) => record,
         normaliseStatUpdatePolicies, normaliseNpcPersistence, npcRoster);
 
     const payload = await exportWorldCharacters('Inactive');

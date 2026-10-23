@@ -5,7 +5,6 @@ import { LOG_PREFIX } from '../../core/constants.js';
 import { POPUP_TYPE, Popup } from '../../../../../../popup.js';
 import { splitNpcStats, carriesNpcStat } from '../../tracker/stat-persistence.js';
 import { getAllCharacters } from '../../characters/character-repository.js';
-import { carriesNpcMemories } from '../../characters/system-roster-state.js';
 
 /**
  * Sending characters out of the grid and taking them in.
@@ -37,9 +36,10 @@ export async function exportCharacterFile(chars) {
         const reset = values.reduce((n, entry) => n + Object.keys(entry.variable).length, 0);
         const preview = `Export ${list.length} character${list.length === 1 ? '' : 's'}? `
             + `Carryover fields travel: ${innateNames.join(', ') || 'none'} (${carried} stored values). `
-            + `Turn fields start from the destination defaults: ${variableNames.join(', ') || 'none'} `
-            + `(${reset} current values stay here). Inventory and conditions also stay here. `
-            + (carriesNpcMemories(getSettings()) ? 'Active and archived NPC memories travel too.' : 'NPC memories stay here.');
+            + `Other stats start from the destination defaults: ${variableNames.join(', ') || 'none'} `
+            + `(${reset} current values stay here). `
+            + 'Portraits, expressions, collections, memories, profile, and lore travel too. '
+            + 'Voice service bindings may need checking after import.';
         if (!await Popup.show.confirm('Character export preview', preview)) return;
         const payload = await exportCharacters(list);
         const fileName = list.length === 1

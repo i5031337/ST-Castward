@@ -153,7 +153,7 @@ Characters can keep memories on their sheets, and the reader can suggest new one
 
 ## Moving between adventures
 
-Export characters or Systems to reuse them. Character exports include their profiles and any stats marked **NPC carryover**, while other adventure state starts fresh. Transfer portrait and sprite files separately.
+Export characters or Systems to reuse them. A character file includes their profile, lore, memories, belongings, conditions, portrait gallery, picture tags, expressions, and voice preferences. Only stats marked **NPC carryover** travel; other stats start from the destination System's defaults. Voice bindings may need checking on the new installation.
 
 Use **Extension → Export everything** for a full extension backup.
 

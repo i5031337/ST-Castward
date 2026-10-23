@@ -73,7 +73,7 @@ function buildEditorHeader(char, showGrid, refreshEditor, viewState) {
     header.append(title, fill);
     if (!char.isPlayer) {
         const exportButton = actionButton('sillynpc-export-char-btn', 'fa-file-export', '', () => exportCharacterFile([char]));
-        exportButton.title = 'Export this character, including portraits and lore.';
+        exportButton.title = 'Export this character with their Cast details and images.';
         const deleteButton = actionButton('sillynpc-delete-btn', 'fa-trash', '', async () => {
             if (await Popup.show.confirm(`Delete "${char.name || 'this character'}"?`)) {
                 deleteCharacter(char.id); manageState.editingCharId = null; showGrid();

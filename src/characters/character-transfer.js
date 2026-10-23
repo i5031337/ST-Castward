@@ -1,8 +1,8 @@
 import { activeNpcSystem, npcTemplateFor, npcStatsFor } from '../core/npc-templates.js';
 import { getSettings, saveSettings, normalizeSettings } from '../core/settings.js';
 import { createCharacter, instantiateWorldCharacter } from './characters.js';
-import { adoptImageForCharacter, createLoreEntry, saveLoreContent } from '../api/api.js';
-import { tryAutoSyncLorebook, getChatLorebookName } from '../lore/lorebook.js';
+import { createLoreEntry, saveLoreContent } from '../api/api.js';
+import { tryAutoSyncLorebook, getChatLorebookName, ensureChatLorebookForFill } from '../lore/lorebook.js';
 import { loadWorldInfo } from '../../../../../world-info.js';
 import { debugLog } from '../core/constants.js';
 import { blankActiveProfile, profileStrings } from '../core/profile-fields.js';
@@ -12,13 +12,12 @@ import { normalizeNpcPresentation } from '../core/npc-presentation.js';
 import { getContext } from '../../../../../st-context.js';
 import { readNpcMemories, writeNpcMemories } from '../tracker/npc-memories.js';
 import { portableMemories } from './system-roster-state.js';
+import { captureCharacterMedia, restoreCharacterImages, restoreCharacterSprites } from './character-transfer-media.js';
 
-/** Transfer portable character prose, lore, and innate stats between installations.
- * Portraits are supplied by the recipient; older files with embedded portraits still import.
- */
+/** Transfer Cast details, embedded images, and carryover stats between installations. */
 
 export const TRANSFER_FORMAT = 'sillynpc-characters';
-export const TRANSFER_VERSION = 2;
+export const TRANSFER_VERSION = 3;
 
 /* ─── Out ─────────────────────────────────────────────────────────────────── */
 
@@ -43,7 +42,7 @@ async function readLoreEntry(char) {
 }
 
 /**
- * One character's identity, lore and carried values. Adventure state stays behind.
+ * One character's Cast details. Stat readings follow their carryover rule.
  *
  * @param {object} char
  * @returns {Promise<object>} The record.
@@ -56,6 +55,10 @@ export async function serialiseCharacter(char, {
 } = {}) {
     // A different System may have retired a field; exports must keep its prose.
     const profile = profileStrings(char.profile);
+    const currentState = state === undefined
+        ? (isChatCharacter(char.id) ? getContext()?.chatMetadata?.sillynpc_status_state : null) : state;
+    const actor = currentState?.characters?.find(item => item.id && item.id === char.id)
+        || currentState?.characters?.find(item => String(item.name).toLowerCase() === String(char.name).toLowerCase());
 
     return {
         name: String(char.name || ''),
@@ -67,10 +70,9 @@ export async function serialiseCharacter(char, {
         profile,
         npcTemplateId: npcTemplateFor(char, system)?.id || char.npcTemplateId || '',
         // Keep the version 2 field name so existing character files remain readable.
-        innateStats: splitNpcStats(char.statusOverrides, npcStats).innate,
-        ...(system?.memories?.carryOver === true ? { memories: portableMemories(memories
-            ?? readNpcMemories(state === undefined
-                ? (isChatCharacter(char.id) ? getContext()?.chatMetadata?.sillynpc_status_state : null) : state, char)) } : {}),
+        innateStats: splitNpcStats(actor?.stats || char.statusOverrides, npcStats).innate,
+        collections: structuredClone(actor?.collections || char.statusCollections || {}),
+        memories: portableMemories(memories ?? readNpcMemories(currentState, char)),
         lore: await readLoreEntry(char),
     };
 }
@@ -83,7 +85,10 @@ export async function serialiseCharacter(char, {
  */
 export async function exportCharacters(chars, { npcStats } = {}) {
     const records = [];
-    for (const char of chars) records.push(await serialiseCharacter(char, { npcStats }));
+    for (const char of chars) {
+        const record = await serialiseCharacter(char, { npcStats });
+        records.push(await captureCharacterMedia(char, record));
+    }
 
     return {
         format: TRANSFER_FORMAT,
@@ -154,12 +159,21 @@ function applyRecord(char, record, name, version) {
     // travel; turn fields receive its defaults instead.
     const incoming = version >= 2 ? record.innateStats : record.statusOverrides;
     char.statusOverrides = initialiseNpcStats(incoming, npcStatsFor(char, getSettings().statusTracker));
-    // Collections, conditions and inventory belong to the adventure instance.
-    char.statusCollections = {};
-    char.memories = portableMemories(activeNpcSystem()?.memories?.carryOver === true ? record.memories : undefined);
+    char.statusCollections = version >= 3 && record.collections && typeof record.collections === 'object'
+        && !Array.isArray(record.collections) ? structuredClone(record.collections) : {};
+    char.memories = portableMemories(version >= 3 || activeNpcSystem()?.memories?.carryOver === true
+        ? record.memories : undefined);
     const context = getContext();
     const state = context?.getCurrentChatId?.() !== undefined && context.chatMetadata?.sillynpc_status_state;
-    if (state) writeNpcMemories(state, char, char.memories);
+    if (state) {
+        writeNpcMemories(state, char, char.memories);
+        const actor = state.characters?.find(item => item.id && item.id === char.id);
+        if (actor && version >= 3) {
+            actor.stats = structuredClone(char.statusOverrides);
+            actor.collections = structuredClone(char.statusCollections);
+        }
+        context.saveMetadataDebounced?.();
+    }
 
     // Field by field, for the same reason normalizeSettings does it that way: a file
     // written before a field existed should gain it blank, not replace the set.
@@ -174,20 +188,9 @@ function applyRecord(char, record, name, version) {
 
 /** Writes the inlined portraits back to disk and points the card at the right one. */
 async function restoreImages(char, record) {
-    char.images = [];
-    char.imageUrl = '';
-
-    const wanted = Number(record.portrait);
-    const stored = [];
-    for (const dataUri of Array.isArray(record.images) ? record.images : []) {
-        if (typeof dataUri !== 'string' || !dataUri.startsWith('data:')) continue;
-        // Writes the file, adds it to the list and points imageUrl at it - the same path a
-        // portrait chosen from disk takes, so an imported one behaves like any other.
-        stored.push(await adoptImageForCharacter(char, dataUri));
-    }
-
-    if (stored.length) {
-        char.imageUrl = stored[wanted >= 0 && wanted < stored.length ? wanted : 0];
+    const stored = await restoreCharacterImages(char, record);
+    if (Number.isInteger(record.expressionReference) && stored[record.expressionReference]) {
+        char.presentation.expressions.generation.reference = stored[record.expressionReference];
     }
 }
 
@@ -208,7 +211,14 @@ async function restoreLore(char, record) {
         return 'kept your existing lore entry';
     }
 
-    const world = getSettings().defaultLorebook || getChatLorebookName();
+    let world;
+    try {
+        world = getSettings().defaultLorebook || getChatLorebookName()
+            || await ensureChatLorebookForFill();
+    } catch (err) {
+        debugLog('Could not create a lorebook for the imported character', err);
+        return 'could not create a lorebook for its lore';
+    }
     if (!world) return 'no lorebook to write the lore into';
 
     try {
@@ -267,11 +277,16 @@ export async function importCharacters(payload, { onCollision } = {}) {
         const char = localInstance || (overwriting ? existing : createCharacter(name));
 
         applyRecord(char, record, name, Number(payload.version) || 1);
-        if (char.presentation.expressions.spriteFolder
-            || Object.values(char.presentation.voices).some(voice => voice.mode === 'voice')) {
-            result.notes.push(`${name}: sprite and voice references need checking on this installation`);
-        }
         await restoreImages(char, record);
+        if (Array.isArray(record.sprites) && record.sprites.length) {
+            try { await restoreCharacterSprites(char, record); }
+            catch (err) { result.notes.push(`${name}: ${err.message}`); }
+        } else if (char.presentation.expressions.spriteFolder) {
+            result.notes.push(`${name}: sprite reference needs checking on this installation`);
+        }
+        if (Object.values(char.presentation.voices).some(voice => voice.mode === 'voice')) {
+            result.notes.push(`${name}: voice reference needs checking on this installation`);
+        }
         const loreNote = await restoreLore(char, record);
         if (loreNote) result.notes.push(`${name}: ${loreNote}`);
 

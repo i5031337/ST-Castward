@@ -43,13 +43,15 @@ test('memory carryover works with automatic reading and roster reuse off', async
     assert.equal(exported.memories.entries[0].text, 'A promise');
 });
 
-test('source and destination each decide memory carryover and old character files remain readable', async () => {
+test('new files carry memories regardless of memory reuse; older files keep their prior rule', async () => {
     const { serialiseCharacter, applyRecord, system, state } = fixture();
     const exported = await serialiseCharacter({ id: 'source', name: 'Mira' });
     system.memories.carryOver = false;
-    assert.equal((await serialiseCharacter({ id: 'source', name: 'Mira' })).memories, undefined);
+    assert.equal((await serialiseCharacter({ id: 'source', name: 'Mira' })).memories.entries[0].text, 'A promise');
     const card = { id: 'destination' };
     writeNpcMemories(state, card, { entries: ['Previous destination value'] });
+    applyRecord(card, exported, 'Mira', 3);
+    assert.equal(readNpcMemories(state, card).entries[0].text, 'A promise');
     applyRecord(card, exported, 'Mira', 2);
     assert.deepEqual(readNpcMemories(state, card), { entries: [], archive: [] });
     system.memories.carryOver = true;

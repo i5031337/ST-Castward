@@ -153,7 +153,7 @@ test('reusable card instantiation copies preferences into independent chat insta
 
 test('transfer exports safe preferences and imports explicit unresolved external references', async () => {
     const deps = {
-        portableMemories, writeNpcMemories, getContext: () => ({}),
+        portableMemories, writeNpcMemories, readNpcMemories: () => ({}), getContext: () => ({}), isChatCharacter: () => false,
         normalizeNpcPresentation, getSettings: () => ({ statusTracker: {} }), activeNpcSystem: () => ({}),
         npcTemplateFor: () => null, splitNpcStats: () => ({ innate: {} }), profileStrings: () => ({}),
         initialiseNpcStats: () => ({}), npcStatsFor: () => [], blankActiveProfile: () => ({}),

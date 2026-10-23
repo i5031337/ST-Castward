@@ -3,6 +3,7 @@ import { getSettings } from '../core/settings.js';
 import { getWorldCharacters, getChatCharacters } from './character-repository.js';
 import { chatNpcSources, CHAT_NPCS_KEY } from '../chat/chat-npc-sources.js';
 import { serialiseCharacter, TRANSFER_FORMAT, TRANSFER_VERSION } from './character-transfer.js';
+import { captureCharacterMedia } from './character-transfer-media.js';
 import { listChatHeaders } from '../chat/chat-listing.js';
 import { normaliseNpcPersistence } from '../tracker/stat-persistence.js';
 import { normaliseStatUpdatePolicies } from '../tracker/stat-update-policy.js';
@@ -42,17 +43,17 @@ export async function exportWorldCharacters(systemName) {
 
     const characters = [];
     for (const char of worldCards) {
-        characters.push({
+        characters.push(await captureCharacterMedia(char, {
             ...await serialiseCharacter(char, { npcStats, system: profile.definition, state: null,
                 memories: npcRoster(settings, systemName)?.memories?.[char.id] }),
             source: { kind: 'world', system: systemName, npcId: char.id },
-        });
+        }));
     }
     for (const { char, sourceChat, state } of chatNpcSources(headers, systemName)) {
-        characters.push({
+        characters.push(await captureCharacterMedia(char, {
             ...await serialiseCharacter(char, { npcStats, system: profile.definition, state: state || null }),
             source: { kind: 'chat', system: systemName, chat: sourceChat, npcId: char.id },
-        });
+        }));
     }
     return { format: TRANSFER_FORMAT, version: TRANSFER_VERSION,
         exported: new Date().toISOString(), system: systemName, characters };

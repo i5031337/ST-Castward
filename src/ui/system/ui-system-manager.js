@@ -114,8 +114,8 @@ export function buildSystemManager(onRefresh) {
                     const confirmed = await Popup.show.confirm('Export World Characters',
                         `${payload.characters.length} characters from reusable cards and assigned chats. `
                         + `Carryover fields carried: ${innate.join(', ') || 'none'}. `
-                        + (profile.definition?.memories?.carryOver ? 'Active and archived NPC memories are included. ' : 'NPC memories stay here. ')
-                        + 'Turn stats, conditions and inventory reset on import. Export this file?');
+                        + 'Portraits, expressions, collections, memories, profile, and lore are included. '
+                        + 'Other stats reset to destination defaults. Export this file?');
                     if (!confirmed) return;
                     offerDownload(payload,
                         `${displayName.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_characters.json`);
