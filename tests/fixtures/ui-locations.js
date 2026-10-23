@@ -43,7 +43,8 @@ export async function checkLocations(root) {
     host.append(view, reviewView);
     document.body.append(host);
     let state = {};
-    const context = { chatMetadata: {}, getCurrentChatId: () => 'locations-ui-unsaved' };
+    const context = { chatMetadata: { chat_backgrounds: ['user/images/place-fixture.png'] },
+        getCurrentChatId: () => 'locations-ui-unsaved' };
     const history = [];
     let writes = 0;
     let loreReads = 0;
@@ -66,7 +67,8 @@ export async function checkLocations(root) {
             document, getContext: () => context, hasOpenChat: () => true, ...store,
             getSettings: () => settings, activeNpcSystem: () => system, saveSettings: () => { settingWrites++; },
             loadStateFromMetadata: load, saveStateToMetadata: save, applyScenePrompt() {},
-            eventSource: { emit() {} }, buildLocationLore,
+            eventSource: { emit() {} }, buildLocationLore, syncPlaceBackground() {},
+            generatePlaceBackground: async () => false,
             undoLastChange: () => { state = history.pop(); context.chatMetadata.sillynpc_status_state = state; },
         }, 'renderLocationsView');
         const button = (text, base = view) => [...base.querySelectorAll('button')]
@@ -84,6 +86,10 @@ export async function checkLocations(root) {
         field('Name').value = '<The Lantern>';
         field('Aliases').value = 'Lantern\nBlue Hearth';
         field('Description').value = 'An old tavern.';
+        const background = 'url("user/images/place-fixture.png")';
+        field('Background image').value = background;
+        fire(field('Background image'), 'change');
+        check('backgroundPreview', view.querySelector('.sillynpc-location-background-preview').getAttribute('src') === 'user/images/place-fixture.png');
         const selects = view.querySelectorAll('fieldset select');
         selects[0].value = 'Fixture book'; fire(selects[0], 'change'); await tick();
         selects[1].value = '0'; fire(selects[1], 'change');
@@ -94,14 +100,20 @@ export async function checkLocations(root) {
         const id = Object.keys(state.locations.records)[0];
         check('createAndLinkUidZero', state.locations.records[id].loreEntryId === 0
             && state.locations.records[id].lorebook === 'Fixture book');
+        check('placeBackgroundSaved', state.locations.records[id].backgroundImage === background);
         check('nameEscaped', !view.querySelector('the') && view.textContent.includes('<The Lantern>'));
         const card = () => view.querySelector('.sillynpc-location-card');
         card().click();
+        check('manualBackgroundAction', !!button('Generate background'));
+        const generated = 'url("user/images/generated-place.png")';
+        state = store.editLocation(state, { id, backgroundImage: generated });
+        context.chatMetadata.sillynpc_status_state = state;
         field('Name').value = 'The Copper Lantern';
         field('Description').value = 'A blue hearth and copper lamps.';
         submit();
         check('editAndRename', state.locations.records[id].name === 'The Copper Lantern'
-            && state.locations.records[id].description.includes('copper lamps'));
+            && state.locations.records[id].description.includes('copper lamps')
+            && state.locations.records[id].backgroundImage === generated);
         const search = view.querySelector('[type=search]');
         search.value = 'Blue Hearth'; fire(search, 'input');
         check('aliasSearch', view.querySelectorAll('.sillynpc-location-card').length === 1);

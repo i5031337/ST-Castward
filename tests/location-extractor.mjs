@@ -32,6 +32,7 @@ function fixture({ enabled = true, afterRequest, afterLocationRequest, reviewMod
         refreshTurnBase: () => {}, recordAppliedChanges: (id, rows) => records.push(rows),
         trackerMessageIndex, partitionChanges: evaluate('../src/tracker/status-diff-review.js', {}, 'partitionChanges'),
         eventSource: { emit: () => {} },
+        generatePlaceBackground: async () => false,
     }, '{ locationProposalsForReading, partitionLocationRows, resolveLocationRows }');
     const output = { global: { Time: 'dusk' }, player: {}, characters: [], locationChanged };
     const locationOutput = {

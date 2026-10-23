@@ -13,6 +13,7 @@ import { refreshReadButton } from '../ui/tracker/ui-read-button.js';
 import { refreshScanButton } from '../ui/tracker/ui-scan-button.js';
 import { refreshMemoryButton } from '../ui/tracker/ui-memory-button.js';
 import { npcCreationService } from '../npc/npc-tool.js';
+import { syncPlaceBackground } from '../locations/location-background.js';
 
 /** Apply the master switch immediately; keep saved characters and tracker state. */
 export function refreshExtensionEnabled() {
@@ -28,6 +29,7 @@ export function refreshExtensionEnabled() {
         restorePlayerDialogueSetting();
     }
     applyScenePrompt();
+    if (getSettings().enabled) syncPlaceBackground(undefined, undefined, true);
     applyDialogueFormatPrompt();
     applyBanList();
     updateHUD();

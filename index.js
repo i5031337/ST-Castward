@@ -44,6 +44,7 @@ import { describeChatConnection } from './src/core/utils.js';
 import { applyDialogueFormatPrompt } from './src/prompts/dialogue-format.js';
 import { placeWritingPrompt } from './src/prompts/prompt-slot.js';
 import { applyBanList } from './src/prompts/banlist.js';
+import { initPlaceBackgrounds } from './src/locations/location-background.js';
 
 async function addSettingsPanel() {
     try {
@@ -105,6 +106,7 @@ jQuery(async () => {
         setReprocessCallback(reprocessAllMessages);
         // Register the aligner to preserve manual corrections without a circular import.
         setSwipeBaseAligner(alignSwipeBaseToNow);
+        initPlaceBackgrounds();
         await addSettingsPanel();
         wireAvatarClicks();
         // Presets replace the prompt list, so restore managed prompts and refresh the HUD.

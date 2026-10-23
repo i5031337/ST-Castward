@@ -94,3 +94,13 @@ test('reserved IDs and allocation collisions cannot corrupt records; JSON preser
     assert.deepEqual(Object.keys(readLocationStore(untrusted).records), ['ok']);
     assert.equal({}.name, undefined);
 });
+
+test('place background links survive edits and reject invalid CSS URLs', () => {
+    const image = 'url("user/images/tavern night.png")';
+    let state = add({}, 'Tavern', 'tavern', { backgroundImage: image });
+    state = editLocation(state, { id: 'tavern', description: 'Warm hearth.' });
+    assert.equal(readLocationStore(state).records.tavern.backgroundImage, image);
+    assert.throws(() => editLocation(state, { id: 'tavern', backgroundImage: 'url(javascript:alert)' }), /valid background/);
+    state = editLocation(state, { id: 'tavern', backgroundImage: '' });
+    assert.equal(state.locations.records.tavern.backgroundImage, '');
+});

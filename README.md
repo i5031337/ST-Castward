@@ -149,7 +149,7 @@ These examples show the expression editor and **Show Present NPC Sprites**, whic
 
 ## Memories and places
 
-Characters can keep memories on their sheets, and the reader can suggest new ones. **Places** keeps location cards for your adventure and follows discoveries and movement. These features have had less testing than profiles and tracking.
+Characters can keep memories on their sheets, and the reader can suggest new ones. **Places** keeps location cards for your adventure and follows discoveries and movement. Link a background image to a place and Castward shows it when that place becomes current. Choose an existing chat image, use the background currently visible, or click **Generate background** on the Place card. To draw images as new places are discovered, enable **Images → Draw New Place Backgrounds Automatically**. Both drawing options use SillyTavern Image Generation and may incur a separate cost. These features have had less testing than profiles and tracking.
 
 ## Moving between adventures
 

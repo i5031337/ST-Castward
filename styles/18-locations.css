@@ -25,6 +25,8 @@
 }
 .sillynpc-location-form textarea { resize: vertical; min-height: 3rem; }
 .sillynpc-location-form .text_pole { width: 100%; min-width: 0; box-sizing: border-box; }
+.sillynpc-location-background-preview { display: block; width: min(100%, 20rem); max-height: 11rem; object-fit: cover; border-radius: 5px; }
+.sillynpc-location-background-preview[hidden] { display: none; }
 .sillynpc-location-lore { margin: 1rem 0; padding: 0.7rem; border: 1px solid currentColor; border-radius: 6px; min-width: 0; }
 .sillynpc-location-error { color: var(--warning, #e8ad75); overflow-wrap: anywhere; }
 .sillynpc-location-review.sillynpc-review-row { display: flex; align-items: flex-start; gap: 0.6rem; }

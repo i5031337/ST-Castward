@@ -38,6 +38,8 @@ export const defaultSettings = {
     autoColorUnknownSpeakers: true,
     /** Draw a missing portrait after empty-card Fill or reader-generated NPC profiles. */
     autoPortraitOnFill: true,
+    /** Draw a linked landscape image when the reader saves a new Place. */
+    autoPlaceBackgrounds: false,
     autoGenerateNpcExpressions: false,
     npcExpressionWorkflow: '',
     npcExpressionIpAdapterMode: false,

@@ -19,6 +19,11 @@ export function renderImageGenerationSettings(view, rerender) {
             + 'Uses profile fields selected for image prompts with SillyTavern Image Generation, which may be billed separately.',
     }));
     view.append(buildSettingToggle({
+        key: 'autoPlaceBackgrounds', label: 'Draw New Place Backgrounds Automatically',
+        help: 'Draw and link a landscape image when the Places reader saves a new place. '
+            + 'Uses SillyTavern Image Generation and may be billed separately. Existing places are unchanged.',
+    }));
+    view.append(buildSettingToggle({
         key: 'autoGenerateNpcExpressions', label: 'Generate NPC Expressions Automatically',
         help: 'Classify NPC dialogue on new replies and generate missing expression sprites from each NPC portrait. '
             + 'Applies to all NPCs. Uses Image Edit with ComfyUI and the saved emotion prompts; requires Local, Extras or WebLLM in ST Expressions. '

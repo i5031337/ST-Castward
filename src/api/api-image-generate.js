@@ -54,12 +54,15 @@ function imageUrlFromResult(result) {
 }
 
 /** Return the generated image for caller review; the caller decides whether to use it. */
-export async function generateImage(fullPrompt, { owner = null, shape = resolvePortraitShape() } = {}) {
-    const negative = applyMacros(DEFAULT_IMAGE_NEGATIVE_PROMPT);
+export async function generateImage(fullPrompt, { owner = null, shape = resolvePortraitShape(),
+    negativePrompt = DEFAULT_IMAGE_NEGATIVE_PROMPT, gallery, extend, edit } = {}) {
+    const negative = applyMacros(negativePrompt);
     const pixels = shape?.pixels;
     const size = pixels ? `width=${pixels.width} height=${pixels.height} ` : '';
+    const controls = [gallery, extend, edit].map((value, index) => value === undefined ? ''
+        : `${['gallery', 'extend', 'edit'][index]}=${value} `).join('');
     // The host command handles provider selection, credentials, gallery saving and errors.
-    const command = `/imagine quiet=true ${size}negative="${escapeCommandValue(negative)}" ${escapeCommandValue(fullPrompt)}`;
+    const command = `/imagine quiet=true ${controls}${size}negative="${escapeCommandValue(negative)}" ${escapeCommandValue(fullPrompt)}`;
     debugLog('Sending Image Generation command', command);
     const result = await executeSlashCommandsOnChatInput(command, { clearChatInput: false });
     let imageUrl = imageUrlFromResult(result);

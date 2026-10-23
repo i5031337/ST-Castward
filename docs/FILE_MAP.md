@@ -409,11 +409,14 @@ SillyTavern loads `index.js` and `style.css` from `manifest.json`. The JavaScrip
 | `src/locations/location-runtime.js` | Reader provenance, source validation, chat saves, and reviewed turn effects. |
 | `src/locations/location-context.js` | Literal mention detection, bounded narrator recall, current-place context and movement-flag instructions, and place-detail schema. |
 | `src/locations/location-lore.js` | Read-only lorebook listings and entry reads. |
+| `src/locations/location-background.js` | Apply a current Place's linked image through the chat background metadata and visible host background. |
+| `src/locations/location-image.js` | Build landscape prompts, draw a Place image through SillyTavern Image Generation, and attach fresh results to chat-owned cards. |
 | `src/ui/locations/ui-locations.js` | Chat-scoped Places management, search, manual editing, current marker, and deletion undo. |
 | `src/ui/locations/ui-location-lore.js` | Reference linking and explicit copying into an unsaved place description. |
 | `src/ui/locations/ui-location-review.js` | Visible place identities, containment, editable descriptions, and legacy citation display. |
 | `styles/18-locations.css` | Places editor, responsive list, and review row layout. |
 | `tests/locations-store.mjs`, `tests/location-proposals.mjs` | Pure identities, validation, uncited proposals, dependency, and acceptance checks. |
+| `tests/location-image.mjs`, `tests/ui-place-background.cjs` | Automatic drawing, stale-result guards, and the live Place image editor/background check. |
 | `tests/location-context.mjs`, `tests/locations-ui.mjs` | Prompt/schema integration, bounded matching, editor controls, and stale-chat guards. |
 | `tests/location-runtime.mjs`, `tests/location-turns.mjs` | Mixed review orchestration, provenance, current-turn replacement, manual corrections, and System independence. |
 | `tests/ui-locations.py` | Temporary unsaved browser check of Places, review, and the in-chat tracker trail. |

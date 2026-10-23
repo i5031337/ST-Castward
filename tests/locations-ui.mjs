@@ -54,6 +54,8 @@ function fixture(open = true) {
             return state;
         },
         applyScenePrompt: () => promptedFlags.push(state.locations.enabled),
+        syncPlaceBackground() {},
+        generatePlaceBackground: async () => false,
         saveStateToMetadata: next => { state = next; saves.push(next); },
         eventSource: { emit() {} }, undoLastChange() {},
         buildLocationLore: () => ({ element: new Element('fieldset'), value: () => ({ lorebook: '', loreEntryId: null }) }),

@@ -5,6 +5,7 @@ import { recordAppliedChanges } from '../tracker/snapshots/status-snapshot-recor
 import { trackerMessageIndex } from '../tracker/ui/status-ui-placement.js';
 import { partitionChanges } from '../tracker/status-diff-review.js';
 import { buildLocationProposals, applyLocationReview } from './location-proposals.js';
+import { generatePlaceBackground } from './location-image.js';
 
 /** Keep movement behind any new destination card awaiting review. */
 export function partitionLocationRows(rows, settings) {
@@ -49,6 +50,15 @@ export function resolveLocationRows(messageId, pending, accepted, { discardAll =
         saveStateToMetadata(result.state, { label: automatic ? 'Recognized places' : 'Reviewed places', partOfMessage: current });
         if (current) recordAppliedChanges(messageId, result.appliedRows);
         eventSource.emit('sillynpc-status-updated', result.state);
+        for (const row of result.appliedRows) {
+            if (row.kind !== 'location-create') continue;
+            void generatePlaceBackground(row.location.id, { automatic: true }).catch(error => {
+                console.warn('Castward: Could not draw place background', error);
+                if (typeof toastr !== 'undefined') toastr.warning(
+                    `Could not draw ${row.actor}'s background: ${error.message || error}`,
+                    'Castward');
+            });
+        }
     }
     const attempted = new Set((accepted || []).map(row => row.id));
     const applied = new Set(result.appliedRows.map(row => row.id));

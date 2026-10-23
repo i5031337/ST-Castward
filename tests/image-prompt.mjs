@@ -45,6 +45,24 @@ test('manual edited prompt is sent verbatim with ownership and blanks are reject
     assert.equal(f.calls.length, 1);
 });
 
+test('landscape generation uses the host image command without portrait prompt controls', async () => {
+    const source = readFileSync(new URL('../src/api/api-image-generate.js', import.meta.url), 'utf8')
+        .replace(/^import\s+[\s\S]*?\s+from\s+['"][^'"]+['"];\s*/gm, '')
+        .replaceAll('export function ', 'function ').replaceAll('export async function ', 'async function ');
+    let command = '';
+    const generate = new Function('applyMacros', 'executeSlashCommandsOnChatInput', 'recordUsage',
+        'debugLog', 'persistGeneratedImage', 'DEFAULT_IMAGE_NEGATIVE_PROMPT',
+        `${source}\nreturn generateImage;`)(value => value, async value => {
+        command = value; return { pipe: 'user/images/place.png' };
+    }, () => {}, () => {}, async value => value, 'portrait negatives');
+    const path = await generate('Stone bridge at dusk', {
+        shape: { pixels: { width: 1280, height: 720 } }, negativePrompt: 'people, text',
+        gallery: false, extend: false, edit: false,
+    });
+    assert.equal(path, 'user/images/place.png');
+    assert.match(command, /^\/imagine quiet=true gallery=false extend=false edit=false width=1280 height=720 negative="people, text" Stone bridge at dusk$/);
+});
+
 
 test('portrait prefix precedes the description in preview and automatic requests and can be cleared', async () => {
     const f = fixture();

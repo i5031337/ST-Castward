@@ -3,8 +3,10 @@ import { eventSource } from '../../../../../../events.js';
 import { getSettings, saveSettings } from '../../core/settings.js';
 import { activeNpcSystem } from '../../core/npc-templates.js';
 import { loadStateFromMetadata, saveStateToMetadata, hasOpenChat, undoLastChange, applyScenePrompt } from '../../tracker/status-logic.js';
-import { readLocationStore, editLocation, deleteLocation, setCurrentLocation } from '../../locations/location-store.js';
+import { readLocationStore, editLocation, deleteLocation, setCurrentLocation, backgroundImageUrl } from '../../locations/location-store.js';
 import { buildLocationLore } from './ui-location-lore.js';
+import { syncPlaceBackground } from '../../locations/location-background.js';
+import { generatePlaceBackground } from '../../locations/location-image.js';
 
 function element(tag, text = '', className = '') {
     const node = document.createElement(tag);
@@ -44,6 +46,7 @@ export function renderLocationsView(view, { locationId = null } = {}) {
                 // Refresh the derived flag before rebuilding the cached scene prompt.
                 loadStateFromMetadata();
                 applyScenePrompt();
+                if (enabled.checked && getSettings().enabled) syncPlaceBackground();
             }
         });
         enabledLabel.append(enabled, document.createTextNode(' Remember places with this System'));
@@ -188,6 +191,36 @@ export function renderLocationsView(view, { locationId = null } = {}) {
         const description = field('Description', 'textarea', record?.description, 'Established details and lasting changes. Saved text is recalled when this place is current.');
         description.rows = 6;
         description.maxLength = 4000;
+        const background = field('Background image', 'select', '', 'Choose an image already in this chat, or use the background currently visible.');
+        const addBackground = (image, label) => {
+            if (!image || !backgroundImageUrl(image) || [...(background.options || [])].some(option => option.value === image)) return;
+            const choice = element('option', label);
+            choice.value = image;
+            background.append(choice);
+        };
+        const none = element('option', 'No linked image');
+        none.value = '';
+        background.append(none);
+        const visibleBackground = metadata.custom_background || document.querySelector?.('#bg1')?.style.backgroundImage;
+        addBackground(visibleBackground, 'Current chat background');
+        for (const path of Array.isArray(metadata.chat_backgrounds) ? metadata.chat_backgrounds : []) {
+            if (typeof path !== 'string') continue;
+            const image = `url("${encodeURI(path).replaceAll('"', '%22')}")`;
+            addBackground(image, path.split('/').pop());
+        }
+        addBackground(record?.backgroundImage, 'Previously linked image');
+        background.value = record?.backgroundImage || '';
+        const preview = document.createElement('img');
+        preview.className = 'sillynpc-location-background-preview';
+        preview.alt = 'Selected place background';
+        let backgroundTouched = false;
+        const updatePreview = () => {
+            preview.hidden = !background.value;
+            preview.src = backgroundImageUrl(background.value);
+        };
+        background.addEventListener('change', () => { backgroundTouched = true; updatePreview(); });
+        updatePreview();
+        form.append(preview);
         const parent = field('Inside', 'select', '');
         const option = (id, label) => {
             const node = element('option', label);
@@ -217,6 +250,26 @@ export function renderLocationsView(view, { locationId = null } = {}) {
         actions.append(save);
         if (record) {
             if (record.id !== store.currentId) actions.append(button('Set as current place', () => commit(state => setCurrentLocation(state, record.id), 'Changed current place')));
+            const generate = button('Generate background', async () => {
+                if (!current()) return;
+                const reference = lore.value();
+                if (name.value !== record.name || aliases.value !== record.aliases.join('\n')
+                    || description.value !== record.description || parent.value !== record.parentId
+                    || reference.lorebook !== record.lorebook || reference.loreEntryId !== record.loreEntryId
+                    || backgroundTouched) {
+                    showError('Save your place edits before generating its background.');
+                    return;
+                }
+                generate.disabled = true;
+                generate.textContent = 'Drawing background...';
+                try {
+                    await generatePlaceBackground(record.id);
+                    if (current()) renderLocationsView(view, { locationId: record.id });
+                } catch (err) {
+                    if (current()) { showError(err.message || 'Could not draw this background.'); generate.disabled = false; generate.textContent = 'Generate background'; }
+                }
+            });
+            actions.append(generate);
             actions.append(button('Delete place', () => {
                 if (!current()) return;
                 try {
@@ -243,7 +296,10 @@ export function renderLocationsView(view, { locationId = null } = {}) {
             event.preventDefault();
             commit(state => editLocation(state, {
                 ...(record ? { id: record.id } : {}), name: name.value, aliases: aliases.value.split('\n'),
-                description: description.value, parentId: parent.value, ...lore.value(),
+                description: description.value,
+                backgroundImage: backgroundTouched ? background.value
+                    : readLocationStore(state).records[record?.id]?.backgroundImage || background.value,
+                parentId: parent.value, ...lore.value(),
             }), record ? 'Edited place' : 'Added place');
         });
         editor.append(form);

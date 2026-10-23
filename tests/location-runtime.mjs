@@ -20,7 +20,7 @@ function fixture() {
     let chatId = 'chat-a';
     const context = { chat: [{ mes: 'We enter the Lantern tavern.', name: 'Narrator', swipe_id: 0, extra: {} }],
         getCurrentChatId: () => chatId };
-    const saves = [], records = [], refreshes = [], events = [];
+    const saves = [], records = [], refreshes = [], events = [], backgrounds = [];
     const dependencies = {
         getContext: () => context, eventSource: { emit: (...args) => events.push(args) },
         loadStateFromMetadata: () => state,
@@ -28,6 +28,7 @@ function fixture() {
         refreshTurnBase: id => refreshes.push(id),
         recordAppliedChanges: (id, rows) => records.push({ id, rows }),
         trackerMessageIndex, buildLocationProposals, applyLocationReview,
+        generatePlaceBackground: (id, options) => { backgrounds.push({ id, options }); return Promise.resolve(true); },
     };
     const runtime = evaluate('../src/locations/location-runtime.js', dependencies,
         '{ locationProposalsForReading, resolveLocationRows }');
@@ -35,7 +36,7 @@ function fixture() {
         places: [{ name: 'The Lantern', description: 'A tavern.' }],
         ...(movement ? { current: 'The Lantern' } : {}),
     }, 0).rows;
-    return { context, saves, records, refreshes, events, dependencies, runtime, discover,
+    return { context, saves, records, refreshes, events, backgrounds, dependencies, runtime, discover,
         get state() { return state; }, set chatId(value) { chatId = value; } };
 }
 
@@ -48,6 +49,8 @@ test('latest reviewed places use turn effects and duplicate acceptance cannot re
     assert.deepEqual(f.refreshes, [0]);
     assert.equal(f.saves[0].partOfMessage, true);
     assert.equal(f.records[0].rows.length, 2);
+    assert.deepEqual(f.backgrounds, [{ id: rows.find(row => row.kind === 'location-create').location.id,
+        options: { automatic: true } }]);
     assert.equal(f.runtime.resolveLocationRows(0, rows, rows).applied, 0);
     assert.equal(f.saves.length, 1);
 });

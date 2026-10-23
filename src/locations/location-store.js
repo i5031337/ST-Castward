@@ -3,6 +3,17 @@ const key = value => text(value).normalize('NFKC').toLowerCase();
 const safeId = value => typeof value === 'string' && value === text(value) && value.length > 0
     && value.length <= 200 && !['__proto__', 'constructor', 'prototype'].includes(value);
 
+export function backgroundImageUrl(value) {
+    if (typeof value !== 'string' || value.length > 2048) return '';
+    const match = /^url\((?:"([^"\r\n]+)"|'([^'\r\n]+)'|([^"'()\r\n]+))\)$/.exec(value.trim());
+    const path = match?.[1] || match?.[2] || match?.[3];
+    if (!path?.trim()) return '';
+    try {
+        const url = new URL(path, 'http://localhost/');
+        return ['http:', 'https:'].includes(url.protocol) ? path : '';
+    } catch { return ''; }
+}
+
 export function normalizeLocationRecord(input, id = input?.id) {
     const name = text(input?.name);
     const seen = new Set([key(name)]);
@@ -12,6 +23,7 @@ export function normalizeLocationRecord(input, id = input?.id) {
         if (alias && !seen.has(key(alias))) { aliases.push(alias); seen.add(key(alias)); }
     }
     return { id: text(id), name, aliases, description: text(input?.description),
+        backgroundImage: backgroundImageUrl(input?.backgroundImage) ? text(input.backgroundImage) : '',
         parentId: text(input?.parentId), lorebook: text(input?.lorebook),
         loreEntryId: typeof input?.loreEntryId === 'number' && Number.isInteger(input.loreEntryId) && input.loreEntryId >= 0
             ? input.loreEntryId : null };
@@ -81,7 +93,7 @@ function validateRecord(store, record) {
 /** All edits return a new state; callers own persistence and chat-boundary checks. */
 export function editLocation(state, input, { makeId = createLocationId } = {}) {
     if (input?.id !== undefined && typeof input.id !== 'string') throw new Error('Invalid place ID.');
-    for (const field of ['name', 'description', 'parentId', 'lorebook']) {
+    for (const field of ['name', 'description', 'parentId', 'lorebook', 'backgroundImage']) {
         if (Object.hasOwn(input || {}, field) && typeof input[field] !== 'string') {
             throw new Error(`The place ${field} must be text.`);
         }
@@ -97,6 +109,7 @@ export function editLocation(state, input, { makeId = createLocationId } = {}) {
     if (!safeId(id)) throw new Error('Invalid place ID.');
     if (!existingId && Object.hasOwn(store.records, id)) throw new Error('The new place ID already exists.');
     const record = normalizeLocationRecord({ ...store.records[id], ...input }, id);
+    if (input?.backgroundImage && !record.backgroundImage) throw new Error('Choose a valid background image.');
     validateRecord(store, record);
     store.records[id] = record;
     return { ...state, locations: store };
