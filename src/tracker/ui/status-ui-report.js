@@ -76,7 +76,8 @@ export function renderExtractionReport(mesEl, messageId) {
         const summary = document.createElement('summary');
         const diagnostics = String(report.summary || '').split(' · ')
             .filter(part => !/^\d+ (applied|awaiting review)$/.test(part)).join(' · ');
-        summary.textContent = report.status === 'failed'
+        summary.textContent = report.status === 'cancelled' ? 'Tracker reading cancelled'
+            : report.status === 'failed'
             ? `Tracker reading failed · ${report.summary}`
             : `Tracker reading complete · Applied: ${report.breakdown.applied} · Needs review: ${report.breakdown.pending}`
                 + (diagnostics ? ` · ${diagnostics}` : '');

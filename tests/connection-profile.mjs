@@ -1,3 +1,4 @@
+import { readerCancellationHarness } from './helpers/reader-cancellation.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
@@ -53,14 +54,16 @@ test('lore forwards assigned preset parameters while retaining raw response and 
         received = args; return { choices: [{ message: { content: 'Lore' }, finish_reason: 'length' }] };
     };
     context.generateRawData = () => assert.fail('Successful profile must not fall back');
+    const { startGenerationTask, awaitGenerationRequest } = readerCancellationHarness();
     const request = new Function('getContext', 'getSettings', 'debugLog', 'describeConnection', 'promptText',
-        'customProfilePayload', 'extractMessageFromData', 'recordUsage', 'loreReplyWasTruncated',
+        'customProfilePayload', 'extractMessageFromData', 'recordUsage', 'loreReplyWasTruncated', 'startGenerationTask', 'awaitGenerationRequest',
         `let lastLoreConnection; ${requestSource}\nreturn requestLore;`)(
         () => context, () => ({ loreProfileId: 'selected', loreMaxTokens: 400 }), () => {}, () => 'Custom',
         () => 'System', customProfilePayload, raw => raw.choices[0].message.content, () => {},
-        raw => raw.choices[0].finish_reason === 'length');
+        raw => raw.choices[0].finish_reason === 'length', startGenerationTask, awaitGenerationRequest);
     assert.deepEqual(await request('Prompt'), { text: 'Lore', truncated: true });
     assert.equal(received[2], 400);
-    assert.deepEqual(received[3], { extractData: false, includePreset: false });
+    assert.ok(received[3].signal instanceof AbortSignal);
+    assert.deepEqual({ ...received[3], signal: undefined }, { extractData: false, includePreset: false, signal: undefined });
     assert.deepEqual(received[4], expected);
 });

@@ -1,3 +1,4 @@
+import { startGenerationTask, awaitGenerationRequest } from '../../core/generation-cancellation.js';
 import { extractMessageFromData } from '../../../../../../../script.js';
 import { getContext } from '../../../../../../st-context.js';
 import { applyMacros } from '../../prompts/macros.js';
@@ -27,6 +28,14 @@ export function readerTemperature(trackerSettings) {
  */
 
 export async function requestExtraction(userPrompt, schema, trackerSettings, systemPrompt = null, { usageKind = 'extraction' } = {}) {
+    const task = startGenerationTask();
+    try {
+        return await performExtraction(userPrompt, schema, trackerSettings, systemPrompt, usageKind, task.signal);
+    } finally { task.finish(); }
+}
+
+async function performExtraction(userPrompt, schema, trackerSettings, systemPrompt, usageKind, signal) {
+    signal.throwIfAborted();
     // History scans can supply a specialized prompt. Ordinary turns use the built-in.
     systemPrompt = applyMacros(systemPrompt || SYSTEM_PROMPT);
     const context = getContext();
@@ -44,11 +53,11 @@ export async function requestExtraction(userPrompt, schema, trackerSettings, sys
         // either throws, so fall through to the main API rather than failing the sync.
         try {
             const service = context.ConnectionManagerRequestService;
-            const result = await service.sendRequest(
+            const result = await awaitGenerationRequest(service.sendRequest(
                 profileId,
                 [{ role: 'system', content: systemPrompt }, { role: 'user', content: userPrompt }],
                 maxTokens,
-                { extractData: true, includePreset: false },
+                { extractData: true, includePreset: false, signal },
                 {
                     // Structured output is opt-in: some backends return an empty object
                     // rather than reject a schema they dislike, which loses the update
@@ -60,11 +69,13 @@ export async function requestExtraction(userPrompt, schema, trackerSettings, sys
                     ...(temperature === null ? {} : { temperature }),
                     ...customProfilePayload(context, profileId),
                 },
-            );
+            ), signal);
+            signal.throwIfAborted();
             const answer = typeof result === 'string' ? result : (result?.content ?? result ?? '');
             recordUsage(usageKind, { prompt: systemPrompt + userPrompt, reply: describeAnswer(answer) });
             return answer;
         } catch (err) {
+            if (signal.aborted || err?.name === 'AbortError') throw signal.reason || err;
             console.warn(LOG_PREFIX, 'Selected extraction connection failed, falling back to the main API:', err);
             if (typeof toastr !== 'undefined') toastr.warning(
                 `The selected ${usageKind === 'scan' ? 'history scan' : 'reader'} connection failed. `
@@ -74,12 +85,13 @@ export async function requestExtraction(userPrompt, schema, trackerSettings, sys
         }
     }
 
-    const raw = await context.generateRawData({
+    const raw = await awaitGenerationRequest(context.generateRawData({
         prompt: userPrompt,
         systemPrompt,
         responseLength: maxTokens,
         jsonSchema,
-    });
+    }), signal);
+    signal.throwIfAborted();
     // Without a schema, generateRawData returns the provider response. Its text may
     // be in choices, results, or content blocks rather than a top-level content field.
     // With a schema, SillyTavern has already extracted the JSON response for us.

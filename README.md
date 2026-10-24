@@ -86,6 +86,8 @@ The reader makes a separate request after each story reply. Your writing model c
 
 Castward asks for named dialogue lines so it can add speaker portraits. You can change or disable that instruction under **Dialogue**.
 
+Use SillyTavern’s **Stop** button to cancel Castward’s LLM calls, including tracker readings, lore writing, NPC creation, and System generation.
+
 Automatic reading adds a model request each turn. Manual mode lets you choose when to read, and inline mode asks for story and tracking in one reply.
 
 ## Install

@@ -108,7 +108,10 @@ Reuse the host's exported `getExpressionLabel` and sprite backend
 `/api/sprites/get?name=...`. Supported classifiers are Local (0), Extras (1), and
 WebLLM (3). Native available-sprite filtering is disabled because it resolves the
 native character's pack. WebLLM receives labels constrained to the NPC pack;
-custom labels also need registration in native Expressions.
+custom labels also need registration in native Expressions. Classification shares
+Castward’s standard Stop-button cancellation. Native WebLLM has no abort API;
+Stop releases the caller and discards the result while retaining the native
+request lock until that computation finishes.
 
 Main-LLM classification (2) remains unavailable: full mode includes conversation
 context, and raw mode lacks a shared request lock with native Expressions and

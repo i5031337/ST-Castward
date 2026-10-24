@@ -1,3 +1,4 @@
+import { readerCancellationHarness } from '../helpers/reader-cancellation.mjs';
 import { readFileSync } from 'node:fs';
 import { createBuiltinSystem } from '../../src/core/builtin-systems.js';
 import { defaultTrackerSettings } from '../../src/core/settings-tracker-defaults.js';
@@ -59,6 +60,7 @@ export function profileHarness(scenario) {
     let capturedLorePrompt = '';
     const generateLoreContent = functionFrom(body('../../src/api/api-lore-generate.js',
         'export async function generateLoreContent', 'export async function saveLoreContent'), {
+        ...readerCancellationHarness(),
         loadWorldInfo: async () => ({ entries: {} }), chat: [],
         buildLoreExcerpt: () => ({ text: scenario.story || '', used: 1, available: 1, trimmed: false }),
         retrieveWorldFacts: async () => '', DEFAULT_LORE_PROMPT, mergeLoreValues,

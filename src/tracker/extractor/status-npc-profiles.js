@@ -80,6 +80,7 @@ export async function generateNewNpcProfiles(names, isCurrent) {
                 }
             }
         } catch (error) {
+            if (error?.name === 'AbortError') break;
             if (!canSave()) break;
             result.failed++;
             console.warn(LOG_PREFIX, `Could not generate ${name}'s profile`, error);

@@ -69,7 +69,8 @@ async function onScanClicked() {
             if (of > 1) button.title = `Reading the history - pass ${chunk} of ${of}...`;
         });
         if (!result.ok) {
-            toastr.error(result.reason || 'The scan did not complete.', 'Castward');
+            if (result.cancelled) toastr.info(result.reason, 'Castward');
+            else toastr.error(result.reason || 'The scan did not complete.', 'Castward');
             return;
         }
         const scope = result.passes > 1

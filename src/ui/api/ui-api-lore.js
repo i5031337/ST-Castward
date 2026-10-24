@@ -55,9 +55,7 @@ function buildLoreDialog(char, defaultWorld) {
 
     // ─── Create Row ─────────────────────────────────────────────────────
     //
-    // There was a "Connection Profile" select here with one hardcoded option that was
-    // never read: generation runs through generateQuietPrompt on whatever profile is
-    // current, and always did. A control that does nothing is worse than no control.
+    // Lore uses the connection selected in Castward settings.
     const actionRow = document.createElement('div');
     actionRow.style.display = 'flex';
     actionRow.style.alignItems = 'flex-end';
@@ -258,6 +256,7 @@ export async function generateLoreEntry(char, { onSave, template, facts, default
             }
             toastr.success('Generation complete.');
         } catch (err) {
+            if (err?.name === 'AbortError') { toastr.info('Lore generation cancelled.', 'Castward'); return; }
             console.error(LOG_PREFIX, 'Lore generation failed', err);
             toastr.error(String(err?.message || err), 'Castward');
         } finally {

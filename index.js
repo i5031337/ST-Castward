@@ -143,6 +143,7 @@ jQuery(async () => {
         eventSource.on(event_types.GENERATION_STARTED, allowStoryPlayerDialogue);
         eventSource.on(event_types.GENERATION_ENDED, restorePlayerDialogueSetting);
         eventSource.on(event_types.GENERATION_STOPPED, restorePlayerDialogueSetting);
+        eventSource.on(event_types.GENERATION_STOPPED, resetMemorySchedule);
 
         eventSource.on(event_types.WORLDINFO_ENTRIES_LOADED, activateCastLore);
 

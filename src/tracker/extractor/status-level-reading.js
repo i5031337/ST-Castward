@@ -67,5 +67,8 @@ export async function retryLevelReading(messageId) {
         saveLevelReading(message, grants.reading);
         setPendingChanges(messageId, pending.concat(additions), getLooseNotes(messageId), getRefusedValues(messageId));
         return { applied: true, pending: additions.length, failures: grants.reading.failures.length };
+    } catch (error) {
+        if (error?.name === 'AbortError') return { applied: false, reason: 'cancelled' };
+        throw error;
     } finally { retrying.delete(message); }
 }

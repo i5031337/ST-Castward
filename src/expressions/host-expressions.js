@@ -1,3 +1,4 @@
+import { startGenerationTask, awaitGenerationRequest } from '../core/generation-cancellation.js';
 import { doExtrasFetch, getApiUrl, modules, extension_settings } from '../../../../../extensions.js';
 import { getRequestHeaders, substituteParams } from '../../../../../../script.js';
 import { trimToEndSentence, trimToStartSentence } from '../../../../../utils.js';
@@ -29,7 +30,15 @@ export async function loadSpritePack(folder) {
 
 let webLlmRequest = null;
 
-export async function classifyDialogue({ line, sprites, config, labels: vocabulary, signal }) {
+export async function classifyDialogue(input) {
+    if (classifierHint(input.config)) return '';
+    const task = startGenerationTask({ signal: input.signal });
+    try {
+        return await awaitGenerationRequest(classifyLine({ ...input, signal: task.signal }), task.signal);
+    } finally { task.finish(); }
+}
+
+async function classifyLine({ line, sprites, config, labels: vocabulary, signal }) {
     if (classifierHint(config)) return '';
     signal?.throwIfAborted();
     if (config.api !== 3) {

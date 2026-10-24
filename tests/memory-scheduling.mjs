@@ -65,3 +65,16 @@ test('disabling the extension cancels queued memory work', async () => {
     h.api.scheduleMemoryRead(1); h.disable(); await h.tick();
     assert.equal(h.reads(), 0); assert.equal(h.timers.size, 0);
 });
+
+test('resetting the schedule on Stop clears queued reads and allows the next reply', async () => {
+    const h = harness();
+    h.context.chat.push({ mes: 'Cancelled turn' });
+    h.api.scheduleMemoryRead(1);
+    h.api.resetMemorySchedule();
+    await h.tick();
+    assert.equal(h.reads(), 0);
+    h.context.chat.push({ mes: 'Next turn' });
+    h.api.scheduleMemoryRead(2);
+    await h.tick();
+    assert.equal(h.reads(), 1);
+});

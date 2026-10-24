@@ -1,3 +1,4 @@
+import { readerCancellationHarness } from './helpers/reader-cancellation.mjs';
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFileSync } from 'node:fs';
@@ -56,7 +57,9 @@ function harness(mode = 'extract') {
         diffTurnValues, applyTurnValues, turnEffectStatus, syncRebasedLore: () => {}, debugLog: () => {},
     };
     const snapshots = loadModule('../src/tracker/snapshots/status-snapshot-swipe.js', deps);
+    const cancellation = readerCancellationHarness();
     const extraction = loadModule('../src/tracker/extractor/status-extractor-run.js', {
+        ...cancellation,
         ...deps, ...snapshots, normalizeCollectionUpdates,
         trackerMessageIndex: chat => chat.length - 1,
         getSettings: () => ({ enabled, statusTracker: { ...settings, extractionMode: mode,
@@ -98,7 +101,7 @@ function harness(mode = 'extract') {
         document: { querySelector: () => null }, LOG_PREFIX: 'test',
     });
     return { run: (options = { regenerate: true }) => extraction.extractStateFromMessage(message.mes, 0, options),
-        live: () => live, pending: () => pending, prompted: () => prompted, message, context, base,
+        cancellation, live: () => live, pending: () => pending, prompted: () => prompted, message, context, base,
         setEnabled: value => { enabled = value; },
         setResponse: value => { response = value; }, onRequest: fn => { onRequest = fn; },
         setWarnings: value => { previewWarnings = value; } };
@@ -199,4 +202,19 @@ test('master switch blocks forced reads and discards replies from an in-flight r
     h.setResponse({ player: {} });
     await h.run();
     assert.deepEqual(h.message.report.warnings, []);
+});
+
+test('Stop preserves the previous reading and permits a clean retry', async () => {
+    const h = harness();
+    const previous = structuredClone(h.live());
+    const proposals = structuredClone(h.pending());
+    h.onRequest(() => h.cancellation.emit('stop'));
+    assert.deepEqual(await h.run(), { applied: false, reason: 'cancelled' });
+    assert.deepEqual(h.live(), previous);
+    assert.deepEqual(h.pending(), proposals);
+    assert.equal(h.message.report.status, 'cancelled');
+    assert.equal(h.cancellation.listeners(), 0);
+    h.onRequest(() => {});
+    assert.equal((await h.run()).applied, true);
+    assert.equal(h.message.report.status, 'done');
 });

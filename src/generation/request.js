@@ -1,3 +1,4 @@
+import { startGenerationTask, awaitGenerationRequest } from '../core/generation-cancellation.js';
 import { getContext } from '../../../../../st-context.js';
 import { extractMessageFromData } from '../../../../../../script.js';
 import { recordUsage } from '../core/usage.js';
@@ -9,22 +10,27 @@ export function generationRequestAdapter(tracker, profileId = tracker.extraction
     const temperature = typed !== '' && Number.isFinite(Number(typed)) ? Number(typed) : null;
     return async ({ systemPrompt, userPrompt, schema, maxTokens, signal }) => {
         if (signal?.aborted) throw new DOMException('Generation cancelled', 'AbortError');
-        const context = getContext();
-        let answer;
-        if (profileId) {
-            if (!context.ConnectionManagerRequestService) throw new Error('Selected connection is unavailable. Choose another connection explicitly.');
-            const result = await context.ConnectionManagerRequestService.sendRequest(profileId,
-                [{ role: 'system', content: systemPrompt }, { role: 'user', content: userPrompt }], maxTokens,
-                { extractData: true, includePreset: false, signal }, { ...(useSchema ? { json_schema: schema } : {}),
-                    ...(temperature === null ? {} : { temperature }), ...customProfilePayload(context, profileId) });
-            answer = typeof result === 'string' ? result : result?.content ?? result;
-        } else {
-            const raw = await context.generateRawData({ prompt: userPrompt, systemPrompt,
-                responseLength: maxTokens, jsonSchema: useSchema ? schema : null, signal });
-            answer = useSchema ? raw : extractMessageFromData(raw);
-        }
-        // Accounting is separate from rules; completed requests are counted even after cancellation.
-        void recordUsage(usageKind, { prompt: systemPrompt + userPrompt, reply: typeof answer === 'string' ? answer : JSON.stringify(answer ?? '') });
-        return answer;
+        const task = startGenerationTask({ signal });
+        signal = task.signal;
+        try {
+            const context = getContext();
+            let answer;
+            if (profileId) {
+                if (!context.ConnectionManagerRequestService) throw new Error('Selected connection is unavailable. Choose another connection explicitly.');
+                const result = await awaitGenerationRequest(context.ConnectionManagerRequestService.sendRequest(profileId,
+                    [{ role: 'system', content: systemPrompt }, { role: 'user', content: userPrompt }], maxTokens,
+                    { extractData: true, includePreset: false, signal }, { ...(useSchema ? { json_schema: schema } : {}),
+                        ...(temperature === null ? {} : { temperature }), ...customProfilePayload(context, profileId) }), signal);
+                answer = typeof result === 'string' ? result : result?.content ?? result;
+            } else {
+                const raw = await awaitGenerationRequest(context.generateRawData({ prompt: userPrompt, systemPrompt,
+                    responseLength: maxTokens, jsonSchema: useSchema ? schema : null, signal }), signal);
+                answer = useSchema ? raw : extractMessageFromData(raw);
+            }
+            signal.throwIfAborted();
+            // Count only completed, accepted responses.
+            void recordUsage(usageKind, { prompt: systemPrompt + userPrompt, reply: typeof answer === 'string' ? answer : JSON.stringify(answer ?? '') });
+            return answer;
+        } finally { task.finish(); }
     };
 }

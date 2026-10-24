@@ -1,3 +1,4 @@
+import { startGenerationTask, awaitGenerationRequest } from '../../core/generation-cancellation.js';
 import { prepareSceneLocationReading } from '../../locations/location-reading.js';
 import { getAllCharacters } from '../../characters/character-repository.js';
 import { getContext } from '../../../../../../st-context.js';
@@ -32,6 +33,7 @@ export function isExtractionRunning() { return activeExtraction !== null; }
 const extractedMessages = new Set();
 
 export function resetExtractionState() {
+    activeExtraction?.abort();
     activeExtraction = null;
     extractedMessages.clear();
 }
@@ -76,9 +78,7 @@ export async function extractStateFromMessage(messageText, messageId, options = 
         return retryLevelReading(messageId);
     }
 
-    // Keyed on the swipe as well as the message. On the message alone, the first swipe
-    // was read and every later one came back 'already extracted' and was never looked at
-    // - so whichever reply you kept, the tracker held the numbers from swipe 1.
+    // Read each swipe independently.
     const swipeId = getContext()?.chat?.[Number(messageId)]?.swipe_id ?? 0;
     const key = `${messageId}:${swipeId}`;
     const savedReading = getContext()?.chat?.[Number(messageId)]?.extra?.[LEVEL_READING_KEY];
@@ -92,7 +92,7 @@ export async function extractStateFromMessage(messageText, messageId, options = 
     const canReplace = () => Number(messageId) === trackerMessageIndex(getContext()?.chat || [])
         && replacementReadingState(messageId) !== null;
     if (options.regenerate && !canReplace()) return { applied: false, reason: 'no latest-turn base' };
-    const run = {};
+    const run = startGenerationTask();
     activeExtraction = run;
     const reportMessage = startExtractionReport(messageId);
     const sourceText = reportMessage?.mes;
@@ -101,11 +101,11 @@ export async function extractStateFromMessage(messageText, messageId, options = 
     const sourcePersona = getCurrentPersonaKey();
     const sourceSystem = getSettings().activeSystem;
     const sourceIsCurrent = () => getSettings().enabled && getSettings().statusTracker.enabled
-        && activeExtraction === run && getContext()?.chatMetadata === sourceMetadata
+        && !run.signal.aborted && activeExtraction === run && getContext()?.chatMetadata === sourceMetadata
         && getContext()?.chat?.[Number(messageId)] === reportMessage
         && reportMessage?.mes === sourceText && extractionSwipe(reportMessage) === swipe
         && getCurrentPersonaKey() === sourcePersona && getSettings().activeSystem === sourceSystem;
-    const staleResult = () => ({ applied: false, reason: !getSettings().enabled
+    const staleResult = () => ({ applied: false, reason: run.signal.aborted ? 'cancelled' : !getSettings().enabled
         || !getSettings().statusTracker.enabled || activeExtraction !== run
         ? 'extension disabled' : 'reply changed while reading' });
     let report = { swipe, status: 'failed', summary: 'The request did not complete', output: null };
@@ -169,6 +169,7 @@ export async function extractStateFromMessage(messageText, messageId, options = 
         sanitizeModelUpdate(parsed, liveState, trackerSettings, { warnings });
         const grants = await prepareLevelReading(parsed, liveState, trackerSettings,
             String(messageText), leadUp, reportMessage, messageId, options);
+        run.signal.throwIfAborted();
         if (!sourceIsCurrent() || grants.reading.personaId !== getCurrentPersonaKey()
             || (options.manual && Number(messageId) !== trackerMessageIndex(getContext()?.chat || []))) {
             return { applied: false, reason: 'reply changed while reading' };
@@ -197,9 +198,7 @@ export async function extractStateFromMessage(messageText, messageId, options = 
             reconcileScenePresence(names, messageId, { authoritative: true });
         }
 
-        /* Strangers' kinds, recorded for everyone asked about - an answer that is missing or
-           not one of the tags counts as none fitting, so nobody waits for good. The chat is
-           redrawn so they get their face now rather than at the next redraw. */
+        // Classify newly encountered NPCs before redrawing their portraits.
         if (strangers.length && setStrangerKinds(parsed.strangers, strangers)) {
             debugLog('Strangers\' kinds', parsed.strangers);
             triggerReprocess();
@@ -245,9 +244,7 @@ export async function extractStateFromMessage(messageText, messageId, options = 
             warnings.push(...places.warnings);
         }
 
-        // The parsed update is only safe to apply whole when nothing was held back. If a
-        // row was blocked by a standing decision, applying `parsed` would carry out the
-        // very change that was blocked, so the surviving rows are rebuilt instead.
+        // Rebuild surviving rows when review or standing decisions filter the update.
         if (pending.length === 0 && blocked === 0) {
             applyUpdate(parsed, { partOfMessage: true, admitCharacters: true });
         } else if (auto.length > 0) {
@@ -285,15 +282,15 @@ export async function extractStateFromMessage(messageText, messageId, options = 
         report = { swipe, status: 'done', summary: parts.join(' · '), output: readerOutput, warnings, ...(locationReading ? { locationReading } : {}) };
         // Save the reading before the additional lore requests, so changing chats or
         // replies during profile generation cannot lose applied rows or review proposals.
-        const profiles = await generateNewNpcProfiles(
+        const profiles = await awaitGenerationRequest(generateNewNpcProfiles(
             (parsed.characters || []).map(character => character?.name).filter(Boolean),
-            () => getSettings().enabled && activeExtraction === run
+            () => getSettings().enabled && !run.signal.aborted && activeExtraction === run
                 && getContext()?.chatMetadata === sourceMetadata
                 && getContext()?.chat?.[Number(messageId)] === reportMessage
                 && reportMessage?.mes === sourceText
                 && extractionSwipe(reportMessage) === swipe
                 && Number(messageId) === trackerMessageIndex(getContext()?.chat || []),
-        );
+        ), run.signal);
         if (profiles.generated) parts.push(`${profiles.generated} NPC profile(s) generated`);
         if (profiles.failed) parts.push(`${profiles.failed} NPC profile(s) failed`);
         report.summary = parts.join(' · ');
@@ -303,12 +300,24 @@ export async function extractStateFromMessage(messageText, messageId, options = 
         debugLog('Extraction applied for message', key);
         return { applied: true, pending: pending.length };
     } catch (err) {
+        if (run.signal.aborted || err?.name === 'AbortError') {
+            if (report.status === 'done') {
+                report.summary += ' · Follow-up generation cancelled';
+                return { applied: true, cancelled: true };
+            }
+            report = { ...report, status: 'cancelled', summary: 'Cancelled' };
+            return { applied: false, reason: 'cancelled' };
+        }
         report = { ...report, status: 'failed', summary: String(err?.message || err),
             output: err?.output ?? report.output };
         console.error(LOG_PREFIX, 'Extraction failed; state left unchanged.', err);
         reportExtractionProblem(`The tracker could not read this message: ${err?.message || err}`);
         return { applied: false, reason: String(err?.message || err) };
     } finally {
+        if (run.signal.aborted && report.status !== 'done') {
+            report = { ...report, status: 'cancelled', summary: 'Cancelled' };
+        }
+        run.finish();
         finishExtractionReport(messageId, reportMessage, report);
         if (activeExtraction === run) activeExtraction = null;
         refreshReport();

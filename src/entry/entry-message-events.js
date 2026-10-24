@@ -52,15 +52,17 @@ export function onMessageForExtraction(messageId) {
         // is included as fresh evidence by the reader prompt builder.
         if (!message || message.is_user || message.is_system || isImageOnlyMessage(message)) return;
 
+        let cancelled = false;
         extractStateFromMessage(message.mes, messageId)
             .then(result => {
+                cancelled = result.cancelled || result.reason === 'cancelled';
                 if (!result.applied && result.reason && result.reason !== 'extraction disabled'
                     && result.reason !== 'already extracted') {
                     debugLog('Extraction skipped:', result.reason);
                 }
             })
             .catch(err => console.error(LOG_PREFIX, 'Extraction pass failed', err))
-            .finally(() => scheduleMemoryRead(messageId));
+            .finally(() => { if (!cancelled) scheduleMemoryRead(messageId); });
     } catch (err) {
         console.error(LOG_PREFIX, 'onMessageForExtraction error', err);
     }

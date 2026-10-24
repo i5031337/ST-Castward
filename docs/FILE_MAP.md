@@ -108,6 +108,7 @@ SillyTavern loads `index.js` and `style.css` from `manifest.json`. The JavaScrip
 | `src/entry/entry-avatar-actions.js` | Character and player avatar click actions. |
 | `src/entry/entry-chat-scope.js` | Prompt to scope a chat to its characters. |
 | `src/entry/entry-history-notes.js` | Manage copied historical notes on messages. |
+| `src/core/generation-cancellation.js` | Shared Stop-button visibility, stop/chat-change cancellation, linked dialog signals, and late-response guards for all LLM request adapters. |
 | `src/core/constants.js` | Extension constants, themes, profile schema, and built-in writing/image prompts. |
 | `src/core/constants-base.js` | Base extension, theme, layout, and image constants. |
 | `src/core/constants-profile.js` | Built-in character profile fields and default assignments. |

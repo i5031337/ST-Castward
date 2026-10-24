@@ -258,6 +258,7 @@ export async function scanHistoryForCollections(onProgress) {
                 },
                 promptText('scanSystem'), { usageKind: 'scan' });
         } catch (err) {
+            if (err?.name === 'AbortError') return { ok: false, cancelled: true, reason: 'History scan cancelled.' };
             console.error(LOG_PREFIX, `History scan pass ${index + 1} failed.`, err);
             return failedPass(index, chunks.length, String(err?.message || err));
         }

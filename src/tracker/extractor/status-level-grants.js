@@ -168,6 +168,7 @@ export async function selectLevelGrants(parsed, state, tracker, text, leadUp = [
                 cache[task.id] = { ...choice, entry, id: task.id };
             }
         } catch (error) {
+            if (error?.name === 'AbortError') throw error;
             for (const task of missing) failures.push({ id: task.id, actor: task.transition.actor,
                 level: task.level, message: String(error?.message || error) });
         }

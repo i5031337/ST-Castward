@@ -1,3 +1,4 @@
+import { startGenerationTask, awaitGenerationRequest } from '../core/generation-cancellation.js';
 import { promptText } from '../prompts/prompt-texts.js';
 import { chat, extractMessageFromData } from '../../../../../../script.js';
 import { getContext } from '../../../../../st-context.js';
@@ -87,7 +88,13 @@ export function getLastLoreConnection() {
     return lastLoreConnection;
 }
 
-export async function requestLore(prompt) {
+export async function requestLore(prompt, { signal } = {}) {
+    const task = startGenerationTask({ signal });
+    try { return await performLoreRequest(prompt, task.signal); }
+    finally { task.finish(); }
+}
+
+async function performLoreRequest(prompt, signal) {
     const context = getContext();
     const settings = getSettings();
     const profileId = settings.loreProfileId;
@@ -99,16 +106,17 @@ export async function requestLore(prompt) {
         // Connection Manager can be disabled and a profile can be deleted; either throws,
         // so fall through to the main API rather than failing the generation.
         try {
-            const result = await context.ConnectionManagerRequestService.sendRequest(
+            const result = await awaitGenerationRequest(context.ConnectionManagerRequestService.sendRequest(
                 profileId,
                 [
                     { role: 'system', content: promptText('loreSystem') },
                     { role: 'user', content: prompt },
                 ],
                 maxTokens,
-                { extractData: false, includePreset: false },
+                { extractData: false, includePreset: false, signal },
                 customProfilePayload(context, profileId),
-            );
+            ), signal);
+            signal.throwIfAborted();
             const profile = context.extensionSettings?.connectionManager?.profiles
                 ?.find(p => p.id === profileId);
             lastLoreConnection = {
@@ -122,6 +130,7 @@ export async function requestLore(prompt) {
             recordUsage('lore', { prompt: promptText('loreSystem') + prompt, reply: text });
             return { text, truncated: loreReplyWasTruncated(result) };
         } catch (err) {
+            if (signal.aborted || err?.name === 'AbortError') throw signal.reason || err;
             console.warn(LOG_PREFIX, 'Lore connection unavailable, using the main API:', err);
         }
     }
@@ -132,11 +141,12 @@ export async function requestLore(prompt) {
             : 'Main API (same as chat)',
         when: Date.now(),
     };
-    const raw = await context.generateRawData({
+    const raw = await awaitGenerationRequest(context.generateRawData({
         prompt,
         systemPrompt: promptText('loreSystem'),
         responseLength: maxTokens,
-    });
+    }), signal);
+    signal.throwIfAborted();
     // generateRawData returns the provider's response object. Its text can live in
     // choices, results, or a content block array, depending on the main API.
     const text = extractMessageFromData(raw) || '';
@@ -160,6 +170,14 @@ export async function requestLore(prompt) {
  * @returns {Promise<{ tags: string, content: string, followedFormat: boolean, truncated: boolean, excerpt: object }>}
  */
 export async function generateLoreContent(char, world, uid, options = {}) {
+    const task = startGenerationTask({ signal: options.signal });
+    try {
+        return await awaitGenerationRequest(buildLoreContent(char, world, uid, { ...options, signal: task.signal }), task.signal);
+    } finally { task.finish(); }
+}
+
+async function buildLoreContent(char, world, uid, options) {
+    options.signal.throwIfAborted();
     let existingLore = '';
     if (world) try {
         const worldData = await loadWorldInfo(world);
@@ -173,6 +191,7 @@ export async function generateLoreContent(char, world, uid, options = {}) {
     const excerpt = buildLoreExcerpt(chat || []);
     const recentMessages = excerpt.text;
     const worldFacts = await retrieveWorldFacts(char.name);
+    options.signal.throwIfAborted();
 
     const template = options.template || DEFAULT_LORE_PROMPT;
     const givenFacts = typeof options.facts === 'function' ? options.facts() : options.facts;
@@ -218,7 +237,7 @@ export async function generateLoreContent(char, world, uid, options = {}) {
         if (description) prompt += `\n\nSillyTavern persona description for ${char.name}:\n${description}`;
     }
 
-    const { text, truncated } = await requestLore(prompt);
+    const { text, truncated } = await requestLore(prompt, { signal: options.signal });
 
     let { tags, content, followedSections } = parseLoreReply(text,
         !options.template ? profileFieldsForCard(char) : []);

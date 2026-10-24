@@ -3,7 +3,7 @@ import test from 'node:test';
 import { readFileSync } from 'node:fs';
 import { isImageOnlyMessage } from '../src/tracker/ui/status-ui-placement.js';
 
-function fixture(message, enabled = true) {
+function fixture(message, enabled = true, reading = { applied: true }) {
     const context = { chat: [message], chatMetadata: {} };
     const calls = [];
     const memories = [];
@@ -14,7 +14,7 @@ function fixture(message, enabled = true) {
         isImageOnlyMessage, LOG_PREFIX: 'test', debugLog() {},
         extractStateFromMessage: (...args) => {
             calls.push(args);
-            return Promise.resolve({ applied: true });
+            return Promise.resolve(reading);
         },
         scheduleMemoryRead: id => memories.push(id),
     };
@@ -50,3 +50,13 @@ test('disabled Castward does not read an opening greeting', () => {
     f.onMessageForExtraction(0, 'first_message');
     assert.equal(f.calls.length, 0);
 });
+
+for (const reading of [{ applied: false, reason: 'cancelled' }, { applied: true, cancelled: true }]) {
+    test(`cancelled ${reading.applied ? 'follow-up' : 'tracker'} does not schedule an automatic memory call`, async () => {
+        const f = fixture({ mes: 'A new story reply.' }, true, reading);
+        f.onMessageForExtraction(0);
+        await new Promise(resolve => setImmediate(resolve));
+        assert.equal(f.calls.length, 1);
+        assert.deepEqual(f.memories, []);
+    });
+}

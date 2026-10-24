@@ -1,3 +1,4 @@
+import { readerCancellationHarness } from './helpers/reader-cancellation.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
@@ -8,13 +9,14 @@ const source = (await readFile(new URL('../src/tracker/extractor/status-extracto
 function build(context) {
     profileContext(context);
     const events = [], usage = [];
+    const cancellation = readerCancellationHarness();
     const request = new Function('getContext', 'applyMacros', 'LOG_PREFIX', 'debugLog', 'SYSTEM_PROMPT',
-        'describeConnection', 'extractJSON', 'safeJsonParse', 'recordUsage', 'extractMessageFromData', 'toastr', 'console', 'customProfilePayload',
+        'describeConnection', 'extractJSON', 'safeJsonParse', 'recordUsage', 'extractMessageFromData', 'toastr', 'console', 'customProfilePayload', 'startGenerationTask', 'awaitGenerationRequest',
         `${source}\nreturn requestExtraction;`)(
         () => context, value => value, '[Castward]', () => {}, 'System', () => 'Connection',
         value => value, JSON.parse, (...args) => usage.push(args), raw => raw.choices[0].message.content,
-        { warning: (...args) => events.push(['warning', ...args]) }, { warn: () => {} }, customProfilePayload);
-    return { request, events, usage };
+        { warning: (...args) => events.push(['warning', ...args]) }, { warn: () => {} }, customProfilePayload, cancellation.startGenerationTask, cancellation.awaitGenerationRequest);
+    return { request, events, usage, cancellation };
 }
 const schema = { type: 'object' };
 const namedSchema = { name: 'castward_reader', value: schema, strict: true };
@@ -56,7 +58,8 @@ test('successful selected connection preserves its configuration without warning
         extractionTemperature: '0.2', extractionMaxTokens: 500 }), { player: {} });
     assert.equal(received[0], 'reader');
     assert.equal(received[2], 500);
-    assert.deepEqual(received[3], { extractData: true, includePreset: false });
+    assert.ok(received[3].signal instanceof AbortSignal);
+    assert.deepEqual({ ...received[3], signal: undefined }, { extractData: true, includePreset: false, signal: undefined });
     assert.deepEqual(received[4], { json_schema: namedSchema, temperature: 0.2 });
     assert.deepEqual(events, []);
     assert.equal(usage.length, 1);
@@ -136,5 +139,28 @@ for (const profileId of ['', 'reader']) {
         await request('Prompt', null, { extractionProfileId: profileId, extractionUseSchema: true });
         assert.equal(payload.json_schema, undefined);
         if (!profileId) assert.equal(payload.jsonSchema, null);
+    });
+}
+
+for (const profile of [false, true]) {
+    test(`Stop cancels ${profile ? 'profile' : 'main API'} request without fallback or late usage`, async () => {
+        let complete, signal, calls = 0;
+        const pending = new Promise(resolve => { complete = resolve; });
+        const { request, events, usage, cancellation } = build({
+            ConnectionManagerRequestService: { sendRequest: (...args) => { signal = args[3].signal; return pending; } },
+            generateRawData: () => { calls++; return pending; },
+        });
+        const result = request('Prompt', null, profile ? { extractionProfileId: 'reader' } : {});
+        assert.equal(cancellation.button.style.display, 'flex');
+        cancellation.emit('stop');
+        await assert.rejects(result, { name: 'AbortError' });
+        if (profile) assert.equal(signal.aborted, true);
+        complete(rawReply);
+        await new Promise(resolve => setImmediate(resolve));
+        assert.equal(calls, profile ? 0 : 1);
+        assert.deepEqual(events, []);
+        assert.deepEqual(usage, []);
+        assert.equal(cancellation.listeners(), 0);
+        assert.equal(cancellation.button.style.display, 'none');
     });
 }

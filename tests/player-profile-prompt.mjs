@@ -1,3 +1,4 @@
+import { readerCancellationHarness } from './helpers/reader-cancellation.mjs';
 import { profileFieldValue } from '../src/core/profile-fields.js';
 import assert from 'node:assert/strict';
 import test from 'node:test';
@@ -58,6 +59,7 @@ async function lorePrompt(card, activePersona = persona) {
         .split('export async function saveLoreContent')[0];
     let sent;
     const dependencies = {
+        ...readerCancellationHarness(),
         buildLoreExcerpt: () => ({ text: '' }), chat: [], retrieveWorldFacts: async () => '',
         DEFAULT_LORE_PROMPT: 'Fill profile for {{name}}',
         mergeLoreValues: () => ({}), profileFieldsForCard: () => fields, hintFor: () => 'Describe appearance.',

@@ -120,6 +120,7 @@ export async function fillCharacter(char, { onSave, preset } = {}) {
                 if (succeeded(result)) return result;
                 reason = result?.reason || 'The response could not be used.';
             } catch (err) {
+                if (err?.name === 'AbortError') return null;
                 console.error(LOG_PREFIX, `${label} failed`, err);
                 reason = String(err?.message || err);
             }
