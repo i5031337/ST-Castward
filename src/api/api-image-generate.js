@@ -1,5 +1,6 @@
 import { loadWorldInfo } from '../../../../../world-info.js';
-import { executeSlashCommandsOnChatInput } from '../../../../../slash-commands.js';
+import { executeSlashCommandsWithOptions } from '../../../../../slash-commands.js';
+import { getContext } from '../../../../../st-context.js';
 import { debugLog, PORTRAIT_SHAPES, DEFAULT_PORTRAIT_SHAPE } from '../core/constants.js';
 import { applyMacros } from '../prompts/macros.js';
 import { getSettings, resolveImagePrompt } from '../core/settings.js';
@@ -8,6 +9,8 @@ import { recordUsage } from '../core/usage.js';
 import { fillImagePrompt, describeCarriedItems } from './api-lore-facts.js';
 import { characterImageDescription } from './api-image-description.js';
 import { persistGeneratedImage } from './api-image-files.js';
+
+let imageQueue = Promise.resolve();
 
 /** The configured shape, or the current default for an unknown stored value. */
 export function resolvePortraitShape() {
@@ -64,7 +67,21 @@ export async function generateImage(fullPrompt, { owner = null, shape = resolveP
     // The host command handles provider selection, credentials, gallery saving and errors.
     const command = `/imagine quiet=true ${controls}${size}negative="${escapeCommandValue(negative)}" ${escapeCommandValue(fullPrompt)}`;
     debugLog('Sending Image Generation command', command);
-    const result = await executeSlashCommandsOnChatInput(command, { clearChatInput: false });
+    const context = getContext();
+    const chatId = context.getCurrentChatId();
+    const metadata = context.chatMetadata;
+    // /imagine temporarily overrides shared provider settings. Serialize our requests,
+    // and use the runner that does not silently reject a busy chat input.
+    const task = imageQueue.then(() => {
+        const now = getContext();
+        if (now.getCurrentChatId() !== chatId || now.chatMetadata !== metadata) {
+            throw new Error('Chat changed before image generation could start.');
+        }
+        return executeSlashCommandsWithOptions(command, { source: 'Castward image generation' });
+    });
+    imageQueue = task.catch(() => {});
+    const result = await task;
+    if (result?.isError) throw new Error(result.errorMessage || 'Image Generation command failed.');
     let imageUrl = imageUrlFromResult(result);
     if (!imageUrl) {
         throw new Error('Image Generation did not return an image. Check its settings and the error shown by SillyTavern.');

@@ -14,7 +14,8 @@ export function syncPlaceBackground(context = getContext(), background = documen
     const image = store.enabled ? store.records[store.currentId]?.backgroundImage : '';
     if (!backgroundImageUrl(image)) { last = null; return false; }
     if (!force && last?.metadata === metadata && last.chatId === chatId
-        && last.currentId === store.currentId && last.image === image) return false;
+        && last.currentId === store.currentId && last.image === image
+        && metadata.custom_background === image && background.style.backgroundImage === image) return false;
     last = { metadata, chatId, currentId: store.currentId, image };
     if (metadata.custom_background !== image) {
         metadata.custom_background = image;

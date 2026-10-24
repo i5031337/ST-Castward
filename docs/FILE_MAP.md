@@ -417,7 +417,7 @@ SillyTavern loads `index.js` and `style.css` from `manifest.json`. The JavaScrip
 | `src/ui/locations/ui-location-review.js` | Visible place identities, containment, editable descriptions, and legacy citation display. |
 | `styles/18-locations.css` | Places editor, responsive list, and review row layout. |
 | `tests/locations-store.mjs`, `tests/location-proposals.mjs` | Pure identities, validation, uncited proposals, dependency, and acceptance checks. |
-| `tests/location-image.mjs`, `tests/ui-place-background.cjs` | Automatic drawing, stale-result guards, and the live Place image editor/background check. |
+| `tests/location-image.mjs`, `tests/image-command.mjs`, `tests/ui-place-background.cjs`, `tests/ui-background-generation.py` | Automatic drawing, queued image commands, stale-result guards, and live Place image editor/background recovery checks. |
 | `tests/location-context.mjs`, `tests/locations-ui.mjs` | Prompt/schema integration, bounded matching, editor controls, and stale-chat guards. |
 | `tests/location-runtime.mjs`, `tests/location-turns.mjs` | Mixed review orchestration, provenance, current-turn replacement, manual corrections, and System independence. |
 | `tests/ui-locations.py` | Temporary unsaved browser check of Places, review, and the in-chat tracker trail. |

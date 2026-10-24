@@ -41,3 +41,22 @@ test('background links stay within an open, enabled chat', () => {
     metadata.sillynpc_status_state = setLocationsEnabled(state, true);
     assert.equal(sync(context, background), true);
 });
+
+test('a cached Place restores background metadata and display after another writer changes them', () => {
+    let state = editLocation({}, { name: 'Inn', backgroundImage: 'url("user/images/inn.png")' }, { makeId: () => 'inn' });
+    state = setLocationsEnabled(setCurrentLocation(state, 'inn'), true);
+    const metadata = { sillynpc_status_state: state };
+    let saves = 0;
+    const context = { chatMetadata: metadata, getCurrentChatId: () => 'chat-restore', saveMetadataDebounced: () => saves++ };
+    const background = { style: { backgroundImage: '' } };
+    assert.equal(sync(context, background), true);
+    background.style.backgroundImage = 'url("other.png")';
+    assert.equal(sync(context, background), true);
+    assert.equal(background.style.backgroundImage, metadata.custom_background);
+    assert.equal(saves, 1);
+    metadata.custom_background = 'url("other.png")';
+    assert.equal(sync(context, background), true);
+    assert.equal(metadata.custom_background, 'url("user/images/inn.png")');
+    assert.equal(saves, 2);
+    assert.equal(sync(context, background), false);
+});
