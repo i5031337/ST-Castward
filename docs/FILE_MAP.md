@@ -435,6 +435,12 @@ SillyTavern loads `index.js` and `style.css` from `manifest.json`. The JavaScrip
 
 ## Maintenance notes
 
+`src/tracker/extractor/status-extractor-queue.js` serializes overlapping readings,
+coalesces duplicates, and validates queued reply ownership before execution.
+`tests/extraction-queue.mjs` and `tests/tracker-regenerate.mjs` cover ordering,
+cancellation, source invalidation, and use of the preceding applied state.
+`docs/adversarial-review-20261025.md` records the current critique and follow-up status.
+
 `src/tracker/status-logic.js` binds the state providers by name, then freezes the shared
 registry. `tests/status-dependencies.mjs` checks that each dependency has one
 provider. The registry still resolves cross-module calls at runtime, so changes to

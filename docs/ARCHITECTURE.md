@@ -97,6 +97,14 @@ mode. An explicitly established initial scene does not require an arrival event.
 
 ## Current-turn consistency and review
 
+Separate reader requests run in arrival order. Overlapping turns wait rather than
+being skipped, and each prompt uses the state available when its reading starts.
+Duplicate requests for the same reply and options share a result. Waiting work is
+discarded if its chat, persona, System, message identity, text, or swipe changes.
+Stop and chat changes cancel waiting work as well as the active reading; message
+invalidation cancels waiting entries from the affected index onward. Pending review
+rows remain proposals and are not included as accepted state in the next reading.
+
 Latest-reply changes use a pre-turn base. Swipe, regeneration, latest-reply editing,
 and deletion replace that reply's accepted changes rather than accumulating them.
 Manual corrections and one-step undo have separate handling. Arbitrary historical

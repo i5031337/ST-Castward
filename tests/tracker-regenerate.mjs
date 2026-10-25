@@ -1,4 +1,5 @@
 import { readerCancellationHarness } from './helpers/reader-cancellation.mjs';
+import { createExtractionQueue } from '../src/tracker/extractor/status-extractor-queue.js';
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFileSync } from 'node:fs';
@@ -59,6 +60,7 @@ function harness(mode = 'extract') {
     const snapshots = loadModule('../src/tracker/snapshots/status-snapshot-swipe.js', deps);
     const cancellation = readerCancellationHarness();
     const extraction = loadModule('../src/tracker/extractor/status-extractor-run.js', {
+        createExtractionQueue,
         ...cancellation,
         ...deps, ...snapshots, normalizeCollectionUpdates,
         trackerMessageIndex: chat => chat.length - 1,
@@ -95,17 +97,55 @@ function harness(mode = 'extract') {
         getCurrentPersonaKey: () => 'hero', getCurrentPersonaName: () => 'Hero',
         prepareSceneLocationReading: async () => null,
         generateNewNpcProfiles: async () => ({ generated: 0, failed: 0 }),
-        startExtractionReport: () => message, finishExtractionReport: (id, msg, report) => { msg.report = report; },
+        startExtractionReport: id => context.chat[id], finishExtractionReport: (id, msg, report) => { msg.report = report; },
         extractionSwipe: () => 0, renderExtractionReport: () => {},
         getAllCharacters: () => [],
         document: { querySelector: () => null }, LOG_PREFIX: 'test',
     });
-    return { run: (options = { regenerate: true }) => extraction.extractStateFromMessage(message.mes, 0, options),
+    return { run: (options = { regenerate: true }, id = 0) => extraction.extractStateFromMessage(context.chat[id].mes, id, options),
         cancellation, live: () => live, pending: () => pending, prompted: () => prompted, message, context, base,
         setEnabled: value => { enabled = value; },
         setResponse: value => { response = value; }, onRequest: fn => { onRequest = fn; },
         setWarnings: value => { previewWarnings = value; } };
 }
+test('overlapping automatic turns read in order using the preceding applied state', async () => {
+    const h = harness();
+    let release;
+    const gate = new Promise(resolve => { release = resolve; });
+    let calls = 0;
+    h.onRequest(async () => {
+        calls += 1;
+        if (calls === 1) await gate;
+        h.setResponse({ player: { stats: { XP: calls === 1 ? '50' : '70' } } });
+    });
+    const first = h.run({});
+    h.context.chat.push({ mes: 'Another accomplishment.', extra: {} });
+    const second = h.run({}, 1);
+    assert.equal(calls, 1);
+    release();
+    assert.equal((await first).applied, true);
+    assert.equal((await second).applied, true);
+    assert.equal(calls, 2);
+    assert.equal(h.prompted().player.stats.XP, '50');
+    assert.equal(h.live().player.stats.XP, '70');
+});
+
+test('Stop cancels both the active reading and a waiting turn without starting its request', async () => {
+    const h = harness();
+    let release;
+    const gate = new Promise(resolve => { release = resolve; });
+    let calls = 0;
+    h.onRequest(async () => { calls += 1; await gate; });
+    const first = h.run({});
+    h.context.chat.push({ mes: 'Another accomplishment.', extra: {} });
+    const second = h.run({}, 1);
+    h.cancellation.emit('stop');
+    release();
+    assert.equal((await first).reason, 'cancelled');
+    assert.equal((await second).reason, 'cancelled');
+    assert.equal(calls, 1);
+    assert.equal(h.live().player.stats.XP, '30');
+});
 test('reader reports skipped collection proposals even with no review rows and clears them on regeneration', async () => {
     const h = harness();
     h.setResponse({ player: {} });

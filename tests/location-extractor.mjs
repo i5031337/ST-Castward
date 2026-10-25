@@ -1,4 +1,5 @@
 import { readerCancellationHarness } from './helpers/reader-cancellation.mjs';
+import { createExtractionQueue } from '../src/tracker/extractor/status-extractor-queue.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -88,7 +89,7 @@ function fixture({ enabled = true, afterRequest, afterLocationRequest, reviewMod
         partitionLocationRows: runtime.partitionLocationRows,
         resolveLocationRows: runtime.resolveLocationRows,
     };
-    const run = evaluate('../src/tracker/extractor/status-extractor-run.js', { ...readerCancellationHarness(), ...dependencies }, 'extractStateFromMessage');
+    const run = evaluate('../src/tracker/extractor/status-extractor-run.js', { createExtractionQueue, ...readerCancellationHarness(), ...dependencies }, 'extractStateFromMessage');
     return { run: () => run('We enter the Lantern tavern at dusk.', 0), context, requests, locationRequests, reports, records, output, settings,
         get pending() { return pending; }, get state() { return state; } };
 }

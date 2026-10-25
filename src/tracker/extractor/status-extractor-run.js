@@ -1,4 +1,5 @@
 import { startGenerationTask, awaitGenerationRequest } from '../../core/generation-cancellation.js';
+import { createExtractionQueue } from './status-extractor-queue.js';
 import { prepareSceneLocationReading } from '../../locations/location-reading.js';
 import { getAllCharacters } from '../../characters/character-repository.js';
 import { getContext } from '../../../../../../st-context.js';
@@ -24,8 +25,11 @@ import { trackerMessageIndex } from '../ui/status-ui-placement.js';
 import { generateNewNpcProfiles } from './status-npc-profiles.js';
 import { locationProposalsForReading, partitionLocationRows, resolveLocationRows } from '../../locations/location-runtime.js';
 
-/** Guards against an extraction triggering the events that would start another. */
+/** The reading currently applying state. */
 let activeExtraction = null;
+const extractionQueue = createExtractionQueue({
+    getContext, getSettings, getCurrentPersonaKey, startGenerationTask, extract: performExtraction,
+});
 
 export function isExtractionRunning() { return activeExtraction !== null; }
 
@@ -33,6 +37,7 @@ export function isExtractionRunning() { return activeExtraction !== null; }
 const extractedMessages = new Set();
 
 export function resetExtractionState() {
+    extractionQueue.clear();
     activeExtraction?.abort();
     activeExtraction = null;
     extractedMessages.clear();
@@ -47,6 +52,7 @@ export function resetExtractionState() {
 export function forgetExtractionsFrom(index) {
     const from = Number(index);
     if (!Number.isFinite(from)) return 0;
+    extractionQueue.forgetFrom(from);
 
     let forgotten = 0;
     for (const key of [...extractedMessages]) {
@@ -65,7 +71,11 @@ function reportExtractionProblem(message) {
     if (typeof toastr !== 'undefined') toastr.warning(message, 'Castward');
 }
 
-export async function extractStateFromMessage(messageText, messageId, options = {}) {
+export function extractStateFromMessage(messageText, messageId, options = {}) {
+    return extractionQueue.submit(messageText, messageId, options);
+}
+
+async function performExtraction(messageText, messageId, options, signal) {
     if (!getSettings().enabled) return { applied: false, reason: 'extension disabled' };
     const trackerSettings = getSettings().statusTracker;
     if (!trackerSettings.enabled) return { applied: false, reason: 'tracker disabled' };
@@ -87,12 +97,11 @@ export async function extractStateFromMessage(messageText, messageId, options = 
         return { applied: false, reason: 'already extracted' };
     }
     if (!options.force && !options.regenerate && extractedMessages.has(key)) return { applied: false, reason: 'already extracted' };
-    if (activeExtraction) return { applied: false, reason: 'already running' };
 
     const canReplace = () => Number(messageId) === trackerMessageIndex(getContext()?.chat || [])
         && replacementReadingState(messageId) !== null;
     if (options.regenerate && !canReplace()) return { applied: false, reason: 'no latest-turn base' };
-    const run = startGenerationTask();
+    const run = startGenerationTask({ signal });
     activeExtraction = run;
     const reportMessage = startExtractionReport(messageId);
     const sourceText = reportMessage?.mes;
@@ -137,9 +146,7 @@ export async function extractStateFromMessage(messageText, messageId, options = 
         if (!parsed || typeof parsed !== 'object') {
             report = { swipe, status: 'failed', summary: 'The reply could not be read', output: raw ?? null };
             console.warn(LOG_PREFIX, 'Extraction returned nothing usable; state left unchanged.', raw);
-            // Said out loud, not just to the console. A reply that could not be read and a
-            // message that genuinely changed nothing look identical from the outside, so
-            // silence here reads as "the tracker is broken" rather than "this one failed".
+            // Distinguish a failed reading from a story turn that changed nothing.
             reportExtractionProblem(
                 'The reader replied with something that could not be read, so nothing was '
                 + 'changed. A smaller or faster model is the usual cause; expand the tracker '
