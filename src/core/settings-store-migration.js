@@ -51,18 +51,6 @@ export function migratePresetsAndStores(settings, currentVersion) {
     }
     if (!settings.master_items) {
         settings.master_items = {};
-    } else {
-        // Cleanup hardcoded "New Item X" from Master Database
-        for (const colId in settings.master_items) {
-            const items = settings.master_items[colId];
-            if (!items) continue;
-            for (const itemName in items) {
-                if (/^new item \d+$/i.test(itemName)) {
-                    debugLog('Removing hardcoded item from Master DB:', itemName);
-                    delete items[itemName];
-                }
-            }
-        }
     }
     delete settings.profileHints;
     settings.version = currentVersion;

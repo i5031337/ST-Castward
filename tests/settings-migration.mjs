@@ -22,7 +22,7 @@ const loadMigration = new Function('debugLog', 'SPEAKER_PALETTE', 'NPC_LORE_FIEL
     'normalizeHudLayoutId', 'ensureCollectionIdentifier', 'ensureCollectionQuantity', 'normalizeTrackerProgression', 'normalizeCharacterPresentation', 'normalizeTtsSettings', 'normalizeThemeOverrides', 'normalizeNpcRosters',
     `${source}\nreturn normalizeSettings;`);
 
-function migration() {
+function migration(migrateStores = (settings, version) => { settings.version = version; }) {
     const saves = [];
     const defaults = {
         version: '1.0.0',
@@ -33,7 +33,7 @@ function migration() {
     const normalize = loadMigration(() => {}, ['#111111', '#222222'],
         NPC_LORE_FIELDS, () => 0, () => {}, defaults,
         () => saves.push('saved'),
-        (settings, version) => { settings.version = version; },
+        migrateStores,
         () => {}, normaliseStatUpdatePolicies, normalizeHudLayoutId, ensureCollectionIdentifier, ensureCollectionQuantity, normalizeTrackerProgression,
         normalizeCharacterPresentation, normalizeTtsSettings, normalizeThemeOverrides, normalizeNpcRosters);
     return { normalize, saves };
@@ -104,6 +104,23 @@ test('legacy profile hints enter old System presets before the flat setting is r
     assert.equal(settings.statusTracker.presets.old.config.profileHints.appearance,
         'Describe distinguishing features');
     assert.equal('profileHints' in settings, false);
+});
+
+test('settings normalization preserves numbered item names and their library data', () => {
+    const { normalize } = migration(migratePresetsAndStores);
+    for (const version of ['0.4.0', '1.0.0']) {
+        const items = {
+            'New Item': { description: 'First row' },
+            'New Item 2': { description: 'Second row', weight: '3' },
+            'new item 12': { description: 'A saved custom item' },
+            Sword: { description: 'An ordinary item' },
+        };
+        const settings = { version, characters: [], statusTracker: {},
+            master_items: { inventory: structuredClone(items) } };
+        normalize(settings);
+        normalize(settings);
+        assert.deepEqual(settings.master_items.inventory, items);
+    }
 });
 
 test('collection identifiers normalize on startup while retaining existing item identities', () => {

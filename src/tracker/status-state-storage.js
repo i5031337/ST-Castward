@@ -162,28 +162,6 @@ function loadStateFromMetadata() {
         });
     });
 
-    // Cleanup hardcoded items from current state
-    if (stateToReturn.player && stateToReturn.player.collections) {
-        for (const colId in stateToReturn.player.collections) {
-            const items = stateToReturn.player.collections[colId];
-            if (Array.isArray(items)) {
-                const settings = getSettings().statusTracker;
-                const colDef = settings.collections.find(c => c.id === colId);
-                const primaryField = colDef ? colDef.fields.find(f => f.isPrimary) : { name: 'name' };
-                const primaryFieldName = primaryField ? primaryField.name : 'name';
-                
-                stateToReturn.player.collections[colId] = items.filter(item => {
-                    const name = item[primaryFieldName];
-                    if (typeof name === 'string' && /^new item \d+$/i.test(name)) {
-                        debugLog('Removing hardcoded item from player collection:', name);
-                        return false;
-                    }
-                    return true;
-                });
-            }
-        }
-    }
-
     if (stateChanged) {
         debugLog('State repaired during load, saving back to chat metadata.');
         saveStateToMetadata(stateToReturn, { recordHistory: false });

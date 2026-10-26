@@ -143,3 +143,37 @@ test('storage loads legacy tracker player from master, but fresh chats use defau
     assert.equal(metadata.sillynpc_status_state.locations.records.inn.name, 'Inn');
     assert.equal(metadata.sillynpc_status_state.npcMemories['id:copied'].entries[0].text, 'Carried memory');
 });
+
+test('saved player items survive repeated state loads with default and custom identifiers', () => {
+    for (const identifier of ['name', 'title']) {
+        const items = [
+            { [identifier]: 'New Item', description: 'First row' },
+            { [identifier]: 'New Item 2', description: 'Second row', quantity: 3 },
+            { [identifier]: 'new item 12', description: 'Custom saved item' },
+            { [identifier]: 'Sword', description: 'Ordinary item' },
+        ];
+        const metadata = { state: { global: {}, characters: [], recently_deleted: {},
+            player: { name: 'Rhea', stats: {}, collections: { inventory: structuredClone(items) } } } };
+        const localSettings = { statusTracker: { collections: [
+            { id: 'inventory', fields: [{ name: identifier, isPrimary: true }] },
+        ] } };
+        const storage = {
+            STATE_KEY: 'state', HISTORY_KEY: 'history',
+            currentChatId: () => 'chat', stateOrigin: new WeakMap(),
+            getMetadata: () => metadata, hasOpenChat: () => true,
+            getCurrentPersonaKey: () => 'Rhea.png', getCurrentPersonaName: () => 'Rhea',
+            activatePersona() {},
+        };
+        bindFrom('../src/tracker/status-state-storage.js',
+            ['getSettings', 'getContext', 'eventSource', 'debugLog', 'LOG_PREFIX', 'applyRosterStateSeed', 'captureNpcRoster', 'saveSettings'],
+            [() => localSettings, () => ({ saveMetadataDebounced() {} }), { emit() {} }, () => {}, '[test]', applyRosterStateSeed, captureNpcRoster, () => {}])(storage);
+        for (let reload = 0; reload < 2; reload++) {
+            const loaded = storage.loadStateFromMetadata();
+            assert.deepEqual(loaded.player.collections.inventory, items);
+            assert.deepEqual(storage.loadStateFromMetadata().player.collections.inventory, items);
+            storage.saveStateToMetadata(loaded, { recordHistory: false });
+            metadata.state = JSON.parse(JSON.stringify(metadata.state));
+            storage.committedState = null;
+        }
+    }
+});
