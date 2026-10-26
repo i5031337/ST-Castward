@@ -9,7 +9,8 @@ export { portraitSizeFor, ringOverhang, ringRadius } from './ui-hud-meters.js';
 
 let hudContainer = null;
 let isDragging = false;
-let dragOffset = { x: 0, y: 0 };
+let suppressPortraitClick = false;
+let activePointerId = null;
 
 /** Keep at least this much of the HUD on screen so it can never be dragged out of reach. */
 const HUD_VIEWPORT_MARGIN = 48;
@@ -146,10 +147,11 @@ export function initHUD() {
             portrait.dataset.faceWhy = `inline:none << ${by}`;
         });
     }
-    portrait.addEventListener('mousedown', startDrag);
+    portrait.addEventListener('pointerdown', startDrag);
     makeActivatable(portrait, { label: 'Open your character sheet' });
     portrait.addEventListener('click', (e) => {
-        if (!isDragging) openPlayerSheet();
+        if (e.detail !== 0 && suppressPortraitClick) return;
+        openPlayerSheet();
     });
     
     const statsContainer = document.createElement('div');
@@ -199,29 +201,32 @@ function pinHudAt(rect) {
 }
 
 function startDrag(e) {
-    if (e.button !== 0) return;
-    e.preventDefault();
-    isDragging = false;
+    if (e.button !== 0 || !e.isPrimary || activePointerId !== null) return;
+    suppressPortraitClick = false;
     const startX = e.clientX;
     const startY = e.clientY;
 
     const rect = hudContainer?.getBoundingClientRect();
     if (!rect) return;
     // Against the visible box, which is what pinHudAt makes left/top mean.
-    dragOffset.x = startX - rect.left;
-    dragOffset.y = startY - rect.top;
+    const dragOffset = { x: startX - rect.left, y: startY - rect.top };
+    const handle = e.currentTarget;
+    activePointerId = e.pointerId;
+    handle.setPointerCapture(e.pointerId);
 
     /* Use translate while dragging to avoid layout; disable blur until release. */
     let offsetX = 0;
     let offsetY = 0;
     const zoom = hudZoom();
 
-    const onMouseMove = (moveEvent) => {
+    const onPointerMove = (moveEvent) => {
+        if (moveEvent.pointerId !== activePointerId) return;
         if (!isDragging) {
             if (!passedDragThreshold(moveEvent.clientX - startX, moveEvent.clientY - startY)) return;
             isDragging = true;
+            suppressPortraitClick = true;
             // Only once it is really a drag. A press that turns out to be a click has to
-            // leave the HUD anchored to its corner: pinning it on mousedown would strand
+            // leave the HUD anchored to its corner: pinning it on pointerdown would strand
             // it at inline coordinates that the corner setting can no longer override.
             pinHudAt(rect);
             hudContainer.classList.add('is-dragging');
@@ -233,17 +238,23 @@ function startDrag(e) {
         hudContainer.style.translate = `${offsetX / zoom}px ${offsetY / zoom}px`;
     };
 
-    const onMouseUp = (upEvent) => {
-        document.removeEventListener('mousemove', onMouseMove);
-        document.removeEventListener('mouseup', onMouseUp);
+    const finishDrag = (upEvent) => {
+        if (upEvent.pointerId !== activePointerId) return;
+        activePointerId = null;
+        document.removeEventListener('pointermove', onPointerMove);
+        document.removeEventListener('pointerup', finishDrag);
+        document.removeEventListener('pointercancel', finishDrag);
+        handle.removeEventListener('lostpointercapture', finishDrag);
+        if (handle.hasPointerCapture(e.pointerId)) handle.releasePointerCapture(e.pointerId);
         if (!isDragging) return;
 
         const settings = getSettings().statusTracker;
         if (!settings.hud) settings.hud = { position: { x: null, y: null } };
 
         // Where it was let go, from the pointer - not measured, and with the translate gone.
-        const dropX = (upEvent?.clientX ?? startX + offsetX) - dragOffset.x;
-        const dropY = (upEvent?.clientY ?? startY + offsetY) - dragOffset.y;
+        const released = upEvent.type === 'pointerup';
+        const dropX = (released ? upEvent.clientX : startX + offsetX) - dragOffset.x;
+        const dropY = (released ? upEvent.clientY : startY + offsetY) - dragOffset.y;
         hudContainer.style.translate = '';
         hudContainer.classList.remove('is-dragging');
         // The origin is top-left by now, so the visible box and left/top are the same
@@ -253,10 +264,11 @@ function startDrag(e) {
         settings.hud.position.y = y;
         placeHud(x, y);
         saveSettings();
-        // The click handler runs after mouseup, and has to see that this was a drag.
-        setTimeout(() => { isDragging = false; }, 50);
+        isDragging = false;
     };
 
-    document.addEventListener('mousemove', onMouseMove);
-    document.addEventListener('mouseup', onMouseUp);
+    document.addEventListener('pointermove', onPointerMove);
+    document.addEventListener('pointerup', finishDrag);
+    document.addEventListener('pointercancel', finishDrag);
+    handle.addEventListener('lostpointercapture', finishDrag);
 }

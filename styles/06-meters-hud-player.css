@@ -192,6 +192,10 @@
 
 /* Its width and height follow the meter count and are set in HUD proportions below. */
 .sillynpc-hud-portrait {
+    /* Reserve swipes on the drag handle for moving the HUD. */
+    touch-action: none;
+    user-select: none;
+    -webkit-touch-callout: none;
     border-radius: 50%;
     /* Kept for the empty frame: the tint below still shows while no picture has loaded. */
     background-size: cover;
