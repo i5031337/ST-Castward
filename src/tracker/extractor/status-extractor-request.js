@@ -50,8 +50,7 @@ async function performExtraction(userPrompt, schema, trackerSettings, systemProm
     debugLog(`Extraction -> ${describeConnection(profileId)}, reply budget ${maxTokens}`);
 
     if (profileId) {
-        // Connection Manager can be disabled, and the profile may have been deleted;
-        // either throws, so fall through to the main API rather than failing the sync.
+        // Missing profiles and a disabled Connection Manager follow the same retry policy.
         try {
             const service = context.ConnectionManagerRequestService;
             const result = await awaitGenerationRequest(service.sendRequest(
@@ -77,6 +76,7 @@ async function performExtraction(userPrompt, schema, trackerSettings, systemProm
             return answer;
         } catch (err) {
             if (signal.aborted || err?.name === 'AbortError') throw signal.reason || err;
+            if (trackerSettings.extractionFallbackToMain !== true) throw err;
             console.warn(LOG_PREFIX, 'Selected extraction connection failed, falling back to the main API:', err);
             if (typeof toastr !== 'undefined') toastr.warning(
                 `The selected ${usageKind === 'scan' ? 'history scan' : 'reader'} connection failed. `

@@ -56,6 +56,8 @@ export const defaultTrackerSettings = {
         autoGenerateNpcProfiles: false,
         /** Connection Manager profile for the extraction request. Empty = main API. */
         extractionProfileId: '',
+        /** Retry failed reader/scan connections through the main chat API only when opted in. */
+        extractionFallbackToMain: false,
         /** Token budget for the extraction reply. */
         extractionMaxTokens: 2400,
 

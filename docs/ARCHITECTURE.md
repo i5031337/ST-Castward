@@ -146,9 +146,13 @@ pass stops the scan without publishing partial proposals. Oversized transcript
 messages stop the scan before any model request; the character budget covers the
 transcript, with prompt and inventory overhead added separately. Scans always use review.
 
-Selected reader and scan connection failures show a warning before falling back to
-the main chat API. Time is an ordinary editable world field; there is no automatic
-elapsed-time regeneration.
+Selected reader and scan connection failures propagate without retrying through another
+API by default. Tracker → How Stats Are Read → Fall Back To Main API opts into a
+warning followed by a retry through the main chat API. This policy applies to all
+requests using the reader request helper, including location readings, profile Fill,
+and phrase scans. Cancellation never triggers fallback. Selecting Main API directly
+still works with fallback disabled. Time is an ordinary editable world field; there
+is no automatic elapsed-time regeneration.
 
 ## Verification
 

@@ -98,6 +98,15 @@ export function renderTrackerDisplayAndReading({ container, settings, onApply, o
     if (settings.extractionMode === 'extract' || settings.extractionMode === 'manual') {
         container.appendChild(buildConnectionProfilePicker(onApply));
         container.append(buildSettingToggle({
+            key: 'statusTracker.extractionFallbackToMain',
+            label: 'Fall Back To Main API',
+            help: 'If a selected reader or history scan connection fails, warn and retry '
+                + 'using the same API as chat. This may use a different model or provider '
+                + 'and incur its costs. Off by default: failures are reported without retrying '
+                + 'through another connection. Applies to all requests using the reader connection.',
+            onChange: onApply,
+        }));
+        container.append(buildSettingToggle({
             key: 'statusTracker.autoGenerateNpcProfiles',
             label: 'Generate Profiles For New NPCs',
             help: 'When the reader identifies an NPC without a character card, creates a '

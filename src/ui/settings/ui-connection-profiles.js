@@ -47,9 +47,10 @@ export function buildConnectionProfilePicker(onChange, options = {}) {
         fallbackLabel = 'Main API (same as chat)',
         noteText = 'Which connection runs the extraction. A small fast model is usually '
             + 'enough, and keeps this off the budget of your main model.',
-        unavailableText = 'Connection Manager is not available, so the extraction uses '
-            + 'your main API. Enable the Connection Manager extension to run it on a '
-            + 'separate, cheaper model.',
+        unavailableText = 'Connection Manager is not available. Enable it to use a selected '
+            + 'reader connection. Requests through a selected connection will fail unless '
+            + 'Fall Back To Main API is enabled. With no connection selected, the reader '
+            + 'uses the main API.',
     } = options;
 
     const wrap = document.createElement('div');

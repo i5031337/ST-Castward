@@ -1,3 +1,4 @@
+import { defaultTrackerSettings } from '../src/core/settings-tracker-defaults.js';
 import { readerCancellationHarness } from './helpers/reader-cancellation.mjs';
 import { readerSchemaForConnection } from '../src/tracker/extractor/status-extractor-schema-provider.js';
 import test from 'node:test';
@@ -43,7 +44,7 @@ for (const usageKind of ['extraction', 'scan']) {
 test('main API without a selected profile does not warn', async () => {
     let calls = 0;
     const { request, events, usage } = build({ generateRawData: async () => { calls++; return rawReply; } });
-    assert.equal(await request('Prompt', schema, {}), '{"player":{}}');
+    assert.equal(await request('Prompt', schema, { extractionFallbackToMain: false }), '{"player":{}}');
     assert.equal(calls, 1);
     assert.deepEqual(events, []);
     assert.equal(usage.length, 1);
@@ -71,7 +72,7 @@ for (const failure of ['deleted profile', 'network failure', 'authentication fai
         const context = { ConnectionManagerRequestService: { sendRequest: async () => { throw new Error(failure); } } };
         const { request, events, usage } = build(context);
         context.generateRawData = async () => { events.push(['main']); return rawReply; };
-        assert.equal(await request('Prompt', schema, { extractionProfileId: 'reader' }), '{"player":{}}');
+        assert.equal(await request('Prompt', schema, { extractionProfileId: 'reader', extractionFallbackToMain: true }), '{"player":{}}');
         assert.equal(events.length, 2);
         assert.equal(events[0][0], 'warning');
         assert.match(events[0][1], /selected reader connection failed.*main API/);
@@ -85,7 +86,7 @@ test('disabled manager warns with history scan wording and preserves scan usage 
     const context = {};
     const { request, events, usage } = build(context);
     context.generateRawData = async () => { events.push(['main']); return { player: {} }; };
-    assert.deepEqual(await request('Prompt', schema, { extractionProfileId: 'scan', extractionUseSchema: true },
+    assert.deepEqual(await request('Prompt', schema, { extractionProfileId: 'scan', extractionUseSchema: true, extractionFallbackToMain: true },
         'Scan system', { usageKind: 'scan' }), { player: {} });
     assert.match(events[0][1], /selected history scan connection failed.*main API/);
     assert.deepEqual(events[1], ['main']);
@@ -97,7 +98,7 @@ test('a failing main API still propagates its error after the fallback warning',
         ConnectionManagerRequestService: { sendRequest: async () => { throw new Error('Profile failed'); } },
         generateRawData: async () => { throw new Error('Main API failed'); },
     });
-    await assert.rejects(request('Prompt', schema, { extractionProfileId: 'reader' }), /Main API failed/);
+    await assert.rejects(request('Prompt', schema, { extractionProfileId: 'reader', extractionFallbackToMain: true }), /Main API failed/);
     assert.equal(events.length, 1);
     assert.equal(usage.length, 0);
 });
@@ -126,7 +127,7 @@ test('selected connection fallback preserves the wrapped schema', async () => {
         ConnectionManagerRequestService: { sendRequest: async () => { throw Error('Unavailable'); } },
         generateRawData: async payload => { received = payload; return { player: {} }; },
     });
-    await request('Prompt', schema, { extractionProfileId: 'reader', extractionUseSchema: true });
+    await request('Prompt', schema, { extractionProfileId: 'reader', extractionUseSchema: true, extractionFallbackToMain: true });
     assert.deepEqual(received.jsonSchema, namedSchema);
 });
 
@@ -151,7 +152,7 @@ for (const profile of [false, true]) {
             ConnectionManagerRequestService: { sendRequest: (...args) => { signal = args[3].signal; return pending; } },
             generateRawData: () => { calls++; return pending; },
         });
-        const result = request('Prompt', null, profile ? { extractionProfileId: 'reader' } : {});
+        const result = request('Prompt', null, profile ? { extractionProfileId: 'reader', extractionFallbackToMain: true } : {});
         assert.equal(cancellation.button.style.display, 'flex');
         cancellation.emit('stop');
         await assert.rejects(result, { name: 'AbortError' });
@@ -180,9 +181,50 @@ for (const profileSupportsPatterns of [true, false]) {
             },
             generateRawData: async args => { mainSchema = args.jsonSchema.value; return { player: {} }; },
         });
-        await request('Prompt', patterned, { extractionProfileId: 'reader', extractionUseSchema: true });
+        await request('Prompt', patterned, { extractionProfileId: 'reader', extractionUseSchema: true, extractionFallbackToMain: true });
         assert.equal(Boolean(profileSchema.properties.Rating.pattern), profileSupportsPatterns);
         assert.equal(Boolean(mainSchema.properties.Rating.pattern), !profileSupportsPatterns);
         assert.equal(patterned.properties.Rating.pattern, '^[0-9]+$');
     });
 }
+test('reader fallback is off by default', () => {
+    assert.equal(defaultTrackerSettings.extractionFallbackToMain, false);
+});
+
+for (const usageKind of ['extraction', 'scan', 'location', 'fill', 'banscan']) {
+    for (const fallback of [false, undefined]) {
+        for (const missingManager of [false, true]) {
+            test(`${usageKind} reports failure without fallback (setting=${fallback}, missing manager=${missingManager})`, async () => {
+                const failure = new Error('Selected connection unavailable');
+                const context = {
+                    generateRawData: () => assert.fail('Main API must not be called'),
+                    ...(missingManager ? {} : { ConnectionManagerRequestService: {
+                        sendRequest: async () => { throw failure; },
+                    } }),
+                };
+                const { request, events, usage, cancellation } = build(context);
+                await assert.rejects(request('Prompt', schema, {
+                    extractionProfileId: 'reader', extractionFallbackToMain: fallback,
+                }, 'System', { usageKind }), missingManager ? { name: 'TypeError' } : failure);
+                assert.deepEqual(events, []);
+                assert.deepEqual(usage, []);
+                assert.equal(cancellation.listeners(), 0);
+                assert.equal(cancellation.button.style.display, 'none');
+            });
+        }
+    }
+}
+
+test('an AbortError never falls back even when retry is enabled', async () => {
+    const { request, events, usage } = build({
+        ConnectionManagerRequestService: { sendRequest: async () => {
+            throw new DOMException('Cancelled', 'AbortError');
+        } },
+        generateRawData: () => assert.fail('Cancellation must not retry'),
+    });
+    await assert.rejects(request('Prompt', schema, {
+        extractionProfileId: 'reader', extractionFallbackToMain: true,
+    }), { name: 'AbortError' });
+    assert.deepEqual(events, []);
+    assert.deepEqual(usage, []);
+});

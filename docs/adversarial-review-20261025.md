@@ -72,27 +72,50 @@ review option; it does not establish the best default review policy.
 Sources: the linked final evaluation,
 `src/core/settings-tracker-defaults.js`, and the reader's normalization/request modules.
 
-## 3. Recovery is shallow relative to probabilistic changes — open
+## 3. Recovery is shallow relative to probabilistic changes — accepted limitation
 
 Latest-reply replacement and one-step undo do not provide general historical
 restoration. The edit handler ignores earlier replies; some earlier-message deletions
 warn the user to review state. A mistake discovered several turns later can require
 manual reconstruction of stats and inventories.
 
-Recommendation: design a bounded correction or checkpoint workflow before expanding
-tracking scope. Sources: `src/entry/entry-message-events.js` and `ARCHITECTURE.md`.
+Decision: retain latest-reply replacement, one-step undo, and manual correction.
+Do not add historical recovery or checkpoints. The expected benefit does not justify
+the added extension complexity and chat file size. Most tracking mistakes are
+expected to have limited consequences and be straightforward to fix manually; this
+is a product judgment, not a measured campaign result.
 
-## 4. Background automation has substantial service and latency costs — open
+The original recommendation to design a bounded correction or checkpoint workflow
+before expanding tracking scope is declined. Historical restoration remains limited
+as described above; no runtime change is required to close this item.
+
+Sources: `src/entry/entry-message-events.js` and `docs/ARCHITECTURE.md`.
+
+## 4. Background automation has substantial service and latency costs — fallback policy addressed; visibility open
 
 A tracker reading can lead to a separate location request, reward selection, and
 optional NPC profile generation. Memories, expressions, images, and speech introduce
 additional work and services. These can compete with narration on local hardware.
-A failed dedicated reader connection falls back to the main chat API after a warning,
-potentially changing the model and provider the user selected.
+A failed dedicated reader connection previously fell back to the main chat API after
+a warning, potentially changing the model and provider the user selected.
 
-Recommendation: make outstanding work understandable and offer an explicit fallback
-policy. Sources: `src/tracker/extractor/status-extractor-run.js`,
-`status-extractor-request.js`, and `src/core/usage.js`.
+The tracker now offers **Fall Back To Main API** beside the extraction connection
+selector. It is off by default, including for existing settings without an explicit
+choice. When disabled, selected-connection failures propagate to the caller without
+a request to the main API. Enabling it retains the warning and main-API retry.
+The policy also covers history scans and other requests using the reader connection;
+direct selection of the main API still works, and cancellation never triggers fallback.
+
+Verification: all 949 Node tests pass, including disabled fallback, enabled retry,
+missing Connection Manager, and cancellation checks. A running-host browser fixture
+confirmed the toggle is visible, reflects both values, and propagates a mocked
+selected-connection failure with fallback disabled. It restored in-memory settings
+and the mocked service afterward; no settings saves or model requests were made.
+
+The explicit fallback policy is addressed. Making outstanding work and its service
+costs easier to understand remains open. Sources:
+`src/tracker/extractor/status-extractor-run.js`, `status-extractor-request.js`,
+`src/ui/tracker/ui-tracker-display-reading.js`, and `src/core/usage.js`.
 
 ## 5. The interface imposes a large conceptual burden — product judgment, open
 
