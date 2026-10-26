@@ -1,0 +1,603 @@
+{
+  "method": "Current Dating definitions, 10 independent repetitions of each of 10 fixed development scenes, balanced 5 per endpoint for each scene. Final frozen bundles exactly match the full snapshot prepared before the focused attribution test; inference is fresh and unselected. Subsequent user-approved grading accepts Upset and Agitated; headline results use saved replies rescored without inference. Original artifacts are unchanged.",
+  "preparedAttributionBundlesIdentical": true,
+  "schemaValidReplies": 100,
+  "rawJsonValidReplies": 100,
+  "balancedEndpoints": true,
+  "summary": {
+    "replies": 100,
+    "checks": 960,
+    "passed": 947,
+    "fullyPassing": 87,
+    "numericChecks": 220,
+    "numericPassed": 211,
+    "inventoryFailures": 3,
+    "strictJsonValid": 100,
+    "requestErrors": 0,
+    "normalizationErrors": 0,
+    "warnings": 5,
+    "failedChecks": {
+      "sameHoldings ": 3,
+      "npcAbsent Sam": 1,
+      "playerChangeBetween Social Energy -5 -1": 4,
+      "playerChangeBetween Social Energy 1 5": 1,
+      "npcChangeBetween June Comfort 1 15": 1,
+      "npcChangeBetween June Comfort -1 5": 3
+    }
+  },
+  "scenes": {
+    "dating-q-accepted-boundary": {
+      "replies": 10,
+      "checks": 100,
+      "passed": 99,
+      "fullyPassing": 9,
+      "numericChecks": 30,
+      "numericPassed": 30,
+      "inventoryFailures": 1,
+      "strictJsonValid": 10,
+      "requestErrors": 0,
+      "normalizationErrors": 0,
+      "warnings": 0,
+      "failedChecks": {
+        "sameHoldings ": 1
+      }
+    },
+    "dating-q-candy-before-call": {
+      "replies": 10,
+      "checks": 70,
+      "passed": 69,
+      "fullyPassing": 9,
+      "numericChecks": 10,
+      "numericPassed": 10,
+      "inventoryFailures": 0,
+      "strictJsonValid": 10,
+      "requestErrors": 0,
+      "normalizationErrors": 0,
+      "warnings": 5,
+      "failedChecks": {
+        "npcAbsent Sam": 1
+      }
+    },
+    "dating-q-closing-shift": {
+      "replies": 10,
+      "checks": 90,
+      "passed": 86,
+      "fullyPassing": 6,
+      "numericChecks": 20,
+      "numericPassed": 16,
+      "inventoryFailures": 0,
+      "strictJsonValid": 10,
+      "requestErrors": 0,
+      "normalizationErrors": 0,
+      "warnings": 0,
+      "failedChecks": {
+        "playerChangeBetween Social Energy -5 -1": 4
+      }
+    },
+    "dating-q-kept-confidence": {
+      "replies": 10,
+      "checks": 90,
+      "passed": 90,
+      "fullyPassing": 10,
+      "numericChecks": 20,
+      "numericPassed": 20,
+      "inventoryFailures": 0,
+      "strictJsonValid": 10,
+      "requestErrors": 0,
+      "normalizationErrors": 0,
+      "warnings": 0,
+      "failedChecks": {}
+    },
+    "dating-q-misplaced-confidence": {
+      "replies": 10,
+      "checks": 90,
+      "passed": 90,
+      "fullyPassing": 10,
+      "numericChecks": 20,
+      "numericPassed": 20,
+      "inventoryFailures": 0,
+      "strictJsonValid": 10,
+      "requestErrors": 0,
+      "normalizationErrors": 0,
+      "warnings": 0,
+      "failedChecks": {}
+    },
+    "dating-q-ordinary-pause": {
+      "replies": 10,
+      "checks": 110,
+      "passed": 110,
+      "fullyPassing": 10,
+      "numericChecks": 40,
+      "numericPassed": 40,
+      "inventoryFailures": 0,
+      "strictJsonValid": 10,
+      "requestErrors": 0,
+      "normalizationErrors": 0,
+      "warnings": 0,
+      "failedChecks": {}
+    },
+    "dating-q-passing-joke": {
+      "replies": 10,
+      "checks": 100,
+      "passed": 100,
+      "fullyPassing": 10,
+      "numericChecks": 30,
+      "numericPassed": 30,
+      "inventoryFailures": 0,
+      "strictJsonValid": 10,
+      "requestErrors": 0,
+      "normalizationErrors": 0,
+      "warnings": 0,
+      "failedChecks": {}
+    },
+    "dating-q-pressure-lifted": {
+      "replies": 10,
+      "checks": 110,
+      "passed": 110,
+      "fullyPassing": 10,
+      "numericChecks": 20,
+      "numericPassed": 20,
+      "inventoryFailures": 0,
+      "strictJsonValid": 10,
+      "requestErrors": 0,
+      "normalizationErrors": 0,
+      "warnings": 0,
+      "failedChecks": {}
+    },
+    "dating-q-quiet-company": {
+      "replies": 10,
+      "checks": 100,
+      "passed": 96,
+      "fullyPassing": 6,
+      "numericChecks": 20,
+      "numericPassed": 18,
+      "inventoryFailures": 2,
+      "strictJsonValid": 10,
+      "requestErrors": 0,
+      "normalizationErrors": 0,
+      "warnings": 0,
+      "failedChecks": {
+        "sameHoldings ": 2,
+        "playerChangeBetween Social Energy 1 5": 1,
+        "npcChangeBetween June Comfort 1 15": 1
+      }
+    },
+    "dating-q-unwelcome-notification": {
+      "replies": 10,
+      "checks": 100,
+      "passed": 97,
+      "fullyPassing": 7,
+      "numericChecks": 10,
+      "numericPassed": 7,
+      "inventoryFailures": 0,
+      "strictJsonValid": 10,
+      "requestErrors": 0,
+      "normalizationErrors": 0,
+      "warnings": 0,
+      "failedChecks": {
+        "npcChangeBetween June Comfort -1 5": 3
+      }
+    }
+  },
+  "endpoints": {
+    "http://127.0.0.1:9931/v1": {
+      "replies": 50,
+      "checks": 480,
+      "passed": 473,
+      "fullyPassing": 43,
+      "numericChecks": 110,
+      "numericPassed": 106,
+      "inventoryFailures": 2,
+      "strictJsonValid": 50,
+      "requestErrors": 0,
+      "normalizationErrors": 0,
+      "warnings": 5,
+      "failedChecks": {
+        "sameHoldings ": 2,
+        "npcAbsent Sam": 1,
+        "playerChangeBetween Social Energy -5 -1": 2,
+        "npcChangeBetween June Comfort -1 5": 2
+      }
+    },
+    "http://127.0.0.1:8080/v1": {
+      "replies": 50,
+      "checks": 480,
+      "passed": 474,
+      "fullyPassing": 44,
+      "numericChecks": 110,
+      "numericPassed": 105,
+      "inventoryFailures": 1,
+      "strictJsonValid": 50,
+      "requestErrors": 0,
+      "normalizationErrors": 0,
+      "warnings": 0,
+      "failedChecks": {
+        "playerChangeBetween Social Energy -5 -1": 2,
+        "playerChangeBetween Social Energy 1 5": 1,
+        "npcChangeBetween June Comfort 1 15": 1,
+        "sameHoldings ": 1,
+        "npcChangeBetween June Comfort -1 5": 1
+      }
+    }
+  },
+  "failuresOverThreePerTen": [
+    {
+      "id": "dating-q-closing-shift",
+      "check": "playerChangeBetween Social Energy -5 -1",
+      "count": 4
+    }
+  ],
+  "nodeTests": {
+    "passed": 927,
+    "failed": 0
+  },
+  "originalInferenceSummary": {
+    "replies": 100,
+    "checks": 960,
+    "passed": 945,
+    "fullyPassing": 86,
+    "numericChecks": 220,
+    "numericPassed": 211,
+    "inventoryFailures": 3,
+    "strictJsonValid": 100,
+    "requestErrors": 0,
+    "normalizationErrors": 0,
+    "warnings": 5,
+    "failedChecks": {
+      "sameHoldings ": 3,
+      "npcAbsent Sam": 1,
+      "playerChangeBetween Social Energy -5 -1": 4,
+      "playerChangeBetween Social Energy 1 5": 1,
+      "npcChangeBetween June Comfort 1 15": 1,
+      "npcChangeBetween June Comfort -1 5": 3,
+      "npcStatMatches June Mood anx|tense|unsett|worri|uneas|alarm|stress|strain": 2
+    }
+  },
+  "originalInferenceScoring": {
+    "scenes": {
+      "dating-q-accepted-boundary": {
+        "replies": 10,
+        "checks": 100,
+        "passed": 99,
+        "fullyPassing": 9,
+        "numericChecks": 30,
+        "numericPassed": 30,
+        "inventoryFailures": 1,
+        "strictJsonValid": 10,
+        "requestErrors": 0,
+        "normalizationErrors": 0,
+        "warnings": 0,
+        "failedChecks": {
+          "sameHoldings ": 1
+        }
+      },
+      "dating-q-candy-before-call": {
+        "replies": 10,
+        "checks": 70,
+        "passed": 69,
+        "fullyPassing": 9,
+        "numericChecks": 10,
+        "numericPassed": 10,
+        "inventoryFailures": 0,
+        "strictJsonValid": 10,
+        "requestErrors": 0,
+        "normalizationErrors": 0,
+        "warnings": 5,
+        "failedChecks": {
+          "npcAbsent Sam": 1
+        }
+      },
+      "dating-q-closing-shift": {
+        "replies": 10,
+        "checks": 90,
+        "passed": 86,
+        "fullyPassing": 6,
+        "numericChecks": 20,
+        "numericPassed": 16,
+        "inventoryFailures": 0,
+        "strictJsonValid": 10,
+        "requestErrors": 0,
+        "normalizationErrors": 0,
+        "warnings": 0,
+        "failedChecks": {
+          "playerChangeBetween Social Energy -5 -1": 4
+        }
+      },
+      "dating-q-kept-confidence": {
+        "replies": 10,
+        "checks": 90,
+        "passed": 90,
+        "fullyPassing": 10,
+        "numericChecks": 20,
+        "numericPassed": 20,
+        "inventoryFailures": 0,
+        "strictJsonValid": 10,
+        "requestErrors": 0,
+        "normalizationErrors": 0,
+        "warnings": 0,
+        "failedChecks": {}
+      },
+      "dating-q-misplaced-confidence": {
+        "replies": 10,
+        "checks": 90,
+        "passed": 90,
+        "fullyPassing": 10,
+        "numericChecks": 20,
+        "numericPassed": 20,
+        "inventoryFailures": 0,
+        "strictJsonValid": 10,
+        "requestErrors": 0,
+        "normalizationErrors": 0,
+        "warnings": 0,
+        "failedChecks": {}
+      },
+      "dating-q-ordinary-pause": {
+        "replies": 10,
+        "checks": 110,
+        "passed": 110,
+        "fullyPassing": 10,
+        "numericChecks": 40,
+        "numericPassed": 40,
+        "inventoryFailures": 0,
+        "strictJsonValid": 10,
+        "requestErrors": 0,
+        "normalizationErrors": 0,
+        "warnings": 0,
+        "failedChecks": {}
+      },
+      "dating-q-passing-joke": {
+        "replies": 10,
+        "checks": 100,
+        "passed": 100,
+        "fullyPassing": 10,
+        "numericChecks": 30,
+        "numericPassed": 30,
+        "inventoryFailures": 0,
+        "strictJsonValid": 10,
+        "requestErrors": 0,
+        "normalizationErrors": 0,
+        "warnings": 0,
+        "failedChecks": {}
+      },
+      "dating-q-pressure-lifted": {
+        "replies": 10,
+        "checks": 110,
+        "passed": 110,
+        "fullyPassing": 10,
+        "numericChecks": 20,
+        "numericPassed": 20,
+        "inventoryFailures": 0,
+        "strictJsonValid": 10,
+        "requestErrors": 0,
+        "normalizationErrors": 0,
+        "warnings": 0,
+        "failedChecks": {}
+      },
+      "dating-q-quiet-company": {
+        "replies": 10,
+        "checks": 100,
+        "passed": 96,
+        "fullyPassing": 6,
+        "numericChecks": 20,
+        "numericPassed": 18,
+        "inventoryFailures": 2,
+        "strictJsonValid": 10,
+        "requestErrors": 0,
+        "normalizationErrors": 0,
+        "warnings": 0,
+        "failedChecks": {
+          "sameHoldings ": 2,
+          "playerChangeBetween Social Energy 1 5": 1,
+          "npcChangeBetween June Comfort 1 15": 1
+        }
+      },
+      "dating-q-unwelcome-notification": {
+        "replies": 10,
+        "checks": 100,
+        "passed": 95,
+        "fullyPassing": 6,
+        "numericChecks": 10,
+        "numericPassed": 7,
+        "inventoryFailures": 0,
+        "strictJsonValid": 10,
+        "requestErrors": 0,
+        "normalizationErrors": 0,
+        "warnings": 0,
+        "failedChecks": {
+          "npcChangeBetween June Comfort -1 5": 3,
+          "npcStatMatches June Mood anx|tense|unsett|worri|uneas|alarm|stress|strain": 2
+        }
+      }
+    },
+    "endpoints": {
+      "http://127.0.0.1:8080/v1": {
+        "replies": 50,
+        "checks": 480,
+        "passed": 473,
+        "fullyPassing": 43,
+        "numericChecks": 110,
+        "numericPassed": 105,
+        "inventoryFailures": 1,
+        "strictJsonValid": 50,
+        "requestErrors": 0,
+        "normalizationErrors": 0,
+        "warnings": 0,
+        "failedChecks": {
+          "playerChangeBetween Social Energy -5 -1": 2,
+          "playerChangeBetween Social Energy 1 5": 1,
+          "npcChangeBetween June Comfort 1 15": 1,
+          "sameHoldings ": 1,
+          "npcChangeBetween June Comfort -1 5": 1,
+          "npcStatMatches June Mood anx|tense|unsett|worri|uneas|alarm|stress|strain": 1
+        }
+      },
+      "http://127.0.0.1:9931/v1": {
+        "replies": 50,
+        "checks": 480,
+        "passed": 472,
+        "fullyPassing": 43,
+        "numericChecks": 110,
+        "numericPassed": 106,
+        "inventoryFailures": 2,
+        "strictJsonValid": 50,
+        "requestErrors": 0,
+        "normalizationErrors": 0,
+        "warnings": 5,
+        "failedChecks": {
+          "sameHoldings ": 2,
+          "npcAbsent Sam": 1,
+          "playerChangeBetween Social Energy -5 -1": 2,
+          "npcChangeBetween June Comfort -1 5": 2,
+          "npcStatMatches June Mood anx|tense|unsett|worri|uneas|alarm|stress|strain": 1
+        }
+      }
+    }
+  },
+  "gradingArtifact": "gemma-e4b-dating-final-10x-20261026-grading.json",
+  "sourceHashesMatchAtInference": true,
+  "sourceDifferencesSinceInference": [
+    "tests/fixtures/roleplay/qualitative/dating-q-unwelcome-notification.json"
+  ],
+  "lexicalScoringCorrections": [
+    {
+      "id": "dating-q-unwelcome-notification",
+      "repeat": 1,
+      "before": {
+        "name": "npcStatMatches June Mood anx|tense|unsett|worri|uneas|alarm|stress|strain",
+        "critical": true,
+        "passed": true
+      },
+      "after": {
+        "name": "npcStatMatches June Mood anx|tense|unsett|worri|uneas|alarm|stress|strain|upset|agitat",
+        "critical": true,
+        "passed": true
+      }
+    },
+    {
+      "id": "dating-q-unwelcome-notification",
+      "repeat": 2,
+      "before": {
+        "name": "npcStatMatches June Mood anx|tense|unsett|worri|uneas|alarm|stress|strain",
+        "critical": true,
+        "passed": true
+      },
+      "after": {
+        "name": "npcStatMatches June Mood anx|tense|unsett|worri|uneas|alarm|stress|strain|upset|agitat",
+        "critical": true,
+        "passed": true
+      }
+    },
+    {
+      "id": "dating-q-unwelcome-notification",
+      "repeat": 3,
+      "before": {
+        "name": "npcStatMatches June Mood anx|tense|unsett|worri|uneas|alarm|stress|strain",
+        "critical": true,
+        "passed": true
+      },
+      "after": {
+        "name": "npcStatMatches June Mood anx|tense|unsett|worri|uneas|alarm|stress|strain|upset|agitat",
+        "critical": true,
+        "passed": true
+      }
+    },
+    {
+      "id": "dating-q-unwelcome-notification",
+      "repeat": 4,
+      "before": {
+        "name": "npcStatMatches June Mood anx|tense|unsett|worri|uneas|alarm|stress|strain",
+        "critical": true,
+        "passed": true
+      },
+      "after": {
+        "name": "npcStatMatches June Mood anx|tense|unsett|worri|uneas|alarm|stress|strain|upset|agitat",
+        "critical": true,
+        "passed": true
+      }
+    },
+    {
+      "id": "dating-q-unwelcome-notification",
+      "repeat": 5,
+      "before": {
+        "name": "npcStatMatches June Mood anx|tense|unsett|worri|uneas|alarm|stress|strain",
+        "critical": true,
+        "passed": false
+      },
+      "after": {
+        "name": "npcStatMatches June Mood anx|tense|unsett|worri|uneas|alarm|stress|strain|upset|agitat",
+        "critical": true,
+        "passed": true
+      }
+    },
+    {
+      "id": "dating-q-unwelcome-notification",
+      "repeat": 6,
+      "before": {
+        "name": "npcStatMatches June Mood anx|tense|unsett|worri|uneas|alarm|stress|strain",
+        "critical": true,
+        "passed": false
+      },
+      "after": {
+        "name": "npcStatMatches June Mood anx|tense|unsett|worri|uneas|alarm|stress|strain|upset|agitat",
+        "critical": true,
+        "passed": true
+      }
+    },
+    {
+      "id": "dating-q-unwelcome-notification",
+      "repeat": 7,
+      "before": {
+        "name": "npcStatMatches June Mood anx|tense|unsett|worri|uneas|alarm|stress|strain",
+        "critical": true,
+        "passed": true
+      },
+      "after": {
+        "name": "npcStatMatches June Mood anx|tense|unsett|worri|uneas|alarm|stress|strain|upset|agitat",
+        "critical": true,
+        "passed": true
+      }
+    },
+    {
+      "id": "dating-q-unwelcome-notification",
+      "repeat": 8,
+      "before": {
+        "name": "npcStatMatches June Mood anx|tense|unsett|worri|uneas|alarm|stress|strain",
+        "critical": true,
+        "passed": true
+      },
+      "after": {
+        "name": "npcStatMatches June Mood anx|tense|unsett|worri|uneas|alarm|stress|strain|upset|agitat",
+        "critical": true,
+        "passed": true
+      }
+    },
+    {
+      "id": "dating-q-unwelcome-notification",
+      "repeat": 9,
+      "before": {
+        "name": "npcStatMatches June Mood anx|tense|unsett|worri|uneas|alarm|stress|strain",
+        "critical": true,
+        "passed": true
+      },
+      "after": {
+        "name": "npcStatMatches June Mood anx|tense|unsett|worri|uneas|alarm|stress|strain|upset|agitat",
+        "critical": true,
+        "passed": true
+      }
+    },
+    {
+      "id": "dating-q-unwelcome-notification",
+      "repeat": 10,
+      "before": {
+        "name": "npcStatMatches June Mood anx|tense|unsett|worri|uneas|alarm|stress|strain",
+        "critical": true,
+        "passed": true
+      },
+      "after": {
+        "name": "npcStatMatches June Mood anx|tense|unsett|worri|uneas|alarm|stress|strain|upset|agitat",
+        "critical": true,
+        "passed": true
+      }
+    }
+  ]
+}

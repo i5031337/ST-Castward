@@ -96,3 +96,17 @@ docs/evaluations/*.json
 !docs/evaluations/gemma-26b-tracker-reference-20261025-prompts.json
 !docs/evaluations/gemma-26b-tracker-reference-20261025-results.json
 !docs/evaluations/tracker-model-evaluation-20261025-audit.json
+
+# Final October 26 evaluations and their supporting comparisons.
+!docs/evaluations/gemma-e4b-26b-comfort-attribution-20261026-audit.json
+!docs/evaluations/gemma-e4b-26b-comfort-attribution-20261026-prompts.json
+!docs/evaluations/gemma-e4b-26b-comfort-attribution-20261026-results.json
+!docs/evaluations/gemma-e4b-dating-comfort-attribution-focus-20261026-prompts.json
+!docs/evaluations/gemma-e4b-dating-comfort-attribution-focus-20261026-results.json
+!docs/evaluations/gemma-e4b-dating-final-10x-20261026-audit.json
+!docs/evaluations/gemma-e4b-dating-final-10x-20261026-grading.json
+!docs/evaluations/gemma-e4b-dating-final-10x-20261026-prompts.json
+!docs/evaluations/gemma-e4b-dating-final-10x-20261026-results.json
+!docs/evaluations/gemma-e4b-hp-definition-comparison-20261026-audit.json
+!docs/evaluations/gemma-e4b-hp-definition-comparison-20261026-prompts.json
+!docs/evaluations/gemma-e4b-hp-definition-comparison-20261026-results.json

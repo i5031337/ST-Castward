@@ -51,7 +51,7 @@ const fantasy = {
             world('quest', 'Quest', 'The objective or lead the characters are currently pursuing.')],
         character: [
             number('hp', 'HP', fantasyActors, '12/12',
-                'Physical well-being. New injuries and illness lower current HP. Healing, rest, and recovery from illness restore HP conservatively. Partial recovery remains below maximum while symptoms remain. Established complete recovery restores HP to maximum. Record injury and recovery details in Condition as well. Maximum HP reflects lasting resilience.',
+                'Physical well-being. Cuts, bruises, pain, and illness lower current HP in proportion to severity. Healing and restorative rest that ease physical pain, weakness, or stiffness raise current HP in proportion to improvement. Partial recovery remains below maximum while symptoms remain; complete recovery restores maximum. Condition describes the symptoms. Maximum HP reflects lasting resilience.',
                 { isPrimary: true, color: '#e03131', carryOver: true }),
             number('mana', 'Mana', fantasyActors, '10/10',
                 'Magical energy. Casting spells spends current Mana; rest or magical recovery restores it. Maximum Mana reflects lasting magical capacity.',
@@ -123,16 +123,16 @@ const dating = {
         world: [world('day', 'Day and Time', 'Current day and time.'),
             world('occasion', 'Occasion', 'Current event or planned date.')],
         character: [
-            number('energy', 'Social Energy', ['player'], '10/10', 'Energy for social activity. Social effort drains it; restorative quiet, rest, and relief replenish it.',
+            number('energy', 'Social Energy', ['player'], '10/10', 'Capacity for social interaction. Social activity, high-stakes conversation, and effortful self-restraint drain current energy. Rest and relief replenish it as willingness to interact returns.',
                 { isPrimary: true, color: '#3b5bdb' }),
-            text('mood', 'Mood', ['player', 'template:character'],
+            text('mood', 'Mood', ['template:character'],
                 'Current emotional state.', { defaultValue: 'Neutral' }),
             number('affection', 'Affection', ['template:character'], '0',
                 'Warmth toward the player, based on established interactions.', { maxStatValue: '100', carryOver: true }),
             number('trust', 'Trust', ['template:character'], '0',
                 'Confidence in the player’s reliability and willingness to confide in them. Increase when actions earn confidence; decrease when actions undermine it.', { maxStatValue: '100', carryOver: true }),
             number('comfort', 'Comfort', ['template:character'], '0',
-                'How comfortable this character currently feels around the player.',
+                'Ease and safety with the player. Reassuring companionship raises Comfort; pressure or unease caused by the player lowers it. Mood describes reactions to the wider situation.',
                 { maxStatValue: '100', carryOver: true }),
             text('relationship', 'Relationship', ['template:character'],
                 'Current relationship in words; change only when events support it.', { carryOver: true }),
@@ -140,7 +140,7 @@ const dating = {
     },
     collections: [
         entry('clothing', 'Clothing', ['player', 'template:character'],
-            'Garments currently being worn; remove garments when taken off.', [],
+            'Garments currently being worn. Initialize from the character’s established outfit; update as garments are put on or taken off.', [],
             { includeInImagePrompt: true, fields: [
                 field('name', 'Name', 'text', { isPrimary: true, isStatic: true,
                     guidance: 'Name the garment in a few words, including distinctive visual details when established by the story. A simple name such as "White polo shirt" or "brown leather boots" is often enough.' }),
@@ -155,7 +155,7 @@ const dating = {
     memories: { ...memories, enabled: true,
         guidance: 'Keep meaningful shared experiences and changes in relationships as personal memories.' },
     hud: { layout: 'underline', showWorld: true, showNpcPortraits: true,
-        playerStatIds: ['energy', 'mood'], npcStatIds: ['affection', 'trust', 'mood', 'relationship'],
+        playerStatIds: ['energy'], npcStatIds: ['affection', 'trust', 'mood', 'relationship'],
         worldStatIds: ['day', 'occasion'] },
 };
 

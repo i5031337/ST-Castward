@@ -102,6 +102,9 @@ test('dating starter uses one cast template, outfit and item collections, and me
     assert.deepEqual(system.npcTemplates.map(template => template.id), ['character']);
     assert.ok(character.some(field => field.id === 'affection'));
     assert.ok(character.some(field => field.id === 'trust'));
+    assert.ok(character.some(field => field.id === 'mood'));
+    assert.deepEqual(systemStatFields(system, 'player').map(field => field.id), ['energy']);
+    assert.deepEqual(system.hud.playerStatIds, ['energy']);
     assert.ok(systemProfileFields(system, 'npc', { npcTemplateId: 'character' })
         .some(field => field.id === 'boundaries'));
     assert.deepEqual(system.collections.map(collection => collection.id), ['clothing', 'items']);

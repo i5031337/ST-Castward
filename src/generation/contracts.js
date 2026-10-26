@@ -26,9 +26,9 @@ export const fieldSchema = object({ id, name: text, label: text, type: enumerati
 export const rewardSchema = object({ enabled: bool, mode: enumeration(['scheduled', 'guided']), guidance: text,
     interval: { type: 'integer', minimum: 1 }, schedule: array(object({ id,
         level: { type: 'integer', minimum: 2 }, entry: { type: 'object', additionalProperties: scalar } }), LIMITS.rewards) });
-export const characterStatSchema = object({ ...statSchema.properties, targets: array(text, 8) }, [...statSchema.required, 'targets']);
+export const characterStatSchema = object({ ...statSchema.properties, targets: { ...array(text, 8), description: 'Assign only to the planned actors. Prefer NPC emotional states and player gameplay resources unless the premise requests otherwise.' } }, [...statSchema.required, 'targets']);
 export const templateSchema = object({ id, name: text, description: text, progression: progressionSchema });
-export const collectionSchema = object({ id, name: text, targets: array(text, 8), guidance: text,
+export const collectionSchema = object({ id, name: text, targets: array(text, 8), guidance: { ...text, description: 'Match possessions to recorded entries. Worn clothing initializes from established outfits and changes when garments are put on or taken off.' },
     trackQuantity: bool, includeInImagePrompt: bool, retired: bool, fields: array(fieldSchema), levelUpRewards: rewardSchema },
 ['id', 'name', 'targets', 'guidance', 'trackQuantity', 'fields']);
 export const memorySchema = object({ enabled: bool, carryOver: { ...bool, description: 'Preserve active and archived NPC memories during character transfer and optional NPC reuse. Independent of automatic reading; default false unless the premise requests persistent knowledge across adventures.' }, guidance: text,

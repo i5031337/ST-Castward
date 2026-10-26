@@ -14,11 +14,20 @@ Switch between the included Fantasy Adventure, Dating Sim, and Creature Trainer 
 
 ## Built for local models
 
-Other trackers often failed because my local model couldn't return the JSON they needed. Castward is built to make tracking usable with a small local model. It repairs common JSON formatting mistakes and keeps usable updates when individual fields need to be skipped or corrected.
+I started building this because other trackers struggled with the output from my local model. Castward fixes common formatting slips and keeps the parts of an update it can use.
 
-**Gemma 4 E4B is our minimum target for the tracker’s reader**, chosen to keep Castward accessible to local users. In a 60-reply evaluation with JSON schema enforcement, it passed **584 of 606 checks (96.4%)**, with **45 replies passing every check**. Numeric changes inferred from the story passed **84 of 99 checks (84.8%)**. A small model can handle useful bookkeeping, but some updates will need correction. Choose **Every change** under **Ask Before Applying** to review each update.
+**Gemma 4 E4B is the minimum reader model I’m aiming to support**, so tracking stays within reach of people with modest hardware. Bigger models can do better with the subtler calls, longer responses, or more complex systems.
 
-The separate profile evaluation passed **78 of 78 checks**. The [tracker report](docs/evaluations/tracker-model-evaluation-20261025-report.md) and [profile report](docs/evaluations/gemma-e4b-profile-report.md) include the setup, results, and important limits.
+I ran ten Fantasy scenes and ten Dating scenes ten times each, with structured output enabled. Here’s how E4B did:
+
+| System | Checks passed | Replies passing every check | Numeric checks passed |
+| --- | ---: | ---: | ---: |
+| Fantasy Adventure | **1050/1060 (99.1%)** | **91/100** | **104/110 (94.5%)** |
+| Dating Sim | **947/960 (98.6%)** | **87/100** | **211/220 (95.9%)** |
+
+It still misses changes and sometimes duplicates an item. Choose **Every change** under **Ask Before Applying** if you want to check each update.
+
+The separate profile test passed **78/78 checks**. The [Fantasy tracker report](docs/evaluations/hp-definition-comparison-20261026-report.md), [Dating tracker report](docs/evaluations/dating-final-10x-20261026-report.md), and [profile report](docs/evaluations/gemma-e4b-profile-report.md) have the setup and full results.
 
 ## Two turns of Fantasy Adventure
 

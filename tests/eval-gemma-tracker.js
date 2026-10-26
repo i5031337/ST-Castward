@@ -1,6 +1,7 @@
 // Default: 20 frozen roleplay exchanges (10 Fantasy, 10 Dating). --minimal selects the old synthetic suite.
 // node tests/eval-gemma-tracker.js --freeze roleplay-baseline
 // node tests/eval-gemma-tracker.js --run roleplay-baseline --repeats 2 --endpoints http://127.0.0.1:8080/v1
+// Add --system fantasy|dating when freezing to evaluate only that System.
 // Port 9931 authors scenes; choose the tracker endpoint explicitly when evaluating another model.
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
@@ -17,7 +18,11 @@ import { locationTreeScenarios, naturalLocationTreeScenarios, mixedLocationTreeS
 import { roleplayScenarios, qualitativeScenarios, makeRoleplayState } from './fixtures/gemma-tracker-roleplay-scenarios.mjs';
 import { xpThresholdScenarios } from './fixtures/gemma-xp-threshold-scenarios.mjs';
 const args = process.argv.slice(2), action = args[0], label = args[1];
-if (!['--freeze', '--run', '--score'].includes(action) || !/^[a-z0-9-]+$/.test(label || '')) throw Error('Usage: --freeze|--run|--score LABEL [--qualitative|--xp-threshold|--minimal|--location-change|--natural|--location-tree|--location-tree-prose|--location-tree-mixed] [--absolute] [--schema] [--repeats N] [--endpoints URL,URL] [--concurrency N]');
+if (!['--freeze', '--run', '--score'].includes(action) || !/^[a-z0-9-]+$/.test(label || '')) throw Error('Usage: --freeze|--run|--score LABEL [--qualitative|--xp-threshold|--minimal|--location-change|--natural|--location-tree|--location-tree-prose|--location-tree-mixed] [--system fantasy|dating (freeze only)] [--absolute] [--schema] [--repeats N] [--endpoints URL,URL] [--concurrency N]');
+const systemFilter = args.includes('--system') ? args[args.indexOf('--system') + 1] : null;
+if (args.includes('--system') && (action !== '--freeze' || !['fantasy', 'dating'].includes(systemFilter))) {
+    throw Error('Choose --system fantasy|dating when freezing; runs use the frozen selection.');
+}
 // --absolute remains an accepted alias; every new evaluation uses the production contract.
 const readerContract = 'absolute';
 const useSchema = args.includes('--schema');
@@ -31,8 +36,10 @@ const locationTreeProse = args.includes('--location-tree-prose');
 const locationTreeMixed = args.includes('--location-tree-mixed');
 if ([qualitative, xpThreshold, minimal, locationChange, natural, locationTree, locationTreeProse, locationTreeMixed].filter(Boolean).length > 1) throw Error('Choose only one scenario suite.');
 const roleplay = ![qualitative, xpThreshold, minimal, locationChange, natural, locationTree, locationTreeProse, locationTreeMixed].some(Boolean);
-const scenarios = qualitative ? qualitativeScenarios : xpThreshold ? xpThresholdScenarios : locationChange ? locationChangeScenarios : locationTreeMixed ? mixedLocationTreeScenarios : locationTreeProse ? naturalLocationTreeScenarios
+const suiteScenarios = qualitative ? qualitativeScenarios : xpThreshold ? xpThresholdScenarios : locationChange ? locationChangeScenarios : locationTreeMixed ? mixedLocationTreeScenarios : locationTreeProse ? naturalLocationTreeScenarios
     : locationTree ? locationTreeScenarios : natural ? naturalScenarios : minimal ? standardScenarios : roleplayScenarios;
+const scenarios = systemFilter ? suiteScenarios.filter(scene => scene.system === systemFilter) : suiteScenarios;
+if (!scenarios.length) throw Error('No scenarios match the selected System.');
 const makeScenarioState = locationChange ? makeLocationChangeState : natural ? makeNaturalState : roleplay || qualitative || xpThreshold ? makeRoleplayState : makeState;
 const freezeCriteria = qualitative ? { ...standardCriteria, suite: 'qualitative-roleplay' } : xpThreshold ? { ...standardCriteria, suite: 'xp-threshold' } : locationChange ? { ...standardCriteria, suite: 'location-change' } : natural ? { ...standardCriteria, suite: 'natural-prose' }
     : locationTree || locationTreeProse || locationTreeMixed ? { ...standardCriteria,
@@ -153,11 +160,12 @@ for (const trial of output.trials) {
     };
 }
 const all = output.trials.flatMap(t => t.checks);
+const evaluatedSystems = [...new Set(output.trials.map(trial => trial.system))];
 const rate = checks => checks.filter(check => check.passed).length / checks.length;
 output.summary = { checks: all.length, passed: all.filter(c => c.passed).length, rate: rate(all),
     criticalFailures: output.trials.flatMap(trial => trial.checks.filter(c => c.critical && !c.passed).map(c => `${trial.id} #${trial.repeat + 1}: ${c.name}`)),
-    systems: Object.fromEntries(['fantasy', 'dating'].map(system => [system, rate(output.trials.filter(t => t.system === system).flatMap(t => t.checks))])) };
-output.summary.perSystemCounts = Object.fromEntries(['fantasy', 'dating'].map(system => {
+    systems: Object.fromEntries(evaluatedSystems.map(system => [system, rate(output.trials.filter(t => t.system === system).flatMap(t => t.checks))])) };
+output.summary.perSystemCounts = Object.fromEntries(evaluatedSystems.map(system => {
     const checks = output.trials.filter(t => t.system === system).flatMap(t => t.checks);
     return [system, { checks: checks.length, passed: checks.filter(c => c.passed).length, rate: rate(checks) }];
 }));

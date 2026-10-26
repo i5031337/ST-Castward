@@ -47,6 +47,7 @@ Use the field's current scale for estimates.
 Apply configured persistence and reset rules.
 Update the listed editable fields.
 {{#collections}}
+Match mentioned possessions to the owner’s recorded entries before proposing changes.
 Add newly acquired items and additional copies, reporting the quantity gained.
 Match each item’s placement to the collection’s purpose.
 Use established possessions for a new NPC's starting items.
@@ -264,6 +265,7 @@ The application handles level-ups and the XP remainder; report the total before 
 Omit existing configured level and level-bonus fields. A blank NPC level field may be initialized.
 {{/xpProgression}}
 {{#schemas}}
+Match mentioned possessions to the owner’s recorded entries before proposing changes.
 Add newly acquired items and additional copies, reporting the quantity gained.
 Match each item’s placement to the collection’s purpose.
 Use established possessions for a new NPC's starting items.

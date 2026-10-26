@@ -1,0 +1,206 @@
+{
+  "method": "Ten fresh Gemma 26B replies against the exact frozen current E4B scene, schema and rubric. Same server build and sampler defaults, four slots on port 9931. Context limit differs.",
+  "sameBundles": true,
+  "sourceHashesMatch": true,
+  "sameBuildAndSamplerDefaults": true,
+  "independentSchemaValidReplies": 10,
+  "rawJsonValidReplies": 10,
+  "contextTokens": {
+    "e4b": 65536,
+    "gemma26b": 32768
+  },
+  "e4b": {
+    "model": "/mnt/D/backup_models/gemma-4-E4B-it-qat-UD-Q4_K_XL.gguf",
+    "checks": 100,
+    "passed": 92,
+    "fullyPassing": 4,
+    "comfortPassed": 5,
+    "trustPassed": 8,
+    "moodPassed": 9,
+    "strictJsonValid": 10,
+    "warnings": 0,
+    "requestErrors": 0,
+    "normalizationErrors": 0,
+    "failedChecks": {
+      "npcUnchanged June Trust": 2,
+      "npcChangeBetween June Comfort -1 5": 5,
+      "npcStatMatches June Mood anx|tense|unsett|worri|uneas|alarm|stress|strain": 1
+    },
+    "readings": [
+      {
+        "repeat": 1,
+        "Comfort": "30",
+        "Trust": "19",
+        "Mood": "Stressed",
+        "failedChecks": [
+          "npcUnchanged June Trust"
+        ]
+      },
+      {
+        "repeat": 2,
+        "Comfort": "30",
+        "Trust": "18",
+        "Mood": "Anxious",
+        "failedChecks": []
+      },
+      {
+        "repeat": 3,
+        "Comfort": "28",
+        "Trust": "18",
+        "Mood": "Anxious",
+        "failedChecks": []
+      },
+      {
+        "repeat": 4,
+        "Comfort": "26",
+        "Trust": "18",
+        "Mood": "Stressed",
+        "failedChecks": [
+          "npcChangeBetween June Comfort -1 5"
+        ]
+      },
+      {
+        "repeat": 5,
+        "Comfort": "26",
+        "Trust": "18",
+        "Mood": "Tense",
+        "failedChecks": [
+          "npcChangeBetween June Comfort -1 5"
+        ]
+      },
+      {
+        "repeat": 6,
+        "Comfort": "20",
+        "Trust": "16",
+        "Mood": "Disturbed",
+        "failedChecks": [
+          "npcChangeBetween June Comfort -1 5",
+          "npcUnchanged June Trust",
+          "npcStatMatches June Mood anx|tense|unsett|worri|uneas|alarm|stress|strain"
+        ]
+      },
+      {
+        "repeat": 7,
+        "Comfort": "25",
+        "Trust": "18",
+        "Mood": "Stressed",
+        "failedChecks": [
+          "npcChangeBetween June Comfort -1 5"
+        ]
+      },
+      {
+        "repeat": 8,
+        "Comfort": "20",
+        "Trust": "18",
+        "Mood": "Stressed",
+        "failedChecks": [
+          "npcChangeBetween June Comfort -1 5"
+        ]
+      },
+      {
+        "repeat": 9,
+        "Comfort": "28",
+        "Trust": "18",
+        "Mood": "Stressed/Distracted",
+        "failedChecks": []
+      },
+      {
+        "repeat": 10,
+        "Comfort": "28",
+        "Trust": "18",
+        "Mood": "Anxious",
+        "failedChecks": []
+      }
+    ]
+  },
+  "gemma26b": {
+    "model": "/mnt/D/backup_models/gemma-4-26B-A4B-it-qat-UD-Q4_K_XL.gguf",
+    "checks": 100,
+    "passed": 99,
+    "fullyPassing": 9,
+    "comfortPassed": 10,
+    "trustPassed": 9,
+    "moodPassed": 10,
+    "strictJsonValid": 10,
+    "warnings": 0,
+    "requestErrors": 0,
+    "normalizationErrors": 0,
+    "failedChecks": {
+      "npcUnchanged June Trust": 1
+    },
+    "readings": [
+      {
+        "repeat": 1,
+        "Comfort": "30",
+        "Trust": "21",
+        "Mood": "Anxious",
+        "failedChecks": [
+          "npcUnchanged June Trust"
+        ]
+      },
+      {
+        "repeat": 2,
+        "Comfort": "28",
+        "Trust": "18",
+        "Mood": "Anxious",
+        "failedChecks": []
+      },
+      {
+        "repeat": 3,
+        "Comfort": "28",
+        "Trust": "18",
+        "Mood": "Tense",
+        "failedChecks": []
+      },
+      {
+        "repeat": 4,
+        "Comfort": "28",
+        "Trust": "18",
+        "Mood": "Tense",
+        "failedChecks": []
+      },
+      {
+        "repeat": 5,
+        "Comfort": "28",
+        "Trust": "18",
+        "Mood": "Tense",
+        "failedChecks": []
+      },
+      {
+        "repeat": 6,
+        "Comfort": "28",
+        "Trust": "18",
+        "Mood": "Stressed",
+        "failedChecks": []
+      },
+      {
+        "repeat": 7,
+        "Comfort": "28",
+        "Trust": "18",
+        "Mood": "Tense",
+        "failedChecks": []
+      },
+      {
+        "repeat": 8,
+        "Comfort": "28",
+        "Trust": "18",
+        "Mood": "Anxious",
+        "failedChecks": []
+      },
+      {
+        "repeat": 9,
+        "Comfort": "28",
+        "Trust": "18",
+        "Mood": "Anxious",
+        "failedChecks": []
+      },
+      {
+        "repeat": 10,
+        "Comfort": "28",
+        "Trust": "18",
+        "Mood": "Anxious",
+        "failedChecks": []
+      }
+    ]
+  }
+}

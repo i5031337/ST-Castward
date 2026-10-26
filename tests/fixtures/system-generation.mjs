@@ -23,6 +23,8 @@ export function responseFor(stage, registry) {
         format: '{{name}}: {{value}}', type: f.id === 'weather' ? 'text' : 'number', defaultValue: f.id === 'weather' ? '' : f.id === 'xp' ? '0/100' : f.id === 'level' ? '1' : '6/10',
         locked: f.id === 'level', ...(scope === 'character' ? { carryOver: ['xp', 'level'].includes(f.id), targets: f.targets } : {}), min: f.id === 'weather' ? '' : '0', maxStatValue: f.id === 'xp' ? '100' : '' }));
     if (kind === 'stats') {
+        for (const field of section) if (field.id === 'mood') Object.assign(field,
+            { type: 'text', defaultValue: 'Neutral', min: '', maxStatValue: '' });
         const owners = scope === 'character' ? [{ id: 'player', progression: registry.playerProgression }, ...registry.npcTemplates] : [];
         const assigned = owner => registry.stats.character.filter(field => field.targets.includes(owner.id === 'player' ? 'player' : 'npc') || field.targets.includes(`template:${owner.id}`)).map(field => field.id);
         const enabled = owners.filter(owner => owner.progression.enabled);

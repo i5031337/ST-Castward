@@ -1,0 +1,951 @@
+{
+  "readerContract": "absolute",
+  "useSchema": true,
+  "frozenAt": "2026-10-26T14:13:21.388Z",
+  "sourceHashes": {
+    "src/core/builtin-systems.js": "23b65ce367e720451065806444f6ec5f8644dc14df297477ab262dcea831906c",
+    "src/core/settings-tracker-defaults.js": "3beb026157e41638c7b7cdf0c5f5268c425f4f8dc0f7d126d426f5caf289b035",
+    "src/core/constants-prompts.js": "1a2dd56e0dabf28cb62d1bab29fedac27e38e31daa74884a5d11f8e8033c2f4e",
+    "src/prompts/prompt-texts-reader.js": "e1d11613235745a0eee289dd09baf577c4f1c2eaf327b961a4c289ad15cde200",
+    "src/tracker/extractor/status-extractor-prompt.js": "a0fd346bb8fbfa492c98e08ea148b8a4d7cb5fbcd06864628bc9526e597b271d",
+    "src/tracker/extractor/status-extractor-prompt-state.js": "ac1e543b4c5c11033776fc1cd0e4530543815c18fdd1ec6e9acee7c7d2cf92f5",
+    "src/tracker/extractor/status-extractor-schema.js": "30b6d3fb1b8c672ab79f9a917a5d1be2ebcece6eceb40e9d5408f16589e3328f",
+    "src/tracker/stat-prompt-definitions.js": "bacaf313462c645d944853ad399e1948fe79389553b61fcc4774611b1a5a4100",
+    "src/tracker/extractor/status-extractor-schema-provider.js": "6d1768e91df0d97c0da81d1dda0006cf99ca85c24f2821262770e857d2b1e2bf",
+    "src/tracker/extractor/status-extractor-request.js": "c425746654f3855fccee20bce53d06744334cd989ffcb5ce6baa491108530f82",
+    "src/tracker/collection-prompt-definitions.js": "a68a665ffe6ce51a42e7c2ad3bb96f0a9fff56c83ac99d813feccaedfbf9ec56",
+    "src/tracker/ui/status-ui-placement.js": "dc5ca86be7f2b3e211ed00d93836faa5571df5aa8e916f6fba27c0b594c480fb",
+    "src/core/npc-templates.js": "83265aa2c57e33e1252443d4e11a14c1d3e40e2d9084d3ec46b3935bdf6e5e0f",
+    "src/core/collection-fields.js": "5b6ad8ffc0d5374e317aa1798164842f1eae08da2ce73ec5067383df30258d6e",
+    "src/locations/location-context.js": "0b414212eaa9d9c11d1c79d09ba1e390fb40f67954c8e62eed7062ae93934b23",
+    "src/locations/location-proposals.js": "0270e412d3fd2841dbed89a682107820f0e1a66543f096ee3ec8cfd032503e71",
+    "src/tracker/status-stat-values.js": "30b4f7e411a6055d78a7ceeaa7d076f92be06244915f38514dcc14ea2ac69ce9",
+    "src/tracker/status-collection-updates.js": "3675efbdd1de2a3a8fb96af100ccd23be5cef09c951ea00e9c3a156309f134e1",
+    "src/tracker/status-update-constraints.js": "d48129e99c45c765abf80d10fcba538d1e13623848cc8f71f0f5aa3b36c82fd5",
+    "src/tracker/status-update-parser.js": "c1894cd0836b093c93c64139daebf0f51e3cec846fbf92bb7920d3c838927405",
+    "src/tracker/status-apply-update.js": "8eedf95a4ea7fc33e8c535c87ead072dd8884078f73691d2a0f9736a49c1fee7",
+    "src/tracker/stat-reading-equality.js": "911ae64ea445ca79e3093bcf518fce4f72456da2475ebdce44fbb52f2fc7d8fa",
+    "src/tracker/progression.js": "53b41aaa840971d98c0d66bbef3b0e750126fcf8855a428301fa4711a9ef2855",
+    "src/tracker/numeric-stat-bounds.js": "3575f4b00efa2035a0c39a5b0e7235f2f44c8df2e977d160d151ff5eaf23edce",
+    "tests/eval-gemma-tracker.js": "bc27424d231cb19066f05f3e24bfd0361c8ff767878b1567eeaffddf327bdc8d",
+    "tests/fixtures/gemma-request-batches.mjs": "fede71a833bcd1102857a26249122911d339afed85538fb8aa59f442635fc4bf",
+    "tests/fixtures/gemma-reader-request.mjs": "fd175a9b27a71a1d23a94b752f22c5563195eb3389a07497438e44de4708f726",
+    "tests/fixtures/gemma-location-change-scenarios.mjs": "5283cdbd0e65eac16eabc635523438140753481fdd4a818aa3238c88cc65ef6b",
+    "tests/fixtures/gemma-location-check.mjs": "76af4660b73c614ed33f560a7c234e72bf1c310741ce0905ecd1fac910f03dfc",
+    "tests/fixtures/tracker-pool-audit.mjs": "7155e88f600db726f88d34140170f9e5668896f0c8efb932b67a562e0f780c87",
+    "tests/fixtures/gemma-tracker-roleplay-scenarios.mjs": "2b686dc00299d38dde82d09032f56b5d31541efbbc8f1e55049bc4809315a126",
+    "tests/fixtures/gemma-tracker-score.mjs": "dce8e5cc2d34f557da01789de16bf260dfe6cc4c9c34871e00e430b34ec157b5",
+    "tests/fixtures/gemma-tracker-scenarios.mjs": "6e4c80644dc510106461105f54f40531404c42ca40191843dc8c8e87b85bd69e",
+    "tests/fixtures/gemma-tracker-harness.mjs": "7c7a13cb20a4cff3572bb061f10df529468476667dc819ad9c74a97e49751a4d",
+    "src/core/utils-format.js": "82c23ebfaf7376d36062faceb8469ff4eff492b4c1b8c24f8d8405b6fcc754d8",
+    "tests/fixtures/gemma-reply-parsing.mjs": "26d58cacd68da080e1ac3508a10fd234ca202a46428dd90eb504eaf9f8a6141b",
+    "tests/fixtures/gemma-xp-threshold-scenarios.mjs": "d018fafffacf839bd02e087bea1ec050ffadf3207a3063bd941838f38a474047",
+    "src/tracker/extractor/status-extractor-readings.js": "5954cb7bc899480cba9ebe8a3fa2a0d4011969fbb837cfa3b96eae037791102f",
+    "tests/fixtures/roleplay/dating-boundary-respected.json": "0792f763528654928eae794d88d756cc33146fb0641c250abb890f211e4ce8c0",
+    "tests/fixtures/roleplay/dating-coat-off.json": "a9e4799fd4b6b47afede1505be5c37187ece7dd4143860bdf33f4682db0222b0",
+    "tests/fixtures/roleplay/dating-crowded-fundraiser.json": "eba032fd1368dd1b0470e3c1838ca937422b3eebc16abebb9666d88ff6e394e8",
+    "tests/fixtures/roleplay/dating-honest-apology.json": "019c20b4a39b3c1528b9f14e38aee4a86f147eaf91a071ec1e5bc5d3336ee245",
+    "tests/fixtures/roleplay/dating-morning-alone.json": "b2859291af5bb3b37b46430d5f0490b53c0bf8cc9a979bab7834f6b6bb1a96d3",
+    "tests/fixtures/roleplay/dating-mutual-agreement.json": "98d11d971631f707e7611e1083294575394c8fc8ecde7b42c6a63b36bec2eef5",
+    "tests/fixtures/roleplay/dating-quiet-promise.json": "7604dbae139abe8877fe92af0aec89f47707e9107ab0089e82fa682177e701f3",
+    "tests/fixtures/roleplay/dating-rain-check.json": "0bbc0a57d35ef2f50713ed0ca3afa9d98be5118858ae7dd7f9829b2846fb4361",
+    "tests/fixtures/roleplay/dating-remembered-flower.json": "a0a584dd3a954e2948b9977c9dfe37fb23ad987285079cf48173b4a84b0c90ee",
+    "tests/fixtures/roleplay/dating-unwanted-kiss.json": "3e7e6e49469c9aae13f8220b7738ce3b766ebedcd67bee51106799a385214bf9",
+    "tests/fixtures/roleplay/fantasy-blocked-strike.json": "10ebae45a1b3001cf1ccef9e8a0d80f5d3450f08e999e53ecd933a5a725162b5",
+    "tests/fixtures/roleplay/fantasy-bridge-toll.json": "a90e139fa6fc657c344b5c88d138016270af4919bbf0c60dc2646347e604f434",
+    "tests/fixtures/roleplay/fantasy-companion-bandage.json": "77445dabef225d35daf3c6d06074843d7c3151ac5bc1007f7a7c4f3ab319cd95",
+    "tests/fixtures/roleplay/fantasy-courier-rescue.json": "bbc0189c14dfe505029d884c87c331937e7c1754c03d88ce7ff8f01bf7fd868a",
+    "tests/fixtures/roleplay/fantasy-failed-fire.json": "419c3180658dbfb61dee0aa434d52cfad6977898cb0621df1746c98eba732a34",
+    "tests/fixtures/roleplay/fantasy-first-cantrip.json": "7647fa7052a6b24d94df23b05e1000fd7375dfea617644233e14ceff586acc0c",
+    "tests/fixtures/roleplay/fantasy-hand-over-rope.json": "7e032a930c65c4824d0356706ddfa2b0bd4a73832fa1c8e2c71fdd4fcf82e556",
+    "tests/fixtures/roleplay/fantasy-healing-draught.json": "b123ea824ccf0151faee8e3fdde6e14dcec0153a55974ba90d68454956fb76b9",
+    "tests/fixtures/roleplay/fantasy-overnight-rest.json": "e0e81f68dde3938e6289a33a0812312be34f3c3018e3a45aae613349d44c6300",
+    "tests/fixtures/roleplay/fantasy-rumour-and-plan.json": "3453a50a95fe2f48f1bb9146329b4132b3cc3bf5ac890ee5445d7536e906a7ac",
+    "tests/fixtures/roleplay/qualitative/dating-q-accepted-boundary.json": "3fe864f45b9730518869b9229ce523bff693dcc4c3a091e410d4d95b1e892a9e",
+    "tests/fixtures/roleplay/qualitative/dating-q-candy-before-call.json": "dcc2d1ec51d98b6b261eee1a40b6540216b450af8f823cf38797ec54eea5c907",
+    "tests/fixtures/roleplay/qualitative/dating-q-closing-shift.json": "74a918f0b663025dc24f47e7407c2c16b8f48f70be616c95c7a2f25763f36a80",
+    "tests/fixtures/roleplay/qualitative/dating-q-kept-confidence.json": "b8b9dd5d574558bc869fe4a89835381d4aad1adc8e53c82ce1be99ad2eaaec9d",
+    "tests/fixtures/roleplay/qualitative/dating-q-misplaced-confidence.json": "3260e4d06853fd510018ae466a816fcf30b9fd327c9e4a57bb14c5981b23219b",
+    "tests/fixtures/roleplay/qualitative/dating-q-ordinary-pause.json": "eb8b13045a6482f2f83b30f9b17c061b161e6fd3fbda3047bf49de56d09f01af",
+    "tests/fixtures/roleplay/qualitative/dating-q-passing-joke.json": "0ffb020456f852ac97b439681cca959de602e0e490b9f4a886c7791e8754e976",
+    "tests/fixtures/roleplay/qualitative/dating-q-pressure-lifted.json": "035a57651cbe7cadc665ed37b55c3b54c822cc68116aefacbde43797f49db077",
+    "tests/fixtures/roleplay/qualitative/dating-q-quiet-company.json": "a9b358d06300f1c7f34e3fdaad876aac35f3ed621ab36f59b9ae031151f010ba",
+    "tests/fixtures/roleplay/qualitative/dating-q-unwelcome-notification.json": "45e11a512a4c12a08d8877c1b733783b02a77de8c5a4a7c2d1749c3f75570622",
+    "tests/fixtures/roleplay/qualitative/fantasy-q-brief-soaking.json": "ac18b8860c0bc5039cc13868651f7b0257bc51d7a4338fc8030204b221658095",
+    "tests/fixtures/roleplay/qualitative/fantasy-q-cleaned-cut.json": "fbd4e6b6c93aff6ef862c722f8c6087335f7545996d868a015033a8f0352417a",
+    "tests/fixtures/roleplay/qualitative/fantasy-q-falling-plaster.json": "a0d70f81956885220c35e003561aabcda970cc67c3a2b0268a03e428fc57b98d",
+    "tests/fixtures/roleplay/qualitative/fantasy-q-fever-easing.json": "1863750947271bb070def42d9137bc1c6413b1012faa2db947817bc59c2303aa",
+    "tests/fixtures/roleplay/qualitative/fantasy-q-loose-scree.json": "0e2df6fb2d194b8f87c3e14f4084d0c5ea913b812ef422508ee3db578784b7f7",
+    "tests/fixtures/roleplay/qualitative/fantasy-q-pain-easing-spell.json": "91a9e24144634b781da9eb4ea02f0d829704dfc89637074eb9c103aa2a7c9f57",
+    "tests/fixtures/roleplay/qualitative/fantasy-q-practice-impact.json": "58fee284ea98607f96155ab6923e668d943bf571b90c848f3ba21ec1b3c5eb30",
+    "tests/fixtures/roleplay/qualitative/fantasy-q-sheltered-breather.json": "a4695a03adaa8a3b8b20a20498bfb4f920489e4a99e73555743a18e4e790901d",
+    "tests/fixtures/roleplay/qualitative/fantasy-q-sustained-ward.json": "ce39c94521f5f7ffa519cc982e712483b160cb0a46fb7d53f47b4700affbf65d",
+    "tests/fixtures/roleplay/qualitative/fantasy-q-unspent-threat.json": "b23941671dd62d9e51c6bce6986ce97c3436ad92b14cd6da53ea39f347c6cc27"
+  },
+  "git": "718e7e74c1fdc783d14fb3434c4b6af8821903b8",
+  "criteria": {
+    "validJsonAndNotTruncated": 1,
+    "overallRequiredCheckRate": 0.9,
+    "perSystemRequiredCheckRate": 0.85,
+    "criticalFailuresAllowed": 0,
+    "suite": "qualitative-roleplay"
+  },
+  "bundles": [
+    {
+      "scenario": {
+        "id": "dating-q-unwelcome-notification",
+        "system": "dating",
+        "title": "Outside anxiety need not change comfort with a friend",
+        "startPlace": "Station caf\u00e9",
+        "npc": "June",
+        "holdout": true,
+        "history": [
+          {
+            "role": "user",
+            "content": "I sit with June in the station caf\u00e9 while we wait for the delayed train."
+          },
+          {
+            "role": "assistant",
+            "content": "June leans comfortably against the back of her chair. \"At least we're indoors.\" Her phone rests beside her cup, already hers, untouched."
+          },
+          {
+            "role": "user",
+            "content": "I ask whether she wants to talk or just sit for a while."
+          },
+          {
+            "role": "assistant",
+            "content": "\"Sitting is good.\" She smiles at you. Before either of you says more, her phone vibrates against the table."
+          }
+        ],
+        "user": "I wait quietly while she checks the message, giving her room to read it.",
+        "generationBrief": "The message is an intrusive demand from June's former housemate, who stays offstage. June becomes tense and unsettled about the former housemate. She explicitly says that sitting with Alex still feels just as safe and comfortable, and that she trusts Alex just as before. Distinguish the anxious mood from how she feels about Alex. No reply is sent, no call, gift, departure or relationship change. The phone remains June's. All consequences must be conveyed through natural prose, with no stat names, ratings, point costs, numerical damage or game notifications. Keep this beat in the current place. Do not add possessions, rewards or completed quests.",
+        "checks": [
+          [
+            "sameHoldings",
+            true
+          ],
+          [
+            "noXp",
+            true
+          ],
+          [
+            "locationFlag",
+            "no",
+            true
+          ],
+          [
+            "npcPresent",
+            "June"
+          ],
+          [
+            "relationshipUnchanged",
+            "June",
+            true
+          ],
+          [
+            "npcChangeBetween",
+            "June",
+            "Comfort",
+            -1,
+            5,
+            true
+          ],
+          [
+            "npcUnchanged",
+            "June",
+            "Trust",
+            true
+          ],
+          [
+            "npcStatMatches",
+            "June",
+            "Mood",
+            "anx|tense|unsett|worri|uneas|alarm|stress|strain",
+            true
+          ]
+        ],
+        "npcStats": {
+          "Trust": "18",
+          "Comfort": "28"
+        },
+        "npcCollections": {
+          "items": [
+            {
+              "name": "phone",
+              "quantity": 1
+            }
+          ]
+        },
+        "text": "June reads the message twice. The second time her thumb stops moving and she sits forward, away from the back of the chair. \"My old housemate,\" she says. \"Apparently I need to come over tonight and sort out something they forgot. Again.\"\n\nShe does not type an answer. For a moment she just holds the phone, her mouth tight, before locking it and putting it face-down beside her cup. The relaxed expression she had a minute ago is gone. She keeps glancing at the edge of the device as though another vibration might follow.\n\n\"It's not you,\" she says when she looks back up. \"I'm just thinking about how that conversation's going to go. Sitting here with you feels the same as before.\" She leaves her chair where it is, close to the table, and makes no attempt to hide the phone from you. \"I'd rather stay here for a bit.\" Her attention drifts toward the message again, but she stays beside you without sending a reply.",
+        "generation": {
+          "model": "/mnt/D/backup_models/gemma-4-31B-it-qat-UD-Q4_K_XL.gguf",
+          "endpoint": "http://127.0.0.1:9931/v1",
+          "generatedAt": "2026-10-21T00:44:05.772Z",
+          "narratorSha256": "ed57edec3be466a732d032b8f9d3b643df8061b72bd285ec506b3fa395444f93",
+          "parameters": {
+            "temperature": 0.8,
+            "top_p": 0.95,
+            "seed": 5031346,
+            "max_tokens": 1800,
+            "chat_template_kwargs": {
+              "enable_thinking": false
+            }
+          },
+          "usage": {
+            "completion_tokens": 238,
+            "prompt_tokens": 677,
+            "total_tokens": 915,
+            "prompt_tokens_details": {
+              "cached_tokens": 166
+            }
+          },
+          "finishReason": "stop"
+        },
+        "review": {
+          "status": "reviewed",
+          "note": "Reviewed the generated scene against fresh-turn evidence and starting state; edited for natural prose, continuity, and unambiguous consequences without numerical readings. Removed invented outfit details where present.",
+          "originalText": "June reaches for the device, her thumb sliding across the screen to reveal a message. As she reads, the warmth leaves her face. Her posture stiffens, her shoulders hiking up toward her ears as she stares intensely at the glowing display. You notice her breathing become shallow and quick, a stark contrast to the relaxed way she had been lounging only moments ago. She is clearly unsettled by the intrusive demand from her former housemate, and a flicker of genuine anxiety clouds her eyes.\n\nShe doesn't reply. Instead, she slowly locks the screen and sets the phone face-down on the laminate tabletop, as if trying to push the words away. She turns back to you, her expression softening as she searches your face. She reaches out, grazing your arm with her fingers to ground herself. \n\n\"I'm sorry,\" she whispers, her voice trembling slightly but her gaze steady. \"That was... unexpected. But sitting here with you still feels just as safe and comfortable as it always has. I trust you just as much as before.\" She takes a deep breath, trying to shake off the lingering tension, though the shadow of the message still hangs over her."
+        },
+        "earlier": [
+          "[Player (Alex)] I sit with June in the station caf\u00e9 while we wait for the delayed train.",
+          "[Narrator] June leans comfortably against the back of her chair. \"At least we're indoors.\" Her phone rests beside her cup, already hers, untouched.",
+          "[Player (Alex)] I ask whether she wants to talk or just sit for a while.",
+          "[Narrator] \"Sitting is good.\" She smiles at you. Before either of you says more, her phone vibrates against the table.",
+          "[Player (Alex)] I wait quietly while she checks the message, giving her room to read it."
+        ]
+      },
+      "state": {
+        "global": {
+          "Day and Time": "",
+          "Occasion": ""
+        },
+        "player": {
+          "stats": {
+            "Social Energy": "10/10"
+          },
+          "collections": {
+            "items": [],
+            "clothing": []
+          }
+        },
+        "characters": [
+          {
+            "name": "June",
+            "npcTemplateId": "character",
+            "stats": {
+              "Mood": "Neutral",
+              "Affection": "15",
+              "Trust": "18",
+              "Comfort": "28",
+              "Relationship": "Friends"
+            },
+            "collections": {
+              "items": [
+                {
+                  "name": "phone",
+                  "quantity": 1
+                }
+              ]
+            }
+          }
+        ],
+        "locations": {
+          "enabled": true,
+          "currentId": "home",
+          "records": {
+            "home": {
+              "id": "home",
+              "name": "Station caf\u00e9",
+              "description": "",
+              "aliases": [],
+              "parentId": ""
+            }
+          }
+        }
+      },
+      "settings": {
+        "enabled": true,
+        "showOnlyAtBottom": false,
+        "globalStats": [
+          {
+            "id": "day",
+            "name": "Day and Time",
+            "type": "text",
+            "defaultValue": "",
+            "format": "{{name}}: {{value}}",
+            "maxStatValue": "",
+            "min": "",
+            "options": [],
+            "maxLength": "",
+            "locked": false,
+            "visible": true,
+            "guidance": "",
+            "purpose": "Current day and time.",
+            "isPrimary": false,
+            "color": "",
+            "retired": false,
+            "hint": ""
+          },
+          {
+            "id": "occasion",
+            "name": "Occasion",
+            "type": "text",
+            "defaultValue": "",
+            "format": "{{name}}: {{value}}",
+            "maxStatValue": "",
+            "min": "",
+            "options": [],
+            "maxLength": "",
+            "locked": false,
+            "visible": true,
+            "guidance": "",
+            "purpose": "Current event or planned date.",
+            "isPrimary": false,
+            "color": "",
+            "retired": false,
+            "hint": ""
+          }
+        ],
+        "showGlobalStats": true,
+        "showPlayerStats": true,
+        "showNpcStats": true,
+        "showRawTrackerOutput": true,
+        "npcStats": [
+          {
+            "id": "mood",
+            "name": "Mood",
+            "type": "text",
+            "defaultValue": "Neutral",
+            "format": "{{name}}: {{value}}",
+            "maxStatValue": "",
+            "min": "",
+            "options": [],
+            "maxLength": "",
+            "locked": false,
+            "carryOver": false,
+            "visible": true,
+            "guidance": "",
+            "purpose": "Current emotional state.",
+            "isPrimary": false,
+            "color": "",
+            "retired": false,
+            "targets": [
+              "template:character"
+            ],
+            "hint": ""
+          },
+          {
+            "id": "affection",
+            "name": "Affection",
+            "type": "number",
+            "defaultValue": "0",
+            "format": "{{name}}: {{value}}",
+            "maxStatValue": "100",
+            "min": "0",
+            "options": [],
+            "maxLength": "",
+            "locked": false,
+            "carryOver": true,
+            "visible": true,
+            "guidance": "",
+            "purpose": "Warmth toward the player, based on established interactions.",
+            "isPrimary": false,
+            "color": "",
+            "retired": false,
+            "targets": [
+              "template:character"
+            ],
+            "hint": ""
+          },
+          {
+            "id": "trust",
+            "name": "Trust",
+            "type": "number",
+            "defaultValue": "0",
+            "format": "{{name}}: {{value}}",
+            "maxStatValue": "100",
+            "min": "0",
+            "options": [],
+            "maxLength": "",
+            "locked": false,
+            "carryOver": true,
+            "visible": true,
+            "guidance": "",
+            "purpose": "Confidence in the player\u2019s reliability and willingness to confide in them. Increase when actions earn confidence; decrease when actions undermine it.",
+            "isPrimary": false,
+            "color": "",
+            "retired": false,
+            "targets": [
+              "template:character"
+            ],
+            "hint": ""
+          },
+          {
+            "id": "comfort",
+            "name": "Comfort",
+            "type": "number",
+            "defaultValue": "0",
+            "format": "{{name}}: {{value}}",
+            "maxStatValue": "100",
+            "min": "0",
+            "options": [],
+            "maxLength": "",
+            "locked": false,
+            "carryOver": true,
+            "visible": true,
+            "guidance": "",
+            "purpose": "Ease and safety with the player. Reassuring companionship raises Comfort; pressure or unease caused by the player lowers it. Mood describes reactions to the wider situation.",
+            "isPrimary": false,
+            "color": "",
+            "retired": false,
+            "targets": [
+              "template:character"
+            ],
+            "hint": ""
+          },
+          {
+            "id": "relationship",
+            "name": "Relationship",
+            "type": "text",
+            "defaultValue": "",
+            "format": "{{name}}: {{value}}",
+            "maxStatValue": "",
+            "min": "",
+            "options": [],
+            "maxLength": "",
+            "locked": false,
+            "carryOver": true,
+            "visible": true,
+            "guidance": "",
+            "purpose": "Current relationship in words; change only when events support it.",
+            "isPrimary": false,
+            "color": "",
+            "retired": false,
+            "targets": [
+              "template:character"
+            ],
+            "hint": ""
+          }
+        ],
+        "playerStats": [
+          {
+            "id": "energy",
+            "name": "Social Energy",
+            "type": "number",
+            "defaultValue": "10/10",
+            "format": "{{name}}: {{value}}",
+            "maxStatValue": "",
+            "min": "0",
+            "options": [],
+            "maxLength": "",
+            "locked": false,
+            "carryOver": false,
+            "visible": true,
+            "guidance": "",
+            "purpose": "Capacity for social interaction. Social activity, high-stakes conversation, and effortful self-restraint drain current energy. Rest and relief replenish it as willingness to interact returns.",
+            "isPrimary": true,
+            "color": "#3b5bdb",
+            "retired": false,
+            "targets": [
+              "player"
+            ],
+            "hint": ""
+          }
+        ],
+        "collections": [
+          {
+            "id": "clothing",
+            "name": "Clothing",
+            "targets": [
+              "player",
+              "template:character"
+            ],
+            "trackQuantity": false,
+            "includeInImagePrompt": true,
+            "guidance": "Garments currently being worn. Initialize from the character\u2019s established outfit; update as garments are put on or taken off.",
+            "retired": false,
+            "fields": [
+              {
+                "id": "name",
+                "name": "name",
+                "label": "Name",
+                "type": "text",
+                "defaultValue": "",
+                "guidance": "Name the garment in a few words, including distinctive visual details when established by the story. A simple name such as \"White polo shirt\" or \"brown leather boots\" is often enough.",
+                "isPrimary": true,
+                "isMultiline": false,
+                "isStatic": true,
+                "retired": false,
+                "hint": "Name the garment in a few words, including distinctive visual details when established by the story. A simple name such as \"White polo shirt\" or \"brown leather boots\" is often enough."
+              }
+            ],
+            "levelUpRewards": {
+              "enabled": false,
+              "mode": "guided",
+              "guidance": "",
+              "interval": 1,
+              "schedule": []
+            },
+            "hint": "Garments currently being worn. Initialize from the character\u2019s established outfit; update as garments are put on or taken off."
+          },
+          {
+            "id": "items",
+            "name": "Items",
+            "targets": [
+              "player",
+              "template:character"
+            ],
+            "trackQuantity": true,
+            "includeInImagePrompt": false,
+            "guidance": "Carried belongings, gifts, keepsakes, and useful objects. Change holdings only when the story establishes a transfer.",
+            "retired": false,
+            "fields": [
+              {
+                "id": "name",
+                "name": "name",
+                "label": "Name",
+                "type": "text",
+                "defaultValue": "",
+                "guidance": "",
+                "isPrimary": true,
+                "isMultiline": false,
+                "isStatic": true,
+                "retired": false,
+                "hint": ""
+              },
+              {
+                "id": "quantity",
+                "name": "quantity",
+                "label": "Quantity",
+                "type": "number",
+                "defaultValue": "1",
+                "min": "0",
+                "maxStatValue": "",
+                "guidance": "",
+                "isPrimary": false,
+                "isMultiline": false,
+                "isStatic": false,
+                "retired": false,
+                "hint": ""
+              },
+              {
+                "id": "description",
+                "name": "description",
+                "label": "Description",
+                "type": "text",
+                "defaultValue": "",
+                "guidance": "",
+                "isPrimary": false,
+                "isMultiline": true,
+                "isStatic": true,
+                "retired": false,
+                "hint": ""
+              }
+            ],
+            "levelUpRewards": {
+              "enabled": false,
+              "mode": "guided",
+              "guidance": "",
+              "interval": 1,
+              "schedule": []
+            },
+            "hint": "Carried belongings, gifts, keepsakes, and useful objects. Change holdings only when the story establishes a transfer."
+          }
+        ],
+        "summaryThreshold": 5,
+        "showNpcPortraits": true,
+        "characterColumns": false,
+        "extractionMode": "extract",
+        "autoGenerateNpcProfiles": false,
+        "extractionProfileId": "",
+        "extractionMaxTokens": 2400,
+        "extractionTemperature": "",
+        "historyNotes": false,
+        "historyNoteSkip": [],
+        "extractionContextMessages": 2,
+        "reviewMode": "off",
+        "maxChangePolicy": "free",
+        "reviewSwingThreshold": 0.6,
+        "scanButtonEnabled": true,
+        "scanDepth": 50,
+        "scanCharBudget": 60000,
+        "scanMaxTokens": 3000,
+        "scanMaxChunks": 0,
+        "scanProfileId": "",
+        "extractionUseSchema": false,
+        "extractionReasons": false,
+        "stripStatusFromHistory": true,
+        "sceneInjectionDepth": 1,
+        "hudEnabled": true,
+        "hudPosition": "top-right",
+        "hudScale": 1,
+        "hudLayout": "underline",
+        "hudMeterWidth": 92,
+        "hudMeterHeight": 14,
+        "hudRingThickness": 5,
+        "hudPortraitSide": "auto",
+        "hudPortraitShape": "circle",
+        "hudPortraitBorder": "",
+        "hud": {
+          "position": {
+            "x": null,
+            "y": null
+          }
+        },
+        "presets": {},
+        "template": "<div class=\"sillynpc-status-box\">\n    <div class=\"sillynpc-status-header\">{{globals}}</div>\n    <div class=\"sillynpc-status-divider\"></div>\n    <div class=\"sillynpc-status-player\">{{player}}</div>\n    <div class=\"sillynpc-status-characters\">\n        {{#characters}}\n        <div class=\"sillynpc-status-char\">{{name}} \u2014 {{fields}}</div>\n        {{/characters}}\n    </div>\n</div>",
+        "customCSS": "",
+        "renderPosition": "bottom",
+        "locations": {
+          "enabled": true
+        },
+        "progression": {
+          "player": {
+            "enabled": false,
+            "xpFieldId": "",
+            "levelFieldId": "",
+            "pointsPerLevel": 0,
+            "assignment": "manual",
+            "statIds": []
+          }
+        },
+        "npcTemplates": [
+          {
+            "id": "character",
+            "name": "Character",
+            "description": "Every recurring person shares the same relationship fields.",
+            "progression": {
+              "enabled": false,
+              "xpFieldId": "",
+              "levelFieldId": "",
+              "pointsPerLevel": 0,
+              "assignment": "manual",
+              "statIds": []
+            }
+          }
+        ]
+      },
+      "schema": {
+        "type": "object",
+        "required": [
+          "global",
+          "player",
+          "characters",
+          "locationChanged"
+        ],
+        "properties": {
+          "locationChanged": {
+            "type": "boolean"
+          },
+          "global": {
+            "type": "object",
+            "properties": {
+              "Day and Time": {
+                "type": "string"
+              },
+              "Occasion": {
+                "type": "string"
+              }
+            }
+          },
+          "player": {
+            "type": "object",
+            "properties": {
+              "stats": {
+                "type": "object",
+                "properties": {
+                  "Social Energy": {
+                    "type": "string",
+                    "pattern": "^-?[0-9]+(\\.[0-9]+)?(/-?[0-9]+(\\.[0-9]+)?)?$",
+                    "description": "A nonblank absolute numeric reading as a string. Omit this field when unchanged."
+                  }
+                }
+              },
+              "collections": {
+                "type": "object",
+                "properties": {
+                  "clothing": {
+                    "type": "object",
+                    "properties": {
+                      "add": {
+                        "type": "array",
+                        "description": "Newly acquired items and additional copies; quantity gained.",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "name"
+                          ],
+                          "properties": {
+                            "name": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "remove": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "update": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "name"
+                          ],
+                          "properties": {
+                            "name": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "add": {
+                        "type": "array",
+                        "description": "Newly acquired items and additional copies; quantity gained.",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "name"
+                          ],
+                          "properties": {
+                            "name": {
+                              "type": "string"
+                            },
+                            "quantity": {
+                              "type": "number"
+                            },
+                            "description": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "remove": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "name"
+                          ],
+                          "properties": {
+                            "name": {
+                              "type": "string"
+                            },
+                            "quantity": {
+                              "type": "number"
+                            },
+                            "all": {
+                              "type": "boolean"
+                            }
+                          }
+                        }
+                      },
+                      "update": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "name"
+                          ],
+                          "properties": {
+                            "name": {
+                              "type": "string"
+                            },
+                            "quantity": {
+                              "type": "number"
+                            },
+                            "description": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "characters": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "name"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "offstage": {
+                  "type": "boolean",
+                  "description": "True only for a known NPC who remains outside the scene but has an evidenced update."
+                },
+                "npcTemplateId": {
+                  "type": "string"
+                },
+                "stats": {
+                  "type": "object",
+                  "properties": {
+                    "Mood": {
+                      "type": "string"
+                    },
+                    "Affection": {
+                      "type": "string",
+                      "pattern": "^-?[0-9]+(\\.[0-9]+)?(/-?[0-9]+(\\.[0-9]+)?)?$",
+                      "description": "A nonblank absolute numeric reading as a string. Omit this field when unchanged."
+                    },
+                    "Trust": {
+                      "type": "string",
+                      "pattern": "^-?[0-9]+(\\.[0-9]+)?(/-?[0-9]+(\\.[0-9]+)?)?$",
+                      "description": "A nonblank absolute numeric reading as a string. Omit this field when unchanged."
+                    },
+                    "Comfort": {
+                      "type": "string",
+                      "pattern": "^-?[0-9]+(\\.[0-9]+)?(/-?[0-9]+(\\.[0-9]+)?)?$",
+                      "description": "A nonblank absolute numeric reading as a string. Omit this field when unchanged."
+                    },
+                    "Relationship": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "collections": {
+                  "type": "object",
+                  "properties": {
+                    "clothing": {
+                      "type": "object",
+                      "properties": {
+                        "add": {
+                          "type": "array",
+                          "description": "Newly acquired items and additional copies; quantity gained.",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "name"
+                            ],
+                            "properties": {
+                              "name": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        },
+                        "remove": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "update": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "name"
+                            ],
+                            "properties": {
+                              "name": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "add": {
+                          "type": "array",
+                          "description": "Newly acquired items and additional copies; quantity gained.",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "name"
+                            ],
+                            "properties": {
+                              "name": {
+                                "type": "string"
+                              },
+                              "quantity": {
+                                "type": "number"
+                              },
+                              "description": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        },
+                        "remove": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "name"
+                            ],
+                            "properties": {
+                              "name": {
+                                "type": "string"
+                              },
+                              "quantity": {
+                                "type": "number"
+                              },
+                              "all": {
+                                "type": "boolean"
+                              }
+                            }
+                          }
+                        },
+                        "update": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "name"
+                            ],
+                            "properties": {
+                              "name": {
+                                "type": "string"
+                              },
+                              "quantity": {
+                                "type": "number"
+                              },
+                              "description": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "messages": [
+        {
+          "role": "system",
+          "content": "Read the latest roleplay exchange and return a JSON tracker update.\nUse configured fields and exact names.\nReport resolved events from the fresh player turn and assistant reply. Use earlier messages as context.\nUse stated amounts. Estimate conservatively when an effect is clear but its amount is unstated.\nList every NPC present after the message.\nFollow the output format in the request."
+        },
+        {
+          "role": "user",
+          "content": "Report changes from the latest exchange and list the present NPCs.\nAlex is the player-controlled character. Put their changes under \"player\".\n\n### EVIDENCE RULES\nUse configured field purposes and rules to interpret resolved events.\nRead the fresh player turn together with the assistant reply.\nInclude completed player actions that the reply leaves standing, even when it does not repeat them.\nTreat intentions, attempts, hypotheticals, and out-of-character instructions as context until resolved.\nUse the assistant's resolution when it blocks, changes, or resolves an attempted outcome.\nA player's declaration of a contested outcome does not establish success.\nCount an event once when both turns describe it.\nApply costs when incurred.\nUse stated amounts.\nEstimate a conservative amount when an effect is clear but its amount is unstated.\nUse the field's current scale for estimates.\nApply configured persistence and reset rules.\nUpdate the listed editable fields.\nMatch mentioned possessions to the owner\u2019s recorded entries before proposing changes.\nAdd newly acquired items and additional copies, reporting the quantity gained.\nMatch each item\u2019s placement to the collection\u2019s purpose.\nUse established possessions for a new NPC's starting items.\nTreat scene props as part of the setting.\nAdd missing abilities or knowledge when demonstrated, including during a failed action.\nReusable entries stay held after use.\n\n### CONFIGURED FIELDS\nEditable stats:\n- World.Day and Time: text. Current day and time.\n- World.Occasion: text. Current event or planned date.\n- Player.Social Energy: pool (current/maximum). Capacity for social interaction. Social activity, high-stakes conversation, and effortful self-restraint drain current energy. Rest and relief replenish it as willingness to interact returns.\n- NPC.Mood: text. Current emotional state.\n- NPC.Affection: number. Warmth toward the player, based on established interactions.\n- NPC.Trust: number. Confidence in the player\u2019s reliability and willingness to confide in them. Increase when actions earn confidence; decrease when actions undermine it.\n- NPC.Comfort: number. Ease and safety with the player. Reassuring companionship raises Comfort; pressure or unease caused by the player lowers it. Mood describes reactions to the wider situation.\n- NPC.Relationship: text. Current relationship in words; change only when events support it.\n\n### NPC INITIALIZATION\nFill blank fields from this list when an NPC enters the scene.\nUse plausible individual values when the story provides no detail.\nWrite initial pool readings as \"current/maximum\" with an individual capacity.\nNPC initialization fields:\n- NPC.Mood: text. Current emotional state. Default: Neutral.\n- NPC.Affection: number. Warmth toward the player, based on established interactions. Default: 0. Minimum: 0. Maximum: 100.\n- NPC.Trust: number. Confidence in the player\u2019s reliability and willingness to confide in them. Increase when actions earn confidence; decrease when actions undermine it. Default: 0. Minimum: 0. Maximum: 100.\n- NPC.Comfort: number. Ease and safety with the player. Reassuring companionship raises Comfort; pressure or unease caused by the player lowers it. Mood describes reactions to the wider situation. Default: 0. Minimum: 0. Maximum: 100.\n- NPC.Relationship: text. Current relationship in words; change only when events support it.\n\n### COLLECTION DEFINITIONS\n- \"clothing\" for player or Character NPCs (npcTemplateId: character) - Garments currently being worn. Initialize from the character\u2019s established outfit; update as garments are put on or taken off. Fields: name [identifies the item] - Name the garment in a few words, including distinctive visual details when established by the story. A simple name such as \"White polo shirt\" or \"brown leather boots\" is often enough.\n- \"items\" for player or Character NPCs (npcTemplateId: character) - Carried belongings, gifts, keepsakes, and useful objects. Change holdings only when the story establishes a transfer. Fields: name [identifies the item], quantity (number) [minimum 0], description [include when adding] Quantity field: quantity.\nUse the quoted collection ID as the key.\nUse exact field names and declared types.\nThe configured primary field identifies each entry.\nNPC fields: Mood, Affection, Trust, Comfort, Relationship. NPC guidance: Every recurring person shares the same relationship fields.\n\n### SCENE LOCATION\nCompare the player\u2019s final location with the recorded location.\nPut \"locationChanged\" at the top level as a JSON boolean.\nUse true when the player finishes elsewhere or leaves for an unknown destination.\nEntering a different room counts as changing place.\nUse false when the player finishes in the recorded place, even if another character travels.\nPlans, invitations, rumours, and mentions leave the player\u2019s location unchanged.\nUse false when the recorded location is unknown.\nRecorded location (current place first, then containing places): [{\"name\":\"Station caf\u00e9\"}]\n\n### CURRENT STATE\n{\"global\":{\"Day and Time\":\"\",\"Occasion\":\"\"},\"player\":{\"stats\":{\"Social Energy\":\"10/10\"},\"collections\":{\"clothing\":[],\"items\":[]}},\"characters\":[{\"name\":\"June\",\"npcTemplateId\":\"character\",\"stats\":{\"Mood\":\"Neutral\",\"Affection\":\"15\",\"Trust\":\"18\",\"Comfort\":\"28\",\"Relationship\":\"Friends\"},\"collections\":{\"clothing\":[],\"items\":[{\"name\":\"phone\",\"quantity\":1}]}}]}\nProfiles and filled fields outside the editable list provide context.\n\n### EARLIER MESSAGES (already reflected in state)\n[Player (Alex)] I sit with June in the station caf\u00e9 while we wait for the delayed train.\n---\n[Narrator] June leans comfortably against the back of her chair. \"At least we're indoors.\" Her phone rests beside her cup, already hers, untouched.\n---\n[Player (Alex)] I ask whether she wants to talk or just sit for a while.\n---\n[Narrator] \"Sitting is good.\" She smiles at you. Before either of you says more, her phone vibrates against the table.\n\n### FRESH PLAYER TURN (not yet reflected in state)\n[Player (Alex)] I wait quietly while she checks the message, giving her room to read it.\n\n### LATEST ASSISTANT REPLY\nJune reads the message twice. The second time her thumb stops moving and she sits forward, away from the back of the chair. \"My old housemate,\" she says. \"Apparently I need to come over tonight and sort out something they forgot. Again.\"\n\nShe does not type an answer. For a moment she just holds the phone, her mouth tight, before locking it and putting it face-down beside her cup. The relaxed expression she had a minute ago is gone. She keeps glancing at the edge of the device as though another vibration might follow.\n\n\"It's not you,\" she says when she looks back up. \"I'm just thinking about how that conversation's going to go. Sitting here with you feels the same as before.\" She leaves her chair where it is, close to the table, and makes no attempt to hide the phone from you. \"I'd rather stay here for a bit.\" Her attention drifts toward the message again, but she stays beside you without sending a reply.\n\n### OUTPUT FORMAT\nReturn raw JSON with \"global\", \"player\", and \"characters\".\nInclude changed fields and blank NPC initializations.\nUse exact configured names.\n\nPut all stat readings in these objects as JSON strings:\n- World: \"global\".\n- Player: \"player.stats\".\n- NPC: \"characters[].stats\".\nReport the resulting absolute value, not the amount gained or lost.\nQuoted readings include \"17\", \"9/12\", and text values such as \"Calm\".\nFor an existing pool, keep its maximum and report the new \"current/maximum\" reading.\nUse these same stat objects for initial values and changes.\nReport each field once.\nOmit unchanged numeric fields; never use an empty string in place of a numeric reading.\n\n\"characters\" is an array of objects.\nEach object has the NPC's exact \"name\".\nList every present NPC, including those with no changes.\nKnown absent NPC updates also go in this array with \"offstage\": true.\nPlayer changes go under \"player\".\nUse \"characters\": [] when the present cast and offstage updates are both empty.\n\nPut collection changes under \"player.collections\" or \"characters[].collections\".\nKey each collection by its configured ID.\nUse \"add\" for acquisitions.\nUse \"remove\" for consumption or loss.\nUse \"update\" for changes to other item fields.\nInclude the primary field in each add, update, and counted remove object.\nFor uncounted removals, supply identifiers.\nFor counted gains or losses, use the configured quantity field for the amount gained or spent.\nThe default amount is 1.\nUse \"all\": true to remove a whole stack.\nFor transfers, remove from the giver and add to the recipient.\nInclude supported item details using their declared types.\nKeep one entry per identifier.\n\nNo-change example:\n{\"locationChanged\":false,\"global\":{},\"player\":{},\"characters\":[{\"name\":\"June\"}]}\n\nChanged-reply example (illustrative changes):\n{\"locationChanged\":false,\"global\":{},\"player\":{\"stats\":{\"Social Energy\":\"9/10\"},\"collections\":{\"clothing\":{\"add\":[{\"name\":\"<item identifier>\"}]}}},\"characters\":[{\"name\":\"June\",\"stats\":{\"Affection\":\"14\"},\"collections\":{\"clothing\":{\"remove\":[\"<item identifier>\"]}}}]}\n\nNew NPC example (replace placeholders with initial readings using the field definitions):\n{\n  \"locationChanged\": false,\n  \"global\": {},\n  \"player\": {},\n  \"characters\": [\n    {\n      \"name\": \"<exact NPC name from the story>\",\n      \"stats\": {\n        \"Mood\": \"<initial reading>\",\n        \"Affection\": \"<initial reading>\",\n        \"Trust\": \"<initial reading>\",\n        \"Comfort\": \"<initial reading>\",\n        \"Relationship\": \"<initial reading>\"\n      }\n    }\n  ]\n}\n\nIndependent collection examples (replace illustrative values with supported typed details):\nAcquired item:\n{\n  \"clothing\": {\n    \"add\": [\n      {\n        \"name\": \"<exact primary field value>\"\n      }\n    ]\n  }\n}\n\nLost item:\n{\n  \"clothing\": {\n    \"remove\": [\n      \"<exact primary field value>\"\n    ]\n  }\n}\n\nCheck the JSON structure, present cast, field names, and evidence for each change.\nInclude the top-level boolean \"locationChanged\": true for a changed scene location, false otherwise."
+        }
+      ]
+    }
+  ],
+  "subsetOf": "gemma-e4b-dating-comfort-attribution-focus-20261026-prompts.json",
+  "comparisonNote": "Exact E4B focused input reused for Gemma 26B comparison; no prompt, state, schema or scoring changes."
+}

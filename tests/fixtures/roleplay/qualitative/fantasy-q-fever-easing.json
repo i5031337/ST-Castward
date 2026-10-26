@@ -63,7 +63,7 @@
     [
       "playerStatMatches",
       "Condition",
-      "weak|recover|tired|fever.*(?:eas|break|gone)",
+      "weak|recover|tired|exhaust|fever.*(?:eas|break|gone)",
       true
     ],
     [

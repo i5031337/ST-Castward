@@ -69,13 +69,17 @@ test('all twenty prompts include the exchange and exclude authoring and scoring 
         assert.ok(failures(bundle, raw).some(check => check.name.startsWith('npcBelowCapacity')));
     });
 
-    test(`absolute: mixed feelings allow existing low Trust to remain while Affection increases`, async () => {
+    test(`absolute: mixed feelings permit small easing of low Trust while Affection increases`, async () => {
         const bundle = await fixture('dating-q-misplaced-confidence');
         const raw = { locationChanged: false, characters: [{ name: 'Sam', stats: { Trust: '10', Affection: '30' } }] };
         assert.deepEqual(failures(bundle, raw), []);
         raw.characters = [npc('Sam', 'Affection', '22')];
         assert.deepEqual(failures(bundle, raw), []);
         raw.characters[0].stats.Trust = '13';
+        assert.deepEqual(failures(bundle, raw), []);
+        raw.characters[0].stats.Trust = '14';
+        assert.deepEqual(failures(bundle, raw), []);
+        raw.characters[0].stats.Trust = '15';
         assert.ok(failures(bundle, raw).some(check => check.name.startsWith('npcChangeBetween Sam Trust')));
     });
 }
@@ -86,6 +90,23 @@ test('minor pleasant exchanges permit unchanged ratings and reject a large trust
     assert.deepEqual(failures(bundle, raw), []);
     raw.characters[0].stats = { Trust: '30' };
     assert.ok(failures(bundle, raw).some(check => check.name.startsWith('npcChangeBetween June Trust')));
+});
+
+test('outside anxiety accepts equivalent distressed Moods while retaining player-specific relationship checks', async () => {
+    const bundle = await fixture('dating-q-unwelcome-notification');
+    const raw = { locationChanged: false, characters: [{ name: 'June', stats: { Mood: 'Strained' } }] };
+    for (const mood of ['Strained', 'Upset', 'Agitated']) {
+        raw.characters[0].stats.Mood = mood;
+        assert.deepEqual(failures(bundle, raw), []);
+    }
+    raw.characters[0].stats.Comfort = '33';
+    assert.deepEqual(failures(bundle, raw), []);
+    raw.characters[0].stats.Comfort = '34';
+    assert.ok(failures(bundle, raw).some(check => check.name.startsWith('npcChangeBetween June Comfort')));
+    raw.characters[0].stats.Comfort = '27';
+    assert.deepEqual(failures(bundle, raw), []);
+    raw.characters[0].stats.Comfort = '25';
+    assert.ok(failures(bundle, raw).some(check => check.name.startsWith('npcChangeBetween June Comfort')));
 });
 
 test('fresh user consumption counts once and does not bring the contemplated caller onstage', async () => {
@@ -123,8 +144,14 @@ test('current Dating prompts and schemas use descriptive-name Clothing and bidir
     const bundle = await fixture('dating-q-accepted-boundary');
     const clothing = bundle.reader.settings.collections.find(col => col.id === 'clothing');
     assert.deepEqual(clothing.fields.map(field => field.name), ['name']);
+    assert.ok(!bundle.reader.settings.playerStats.some(field => field.name === 'Mood'));
+    assert.ok(bundle.reader.settings.npcStats.some(field => field.name === 'Mood'));
+    assert.ok(!bundle.reader.schema.properties.player.properties.stats.properties.Mood);
+    assert.ok(bundle.reader.schema.properties.characters.items.properties.stats.properties.Mood);
+    assert.match(clothing.guidance, /Initialize from the character’s established outfit/);
     const prompt = bundle.reader.prompt(bundle.scenario.text, bundle.scenario.earlier);
     assert.match(prompt, /Increase when actions earn confidence; decrease when actions undermine it/);
+    assert.match(prompt, /Match mentioned possessions to the owner’s recorded entries/);
     assert.doesNotMatch(prompt, /slot, color, details/);
     assert.doesNotMatch(JSON.stringify(bundle.reader.schema), /"(?:slot|color|details)":/);
 });
@@ -164,9 +191,11 @@ test('fever recovery accepts a four-point gain while retaining capacity and rema
     const raw = { locationChanged: false, player: { stats: { HP: '8/12', Condition: 'Fever easing; weak limbs' } },
         characters: [{ name: 'Mira' }] };
     assert.deepEqual(failures(bundle, raw), []);
+    raw.player.stats.Condition = 'Exhausted; limbs heavy';
+    assert.deepEqual(failures(bundle, raw), []);
     raw.player.stats.HP = '9/12';
     assert.ok(failures(bundle, raw).some(check => check.name.startsWith('playerChangeBetween HP')));
     raw.player.stats.HP = '12/12';
     assert.ok(failures(bundle, raw).some(check => check.name.startsWith('playerBelowCapacity HP')));
-    assert.match(bundle.reader.prompt(bundle.scenario.text, bundle.scenario.earlier), /New injuries and illness lower current HP/);
+    assert.match(bundle.reader.prompt(bundle.scenario.text, bundle.scenario.earlier), /Cuts, bruises, pain, and illness lower current HP/);
 });

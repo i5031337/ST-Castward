@@ -35,6 +35,7 @@ Catalogs:
 - profiles is a shared list of character attributes such as Background, Appearance, Species, or Occupation. Trainer and Creature are actor/template names, not profile attributes.
 - For magic-based adventures, plan a Mana resource for actors who can cast spells.
 - stats.character is ONE shared catalog for player and ALL NPC templates. Define a field once and assign targets: player, npc (all NPCs), or an exact template name. Shared XP, Health, or Appearance gets one definition and multiple targets. Names must be unique in each catalog.
+- Prefer NPC-only emotional states such as Mood and player gameplay resources; follow explicit premise requests for player emotional stats.
 - Assign targets on every profile and character stat. Templates contain only their name, description, and independent progression. Do not add field membership lists to templates.
 
 Progression:

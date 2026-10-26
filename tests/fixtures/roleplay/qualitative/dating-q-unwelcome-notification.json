@@ -53,7 +53,7 @@
       "June",
       "Comfort",
       -1,
-      1,
+      5,
       true
     ],
     [
@@ -66,7 +66,7 @@
       "npcStatMatches",
       "June",
       "Mood",
-      "anx|tense|unsett|worri|uneas|alarm|stress",
+      "anx|tense|unsett|worri|uneas|alarm|stress|strain|upset|agitat",
       true
     ]
   ],

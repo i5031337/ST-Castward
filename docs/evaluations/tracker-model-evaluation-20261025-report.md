@@ -1,5 +1,9 @@
 # Tracker evaluation: final local-model configuration, 2026-10-25
 
+The [final October 26 Dating report](dating-final-10x-20261026-report.md) supersedes
+this dated snapshot. It reports 947/960 checks, 87/100 complete replies and 211/220
+numeric checks, and links the retained Fantasy and exact-scene model comparisons.
+
 Gemma 4 E4B is Castward's minimum target for an accessible local reader. In the final
 configuration it passes 584/606 checks (96.4%), with every check passing on 45/60
 replies (75.0%). Inferred numeric changes pass 84/99 checks (84.8%). These measures

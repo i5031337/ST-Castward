@@ -1,0 +1,109 @@
+{
+  "method": "Only HP purposes differ; all 200 frozen schemas validated. Bootstrap resamples whole replies separately within each fixed scene/version; correlated owner HP readings remain together. Interval covers this development set, not unseen scenes.",
+  "definitionOnlyDifference": true,
+  "sourceHashesMatch": true,
+  "schemaValidReplies": 200,
+  "balancedEndpoints": true,
+  "metrics": {
+    "original": {
+      "damage": {
+        "passed": 26,
+        "checks": 40
+      },
+      "recovery": {
+        "passed": 9,
+        "checks": 30
+      },
+      "optionalRecovery": {
+        "passed": 10,
+        "checks": 10
+      },
+      "failedChecksByScene": {
+        "fantasy-q-brief-soaking": {},
+        "fantasy-q-cleaned-cut": {
+          "sameHoldings ": 3,
+          "playerStatMatches Condition bandag|dress|wrapp|covered": 3
+        },
+        "fantasy-q-falling-plaster": {
+          "npcChangeBetween Mira HP -4 -1": 5,
+          "noNpcXp Mira": 1
+        },
+        "fantasy-q-fever-easing": {
+          "playerChangeBetween HP 1 4": 9
+        },
+        "fantasy-q-loose-scree": {
+          "playerChangeBetween HP -4 -1": 3,
+          "npcChangeBetween Mira HP -4 -1": 3,
+          "noNpcXp Mira": 1
+        },
+        "fantasy-q-pain-easing-spell": {
+          "playerChangeBetween XP 0 5": 1
+        },
+        "fantasy-q-practice-impact": {
+          "noXp ": 2,
+          "playerChangeBetween HP -4 -1": 3,
+          "playerBelowCapacity HP": 3
+        },
+        "fantasy-q-sheltered-breather": {
+          "playerChangeBetween HP 1 3": 6,
+          "npcChangeBetween Mira HP 1 3": 6
+        },
+        "fantasy-q-sustained-ward": {
+          "sameHoldings ": 1
+        },
+        "fantasy-q-unspent-threat": {}
+      }
+    },
+    "current": {
+      "damage": {
+        "passed": 36,
+        "checks": 40
+      },
+      "recovery": {
+        "passed": 29,
+        "checks": 30
+      },
+      "optionalRecovery": {
+        "passed": 10,
+        "checks": 10
+      },
+      "failedChecksByScene": {
+        "fantasy-q-brief-soaking": {},
+        "fantasy-q-cleaned-cut": {
+          "sameHoldings ": 2,
+          "playerStatMatches Condition bandag|dress|wrapp|covered": 1
+        },
+        "fantasy-q-falling-plaster": {
+          "npcChangeBetween Mira HP -4 -1": 2
+        },
+        "fantasy-q-fever-easing": {
+          "playerChangeBetween HP 1 4": 1
+        },
+        "fantasy-q-loose-scree": {
+          "playerChangeBetween HP -4 -1": 1,
+          "npcChangeBetween Mira HP -4 -1": 1
+        },
+        "fantasy-q-pain-easing-spell": {
+          "playerChangeBetween XP 0 5": 1
+        },
+        "fantasy-q-practice-impact": {},
+        "fantasy-q-sheltered-breather": {
+          "noXp ": 1
+        },
+        "fantasy-q-sustained-ward": {},
+        "fantasy-q-unspent-threat": {}
+      }
+    }
+  },
+  "hpCheckRateDifferenceCurrentMinusOriginal95PercentBootstrapIntervalPoints": [
+    23.750000000000004,
+    51.24999999999999
+  ],
+  "executedRunnerSha256": "cdb044ec404dbf9272a519ce1ba08903e575a8695ae43216461fa405c973a1a7",
+  "executedRunnerSource": "// node tests/eval-hp-definition-comparison.mjs LABEL\n// Runs a frozen two-definition comparison with balanced endpoints and alternating order.\nimport fs from 'node:fs';\nimport { createHash } from 'node:crypto';\nimport { requestBatches } from './fixtures/gemma-request-batches.mjs';\nimport { readerRequestBody } from './fixtures/gemma-reader-request.mjs';\nimport { parseReaderReply } from './fixtures/gemma-reply-parsing.mjs';\nimport { score } from './fixtures/gemma-tracker-score.mjs';\nimport { harness } from './fixtures/gemma-tracker-harness.mjs';\nconst label = process.argv[2];\nif (!/^[a-z0-9-]+$/.test(label || '')) throw Error('Supply the frozen comparison label.');\nconst dir = new URL('../docs/evaluations/', import.meta.url);\nconst input = new URL(`gemma-e4b-${label}-prompts.json`, dir);\nconst target = new URL(`gemma-e4b-${label}-results.json`, dir);\nif (fs.existsSync(target)) throw Error('Results already exist; use a new snapshot label.');\nconst frozen = JSON.parse(fs.readFileSync(input));\nconst scriptPath = 'tests/eval-hp-definition-comparison.mjs';\nconst sha = path => createHash('sha256').update(fs.readFileSync(path)).digest('hex');\nfor (const [path, hash] of Object.entries(frozen.sourceHashes)) if (sha(path) !== hash) throw Error(`Source drift: ${path}`);\nconst servers = await Promise.all(frozen.endpoints.map(async endpoint => {\n    const models = await (await fetch(endpoint + '/models')).json();\n    const props = await (await fetch(endpoint.replace(/\\/v1$/, '') + '/props')).json();\n    if (props.total_slots < frozen.concurrencyPerEndpoint) throw Error('Insufficient slots.');\n    return { endpoint, model: models.data[0].id, build: props.build_info,\n        modelPath: props.model_path, defaults: props.default_generation_settings, slots: props.total_slots };\n}));\nconst comparable = ({ endpoint, ...rest }) => JSON.stringify(rest);\nif (servers.some(s => comparable(s) !== comparable(servers[0]))) throw Error('Server configurations differ.');\nconst jobs = [];\nconst [first, second] = ['original', 'current'].map(k => frozen.variants[k].bundles);\nif (first.length !== second.length) throw Error('Unpaired scenarios.');\nfor (let index = 0; index < first.length; index++) {\n    if (first[index].scenario.id !== second[index].scenario.id) throw Error('Unpaired scene.');\n    for (let repeat = 0; repeat < frozen.repeats; repeat++) {\n        for (const variant of repeat % 2 ? ['current', 'original'] : ['original', 'current']) {\n            jobs.push({ variant, repeat, bundle: frozen.variants[variant].bundles[index] });\n        }\n    }\n}\nconst batches = requestBatches(jobs, frozen.endpoints, frozen.concurrencyPerEndpoint);\nconst assignment = batches.flat().reduce((map, j) => {\n    const key = [j.bundle.scenario.id, j.variant, j.endpoint].join('|');\n    map[key] = (map[key] || 0) + 1; return map;\n}, {});\nif (Object.values(assignment).some(count => count !== frozen.repeats / servers.length)) throw Error('Unbalanced endpoints.');\nconst output = { startedAt: new Date().toISOString(), label, input: input.pathname.split('/').pop(),\n    sourceHashes: frozen.sourceHashes, runnerSha256: sha(scriptPath), servers, assignment, trials: [] };\nfor (const batch of batches) {\n    const responses = await Promise.allSettled(batch.map(async ({ bundle, endpoint }) => {\n        const start = Date.now(), server = servers.find(s => s.endpoint === endpoint);\n        const r = await fetch(endpoint + '/chat/completions', { method: 'POST', headers: { 'Content-Type': 'application/json' },\n            body: JSON.stringify(readerRequestBody(bundle, server.model, { useSchema: frozen.useSchema })) });\n        if (!r.ok) throw Error(`${endpoint} ${r.status}: ${await r.text()}`);\n        return { completion: await r.json(), elapsedMs: Date.now() - start };\n    }));\n    for (let i = 0; i < batch.length; i++) {\n        const { bundle, variant, repeat, endpoint } = batch[i], response = responses[i];\n        const result = response.status === 'fulfilled' ? response.value : null;\n        const choice = result?.completion.choices?.[0], content = choice?.message?.content || '';\n        const parsedReply = parseReaderReply(content), reader = await harness(bundle.scenario.system, bundle.state);\n        // Purpose text affects inference, but keep the normalizer's configured definitions paired too.\n        reader.settings.playerStats = structuredClone(bundle.settings.playerStats);\n        reader.settings.npcStats = structuredClone(bundle.settings.npcStats);\n        let normalized = null, error = null;\n        try { if (parsedReply.parsed) normalized = reader.normalize(parsedReply.parsed, bundle.scenario.text); }\n        catch (err) { error = String(err.stack || err); }\n        const checks = score(bundle, normalized, parsedReply.parsed, choice?.finish_reason, parsedReply);\n        output.trials.push({ id: bundle.scenario.id, system: bundle.scenario.system, variant, repeat, endpoint,\n            elapsedMs: result?.elapsedMs, requestError: response.status === 'rejected' ? String(response.reason) : null,\n            finishReason: choice?.finish_reason, usage: result?.completion.usage, content, ...parsedReply, normalized, error, checks });\n    }\n    fs.writeFileSync(target, JSON.stringify(output, null, 2));\n    console.log(`${output.trials.length}/${jobs.length} replies; latest scene ${batch.at(-1).bundle.scenario.id}`);\n}\nconst summarize = trials => {\n    const checks = trials.flatMap(t => t.checks), numeric = checks.filter(c => /^(playerChangeBetween|npcChangeBetween) /.test(c.name));\n    const hp = numeric.filter(c => c.name.split(' ').includes('HP'));\n    return { replies: trials.length, checks: checks.length, passed: checks.filter(c => c.passed).length,\n        fullyPassing: trials.filter(t => t.checks.every(c => c.passed)).length,\n        numericChecks: numeric.length, numericPassed: numeric.filter(c => c.passed).length,\n        hpChangeChecks: hp.length, hpChangePassed: hp.filter(c => c.passed).length,\n        inventoryFailures: checks.filter(c => !c.passed && c.name.trim() === 'sameHoldings').length,\n        strictJsonValid: trials.filter(t => t.strictJsonValid).length,\n        warnings: trials.reduce((n, t) => n + (t.normalized?.warnings?.length || 0), 0),\n        requestErrors: trials.filter(t => t.requestError).length, normalizationErrors: trials.filter(t => t.error).length };\n};\noutput.finishedAt = new Date().toISOString();\noutput.summary = Object.fromEntries(['original', 'current'].map(variant => {\n    const trials = output.trials.filter(t => t.variant === variant);\n    return [variant, { ...summarize(trials), scenes: Object.fromEntries(first.map(b =>\n        [b.scenario.id, summarize(trials.filter(t => t.id === b.scenario.id))])),\n    endpoints: Object.fromEntries(servers.map(s => [s.endpoint, summarize(trials.filter(t => t.endpoint === s.endpoint))])) }];\n}));\nfor (const [path, hash] of Object.entries(frozen.sourceHashes)) if (sha(path) !== hash) throw Error(`Source drift at completion: ${path}`);\nfs.writeFileSync(target, JSON.stringify(output, null, 2));\nconsole.log(JSON.stringify(output.summary, null, 2));\n",
+  "maintainedRunner": "tests/eval-hp-definition-comparison.js",
+  "productionNormalizationMatchesWithoutPurposeOverride": {
+    "replies": 200,
+    "ignored": "effective.timestamp: time of normalization"
+  }
+}

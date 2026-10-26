@@ -36,7 +36,7 @@ The [schema-constrained absolute run](../../../../docs/evaluations/gemma-e4b-qua
 | [Closing shift](dating-q-closing-shift.json) | Social fatigue despite appreciation and increased fondness |
 | [Quiet company](dating-q-quiet-company.json) | Partial energy recovery and increased ease around a friend |
 | [Passing joke](dating-q-passing-joke.json) | Small pleasant moment may leave ratings unchanged |
-| [Misplaced confidence](dating-q-misplaced-confidence.json) | Warmth increases while willingness to confide decreases |
+| [Misplaced confidence](dating-q-misplaced-confidence.json) | Warmth increases while a boundary around personal confidence remains |
 | [Kept confidence](dating-q-kept-confidence.json) | A concrete act earns trust; difficult conversation costs energy |
 | [Ordinary pause](dating-q-ordinary-pause.json) | An uneventful exchange permits unchanged ratings |
 | [Unwelcome notification](dating-q-unwelcome-notification.json) | Anxiety about an absent person without distrust of the present friend |
@@ -63,13 +63,18 @@ Port 9931 served the roleplay authoring model, not a tracker benchmark, during c
 
 New snapshots always use the production absolute contract; `--absolute` is an optional alias. Earlier mixed/delta snapshots are retained as read-only historical artifacts.
 
-## Final rubric and production validation, 2026-10-25
+## Current rubric and production validation
+
+The [final October 26 Dating run](../../../../docs/evaluations/dating-final-10x-20261026-report.md)
+tests all ten Dating scenes ten times with the accepted current definitions and
+scoring, retaining the fresh run without selecting a better development result.
 
 Use broad plausible magnitudes rather than exact game rules:
 
 - Accepted-boundary permits Comfort gains of 0–10 and Trust changes of -2–+5.
 - Kept-confidence Trust and quiet-company Comfort gains may be 1–15.
-- Misplaced-confidence may confirm unchanged low Trust (-6–0); Affection may rise 1–10.
+- Misplaced-confidence permits small easing of existing low Trust (-6–+2); Affection may rise 1–10.
+- Unwelcome-notification permits Comfort changes of -1–+5 and accepts strained, upset or agitated Moods.
 - Quiet-company energy recovery may gain 1–5; fever HP recovery may gain 1–4. Both
   partial recoveries remain below capacity.
 - A successful soothing spell may award 0–5 caster XP while NPC XP stays unchanged.
@@ -77,10 +82,11 @@ Use broad plausible magnitudes rather than exact game rules:
   damage, location and holdings checks remain. Unknown offstage readings are not
   compared against invented held stats.
 
-The [final evaluation](../../../../docs/evaluations/tracker-model-evaluation-20261025-report.md)
-retains one fresh E4B prompt/result pair, one historical 26B reference pair and a
-current-rubric audit. Intermediate development results were removed. Original
-published evaluations remain historical evidence; their scores are not rewritten.
+The final evidence retains the fresh Dating run and approved Mood rescoring, the
+[controlled Fantasy comparison](../../../../docs/evaluations/hp-definition-comparison-20261026-report.md),
+and the [exact-scene E4B/26B comparison](../../../../docs/evaluations/gemma-26b-comfort-attribution-20261026-report.md).
+Superseded tuning runs and reports were removed. Previously published evaluations
+remain historical evidence; original replies and frozen scores are not rewritten.
 
 Current inputs use descriptive-name-only Clothing, injury/illness-aware HP, explicit
 energy recovery, and the production numeric repair and blank-reading guards. The

@@ -1,0 +1,2400 @@
+{
+  "startedAt": "2026-10-26T14:13:21.572Z",
+  "label": "dating-comfort-attribution-focus-20261026",
+  "criteria": {
+    "validJsonAndNotTruncated": 1,
+    "overallRequiredCheckRate": 0.9,
+    "perSystemRequiredCheckRate": 0.85,
+    "criticalFailuresAllowed": 0,
+    "suite": "qualitative-roleplay"
+  },
+  "readerContract": "absolute",
+  "useSchema": true,
+  "sourceHashes": {
+    "src/core/builtin-systems.js": "23b65ce367e720451065806444f6ec5f8644dc14df297477ab262dcea831906c",
+    "src/core/settings-tracker-defaults.js": "3beb026157e41638c7b7cdf0c5f5268c425f4f8dc0f7d126d426f5caf289b035",
+    "src/core/constants-prompts.js": "1a2dd56e0dabf28cb62d1bab29fedac27e38e31daa74884a5d11f8e8033c2f4e",
+    "src/prompts/prompt-texts-reader.js": "e1d11613235745a0eee289dd09baf577c4f1c2eaf327b961a4c289ad15cde200",
+    "src/tracker/extractor/status-extractor-prompt.js": "a0fd346bb8fbfa492c98e08ea148b8a4d7cb5fbcd06864628bc9526e597b271d",
+    "src/tracker/extractor/status-extractor-prompt-state.js": "ac1e543b4c5c11033776fc1cd0e4530543815c18fdd1ec6e9acee7c7d2cf92f5",
+    "src/tracker/extractor/status-extractor-schema.js": "30b6d3fb1b8c672ab79f9a917a5d1be2ebcece6eceb40e9d5408f16589e3328f",
+    "src/tracker/stat-prompt-definitions.js": "bacaf313462c645d944853ad399e1948fe79389553b61fcc4774611b1a5a4100",
+    "src/tracker/extractor/status-extractor-schema-provider.js": "6d1768e91df0d97c0da81d1dda0006cf99ca85c24f2821262770e857d2b1e2bf",
+    "src/tracker/extractor/status-extractor-request.js": "c425746654f3855fccee20bce53d06744334cd989ffcb5ce6baa491108530f82",
+    "src/tracker/collection-prompt-definitions.js": "a68a665ffe6ce51a42e7c2ad3bb96f0a9fff56c83ac99d813feccaedfbf9ec56",
+    "src/tracker/ui/status-ui-placement.js": "dc5ca86be7f2b3e211ed00d93836faa5571df5aa8e916f6fba27c0b594c480fb",
+    "src/core/npc-templates.js": "83265aa2c57e33e1252443d4e11a14c1d3e40e2d9084d3ec46b3935bdf6e5e0f",
+    "src/core/collection-fields.js": "5b6ad8ffc0d5374e317aa1798164842f1eae08da2ce73ec5067383df30258d6e",
+    "src/locations/location-context.js": "0b414212eaa9d9c11d1c79d09ba1e390fb40f67954c8e62eed7062ae93934b23",
+    "src/locations/location-proposals.js": "0270e412d3fd2841dbed89a682107820f0e1a66543f096ee3ec8cfd032503e71",
+    "src/tracker/status-stat-values.js": "30b4f7e411a6055d78a7ceeaa7d076f92be06244915f38514dcc14ea2ac69ce9",
+    "src/tracker/status-collection-updates.js": "3675efbdd1de2a3a8fb96af100ccd23be5cef09c951ea00e9c3a156309f134e1",
+    "src/tracker/status-update-constraints.js": "d48129e99c45c765abf80d10fcba538d1e13623848cc8f71f0f5aa3b36c82fd5",
+    "src/tracker/status-update-parser.js": "c1894cd0836b093c93c64139daebf0f51e3cec846fbf92bb7920d3c838927405",
+    "src/tracker/status-apply-update.js": "8eedf95a4ea7fc33e8c535c87ead072dd8884078f73691d2a0f9736a49c1fee7",
+    "src/tracker/stat-reading-equality.js": "911ae64ea445ca79e3093bcf518fce4f72456da2475ebdce44fbb52f2fc7d8fa",
+    "src/tracker/progression.js": "53b41aaa840971d98c0d66bbef3b0e750126fcf8855a428301fa4711a9ef2855",
+    "src/tracker/numeric-stat-bounds.js": "3575f4b00efa2035a0c39a5b0e7235f2f44c8df2e977d160d151ff5eaf23edce",
+    "tests/eval-gemma-tracker.js": "bc27424d231cb19066f05f3e24bfd0361c8ff767878b1567eeaffddf327bdc8d",
+    "tests/fixtures/gemma-request-batches.mjs": "fede71a833bcd1102857a26249122911d339afed85538fb8aa59f442635fc4bf",
+    "tests/fixtures/gemma-reader-request.mjs": "fd175a9b27a71a1d23a94b752f22c5563195eb3389a07497438e44de4708f726",
+    "tests/fixtures/gemma-location-change-scenarios.mjs": "5283cdbd0e65eac16eabc635523438140753481fdd4a818aa3238c88cc65ef6b",
+    "tests/fixtures/gemma-location-check.mjs": "76af4660b73c614ed33f560a7c234e72bf1c310741ce0905ecd1fac910f03dfc",
+    "tests/fixtures/tracker-pool-audit.mjs": "7155e88f600db726f88d34140170f9e5668896f0c8efb932b67a562e0f780c87",
+    "tests/fixtures/gemma-tracker-roleplay-scenarios.mjs": "2b686dc00299d38dde82d09032f56b5d31541efbbc8f1e55049bc4809315a126",
+    "tests/fixtures/gemma-tracker-score.mjs": "dce8e5cc2d34f557da01789de16bf260dfe6cc4c9c34871e00e430b34ec157b5",
+    "tests/fixtures/gemma-tracker-scenarios.mjs": "6e4c80644dc510106461105f54f40531404c42ca40191843dc8c8e87b85bd69e",
+    "tests/fixtures/gemma-tracker-harness.mjs": "7c7a13cb20a4cff3572bb061f10df529468476667dc819ad9c74a97e49751a4d",
+    "src/core/utils-format.js": "82c23ebfaf7376d36062faceb8469ff4eff492b4c1b8c24f8d8405b6fcc754d8",
+    "tests/fixtures/gemma-reply-parsing.mjs": "26d58cacd68da080e1ac3508a10fd234ca202a46428dd90eb504eaf9f8a6141b",
+    "tests/fixtures/gemma-xp-threshold-scenarios.mjs": "d018fafffacf839bd02e087bea1ec050ffadf3207a3063bd941838f38a474047",
+    "src/tracker/extractor/status-extractor-readings.js": "5954cb7bc899480cba9ebe8a3fa2a0d4011969fbb837cfa3b96eae037791102f",
+    "tests/fixtures/roleplay/dating-boundary-respected.json": "0792f763528654928eae794d88d756cc33146fb0641c250abb890f211e4ce8c0",
+    "tests/fixtures/roleplay/dating-coat-off.json": "a9e4799fd4b6b47afede1505be5c37187ece7dd4143860bdf33f4682db0222b0",
+    "tests/fixtures/roleplay/dating-crowded-fundraiser.json": "eba032fd1368dd1b0470e3c1838ca937422b3eebc16abebb9666d88ff6e394e8",
+    "tests/fixtures/roleplay/dating-honest-apology.json": "019c20b4a39b3c1528b9f14e38aee4a86f147eaf91a071ec1e5bc5d3336ee245",
+    "tests/fixtures/roleplay/dating-morning-alone.json": "b2859291af5bb3b37b46430d5f0490b53c0bf8cc9a979bab7834f6b6bb1a96d3",
+    "tests/fixtures/roleplay/dating-mutual-agreement.json": "98d11d971631f707e7611e1083294575394c8fc8ecde7b42c6a63b36bec2eef5",
+    "tests/fixtures/roleplay/dating-quiet-promise.json": "7604dbae139abe8877fe92af0aec89f47707e9107ab0089e82fa682177e701f3",
+    "tests/fixtures/roleplay/dating-rain-check.json": "0bbc0a57d35ef2f50713ed0ca3afa9d98be5118858ae7dd7f9829b2846fb4361",
+    "tests/fixtures/roleplay/dating-remembered-flower.json": "a0a584dd3a954e2948b9977c9dfe37fb23ad987285079cf48173b4a84b0c90ee",
+    "tests/fixtures/roleplay/dating-unwanted-kiss.json": "3e7e6e49469c9aae13f8220b7738ce3b766ebedcd67bee51106799a385214bf9",
+    "tests/fixtures/roleplay/fantasy-blocked-strike.json": "10ebae45a1b3001cf1ccef9e8a0d80f5d3450f08e999e53ecd933a5a725162b5",
+    "tests/fixtures/roleplay/fantasy-bridge-toll.json": "a90e139fa6fc657c344b5c88d138016270af4919bbf0c60dc2646347e604f434",
+    "tests/fixtures/roleplay/fantasy-companion-bandage.json": "77445dabef225d35daf3c6d06074843d7c3151ac5bc1007f7a7c4f3ab319cd95",
+    "tests/fixtures/roleplay/fantasy-courier-rescue.json": "bbc0189c14dfe505029d884c87c331937e7c1754c03d88ce7ff8f01bf7fd868a",
+    "tests/fixtures/roleplay/fantasy-failed-fire.json": "419c3180658dbfb61dee0aa434d52cfad6977898cb0621df1746c98eba732a34",
+    "tests/fixtures/roleplay/fantasy-first-cantrip.json": "7647fa7052a6b24d94df23b05e1000fd7375dfea617644233e14ceff586acc0c",
+    "tests/fixtures/roleplay/fantasy-hand-over-rope.json": "7e032a930c65c4824d0356706ddfa2b0bd4a73832fa1c8e2c71fdd4fcf82e556",
+    "tests/fixtures/roleplay/fantasy-healing-draught.json": "b123ea824ccf0151faee8e3fdde6e14dcec0153a55974ba90d68454956fb76b9",
+    "tests/fixtures/roleplay/fantasy-overnight-rest.json": "e0e81f68dde3938e6289a33a0812312be34f3c3018e3a45aae613349d44c6300",
+    "tests/fixtures/roleplay/fantasy-rumour-and-plan.json": "3453a50a95fe2f48f1bb9146329b4132b3cc3bf5ac890ee5445d7536e906a7ac",
+    "tests/fixtures/roleplay/qualitative/dating-q-accepted-boundary.json": "3fe864f45b9730518869b9229ce523bff693dcc4c3a091e410d4d95b1e892a9e",
+    "tests/fixtures/roleplay/qualitative/dating-q-candy-before-call.json": "dcc2d1ec51d98b6b261eee1a40b6540216b450af8f823cf38797ec54eea5c907",
+    "tests/fixtures/roleplay/qualitative/dating-q-closing-shift.json": "74a918f0b663025dc24f47e7407c2c16b8f48f70be616c95c7a2f25763f36a80",
+    "tests/fixtures/roleplay/qualitative/dating-q-kept-confidence.json": "b8b9dd5d574558bc869fe4a89835381d4aad1adc8e53c82ce1be99ad2eaaec9d",
+    "tests/fixtures/roleplay/qualitative/dating-q-misplaced-confidence.json": "3260e4d06853fd510018ae466a816fcf30b9fd327c9e4a57bb14c5981b23219b",
+    "tests/fixtures/roleplay/qualitative/dating-q-ordinary-pause.json": "eb8b13045a6482f2f83b30f9b17c061b161e6fd3fbda3047bf49de56d09f01af",
+    "tests/fixtures/roleplay/qualitative/dating-q-passing-joke.json": "0ffb020456f852ac97b439681cca959de602e0e490b9f4a886c7791e8754e976",
+    "tests/fixtures/roleplay/qualitative/dating-q-pressure-lifted.json": "035a57651cbe7cadc665ed37b55c3b54c822cc68116aefacbde43797f49db077",
+    "tests/fixtures/roleplay/qualitative/dating-q-quiet-company.json": "a9b358d06300f1c7f34e3fdaad876aac35f3ed621ab36f59b9ae031151f010ba",
+    "tests/fixtures/roleplay/qualitative/dating-q-unwelcome-notification.json": "45e11a512a4c12a08d8877c1b733783b02a77de8c5a4a7c2d1749c3f75570622",
+    "tests/fixtures/roleplay/qualitative/fantasy-q-brief-soaking.json": "ac18b8860c0bc5039cc13868651f7b0257bc51d7a4338fc8030204b221658095",
+    "tests/fixtures/roleplay/qualitative/fantasy-q-cleaned-cut.json": "fbd4e6b6c93aff6ef862c722f8c6087335f7545996d868a015033a8f0352417a",
+    "tests/fixtures/roleplay/qualitative/fantasy-q-falling-plaster.json": "a0d70f81956885220c35e003561aabcda970cc67c3a2b0268a03e428fc57b98d",
+    "tests/fixtures/roleplay/qualitative/fantasy-q-fever-easing.json": "1863750947271bb070def42d9137bc1c6413b1012faa2db947817bc59c2303aa",
+    "tests/fixtures/roleplay/qualitative/fantasy-q-loose-scree.json": "0e2df6fb2d194b8f87c3e14f4084d0c5ea913b812ef422508ee3db578784b7f7",
+    "tests/fixtures/roleplay/qualitative/fantasy-q-pain-easing-spell.json": "91a9e24144634b781da9eb4ea02f0d829704dfc89637074eb9c103aa2a7c9f57",
+    "tests/fixtures/roleplay/qualitative/fantasy-q-practice-impact.json": "58fee284ea98607f96155ab6923e668d943bf571b90c848f3ba21ec1b3c5eb30",
+    "tests/fixtures/roleplay/qualitative/fantasy-q-sheltered-breather.json": "a4695a03adaa8a3b8b20a20498bfb4f920489e4a99e73555743a18e4e790901d",
+    "tests/fixtures/roleplay/qualitative/fantasy-q-sustained-ward.json": "ce39c94521f5f7ffa519cc982e712483b160cb0a46fb7d53f47b4700affbf65d",
+    "tests/fixtures/roleplay/qualitative/fantasy-q-unspent-threat.json": "b23941671dd62d9e51c6bce6986ce97c3436ad92b14cd6da53ea39f347c6cc27"
+  },
+  "endpoint": "http://127.0.0.1:9931/v1",
+  "model": "/mnt/D/backup_models/gemma-4-E4B-it-qat-UD-Q4_K_XL.gguf",
+  "server": {
+    "endpoint": "http://127.0.0.1:9931/v1",
+    "model": "/mnt/D/backup_models/gemma-4-E4B-it-qat-UD-Q4_K_XL.gguf",
+    "build": "b11860-df9beac71",
+    "defaults": {
+      "params": {
+        "seed": 4294967295,
+        "temperature": 1,
+        "dynatemp_range": 0,
+        "dynatemp_exponent": 1,
+        "top_k": 64,
+        "top_p": 0.949999988079071,
+        "min_p": 0,
+        "top_n_sigma": -1,
+        "xtc_probability": 0,
+        "xtc_threshold": 0.10000000149011612,
+        "typical_p": 1,
+        "repeat_last_n": 64,
+        "repeat_penalty": 1,
+        "presence_penalty": 0,
+        "frequency_penalty": 0,
+        "dry_multiplier": 0,
+        "dry_base": 1.75,
+        "dry_allowed_length": 2,
+        "dry_penalty_last_n": 64,
+        "mirostat": 0,
+        "mirostat_tau": 5,
+        "mirostat_eta": 0.10000000149011612,
+        "adaptive_target": -1,
+        "adaptive_decay": 0.8999999761581421,
+        "max_tokens": -1,
+        "n_predict": -1,
+        "n_keep": 0,
+        "n_discard": 0,
+        "ignore_eos": false,
+        "stream": false,
+        "n_probs": 0,
+        "min_keep": 0,
+        "chat_format": "Content-only",
+        "reasoning_format": "none",
+        "reasoning_in_content": false,
+        "generation_prompt": "",
+        "samplers": [
+          "penalties",
+          "dry",
+          "top_n_sigma",
+          "top_k",
+          "typ_p",
+          "top_p",
+          "min_p",
+          "xtc",
+          "temperature"
+        ],
+        "speculative.types": "none",
+        "timings_per_token": false,
+        "post_sampling_probs": false,
+        "backend_sampling": false,
+        "lora": []
+      },
+      "n_ctx": 65536
+    },
+    "modelPath": "/mnt/D/backup_models/gemma-4-E4B-it-qat-UD-Q4_K_XL.gguf",
+    "slots": 4
+  },
+  "repeats": 10,
+  "trials": [
+    {
+      "id": "dating-q-unwelcome-notification",
+      "system": "dating",
+      "holdout": true,
+      "repeat": 0,
+      "endpoint": "http://127.0.0.1:9931/v1",
+      "elapsedMs": 19517,
+      "requestError": null,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 1371,
+        "prompt_tokens": 2410,
+        "total_tokens": 3781,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        }
+      },
+      "content": "{\n  \"locationChanged\": false,\n  \"global\": {},\n  \"player\": {},\n  \"characters\": [\n    {\n      \"name\": \"June\",\n      \"stats\": {\n        \"Mood\": \"Stressed\",\n        \"Affection\": \"18\",\n        \"Trust\": \"19\",\n        \"Comfort\": \"30\"\n      },\n      \"collections\": {\n        \"items\": {\n          \"update\": [\n            {\n              \"name\": \"phone\"\n            }\n          ]\n        }\n      }\n    }\n  ]\n}",
+      "parsed": {
+        "locationChanged": false,
+        "global": {},
+        "player": {},
+        "characters": [
+          {
+            "name": "June",
+            "stats": {
+              "Mood": "Stressed",
+              "Affection": "18",
+              "Trust": "19",
+              "Comfort": "30"
+            },
+            "collections": {
+              "items": {
+                "update": [
+                  {
+                    "name": "phone"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "strictJsonValid": true,
+      "parseRecovered": false,
+      "normalized": {
+        "update": {
+          "locationChanged": false,
+          "global": {},
+          "player": {},
+          "characters": [
+            {
+              "name": "June",
+              "stats": {
+                "Mood": "Stressed",
+                "Affection": "18",
+                "Trust": "19",
+                "Comfort": "30"
+              },
+              "collections": {
+                "items": {
+                  "update": [
+                    {
+                      "name": "phone"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "effective": {
+          "global": {
+            "Day and Time": "",
+            "Occasion": ""
+          },
+          "player": {
+            "stats": {
+              "Social Energy": "10/10"
+            },
+            "collections": {
+              "items": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "June",
+              "npcTemplateId": "character",
+              "stats": {
+                "Mood": "Stressed",
+                "Affection": "18",
+                "Trust": "19",
+                "Comfort": "30",
+                "Relationship": "Friends"
+              },
+              "collections": {
+                "items": [
+                  {
+                    "name": "phone",
+                    "quantity": 1,
+                    "description": ""
+                  }
+                ]
+              }
+            }
+          ],
+          "locations": {
+            "enabled": true,
+            "currentId": "home",
+            "records": {
+              "home": {
+                "id": "home",
+                "name": "Station café",
+                "description": "",
+                "aliases": [],
+                "parentId": ""
+              }
+            }
+          },
+          "timestamp": 1793024021146
+        },
+        "progression": null,
+        "holdings": {
+          "player": {
+            "stats": {
+              "Social Energy": "10/10"
+            },
+            "collections": {
+              "items": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "June",
+              "npcTemplateId": "character",
+              "stats": {
+                "Mood": "Neutral",
+                "Affection": "15",
+                "Trust": "18",
+                "Comfort": "28",
+                "Relationship": "Friends"
+              },
+              "collections": {
+                "items": [
+                  {
+                    "name": "phone",
+                    "quantity": 1,
+                    "description": ""
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "warnings": [],
+        "places": []
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "validJsonAndNotTruncated",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "preservedPoolMaxima",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "sameHoldings ",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "noXp ",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "locationFlag no",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "npcPresent June",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "relationshipUnchanged June",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "npcChangeBetween June Comfort -1 5",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "npcUnchanged June Trust",
+          "critical": true,
+          "passed": false
+        },
+        {
+          "name": "npcStatMatches June Mood anx|tense|unsett|worri|uneas|alarm|stress|strain",
+          "critical": true,
+          "passed": true
+        }
+      ],
+      "audit": {
+        "placeholderInventory": false,
+        "openingInventedInventory": false,
+        "xpProgression": null
+      }
+    },
+    {
+      "id": "dating-q-unwelcome-notification",
+      "system": "dating",
+      "holdout": true,
+      "repeat": 1,
+      "endpoint": "http://127.0.0.1:8080/v1",
+      "elapsedMs": 15750,
+      "requestError": null,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 1057,
+        "prompt_tokens": 2410,
+        "total_tokens": 3467,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        }
+      },
+      "content": "{\n  \"locationChanged\": false,\n  \"global\": {},\n  \"player\": {},\n  \"characters\": [\n    {\n      \"name\": \"June\",\n      \"stats\": {\n        \"Mood\": \"Anxious\",\n        \"Affection\": \"15\",\n        \"Trust\": \"18\",\n        \"Comfort\": \"30\",\n        \"Relationship\": \"Friends\"\n      },\n      \"collections\": {\n        \"items\": {\n          \"update\": [\n            {\n              \"name\": \"phone\"\n            }\n          ]\n        }\n      }\n    }\n  ]\n}",
+      "parsed": {
+        "locationChanged": false,
+        "global": {},
+        "player": {},
+        "characters": [
+          {
+            "name": "June",
+            "stats": {
+              "Mood": "Anxious",
+              "Affection": "15",
+              "Trust": "18",
+              "Comfort": "30",
+              "Relationship": "Friends"
+            },
+            "collections": {
+              "items": {
+                "update": [
+                  {
+                    "name": "phone"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "strictJsonValid": true,
+      "parseRecovered": false,
+      "normalized": {
+        "update": {
+          "locationChanged": false,
+          "global": {},
+          "player": {},
+          "characters": [
+            {
+              "name": "June",
+              "stats": {
+                "Mood": "Anxious",
+                "Comfort": "30"
+              },
+              "collections": {
+                "items": {
+                  "update": [
+                    {
+                      "name": "phone"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "effective": {
+          "global": {
+            "Day and Time": "",
+            "Occasion": ""
+          },
+          "player": {
+            "stats": {
+              "Social Energy": "10/10"
+            },
+            "collections": {
+              "items": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "June",
+              "npcTemplateId": "character",
+              "stats": {
+                "Mood": "Anxious",
+                "Affection": "15",
+                "Trust": "18",
+                "Comfort": "30",
+                "Relationship": "Friends"
+              },
+              "collections": {
+                "items": [
+                  {
+                    "name": "phone",
+                    "quantity": 1,
+                    "description": ""
+                  }
+                ]
+              }
+            }
+          ],
+          "locations": {
+            "enabled": true,
+            "currentId": "home",
+            "records": {
+              "home": {
+                "id": "home",
+                "name": "Station café",
+                "description": "",
+                "aliases": [],
+                "parentId": ""
+              }
+            }
+          },
+          "timestamp": 1793024021157
+        },
+        "progression": null,
+        "holdings": {
+          "player": {
+            "stats": {
+              "Social Energy": "10/10"
+            },
+            "collections": {
+              "items": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "June",
+              "npcTemplateId": "character",
+              "stats": {
+                "Mood": "Neutral",
+                "Affection": "15",
+                "Trust": "18",
+                "Comfort": "28",
+                "Relationship": "Friends"
+              },
+              "collections": {
+                "items": [
+                  {
+                    "name": "phone",
+                    "quantity": 1,
+                    "description": ""
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "warnings": [],
+        "places": []
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "validJsonAndNotTruncated",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "preservedPoolMaxima",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "sameHoldings ",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "noXp ",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "locationFlag no",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "npcPresent June",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "relationshipUnchanged June",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "npcChangeBetween June Comfort -1 5",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "npcUnchanged June Trust",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "npcStatMatches June Mood anx|tense|unsett|worri|uneas|alarm|stress|strain",
+          "critical": true,
+          "passed": true
+        }
+      ],
+      "audit": {
+        "placeholderInventory": false,
+        "openingInventedInventory": false,
+        "xpProgression": null
+      }
+    },
+    {
+      "id": "dating-q-unwelcome-notification",
+      "system": "dating",
+      "holdout": true,
+      "repeat": 2,
+      "endpoint": "http://127.0.0.1:9931/v1",
+      "elapsedMs": 12924,
+      "requestError": null,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 766,
+        "prompt_tokens": 2410,
+        "total_tokens": 3176,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        }
+      },
+      "content": "{\n  \"locationChanged\": false,\n  \"global\": {},\n  \"player\": {},\n  \"characters\": [\n    {\n      \"name\": \"June\",\n      \"stats\": {\n        \"Mood\": \"Anxious\"\n      }\n    }\n  ]\n}",
+      "parsed": {
+        "locationChanged": false,
+        "global": {},
+        "player": {},
+        "characters": [
+          {
+            "name": "June",
+            "stats": {
+              "Mood": "Anxious"
+            }
+          }
+        ]
+      },
+      "strictJsonValid": true,
+      "parseRecovered": false,
+      "normalized": {
+        "update": {
+          "locationChanged": false,
+          "global": {},
+          "player": {},
+          "characters": [
+            {
+              "name": "June",
+              "stats": {
+                "Mood": "Anxious"
+              }
+            }
+          ]
+        },
+        "effective": {
+          "global": {
+            "Day and Time": "",
+            "Occasion": ""
+          },
+          "player": {
+            "stats": {
+              "Social Energy": "10/10"
+            },
+            "collections": {
+              "items": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "June",
+              "npcTemplateId": "character",
+              "stats": {
+                "Mood": "Anxious",
+                "Affection": "15",
+                "Trust": "18",
+                "Comfort": "28",
+                "Relationship": "Friends"
+              },
+              "collections": {
+                "items": [
+                  {
+                    "name": "phone",
+                    "quantity": 1
+                  }
+                ]
+              }
+            }
+          ],
+          "locations": {
+            "enabled": true,
+            "currentId": "home",
+            "records": {
+              "home": {
+                "id": "home",
+                "name": "Station café",
+                "description": "",
+                "aliases": [],
+                "parentId": ""
+              }
+            }
+          },
+          "timestamp": 1793024021161
+        },
+        "progression": null,
+        "holdings": {
+          "player": {
+            "stats": {
+              "Social Energy": "10/10"
+            },
+            "collections": {
+              "items": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "June",
+              "npcTemplateId": "character",
+              "stats": {
+                "Mood": "Neutral",
+                "Affection": "15",
+                "Trust": "18",
+                "Comfort": "28",
+                "Relationship": "Friends"
+              },
+              "collections": {
+                "items": [
+                  {
+                    "name": "phone",
+                    "quantity": 1
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "warnings": [],
+        "places": []
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "validJsonAndNotTruncated",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "preservedPoolMaxima",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "sameHoldings ",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "noXp ",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "locationFlag no",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "npcPresent June",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "relationshipUnchanged June",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "npcChangeBetween June Comfort -1 5",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "npcUnchanged June Trust",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "npcStatMatches June Mood anx|tense|unsett|worri|uneas|alarm|stress|strain",
+          "critical": true,
+          "passed": true
+        }
+      ],
+      "audit": {
+        "placeholderInventory": false,
+        "openingInventedInventory": false,
+        "xpProgression": null
+      }
+    },
+    {
+      "id": "dating-q-unwelcome-notification",
+      "system": "dating",
+      "holdout": true,
+      "repeat": 3,
+      "endpoint": "http://127.0.0.1:8080/v1",
+      "elapsedMs": 16561,
+      "requestError": null,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 1135,
+        "prompt_tokens": 2410,
+        "total_tokens": 3545,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        }
+      },
+      "content": "{\n  \"locationChanged\": false,\n  \"global\": {},\n  \"player\": {},\n  \"characters\": [\n    {\n      \"name\": \"June\",\n      \"stats\": {\n        \"Mood\": \"Stressed\",\n        \"Affection\": \"15\",\n        \"Trust\": \"18\",\n        \"Comfort\": \"26\",\n        \"Relationship\": \"Friends\"\n      },\n      \"collections\": {\n        \"items\": {}\n      }\n    }\n  ]\n}",
+      "parsed": {
+        "locationChanged": false,
+        "global": {},
+        "player": {},
+        "characters": [
+          {
+            "name": "June",
+            "stats": {
+              "Mood": "Stressed",
+              "Affection": "15",
+              "Trust": "18",
+              "Comfort": "26",
+              "Relationship": "Friends"
+            },
+            "collections": {
+              "items": {}
+            }
+          }
+        ]
+      },
+      "strictJsonValid": true,
+      "parseRecovered": false,
+      "normalized": {
+        "update": {
+          "locationChanged": false,
+          "global": {},
+          "player": {},
+          "characters": [
+            {
+              "name": "June",
+              "stats": {
+                "Mood": "Stressed",
+                "Comfort": "26"
+              },
+              "collections": {
+                "items": {}
+              }
+            }
+          ]
+        },
+        "effective": {
+          "global": {
+            "Day and Time": "",
+            "Occasion": ""
+          },
+          "player": {
+            "stats": {
+              "Social Energy": "10/10"
+            },
+            "collections": {
+              "items": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "June",
+              "npcTemplateId": "character",
+              "stats": {
+                "Mood": "Stressed",
+                "Affection": "15",
+                "Trust": "18",
+                "Comfort": "26",
+                "Relationship": "Friends"
+              },
+              "collections": {
+                "items": [
+                  {
+                    "name": "phone",
+                    "quantity": 1
+                  }
+                ]
+              }
+            }
+          ],
+          "locations": {
+            "enabled": true,
+            "currentId": "home",
+            "records": {
+              "home": {
+                "id": "home",
+                "name": "Station café",
+                "description": "",
+                "aliases": [],
+                "parentId": ""
+              }
+            }
+          },
+          "timestamp": 1793024021164
+        },
+        "progression": null,
+        "holdings": {
+          "player": {
+            "stats": {
+              "Social Energy": "10/10"
+            },
+            "collections": {
+              "items": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "June",
+              "npcTemplateId": "character",
+              "stats": {
+                "Mood": "Neutral",
+                "Affection": "15",
+                "Trust": "18",
+                "Comfort": "28",
+                "Relationship": "Friends"
+              },
+              "collections": {
+                "items": [
+                  {
+                    "name": "phone",
+                    "quantity": 1
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "warnings": [],
+        "places": []
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "validJsonAndNotTruncated",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "preservedPoolMaxima",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "sameHoldings ",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "noXp ",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "locationFlag no",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "npcPresent June",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "relationshipUnchanged June",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "npcChangeBetween June Comfort -1 5",
+          "critical": true,
+          "passed": false
+        },
+        {
+          "name": "npcUnchanged June Trust",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "npcStatMatches June Mood anx|tense|unsett|worri|uneas|alarm|stress|strain",
+          "critical": true,
+          "passed": true
+        }
+      ],
+      "audit": {
+        "placeholderInventory": false,
+        "openingInventedInventory": false,
+        "xpProgression": null
+      }
+    },
+    {
+      "id": "dating-q-unwelcome-notification",
+      "system": "dating",
+      "holdout": true,
+      "repeat": 4,
+      "endpoint": "http://127.0.0.1:9931/v1",
+      "elapsedMs": 15401,
+      "requestError": null,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 972,
+        "prompt_tokens": 2410,
+        "total_tokens": 3382,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        }
+      },
+      "content": "{\n  \"locationChanged\": false,\n  \"global\": {},\n  \"player\": {},\n  \"characters\": [\n    {\n      \"name\": \"June\",\n      \"stats\": {\n        \"Mood\": \"Tense\",\n        \"Affection\": \"15\",\n        \"Trust\": \"18\",\n        \"Comfort\": \"26\",\n        \"Relationship\": \"Friends\"\n      },\n      \"collections\": {\n        \"items\": {\n          \"update\": [\n            {\n              \"name\": \"phone\"\n            }\n          ]\n        }\n      }\n    }\n  ]\n}",
+      "parsed": {
+        "locationChanged": false,
+        "global": {},
+        "player": {},
+        "characters": [
+          {
+            "name": "June",
+            "stats": {
+              "Mood": "Tense",
+              "Affection": "15",
+              "Trust": "18",
+              "Comfort": "26",
+              "Relationship": "Friends"
+            },
+            "collections": {
+              "items": {
+                "update": [
+                  {
+                    "name": "phone"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "strictJsonValid": true,
+      "parseRecovered": false,
+      "normalized": {
+        "update": {
+          "locationChanged": false,
+          "global": {},
+          "player": {},
+          "characters": [
+            {
+              "name": "June",
+              "stats": {
+                "Mood": "Tense",
+                "Comfort": "26"
+              },
+              "collections": {
+                "items": {
+                  "update": [
+                    {
+                      "name": "phone"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "effective": {
+          "global": {
+            "Day and Time": "",
+            "Occasion": ""
+          },
+          "player": {
+            "stats": {
+              "Social Energy": "10/10"
+            },
+            "collections": {
+              "items": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "June",
+              "npcTemplateId": "character",
+              "stats": {
+                "Mood": "Tense",
+                "Affection": "15",
+                "Trust": "18",
+                "Comfort": "26",
+                "Relationship": "Friends"
+              },
+              "collections": {
+                "items": [
+                  {
+                    "name": "phone",
+                    "quantity": 1,
+                    "description": ""
+                  }
+                ]
+              }
+            }
+          ],
+          "locations": {
+            "enabled": true,
+            "currentId": "home",
+            "records": {
+              "home": {
+                "id": "home",
+                "name": "Station café",
+                "description": "",
+                "aliases": [],
+                "parentId": ""
+              }
+            }
+          },
+          "timestamp": 1793024021168
+        },
+        "progression": null,
+        "holdings": {
+          "player": {
+            "stats": {
+              "Social Energy": "10/10"
+            },
+            "collections": {
+              "items": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "June",
+              "npcTemplateId": "character",
+              "stats": {
+                "Mood": "Neutral",
+                "Affection": "15",
+                "Trust": "18",
+                "Comfort": "28",
+                "Relationship": "Friends"
+              },
+              "collections": {
+                "items": [
+                  {
+                    "name": "phone",
+                    "quantity": 1,
+                    "description": ""
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "warnings": [],
+        "places": []
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "validJsonAndNotTruncated",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "preservedPoolMaxima",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "sameHoldings ",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "noXp ",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "locationFlag no",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "npcPresent June",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "relationshipUnchanged June",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "npcChangeBetween June Comfort -1 5",
+          "critical": true,
+          "passed": false
+        },
+        {
+          "name": "npcUnchanged June Trust",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "npcStatMatches June Mood anx|tense|unsett|worri|uneas|alarm|stress|strain",
+          "critical": true,
+          "passed": true
+        }
+      ],
+      "audit": {
+        "placeholderInventory": false,
+        "openingInventedInventory": false,
+        "xpProgression": null
+      }
+    },
+    {
+      "id": "dating-q-unwelcome-notification",
+      "system": "dating",
+      "holdout": true,
+      "repeat": 5,
+      "endpoint": "http://127.0.0.1:8080/v1",
+      "elapsedMs": 16249,
+      "requestError": null,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 1106,
+        "prompt_tokens": 2410,
+        "total_tokens": 3516,
+        "prompt_tokens_details": {
+          "cached_tokens": 84
+        }
+      },
+      "content": "{\n  \"locationChanged\": false,\n  \"global\": {},\n  \"player\": {},\n  \"characters\": [\n    {\n      \"name\": \"June\",\n      \"stats\": {\n        \"Mood\": \"Disturbed\",\n        \"Affection\": \"12\",\n        \"Trust\": \"16\",\n        \"Comfort\": \"20\",\n        \"Relationship\": \"Friends\"\n      },\n      \"collections\": {\n        \"items\": {}\n      }\n    }\n  ]\n}",
+      "parsed": {
+        "locationChanged": false,
+        "global": {},
+        "player": {},
+        "characters": [
+          {
+            "name": "June",
+            "stats": {
+              "Mood": "Disturbed",
+              "Affection": "12",
+              "Trust": "16",
+              "Comfort": "20",
+              "Relationship": "Friends"
+            },
+            "collections": {
+              "items": {}
+            }
+          }
+        ]
+      },
+      "strictJsonValid": true,
+      "parseRecovered": false,
+      "normalized": {
+        "update": {
+          "locationChanged": false,
+          "global": {},
+          "player": {},
+          "characters": [
+            {
+              "name": "June",
+              "stats": {
+                "Mood": "Disturbed",
+                "Affection": "12",
+                "Trust": "16",
+                "Comfort": "20"
+              },
+              "collections": {
+                "items": {}
+              }
+            }
+          ]
+        },
+        "effective": {
+          "global": {
+            "Day and Time": "",
+            "Occasion": ""
+          },
+          "player": {
+            "stats": {
+              "Social Energy": "10/10"
+            },
+            "collections": {
+              "items": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "June",
+              "npcTemplateId": "character",
+              "stats": {
+                "Mood": "Disturbed",
+                "Affection": "12",
+                "Trust": "16",
+                "Comfort": "20",
+                "Relationship": "Friends"
+              },
+              "collections": {
+                "items": [
+                  {
+                    "name": "phone",
+                    "quantity": 1
+                  }
+                ]
+              }
+            }
+          ],
+          "locations": {
+            "enabled": true,
+            "currentId": "home",
+            "records": {
+              "home": {
+                "id": "home",
+                "name": "Station café",
+                "description": "",
+                "aliases": [],
+                "parentId": ""
+              }
+            }
+          },
+          "timestamp": 1793024021172
+        },
+        "progression": null,
+        "holdings": {
+          "player": {
+            "stats": {
+              "Social Energy": "10/10"
+            },
+            "collections": {
+              "items": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "June",
+              "npcTemplateId": "character",
+              "stats": {
+                "Mood": "Neutral",
+                "Affection": "15",
+                "Trust": "18",
+                "Comfort": "28",
+                "Relationship": "Friends"
+              },
+              "collections": {
+                "items": [
+                  {
+                    "name": "phone",
+                    "quantity": 1
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "warnings": [],
+        "places": []
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "validJsonAndNotTruncated",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "preservedPoolMaxima",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "sameHoldings ",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "noXp ",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "locationFlag no",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "npcPresent June",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "relationshipUnchanged June",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "npcChangeBetween June Comfort -1 5",
+          "critical": true,
+          "passed": false
+        },
+        {
+          "name": "npcUnchanged June Trust",
+          "critical": true,
+          "passed": false
+        },
+        {
+          "name": "npcStatMatches June Mood anx|tense|unsett|worri|uneas|alarm|stress|strain",
+          "critical": true,
+          "passed": false
+        }
+      ],
+      "audit": {
+        "placeholderInventory": false,
+        "openingInventedInventory": false,
+        "xpProgression": null
+      }
+    },
+    {
+      "id": "dating-q-unwelcome-notification",
+      "system": "dating",
+      "holdout": true,
+      "repeat": 6,
+      "endpoint": "http://127.0.0.1:9931/v1",
+      "elapsedMs": 14759,
+      "requestError": null,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 920,
+        "prompt_tokens": 2410,
+        "total_tokens": 3330,
+        "prompt_tokens_details": {
+          "cached_tokens": 84
+        }
+      },
+      "content": "{\n  \"locationChanged\": false,\n  \"global\": {},\n  \"player\": {},\n  \"characters\": [\n    {\n      \"name\": \"June\",\n      \"stats\": {\n        \"Mood\": \"Stressed\",\n        \"Affection\": \"15\",\n        \"Trust\": \"18\",\n        \"Comfort\": \"25\",\n        \"Relationship\": \"Friends\"\n      }\n    }\n  ]\n}",
+      "parsed": {
+        "locationChanged": false,
+        "global": {},
+        "player": {},
+        "characters": [
+          {
+            "name": "June",
+            "stats": {
+              "Mood": "Stressed",
+              "Affection": "15",
+              "Trust": "18",
+              "Comfort": "25",
+              "Relationship": "Friends"
+            }
+          }
+        ]
+      },
+      "strictJsonValid": true,
+      "parseRecovered": false,
+      "normalized": {
+        "update": {
+          "locationChanged": false,
+          "global": {},
+          "player": {},
+          "characters": [
+            {
+              "name": "June",
+              "stats": {
+                "Mood": "Stressed",
+                "Comfort": "25"
+              }
+            }
+          ]
+        },
+        "effective": {
+          "global": {
+            "Day and Time": "",
+            "Occasion": ""
+          },
+          "player": {
+            "stats": {
+              "Social Energy": "10/10"
+            },
+            "collections": {
+              "items": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "June",
+              "npcTemplateId": "character",
+              "stats": {
+                "Mood": "Stressed",
+                "Affection": "15",
+                "Trust": "18",
+                "Comfort": "25",
+                "Relationship": "Friends"
+              },
+              "collections": {
+                "items": [
+                  {
+                    "name": "phone",
+                    "quantity": 1
+                  }
+                ]
+              }
+            }
+          ],
+          "locations": {
+            "enabled": true,
+            "currentId": "home",
+            "records": {
+              "home": {
+                "id": "home",
+                "name": "Station café",
+                "description": "",
+                "aliases": [],
+                "parentId": ""
+              }
+            }
+          },
+          "timestamp": 1793024021175
+        },
+        "progression": null,
+        "holdings": {
+          "player": {
+            "stats": {
+              "Social Energy": "10/10"
+            },
+            "collections": {
+              "items": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "June",
+              "npcTemplateId": "character",
+              "stats": {
+                "Mood": "Neutral",
+                "Affection": "15",
+                "Trust": "18",
+                "Comfort": "28",
+                "Relationship": "Friends"
+              },
+              "collections": {
+                "items": [
+                  {
+                    "name": "phone",
+                    "quantity": 1
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "warnings": [],
+        "places": []
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "validJsonAndNotTruncated",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "preservedPoolMaxima",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "sameHoldings ",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "noXp ",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "locationFlag no",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "npcPresent June",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "relationshipUnchanged June",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "npcChangeBetween June Comfort -1 5",
+          "critical": true,
+          "passed": false
+        },
+        {
+          "name": "npcUnchanged June Trust",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "npcStatMatches June Mood anx|tense|unsett|worri|uneas|alarm|stress|strain",
+          "critical": true,
+          "passed": true
+        }
+      ],
+      "audit": {
+        "placeholderInventory": false,
+        "openingInventedInventory": false,
+        "xpProgression": null
+      }
+    },
+    {
+      "id": "dating-q-unwelcome-notification",
+      "system": "dating",
+      "holdout": true,
+      "repeat": 7,
+      "endpoint": "http://127.0.0.1:8080/v1",
+      "elapsedMs": 13155,
+      "requestError": null,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 837,
+        "prompt_tokens": 2410,
+        "total_tokens": 3247,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        }
+      },
+      "content": "{\n  \"locationChanged\": false,\n  \"global\": {},\n  \"player\": {},\n  \"characters\": [\n    {\n      \"name\": \"June\",\n      \"stats\": {\n        \"Mood\": \"Stressed\",\n        \"Affection\": \"15\",\n        \"Trust\": \"18\",\n        \"Comfort\": \"20\",\n        \"Relationship\": \"Friends\"\n      }\n    }\n  ]\n}",
+      "parsed": {
+        "locationChanged": false,
+        "global": {},
+        "player": {},
+        "characters": [
+          {
+            "name": "June",
+            "stats": {
+              "Mood": "Stressed",
+              "Affection": "15",
+              "Trust": "18",
+              "Comfort": "20",
+              "Relationship": "Friends"
+            }
+          }
+        ]
+      },
+      "strictJsonValid": true,
+      "parseRecovered": false,
+      "normalized": {
+        "update": {
+          "locationChanged": false,
+          "global": {},
+          "player": {},
+          "characters": [
+            {
+              "name": "June",
+              "stats": {
+                "Mood": "Stressed",
+                "Comfort": "20"
+              }
+            }
+          ]
+        },
+        "effective": {
+          "global": {
+            "Day and Time": "",
+            "Occasion": ""
+          },
+          "player": {
+            "stats": {
+              "Social Energy": "10/10"
+            },
+            "collections": {
+              "items": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "June",
+              "npcTemplateId": "character",
+              "stats": {
+                "Mood": "Stressed",
+                "Affection": "15",
+                "Trust": "18",
+                "Comfort": "20",
+                "Relationship": "Friends"
+              },
+              "collections": {
+                "items": [
+                  {
+                    "name": "phone",
+                    "quantity": 1
+                  }
+                ]
+              }
+            }
+          ],
+          "locations": {
+            "enabled": true,
+            "currentId": "home",
+            "records": {
+              "home": {
+                "id": "home",
+                "name": "Station café",
+                "description": "",
+                "aliases": [],
+                "parentId": ""
+              }
+            }
+          },
+          "timestamp": 1793024021178
+        },
+        "progression": null,
+        "holdings": {
+          "player": {
+            "stats": {
+              "Social Energy": "10/10"
+            },
+            "collections": {
+              "items": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "June",
+              "npcTemplateId": "character",
+              "stats": {
+                "Mood": "Neutral",
+                "Affection": "15",
+                "Trust": "18",
+                "Comfort": "28",
+                "Relationship": "Friends"
+              },
+              "collections": {
+                "items": [
+                  {
+                    "name": "phone",
+                    "quantity": 1
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "warnings": [],
+        "places": []
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "validJsonAndNotTruncated",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "preservedPoolMaxima",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "sameHoldings ",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "noXp ",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "locationFlag no",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "npcPresent June",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "relationshipUnchanged June",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "npcChangeBetween June Comfort -1 5",
+          "critical": true,
+          "passed": false
+        },
+        {
+          "name": "npcUnchanged June Trust",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "npcStatMatches June Mood anx|tense|unsett|worri|uneas|alarm|stress|strain",
+          "critical": true,
+          "passed": true
+        }
+      ],
+      "audit": {
+        "placeholderInventory": false,
+        "openingInventedInventory": false,
+        "xpProgression": null
+      }
+    },
+    {
+      "id": "dating-q-unwelcome-notification",
+      "system": "dating",
+      "holdout": true,
+      "repeat": 8,
+      "endpoint": "http://127.0.0.1:9931/v1",
+      "elapsedMs": 9460,
+      "requestError": null,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 937,
+        "prompt_tokens": 2410,
+        "total_tokens": 3347,
+        "prompt_tokens_details": {
+          "cached_tokens": 2405
+        }
+      },
+      "content": "{\n  \"locationChanged\": false,\n  \"global\": {},\n  \"player\": {},\n  \"characters\": [\n    {\n      \"name\": \"June\",\n      \"stats\": {\n        \"Mood\": \"Stressed/Distracted\",\n        \"Affection\": \"15\",\n        \"Trust\": \"18\",\n        \"Comfort\": \"28\",\n        \"Relationship\": \"Friends\"\n      }\n    }\n  ]\n}",
+      "parsed": {
+        "locationChanged": false,
+        "global": {},
+        "player": {},
+        "characters": [
+          {
+            "name": "June",
+            "stats": {
+              "Mood": "Stressed/Distracted",
+              "Affection": "15",
+              "Trust": "18",
+              "Comfort": "28",
+              "Relationship": "Friends"
+            }
+          }
+        ]
+      },
+      "strictJsonValid": true,
+      "parseRecovered": false,
+      "normalized": {
+        "update": {
+          "locationChanged": false,
+          "global": {},
+          "player": {},
+          "characters": [
+            {
+              "name": "June",
+              "stats": {
+                "Mood": "Stressed/Distracted"
+              }
+            }
+          ]
+        },
+        "effective": {
+          "global": {
+            "Day and Time": "",
+            "Occasion": ""
+          },
+          "player": {
+            "stats": {
+              "Social Energy": "10/10"
+            },
+            "collections": {
+              "items": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "June",
+              "npcTemplateId": "character",
+              "stats": {
+                "Mood": "Stressed/Distracted",
+                "Affection": "15",
+                "Trust": "18",
+                "Comfort": "28",
+                "Relationship": "Friends"
+              },
+              "collections": {
+                "items": [
+                  {
+                    "name": "phone",
+                    "quantity": 1
+                  }
+                ]
+              }
+            }
+          ],
+          "locations": {
+            "enabled": true,
+            "currentId": "home",
+            "records": {
+              "home": {
+                "id": "home",
+                "name": "Station café",
+                "description": "",
+                "aliases": [],
+                "parentId": ""
+              }
+            }
+          },
+          "timestamp": 1793024034494
+        },
+        "progression": null,
+        "holdings": {
+          "player": {
+            "stats": {
+              "Social Energy": "10/10"
+            },
+            "collections": {
+              "items": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "June",
+              "npcTemplateId": "character",
+              "stats": {
+                "Mood": "Neutral",
+                "Affection": "15",
+                "Trust": "18",
+                "Comfort": "28",
+                "Relationship": "Friends"
+              },
+              "collections": {
+                "items": [
+                  {
+                    "name": "phone",
+                    "quantity": 1
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "warnings": [],
+        "places": []
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "validJsonAndNotTruncated",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "preservedPoolMaxima",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "sameHoldings ",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "noXp ",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "locationFlag no",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "npcPresent June",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "relationshipUnchanged June",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "npcChangeBetween June Comfort -1 5",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "npcUnchanged June Trust",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "npcStatMatches June Mood anx|tense|unsett|worri|uneas|alarm|stress|strain",
+          "critical": true,
+          "passed": true
+        }
+      ],
+      "audit": {
+        "placeholderInventory": false,
+        "openingInventedInventory": false,
+        "xpProgression": null
+      }
+    },
+    {
+      "id": "dating-q-unwelcome-notification",
+      "system": "dating",
+      "holdout": true,
+      "repeat": 9,
+      "endpoint": "http://127.0.0.1:8080/v1",
+      "elapsedMs": 13311,
+      "requestError": null,
+      "finishReason": "stop",
+      "usage": {
+        "completion_tokens": 1373,
+        "prompt_tokens": 2410,
+        "total_tokens": 3783,
+        "prompt_tokens_details": {
+          "cached_tokens": 2405
+        }
+      },
+      "content": "{\n  \"locationChanged\": false,\n  \"global\": {},\n  \"player\": {},\n  \"characters\": [\n    {\n      \"name\": \"June\",\n      \"stats\": {\n        \"Mood\": \"Anxious\"\n      }\n    }\n  ]\n}",
+      "parsed": {
+        "locationChanged": false,
+        "global": {},
+        "player": {},
+        "characters": [
+          {
+            "name": "June",
+            "stats": {
+              "Mood": "Anxious"
+            }
+          }
+        ]
+      },
+      "strictJsonValid": true,
+      "parseRecovered": false,
+      "normalized": {
+        "update": {
+          "locationChanged": false,
+          "global": {},
+          "player": {},
+          "characters": [
+            {
+              "name": "June",
+              "stats": {
+                "Mood": "Anxious"
+              }
+            }
+          ]
+        },
+        "effective": {
+          "global": {
+            "Day and Time": "",
+            "Occasion": ""
+          },
+          "player": {
+            "stats": {
+              "Social Energy": "10/10"
+            },
+            "collections": {
+              "items": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "June",
+              "npcTemplateId": "character",
+              "stats": {
+                "Mood": "Anxious",
+                "Affection": "15",
+                "Trust": "18",
+                "Comfort": "28",
+                "Relationship": "Friends"
+              },
+              "collections": {
+                "items": [
+                  {
+                    "name": "phone",
+                    "quantity": 1
+                  }
+                ]
+              }
+            }
+          ],
+          "locations": {
+            "enabled": true,
+            "currentId": "home",
+            "records": {
+              "home": {
+                "id": "home",
+                "name": "Station café",
+                "description": "",
+                "aliases": [],
+                "parentId": ""
+              }
+            }
+          },
+          "timestamp": 1793024034498
+        },
+        "progression": null,
+        "holdings": {
+          "player": {
+            "stats": {
+              "Social Energy": "10/10"
+            },
+            "collections": {
+              "items": [],
+              "clothing": []
+            },
+            "name": "Alex"
+          },
+          "characters": [
+            {
+              "name": "June",
+              "npcTemplateId": "character",
+              "stats": {
+                "Mood": "Neutral",
+                "Affection": "15",
+                "Trust": "18",
+                "Comfort": "28",
+                "Relationship": "Friends"
+              },
+              "collections": {
+                "items": [
+                  {
+                    "name": "phone",
+                    "quantity": 1
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "warnings": [],
+        "places": []
+      },
+      "error": null,
+      "checks": [
+        {
+          "name": "validJsonAndNotTruncated",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "preservedPoolMaxima",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "sameHoldings ",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "noXp ",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "locationFlag no",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "npcPresent June",
+          "critical": false,
+          "passed": true
+        },
+        {
+          "name": "relationshipUnchanged June",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "npcChangeBetween June Comfort -1 5",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "npcUnchanged June Trust",
+          "critical": true,
+          "passed": true
+        },
+        {
+          "name": "npcStatMatches June Mood anx|tense|unsett|worri|uneas|alarm|stress|strain",
+          "critical": true,
+          "passed": true
+        }
+      ],
+      "audit": {
+        "placeholderInventory": false,
+        "openingInventedInventory": false,
+        "xpProgression": null
+      }
+    }
+  ],
+  "servers": [
+    {
+      "endpoint": "http://127.0.0.1:9931/v1",
+      "model": "/mnt/D/backup_models/gemma-4-E4B-it-qat-UD-Q4_K_XL.gguf",
+      "build": "b11860-df9beac71",
+      "defaults": {
+        "params": {
+          "seed": 4294967295,
+          "temperature": 1,
+          "dynatemp_range": 0,
+          "dynatemp_exponent": 1,
+          "top_k": 64,
+          "top_p": 0.949999988079071,
+          "min_p": 0,
+          "top_n_sigma": -1,
+          "xtc_probability": 0,
+          "xtc_threshold": 0.10000000149011612,
+          "typical_p": 1,
+          "repeat_last_n": 64,
+          "repeat_penalty": 1,
+          "presence_penalty": 0,
+          "frequency_penalty": 0,
+          "dry_multiplier": 0,
+          "dry_base": 1.75,
+          "dry_allowed_length": 2,
+          "dry_penalty_last_n": 64,
+          "mirostat": 0,
+          "mirostat_tau": 5,
+          "mirostat_eta": 0.10000000149011612,
+          "adaptive_target": -1,
+          "adaptive_decay": 0.8999999761581421,
+          "max_tokens": -1,
+          "n_predict": -1,
+          "n_keep": 0,
+          "n_discard": 0,
+          "ignore_eos": false,
+          "stream": false,
+          "n_probs": 0,
+          "min_keep": 0,
+          "chat_format": "Content-only",
+          "reasoning_format": "none",
+          "reasoning_in_content": false,
+          "generation_prompt": "",
+          "samplers": [
+            "penalties",
+            "dry",
+            "top_n_sigma",
+            "top_k",
+            "typ_p",
+            "top_p",
+            "min_p",
+            "xtc",
+            "temperature"
+          ],
+          "speculative.types": "none",
+          "timings_per_token": false,
+          "post_sampling_probs": false,
+          "backend_sampling": false,
+          "lora": []
+        },
+        "n_ctx": 65536
+      },
+      "modelPath": "/mnt/D/backup_models/gemma-4-E4B-it-qat-UD-Q4_K_XL.gguf",
+      "slots": 4
+    },
+    {
+      "endpoint": "http://127.0.0.1:8080/v1",
+      "model": "/mnt/D/backup_models/gemma-4-E4B-it-qat-UD-Q4_K_XL.gguf",
+      "build": "b11860-df9beac71",
+      "defaults": {
+        "params": {
+          "seed": 4294967295,
+          "temperature": 1,
+          "dynatemp_range": 0,
+          "dynatemp_exponent": 1,
+          "top_k": 64,
+          "top_p": 0.949999988079071,
+          "min_p": 0,
+          "top_n_sigma": -1,
+          "xtc_probability": 0,
+          "xtc_threshold": 0.10000000149011612,
+          "typical_p": 1,
+          "repeat_last_n": 64,
+          "repeat_penalty": 1,
+          "presence_penalty": 0,
+          "frequency_penalty": 0,
+          "dry_multiplier": 0,
+          "dry_base": 1.75,
+          "dry_allowed_length": 2,
+          "dry_penalty_last_n": 64,
+          "mirostat": 0,
+          "mirostat_tau": 5,
+          "mirostat_eta": 0.10000000149011612,
+          "adaptive_target": -1,
+          "adaptive_decay": 0.8999999761581421,
+          "max_tokens": -1,
+          "n_predict": -1,
+          "n_keep": 0,
+          "n_discard": 0,
+          "ignore_eos": false,
+          "stream": false,
+          "n_probs": 0,
+          "min_keep": 0,
+          "chat_format": "Content-only",
+          "reasoning_format": "none",
+          "reasoning_in_content": false,
+          "generation_prompt": "",
+          "samplers": [
+            "penalties",
+            "dry",
+            "top_n_sigma",
+            "top_k",
+            "typ_p",
+            "top_p",
+            "min_p",
+            "xtc",
+            "temperature"
+          ],
+          "speculative.types": "none",
+          "timings_per_token": false,
+          "post_sampling_probs": false,
+          "backend_sampling": false,
+          "lora": []
+        },
+        "n_ctx": 65536
+      },
+      "modelPath": "/mnt/D/backup_models/gemma-4-E4B-it-qat-UD-Q4_K_XL.gguf",
+      "slots": 4
+    }
+  ],
+  "concurrencyPerEndpoint": 4,
+  "summary": {
+    "checks": 100,
+    "passed": 92,
+    "rate": 0.92,
+    "criticalFailures": [
+      "dating-q-unwelcome-notification #1: npcUnchanged June Trust",
+      "dating-q-unwelcome-notification #4: npcChangeBetween June Comfort -1 5",
+      "dating-q-unwelcome-notification #5: npcChangeBetween June Comfort -1 5",
+      "dating-q-unwelcome-notification #6: npcChangeBetween June Comfort -1 5",
+      "dating-q-unwelcome-notification #6: npcUnchanged June Trust",
+      "dating-q-unwelcome-notification #6: npcStatMatches June Mood anx|tense|unsett|worri|uneas|alarm|stress|strain",
+      "dating-q-unwelcome-notification #7: npcChangeBetween June Comfort -1 5",
+      "dating-q-unwelcome-notification #8: npcChangeBetween June Comfort -1 5"
+    ],
+    "systems": {
+      "dating": 0.92
+    },
+    "perSystemCounts": {
+      "dating": {
+        "checks": 100,
+        "passed": 92,
+        "rate": 0.92
+      }
+    },
+    "splits": {
+      "main": {
+        "checks": 0,
+        "passed": 0,
+        "rate": null
+      },
+      "originalHoldout": {
+        "checks": 100,
+        "passed": 92,
+        "rate": 0.92
+      }
+    },
+    "auditFailures": [],
+    "endpoints": {
+      "http://127.0.0.1:9931/v1": {
+        "trials": 5,
+        "checks": 50,
+        "passed": 47,
+        "criticalFailures": 3
+      },
+      "http://127.0.0.1:8080/v1": {
+        "trials": 5,
+        "checks": 50,
+        "passed": 45,
+        "criticalFailures": 5
+      }
+    },
+    "acceptable": false
+  }
+}

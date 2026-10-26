@@ -28,30 +28,48 @@ Implementation: `src/tracker/extractor/status-extractor-queue.js` and
 `status-extractor-run.js`. Regression coverage: `tests/extraction-queue.mjs` and
 `tests/tracker-regenerate.mjs`.
 
-## 2. Aggregate accuracy overstates complete-turn reliability — reader and reporting updated
+## 2. Aggregate accuracy overstates complete-turn reliability — reporting addressed; campaign validation open
 
 The original README's 96.4% headline counted individual checks without showing that
 44/60 replies passed every check and inferred numeric changes passed 76/96 checks.
 The README now identifies E4B as the minimum local-reader target and presents all
-three measures from the final configuration: 584/606 checks (96.4%), 45/60 complete
-replies (75.0%), and 84/99 numeric checks (84.8%).
+three measures from the final 100-reply Dating configuration: 947/960 checks
+(98.6%), 87/100 complete replies (87.0%), and 211/220 numeric checks (95.9%). These
+use approved grading that accepts equivalent Mood descriptions, with original raw
+replies and scores preserved. E4B is an accessibility target, not a best-results
+recommendation or a proven lower capability boundary.
 
 The reader now constrains numeric strings on compatible schema-enabled connections,
 repairs unambiguous surrounding punctuation, and preserves held values for blank
 numeric readings. Definitions clarify injury, illness, recovery and relationship
 changes; purposeful skill/spell use can earn modest XP. Scoring permits the agreed
-range of reasonable roleplay interpretations. Final outputs contain no malformed
-numeric strings, but semantic HP/energy, inventory and XP errors remain.
+range of reasonable roleplay interpretations. Dating Mood is NPC-only; player
+Social Energy remains a gameplay resource. Clothing initializes from established
+outfits and reader guidance matches possessions to recorded owner entries. Final
+Dating outputs contain no malformed numeric strings, but missed fatigue, external
+distress affecting Comfort, inventory duplication and presence errors remain.
 
-One historical 26B reference is retained alongside the final E4B run, with its older
-configuration explicitly distinguished from current defaults. Both are scored under
-the final rubric in the [consolidated report and audit](evaluations/tracker-model-evaluation-20261025-report.md).
-Intermediate development runs were removed. All 925 Node tests and a mocked
-running-host schema-routing fixture pass.
+The [final report and audit](evaluations/dating-final-10x-20261026-report.md) retain
+the full Dating run, link the accepted Fantasy definition comparison and distinguish
+its earlier shared prompt from the current source snapshot. An exact-current-input
+26B scene comparison passes Comfort 10/10 versus E4B's 5/10 focused and 7/10 final
+trials, supporting a model-capability contribution without establishing a hard
+minimum boundary. All 927 Node tests pass. Read-only running-host checks cover
+schema routing and the NPC-only Mood/HUD configuration.
 
-Review still defaults to automatic application. The default review policy and
-correction burden need evidence from fresh multi-turn campaigns; this development
-suite does not settle those questions. Sources: the linked final evaluation,
+Assessment: the misleading aggregate headline is resolved, and model reliability
+has improved enough to support the stated minimum-model target with corrections.
+Further definition tuning is not required to address that reporting concern.
+
+The original recommendation also asked for default-review evaluation against actual
+campaign correction burden. That part remains open: review still defaults to
+automatic application, and these reused independent scenes do not measure errors
+accumulating across turns, correction effort, or the effects of accepting proposals.
+A fresh multi-turn trial recording missed updates, corrections and review effort
+would address that follow-up. The current evidence supports clear limits and a
+review option; it does not establish the best default review policy.
+
+Sources: the linked final evaluation,
 `src/core/settings-tracker-defaults.js`, and the reader's normalization/request modules.
 
 ## 3. Recovery is shallow relative to probabilistic changes — open
