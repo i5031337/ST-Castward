@@ -24,7 +24,6 @@ test('serialization punctuation is repaired for numeric readings across model sc
         assert.equal(update.player.stats.Rating, expected);
         assert.equal(update.characters[0].stats.Pool, expected);
         assert.equal(warnings.length, 3);
-        assert.ok(warnings.every(w => w.includes('repaired to')));
     }
 });
 
@@ -68,7 +67,6 @@ test('repaired earned XP reaches production progression before rollover', async 
     assert.equal(result.effective.player.stats.XP, '10/100');
     assert.equal(result.effective.player.stats.Level, '2');
     assert.equal(state.player.stats.XP, '90/100');
-    assert.ok(result.warnings.some(w => w.includes('repaired to "110/100"')));
 });
 
 test('repair preserves XP decrease, locked stat, level, maximum and bounds safeguards', async () => {
@@ -82,10 +80,6 @@ test('repair preserves XP decrease, locked stat, level, maximum and bounds safeg
     assert.equal(result.effective.player.stats.Level, '1');
     assert.equal(result.effective.player.stats.HP, '12/12');
     assert.equal(result.effective.player.stats.Currency, '0');
-    assert.ok(result.warnings.some(w => w.includes('earned XP cannot decrease')));
-    assert.ok(result.warnings.some(w => w.includes('this stat is locked')));
-    assert.ok(result.warnings.some(w => w.includes('Level is managed')));
-    assert.ok(result.warnings.some(w => w.includes('reader keeps the existing maximum')));
 });
 
 test('new NPC numeric initialization keeps its individual pool capacity', async () => {

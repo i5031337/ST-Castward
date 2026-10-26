@@ -6,7 +6,6 @@ import { progressionFields } from '../src/tracker/progression-fields.js';
 import { npcStatsFor } from '../src/core/npc-templates.js';
 import { collectionAppliesTo } from '../src/core/collection-targets.js';
 import { isReaderStat } from '../src/tracker/stat-update-policy.js';
-import { readerPromptTexts } from '../src/prompts/prompt-texts-reader.js';
 
 function load(path, deps, exported) {
     const source = readFileSync(new URL(path, import.meta.url), 'utf8')
@@ -23,17 +22,16 @@ const card = { name: 'Mira', npcTemplateId: 'fighter', statusOverrides: {
     Experience: '90/100', Rank: '1', Power: '5',
 } };
 
-test('schema offers known offstage absolute experience readings and explicit absent-actor flag', () => {
+test('NPC schema permits offstage flags and absolute experience and initialization readings', () => {
     const build = load('../src/tracker/extractor/status-extractor-schema.js', {
         progressionFields, npcStatsFor, collectionAppliesTo, isReaderStat,
         npcTemplates: () => [],
     }, 'buildExtractionSchema');
-    const schema = build(tracker, { state: { characters: [] }, cards: [card] });
+    const schema = build(tracker);
     const actor = schema.properties.characters.items.properties;
     assert.equal(actor.offstage.type, 'boolean');
     assert.equal(actor.deltas, undefined);
     assert.equal(actor.stats.properties.Experience.type, 'string');
-    assert.match(actor.stats.properties.Experience.description, /nonblank absolute numeric reading/);
     assert.equal(actor.stats.properties.Rank.type, 'string'); // Blank locked NPC stats can be initialized.
 });
 
@@ -47,10 +45,7 @@ test('offstage prompt exposes filled locked stats as initialization reference da
     const records = JSON.parse(describe({ characters: [] }, 'Mira earned experience elsewhere.', tracker));
     assert.equal(records[0].offstage, true);
     assert.deepEqual(records[0].stats, { Experience: '90/100', Rank: '1', Power: '5' });
-    const prompt = readerPromptTexts.find(entry => entry.id === 'reader').text;
-    assert.match(prompt, /"offstage": true/);
-    assert.match(prompt, /known NPC who remains absent/);
-    assert.match(prompt, /List every present NPC/);
+
 });
 
 test('collection removal schema uses the configured primary field type', () => {

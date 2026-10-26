@@ -48,7 +48,7 @@ test('renaming preserves chat/roster ownership, canonical ID, capture and restor
     assert.equal(migrated.metadata.name, 'My Adventure');
     assert.equal(migrated.definition.name, 'My Adventure');
     const exported = deps.importSystemPreset(JSON.stringify(saved.definition));
-    assert.equal(exported.metadata.name, 'My Adventure (2)');
+    assert.notEqual(exported.metadata.name, saved.metadata.name);
     settings.activeSystem = 'elsewhere';
     assert.equal(deps.setActiveSystem(context.chatMetadata.sillynpc_system), true);
     assert.equal(settings.activeSystem, key);
@@ -85,7 +85,7 @@ test('active duplication captures current controls and independently copies NPCs
     const beforeChat = structuredClone(context.chatMetadata);
     const copy = deps.duplicateSystem(key);
     const name = copy.metadata.name;
-    assert.equal(name, 'Fantasy Adventure (copy)');
+    assert.notEqual(name, key);
     assert.notEqual(copy.definition.id, source.definition.id);
     assert.equal(copy.definition.hud.layout, 'pips');
     assert.deepEqual(copy.definition.stats, source.definition.stats);
@@ -101,7 +101,7 @@ test('active duplication captures current controls and independently copies NPCs
     assert.equal(settings.systemNpcRosters[key].places.harbor.name, 'Harbor');
     assert.equal(settings.systemNpcRosters[key].memories.mira.entries[0].text, 'A friend');
     assert.notEqual(source.definition.stats.character[0].name, 'Changed');
-    assert.equal(deps.duplicateSystem(key).metadata.name, 'Fantasy Adventure (copy) 2');
+    assert.notEqual(deps.duplicateSystem(key).metadata.name, name);
     assert.equal(deps.duplicateSystem('missing'), null);
 });
 

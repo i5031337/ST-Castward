@@ -9,11 +9,7 @@ async function setup(id) {
     const state = makeState(scenario, base.settings);
     return { scenario, state, reader: await harness(scenario.system, state) };
 }
-test('real-model fixture carries Fantasy items in its configured equipment collection', async () => {
-    const { reader, state } = await setup('fantasy-travel');
-    assert.equal(state.player.collections.equipment[0].quantity, 3);
-    assert.match(reader.prompt('Alex waits.'), /"equipment":\[\{"name":"red healing potion","quantity":3\}\]/);
-});
+
 test('evaluation applies actual collection removals and does not forgive changed primary identifiers', async () => {
     const { reader } = await setup('fantasy-travel');
     const read = name => reader.normalize({ global: {}, player: { collections: { equipment: {
@@ -22,14 +18,6 @@ test('evaluation applies actual collection removals and does not forgive changed
     assert.equal(read('red healing potion'), 2);
     assert.equal(read('red healing potions'), 3);
 });
-test('real numeric sanitation and progression turn earned XP into remainder and next level', async () => {
-    const { reader } = await setup('fantasy-battle');
-    const result = reader.normalize({ global: {}, player: { stats: { XP: '110/100', HP: '9/12' } }, characters: [] }, '');
-    assert.equal(result.update.player.stats.HP, '9/12');
-    assert.equal(result.update.player.stats.XP, '110/100');
-    assert.deepEqual(result.progression, { xp: '10/100', level: '2', levelsGained: 1 });
-});
-
 
 test('raw reader capacity audit distinguishes initialization, current changes, and capacity changes', async () => {
     const { changedPoolMaxima } = await import('./fixtures/tracker-pool-audit.mjs');
@@ -40,7 +28,6 @@ test('raw reader capacity audit distinguishes initialization, current changes, a
     assert.deepEqual(changedPoolMaxima({ global: { Ward: '4/9' }, player: { stats: { HP: '5/15' } },
         characters: [{ name: 'Mira', stats: { HP_max: 11 } }] }, state), ['World.Ward', 'Player.HP', 'Mira.HP_max']);
 });
-
 
 test('location scoring accepts a current subplace through its actual parent chain', async () => {
     const { currentPlaceContains } = await import('./fixtures/gemma-location-check.mjs');

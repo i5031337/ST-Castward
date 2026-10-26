@@ -29,16 +29,6 @@ function setup() {
     return f;
 }
 
-test('multiple templates are offered as required IDs with names and assignment guidance only', () => {
-    const f = setup();
-    const schema = npcToolParameters(f.settings);
-    assert.ok(schema.required.includes('npcTemplateId'));
-    assert.deepEqual(schema.properties.npcTemplateId.enum, ['human', 'beast']);
-    assert.match(schema.properties.npcTemplateId.description, /human \(Human\): People and other humanoid citizens/);
-    assert.match(schema.properties.npcTemplateId.description, /beast \(Beast\): Animals and wild creatures/);
-    assert.doesNotMatch(schema.properties.npcTemplateId.description, /Hunger|Instinct|clothes|moves/);
-});
-
 test('a missing or unknown template is rejected before requesting generation', async () => {
     const f = setup();
     await assert.rejects(f.service.create(request), /npcTemplateId: required/);
@@ -57,7 +47,6 @@ test('a selected template limits the generation prompt and response schema for u
     assert.deepEqual(body.templates.map(template => template.id), ['human']);
     assert.deepEqual(f.calls[0].schema.properties.npcTemplateId.enum, ['human']);
     assert.doesNotMatch(f.calls[0].userPrompt, /beast|Hunger|Instinct|"instinct"|"moves"/);
-    assert.match(f.calls[0].systemPrompt, /Use the selected NPC template/);
     assert.equal(f.cards[0].npcTemplateId, 'human');
 });
 

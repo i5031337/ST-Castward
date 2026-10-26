@@ -1,6 +1,5 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { defaultPromptText } from '../src/prompts/prompt-texts.js';
 import { harness } from './fixtures/gemma-tracker-harness.mjs';
 import { readerSchemaForConnection } from '../src/tracker/extractor/status-extractor-schema-provider.js';
 
@@ -29,7 +28,7 @@ for (const [label, context, profileId] of [
     ['GGUF custom profile', { ConnectionManagerRequestService: { getProfile: () => ({ api: 'custom', model: '/models/gemma.gguf' }) } }, 'reader'],
 ]) {
     test(`numeric patterns remain enabled for ${label}`, () => {
-        assert.equal(readerSchemaForConnection(schema, context, profileId), schema);
+        assert.deepEqual(readerSchemaForConnection(schema, context, profileId), schema);
     });
 }
 
@@ -46,10 +45,3 @@ for (const [label, context, profileId] of [
         assert.deepEqual(schema, before);
     });
 }
-
-test('reader and inline XP guidance includes successful purposeful skill or spell use', () => {
-    for (const id of ['reader', 'storyBlock']) {
-        assert.match(defaultPromptText(id), /Award modest XP for successful, purposeful use of a skill or spell/);
-        assert.doesNotMatch(defaultPromptText(id), /Rest, care, accidents/);
-    }
-});

@@ -6,7 +6,8 @@ import { normalizeMemoryStore, appendMemory, editMemory, removeMemory }
 test('legacy strings receive stable IDs and manual provenance', () => {
     const source = ['Met the captain', 'Saw the harbor'];
     const first = normalizeMemoryStore(source);
-    assert.deepEqual(first.entries.map(entry => entry.id), ['memory-1', 'memory-2']);
+    assert.ok(first.entries.every(entry => typeof entry.id === 'string' && entry.id.length > 0));
+    assert.equal(new Set(first.entries.map(entry => entry.id)).size, source.length);
     assert.equal(first.entries[0].manual, true);
     assert.deepEqual(normalizeMemoryStore(first), first);
     assert.deepEqual(source, ['Met the captain', 'Saw the harbor']);

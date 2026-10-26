@@ -112,7 +112,6 @@ test('apply everything saves places and current movement in the same reader turn
     assert.equal(f.state.locations.records[f.state.locations.currentId].name, 'The Lantern');
     assert.deepEqual(f.pending, []);
     assert.deepEqual(f.records.flat().map(row => row.kind), ['stat', 'location-create', 'location-current']);
-    assert.match(f.reports[0].summary, /3 applied · 0 awaiting review/);
 });
 
 test('ask for every change keeps places and ordinary changes pending', async () => {
@@ -137,14 +136,6 @@ test('disabled place tracking ignores unsolicited location output', async () => 
     assert.equal(f.state.global.Time, 'dusk');
     assert.deepEqual(f.state.locations.records, {});
     assert.deepEqual(f.pending, []);
-});
-
-test('uncited place proposals enter normal review alongside ordinary changes', async () => {
-    const f = fixture({ reviewMode: 'risky' });
-    assert.deepEqual(await f.run(), { applied: true, pending: 2 });
-    assert.deepEqual(f.state.locations.records, {});
-    assert.deepEqual(f.pending.map(row => row.kind), ['location-create', 'location-current']);
-    assert.ok(!f.reports[0].warnings.some(warning => warning.includes('evidence')));
 });
 
 test('async source changes cannot publish place proposals or ordinary changes', async () => {

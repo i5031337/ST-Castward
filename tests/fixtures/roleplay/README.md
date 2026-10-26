@@ -18,7 +18,7 @@ Runtime collection always includes the fresh player turn, even with Messages Of 
 
 ```sh
 # Validate fixture loading, normalization and scoring without an LLM request.
-node --test tests/reader-user-evidence.mjs tests/gemma-roleplay-evaluation.mjs tests/gemma-evaluation.mjs tests/gemma-tracker-apply.mjs
+node --test tests/reader-user-evidence.mjs tests/gemma-roleplay-evaluation.mjs tests/gemma-evaluation.mjs tests/gemma-absolute-contract.mjs
 
 # Freeze the current production tracker prompts and all twenty scenes.
 node tests/eval-gemma-tracker.js --freeze roleplay-baseline

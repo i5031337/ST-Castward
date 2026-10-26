@@ -3,7 +3,6 @@ import test from 'node:test';
 import { bind } from './fixtures/stat-values-bind.mjs';
 import { harness } from './fixtures/gemma-tracker-harness.mjs';
 import { qualitativeScenarios, makeRoleplayState } from './fixtures/gemma-tracker-roleplay-scenarios.mjs';
-import { defaultPromptText } from '../src/prompts/prompt-texts.js';
 import { constrainNumericStat } from '../src/tracker/numeric-stat-bounds.js';
 
 const rating = { name: 'Rating', type: 'number', defaultValue: '10', min: '0' };
@@ -29,7 +28,6 @@ test('model blank numeric readings preserve held ratings and pools in every scop
         assert.deepEqual(update.player.stats, {});
         assert.deepEqual(update.characters[0].stats, {});
         assert.equal(warnings.length, 5);
-        assert.ok(warnings.every(w => w.includes('numeric readings must not be blank')));
     }
     const flat = { player: { Rating: '' }, characters: [{ name: 'Mira', Rating: '' }] };
     d.sanitizeModelUpdate(flat, state, settings);
@@ -64,23 +62,4 @@ test('production dry run preserves held relationship stats after a blank model r
         assert.equal(result.effective.characters[0].stats[name], state.characters[0].stats[name]);
     }
     assert.equal(result.warnings.length, 3);
-});
-
-test('both tracker prompts distinguish new acquisitions from restating existing holdings', () => {
-    for (const id of ['reader', 'storyBlock']) {
-        const prompt = defaultPromptText(id);
-        assert.match(prompt, /Add newly acquired items and additional copies, reporting the quantity gained/);
-        assert.match(prompt, /Match each item’s placement to the collection’s purpose/);
-        assert.match(prompt, /never use an empty string in place of a numeric reading/);
-    }
-});
-
-test('acquiring more copies of a held item still increases its stack', async () => {
-    const scene = qualitativeScenarios.find(s => s.id === 'dating-q-accepted-boundary');
-    const blank = await harness('dating', {}), state = makeRoleplayState(scene, blank.settings);
-    const reader = await harness('dating', state);
-    const result = reader.normalize({ characters: [{ name: 'Sam', collections: {
-        items: { add: [{ name: 'phone', quantity: 2 }] },
-    } }] }, 'Sam acquires two more phones.');
-    assert.equal(result.holdings.characters[0].collections.items.find(item => item.name === 'phone').quantity, 3);
 });

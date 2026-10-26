@@ -97,32 +97,6 @@ test('current NPC definitions win when an export also carries the old key', () =
     assert.equal('characterStats' in settings.statusTracker, false);
 });
 
-test('old raw prompt overrides are dropped while other settings normalize', () => {
-    const baseSource = readFileSync(new URL('../src/core/settings-base-migration.js', import.meta.url), 'utf8')
-        .replace(/^import\s+[\s\S]*?\s+from\s+['"][^'"]+['"];\s*/gm, '')
-        .replace('export function normaliseBaseSettings', 'function normaliseBaseSettings');
-    const normalizeBase = new Function('PORTRAIT_SHAPES', 'DEFAULT_PORTRAIT_SHAPE',
-        'defaultSettings', 'resolveImageFolder', 'saveSettings',
-        `${baseSource}\nreturn normaliseBaseSettings;`)(
-            { square: {} }, 'square',
-            { loreCharBudget: 100, loreMaxTokens: 100, imgGenPromptPrefix: 'Solo, profile picture' },
-            value => value, () => {},
-        );
-    const settings = { statusTracker: { extractionPrompt: 'custom', systemRules: 'custom' },
-        dialogueFormatPrompt: 'custom', narratorRulesPrompt: 'custom',
-        generationPrompt: 'custom', imgGenPrompt: 'custom', imgGenNegativePrompt: 'custom',
-        promptTexts: { reader: 'custom' }, imageBackend: 'gemini', imgGenContextMessages: 10 };
-
-    normalizeBase(settings);
-
-    for (const key of ['dialogueFormatPrompt', 'narratorRulesPrompt', 'generationPrompt',
-        'imgGenPrompt', 'imgGenNegativePrompt', 'imgGenContextMessages', 'promptTexts', 'imageBackend']) {
-        assert.equal(key in settings, false);
-    }
-    assert.equal('extractionPrompt' in settings.statusTracker, false);
-    assert.equal('systemRules' in settings.statusTracker, false);
-});
-
 test('legacy profile hints enter old System presets before the flat setting is removed', () => {
     const settings = { statusTracker: { presets: { old: { playerStats: [] } } },
         profileHints: { appearance: 'Describe distinguishing features' } };

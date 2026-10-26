@@ -69,11 +69,18 @@ test('recovery still rejects missing fields, structured stat values and out-of-r
 
 test('model definitions retain meanings and constraints without serializing editor metadata or empty inputs', () => {
     const { settings, contract } = dating();
+    const choice = contract.choices[0];
+    choice.fields.find(field => field.id === 'personality').hint = 'A configured personality meaning.';
+    choice.stats.find(stat => stat.name === 'Affection').purpose = 'A configured relationship meaning.';
     const body = JSON.parse(npcGenerationPrompt({ ...request, requirements: '', nameStyle: '' }, contract, {}, () => 0));
     const template = body.templates[0];
-    assert.match(template.fields, /personality \(Personality\): Stable traits/);
-    assert.match(template.stats, /NPC.Affection: number.*Warmth.*Default: 0.*Minimum: 0.*Maximum: 100/);
-    assert.match(template.collections, /"clothing".*Fields: name \[identifies the item\]/);
+    assert.ok(template.fields.includes('personality'));
+    assert.ok(template.fields.includes('A configured personality meaning.'));
+    for (const value of ['Affection', 'A configured relationship meaning.', 'Default: 0', 'Minimum: 0', 'Maximum: 100']) {
+        assert.ok(template.stats.includes(value), value);
+    }
+    assert.ok(template.collections.includes('clothing'));
+    assert.ok(template.collections.includes('name'));
     assert.equal(template.progression, undefined);
     assert.equal(body.request.requirements, undefined);
     assert.equal(body.request.nameStyle, undefined);
@@ -84,26 +91,28 @@ test('model definitions retain meanings and constraints without serializing edit
             { name: 'quantity', type: 'number', defaultValue: '1', min: '1', maxStatValue: '9' },
             { name: 'worn', type: 'boolean', defaultValue: false, guidance: 'Currently worn.' }] }];
     const gear = JSON.parse(npcGenerationPrompt(request, npcGenerationContract(settings), {}, () => 0)).templates[0].collections;
-    assert.match(gear, /quantity \(number\) \[minimum 1, maximum 9\] \[default "1"\]/);
-    assert.match(gear, /worn \(boolean\) \[default false\] - Currently worn/);
-    assert.match(gear, /Quantity field: quantity/);
+    for (const value of ['quantity', 'number', 'minimum 1', 'maximum 9', 'worn', 'boolean', 'false', 'Currently worn.']) {
+        assert.ok(gear.includes(value), value);
+    }
 });
 
 test('initial pool capacity limits and progression field names survive concise formatting', () => {
     const settings = settingsFixture();
     const contract = npcGenerationContract(settings);
     const template = JSON.parse(npcGenerationPrompt(request, contract, {}, () => 0)).templates[0];
-    assert.match(template.stats, /Health: maximum capacity 50/);
-    assert.match(template.progression, /Initialize Level.*XP.*0\/100/);
+    assert.match(template.stats, /Health[^\n]*50/);
+    for (const value of ['Level', 'XP', '0/100']) assert.ok(template.progression.includes(value), value);
     assert.equal(validateGeneratedNpc({ ...generated(), stats: { ...generated().stats, Strength: 6, Level: 2 } }, contract, [], () => 0).statusOverrides.Level, '2');
 });
 
-test('reader collection descriptions retain their existing output while initialization adds defaults', () => {
+test('collection defaults are offered for initialization without entering ordinary reader definitions', () => {
     const collections = [{ id: 'items', name: 'Items', target: 'npc', hint: 'Held items.',
         fields: [{ name: 'name', type: 'text', isPrimary: true },
             { name: 'count', type: 'number', min: '0', defaultValue: '1' }] }];
     const reader = describeCollections({ collections });
-    assert.equal(reader, '- "items" for all NPCs - Held items. Fields: name [identifies the item], count (number) [minimum 0] Quantity field: count.');
+    for (const value of ['items', 'Held items.', 'name', 'count', 'minimum 0']) {
+        assert.ok(reader.includes(value), value);
+    }
     assert.doesNotMatch(reader, /default/);
     assert.match(describeCollections({ collections }, { initialize: true }), /default "1"/);
 });

@@ -67,12 +67,10 @@ test('scene status contains tracker fields but no player, present NPC, or refere
         player: { name: 'Hero', stats: { HP: '10' }, profile: { appearance: 'PLAYER_PROFILE' } },
         characters: [{ name: 'Mira', stats: { HP: '8' }, profile: { appearance: 'NPC_PROFILE' } }] };
     const result = deps.formatCompactStatus(state, true);
-    assert.match(result, /\[Current Scene Status\]/);
     for (const line of ['Global: Time=Noon', 'Player (Hero): HP=10', 'Mira: HP=8', 'Elza - HP=7']) {
         assert.ok(result.includes(line), result);
     }
     assert.ok(!result.includes('PROFILE'));
-    assert.ok(!result.includes('Who they are'));
 });
 
 test('memory-only NPCs create a lore entry and sync active memories, excluding archived ones', async () => {

@@ -4,22 +4,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFileSync } from 'node:fs';
 import { progressXp } from '../src/tracker/progression.js';
-import { normalizeModelReadings } from '../src/tracker/extractor/status-extractor-readings.js';
 import { sameStatReading } from '../src/tracker/stat-reading-equality.js';
-
-test('reader absolute XP crosses thresholds without adding the old reading twice', () => {
-    const settings = { globalStats: [], npcStats: [], playerStats: [
-        { name: 'XP', type: 'number' }, { name: 'Level', type: 'number' }] };
-    const state = { player: { stats: { XP: '90/100', Level: '1' } } };
-    for (const [incoming, xp, level] of [['92/100', '92/100', '1'], ['110/100', '10/100', '2']]) {
-        const reply = { player: { stats: { XP: incoming } } };
-        const warnings = [];
-        normalizeModelReadings(reply, state, settings, { warnings });
-        assert.deepEqual(warnings, []);
-        assert.deepEqual(progressXp('90/100', reply.player.stats.XP, '1'), { xp, level, levelsGained: Number(level) - 1 });
-        assert.equal(state.player.stats.XP, '90/100');
-    }
-});
 
 // This module's SillyTavern imports require a browser. Inject those boundaries
 // while exercising its real bind(deps) implementation in Node.

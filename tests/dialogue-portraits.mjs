@@ -6,13 +6,12 @@ const line = { npcId: 'bianca', lineIndex: 2 };
 const picture = { label: 'joy', path: '/characters/Bianca/joy.png', fallback: 'neutral', fallbackPath: '/characters/Bianca/neutral.png' };
 const message = () => ({ mes: 'Bianca: "Hello."', swipe_id: 0, extra: { existing: 'keep' }, swipe_info: [{ extra: { native: true } }] });
 
-test('a compact sprite selection survives chat serialization without storing image bytes', () => {
+test('a sprite selection survives chat serialization without replacing other metadata', () => {
     const chatMessage = message();
     assert.equal(writeLinePortrait(chatMessage, line, picture), true);
     const reloaded = JSON.parse(JSON.stringify(chatMessage));
     assert.deepEqual(readLinePortrait(reloaded, line), picture);
     assert.equal(reloaded.extra.existing, 'keep');
-    assert.ok(JSON.stringify(reloaded.extra[DIALOGUE_PORTRAITS_KEY]).length < 350);
     assert.equal(writeLinePortrait(chatMessage, line, picture), false);
 });
 

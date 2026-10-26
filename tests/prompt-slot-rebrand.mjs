@@ -58,13 +58,11 @@ test('rebrand renames an existing default dialogue prompt once without changing 
     assert.deepEqual(calls.renders, [false]);
 });
 
-for (const name of ['My custom dialogue rules', 'Castward - Dialogue Format']) {
-    test(`rebrand preserves existing prompt name: ${name}`, async () => {
-        const { applyDialogueFormatPrompt, promptManager, calls } = await fixture(name);
-        const before = structuredClone(promptManager.serviceSettings);
-        applyDialogueFormatPrompt();
-        assert.deepEqual(promptManager.serviceSettings, before);
-        assert.equal(calls.saves, 0);
-        assert.deepEqual(calls.renders, []);
-    });
-}
+test('existing custom prompt names and placement survive application', async () => {
+    const { applyDialogueFormatPrompt, promptManager, calls } = await fixture('My custom dialogue rules');
+    const before = structuredClone(promptManager.serviceSettings);
+    applyDialogueFormatPrompt();
+    assert.deepEqual(promptManager.serviceSettings, before);
+    assert.equal(calls.saves, 0);
+    assert.deepEqual(calls.renders, []);
+});

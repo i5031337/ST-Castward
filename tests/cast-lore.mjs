@@ -51,15 +51,6 @@ test('native chat, global, character and persona entries are never duplicated or
     }
 });
 
-test('generated profiles use the same activation path as carried profiles; repeated scans do not duplicate entries', async () => {
-    const { activate, lore, cards } = fixture();
-    cards[0].rosterSourceId = '';
-    assert.equal(await activate(lore), 2);
-    assert.equal(lore.chatLore[1].content, 'Mira profile');
-    assert.equal(lore.chatLore.at(-1).content, 'Jon profile');
-    assert.equal(await activate(lore), 0);
-});
-
 test('missing lorebooks and deleted entries leave normal host lore intact', async () => {
     const { deps, lore, cards, errors } = fixture();
     cards[0].lorebook.uid = 999;

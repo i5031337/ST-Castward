@@ -429,7 +429,7 @@ SillyTavern loads `index.js` and `style.css` from `manifest.json`. The JavaScrip
 | `tests/location-runtime.mjs`, `tests/location-turns.mjs` | Mixed review orchestration, provenance, current-turn replacement, manual corrections, and System independence. |
 | `tests/ui-locations.py` | Temporary unsaved browser check of Places, review, and the in-chat tracker trail. |
 | `tests/fixtures/gemma-tracker-scenarios.mjs`, `tests/fixtures/gemma-tracker-harness.mjs` | Pre-registered Fantasy/Dating tracker cases and production prompt, sanitizer, collection, progression, and place-review harness. |
-| `tests/fixtures/gemma-tracker-natural-scenarios.mjs`, `tests/gemma-tracker-apply.mjs` | Two-paragraph prose cases and production update-application checks for implied stat changes. |
+| `tests/fixtures/gemma-tracker-natural-scenarios.mjs` | Two-paragraph prose cases for explicit local-model evaluation. |
 | `tests/fixtures/gemma-location-tree-scenarios.mjs` | Focused Fantasy/Dating cases for a new parent and an independent new root, in explicit, narrative, and mixed-turn prose. |
 | `tests/eval-gemma-tracker.js`, `tests/gemma-evaluation.mjs` | Explicit local-model evaluation runner and offline checks of its scoring path. |
 | `tests/fixtures/gemma-request-batches.mjs` | Bound parallel evaluation requests per endpoint; keep normalization serial. |
@@ -516,7 +516,7 @@ paths have regression tests under `tests/`.
 | `tests/theme-customization.mjs` | Import validation, preset isolation, and stale-style cleanup. |
 | `tests/ui-theme-customization.py` | Unsaved live checks of all presets, themed surfaces, resets, and narrow layout. |
 
-| `tests/fixtures/gemma-location-change-scenarios.mjs`, `tests/gemma-location-change.mjs` | Boolean scene-location detection, mixed stat/inventory cases, and real reader prompt/schema checks. |
+| `tests/fixtures/gemma-location-change-scenarios.mjs` | Boolean scene-location detection and mixed stat/inventory cases for explicit local-model evaluation. |
 
 | `tests/location-reader.mjs`, `tests/location-reading.mjs` | Dedicated reader contract, request routing, initialization, movement gates, stale replies, and failure isolation. |
 | `tests/eval-gemma-location-reader.js` | Explicit frozen local-model evaluation of dedicated place reading and production review proposals. |

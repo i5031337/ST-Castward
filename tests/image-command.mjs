@@ -33,7 +33,6 @@ test('overlapping images run sequentially and each retains its result', async ()
     await flush();
     assert.equal(f.calls.length, 1);
     assert.equal(getGenerationActivities().filter(activity => activity.kind === 'image').length, 1);
-    assert.equal(f.calls[0].options.source, 'Castward image generation');
     f.pending[0].resolve({ pipe: '/first.png' });
     assert.equal(await first, '/first.png');
     await flush();

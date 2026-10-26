@@ -62,7 +62,12 @@ test('landscape generation uses the host image command without portrait prompt c
         gallery: false, extend: false, edit: false,
     });
     assert.equal(path, 'user/images/place.png');
-    assert.match(command, /^\/imagine quiet=true gallery=false extend=false edit=false width=1280 height=720 negative="people, text" Stone bridge at dusk$/);
+    assert.match(command, /^\/imagine\s/);
+    for (const option of ['quiet=true', 'gallery=false', 'extend=false', 'edit=false',
+        'width=1280', 'height=720', 'negative="people, text"']) {
+        assert.ok(command.includes(option), option);
+    }
+    assert.ok(command.endsWith('Stone bridge at dusk'));
 });
 
 
@@ -86,8 +91,10 @@ test('portrait description uses visual profile details filled on the card', () =
         appearance: '  Dark curls and a silver scar. ',
         personality: '  Reserved but quick to smile. ',
     } };
-    assert.equal(characterImageDescription(char, 'Unrelated lore'),
-        'Age: late twenties\nAppearance: Dark curls and a silver scar.');
+    const description = characterImageDescription(char, 'Unrelated lore');
+    assert.ok(description.includes('late twenties'));
+    assert.ok(description.includes('Dark curls and a silver scar.'));
+    assert.doesNotMatch(description, /Reserved|Unrelated lore/);
     assert.equal(characterImageDescription({ profile: {} }, 'Older free-form lore'), 'Older free-form lore');
 });
 
@@ -103,10 +110,15 @@ test('portrait items follow each collection image setting and actor target', () 
         legacy: [{ name: 'Silver sword' }, { name: 'Leather boots' }],
         unknown: [{ name: 'Unconfigured item' }],
     };
-    assert.equal(imageItemsFromCollections(collections, definitions),
-        'Red cloak, Silver sword, Leather boots');
-    assert.equal(imageItemsFromCollections(collections, definitions, true),
-        'Red cloak, Silver sword');
+    const npc = imageItemsFromCollections(collections, definitions);
+    const player = imageItemsFromCollections(collections, definitions, true);
+    for (const text of [npc, player]) {
+        assert.ok(text.includes('Red cloak'));
+        assert.equal(text.match(/Silver sword/g)?.length, 1);
+        assert.doesNotMatch(text, /Hidden letter|Unconfigured item/);
+    }
+    assert.ok(npc.includes('Leather boots'));
+    assert.ok(!player.includes('Leather boots'));
 });
 
 

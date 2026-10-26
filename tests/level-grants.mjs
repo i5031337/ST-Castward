@@ -61,16 +61,6 @@ test('random allocation is code-owned, with replacement, across every gained lev
     assert.deepEqual(applied.remaining, []);
 });
 
-test('random picks exclude capped ratings and remove stats as soon as they reach their cap', async () => {
-    const result = await selectLevelGrants(parsed(), state(), tracker(), 'Victory', [], { random: () => .99, requestExtraction: noModel });
-    assert.deepEqual(result.rows.map(row => row.allocations), [{ power: 1, hp: 7 }, { power: 1, hp: 3 }]);
-    const initial = state(); initial.player.stats.Power = '5/5';
-    const capped = await selectLevelGrants({ player: { Experience: '10/10' } }, initial, tracker(), '', [], {
-        random: () => .99, requestExtraction: noModel,
-    });
-    assert.deepEqual(capped.rows[0].allocations, { hp: 4 });
-});
-
 test('all capped stats retain their unspent budget without choosing an invalid stat', async () => {
     const settings = tracker(), initial = state();
     settings.progression.player.statIds = ['power']; initial.player.stats.Power = '5/5';

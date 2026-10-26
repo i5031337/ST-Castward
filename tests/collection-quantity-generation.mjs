@@ -26,7 +26,6 @@ test('counted collections generate built-in quantity, pin the option, and reject
     assert.deepEqual(validateDefinition(definition), []);
     const request = calls.find(call => call.stage === 'collection.inventory');
     assert.deepEqual(request.schema.properties.section.properties.trackQuantity.enum, [true]);
-    assert.match(request.systemPrompt, /quantity is built in/);
     const bad = structuredClone(definition);
     bad.collections[0].fields[1].defaultValue = '2';
     assert.ok(validateDefinition(bad).some(error => /built-in quantity/.test(error)));

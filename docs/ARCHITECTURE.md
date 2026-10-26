@@ -169,6 +169,18 @@ request, progression, and review checks. Browser checks require a running local
 SillyTavern instance; `python3 tests/ui-smoke.py` is read-only. Additional UI fixtures
 restore temporary state and avoid saved test data or model requests.
 
+Keep permanent tests focused on behavior that matters: saved data, chat and persona
+boundaries, calculations, validation, review actions, request routing, and cancellation.
+Add coverage when a change exposes an untested consequential failure. Wording,
+cosmetic layout, historical benchmark details, and incidental implementation choices
+do not each need a regression test. Prompt checks should protect configured inputs
+and usable output contracts while allowing instructions to be rewritten. Evaluation
+scorers have their own correctness checks; these do not measure live model quality.
+
+The [2026-10-26 per-case audit](test-audit.csv) records individual decisions and
+reasons for all 881 cases present at the start of that review, including parameterized
+cases. This is a historical snapshot; source line numbers refer to that baseline.
+
 [REWRITE_HOST_SMOKE.md](REWRITE_HOST_SMOKE.md) preserves the dated user-reported host
 results and remaining manual checks. Mocked generator checks establish workflow and
 isolation, not local-model quality; evaluate the selected model separately.

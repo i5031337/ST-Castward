@@ -77,7 +77,7 @@ test('new admitted NPCs generate once; aliases, existing cards and the player ar
     assert.equal(f.calls.filter(call => call === 'generate:Mira').length, 1);
 });
 
-test('chat or reply changes during generation discard the profile and stop subsequent requests', async () => {
+test('invalidating an in-flight profile discards it and stops subsequent requests', async () => {
     const f = fixture();
     f.setReply(async () => { f.invalidate(); return { content: 'generated' }; });
     await f.run(['Mira', 'Elza']);
@@ -93,7 +93,7 @@ test('manual profile edits take precedence while the lore writer is running', as
     assert.equal(f.cards.find(card => card.name === 'Mira').profile.appearance, 'Manual');
 });
 
-test('a changed System or template field selection discards the generated result', async () => {
+test('changing configured profile fields discards the generated result', async () => {
     const f = fixture();
     f.setReply(async () => { f.fields.push({ id: 'history' }); return { content: 'generated' }; });
     await f.run(['Mira']);

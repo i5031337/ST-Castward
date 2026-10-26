@@ -58,18 +58,6 @@ test('opening scenes have an explicit unknown current place and include the open
     assert.doesNotMatch(prompt, /\{\{\w+\}\}/);
 });
 
-test('the location prompt grounds destination and place details in the player scene', () => {
-    const prompt = fixture().buildLocationPrompt(input());
-    assert.match(prompt, /player|Alex/i);
-    assert.match(prompt, /"places"/);
-    assert.match(prompt, /"current"/);
-    assert.match(prompt, /aliases/);
-    assert.match(prompt, /parent/);
-    assert.match(prompt, /description/);
-    assert.match(prompt, /plans|rumours|mentions|established/i);
-    assert.doesNotMatch(prompt, /player\.stats|globalDeltas|capacity growth|level-up|UUID|parentRef|currentRef/);
-});
-
 test('the location reader bounds saved context and earlier conversation without mutating either', () => {
     const current = state();
     for (let i = 0; i < 300; i++) {
@@ -101,8 +89,6 @@ test('the dedicated request uses the reader connection settings, location schema
     assert.deepEqual(schema, locationExtractionSchema());
     assert.equal(settings, trackerSettings);
     assert.equal(system, promptText('locationReaderSystem'));
-    assert.match(system, /place|location/i);
-    assert.doesNotMatch(system, /tracker update|stats|NPC present/);
     assert.deepEqual(options, { usageKind: 'location' });
 });
 

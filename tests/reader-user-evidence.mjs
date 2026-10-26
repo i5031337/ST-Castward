@@ -56,14 +56,11 @@ test('consecutive player messages are read together across system notes and imag
     assert.ok(!playerSection(edited).includes('I put it into my bag.'));
 });
 
-test('opening replies omit the player-turn section and retain evidence rules', async () => {
+test('opening replies and invalid indexes have no fresh player turn', async () => {
     const reader = await harness('fantasy', state(), { chat: [narrator('Welcome.')] });
     assert.deepEqual(reader.collectLeadUp(0, 2), []);
     assert.deepEqual(reader.collectLeadUp(-1, 2), []);
     assert.deepEqual(reader.collectLeadUp(3, 2), []);
     const prompt = reader.prompt('Welcome.');
     assert.equal(playerSection(prompt), undefined);
-    assert.match(prompt, /Count an event once when both turns describe it/);
-    assert.match(prompt, /Use the assistant's resolution when it blocks, changes, or resolves an attempted outcome/);
-    assert.match(prompt, /intentions, attempts, hypotheticals, and out-of-character instructions/);
 });

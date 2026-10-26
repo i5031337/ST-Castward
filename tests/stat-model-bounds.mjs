@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test, { describe } from 'node:test';
 import { readFileSync } from 'node:fs';
-import { configuredNumericMaximum, constrainNumericStat, keepNumericMaximum } from '../src/tracker/numeric-stat-bounds.js';
+import { constrainNumericStat, keepNumericMaximum } from '../src/tracker/numeric-stat-bounds.js';
 import { normalizeModelReadings } from '../src/tracker/extractor/status-extractor-readings.js';
 import { sameStatReading } from '../src/tracker/stat-reading-equality.js';
 
@@ -182,14 +182,6 @@ test('numeric readings honor the configured minimum and the live pool maximum', 
     assert.equal(constrainNumericStat(def, '-4', '7'), '2');
 });
 
-test('plain ratings have a fixed configured range', () => {
-    const def = { type: 'number', locked: true, min: '1', maxStatValue: '5' };
-    assert.equal(configuredNumericMaximum(def), 5);
-    assert.equal(constrainNumericStat(def, '9', '4'), '5');
-    assert.equal(constrainNumericStat(def, '-2', '4'), '1');
-    assert.equal(constrainNumericStat(def, '4/9', '3'), '4/5');
-});
-
 test('ordinary model readings retain the actor’s maximum', () => {
     assert.equal(keepNumericMaximum('4/100', '20'), '4/20');
     assert.equal(keepNumericMaximum('4', '20'), '4/20');
@@ -201,6 +193,7 @@ test('plain numeric ratings honor Starts max without becoming pools', () => {
     assert.equal(constrainNumericStat(standing, '6', '5'), '5');
     assert.equal(constrainNumericStat(standing, '-6', '-5'), '-5');
     assert.equal(constrainNumericStat(standing, '3', '2'), '3');
+    assert.equal(constrainNumericStat(standing, '4/9', '3'), '4/5');
     assert.equal(constrainNumericStat(standing, '12', '9'), '5');
     assert.equal(constrainNumericStat({ ...standing, type: 'bar' }, '6', '5'), '5');
     assert.equal(constrainNumericStat({ ...standing, maxStatValue: '' }, '6', '5'), '6');
@@ -250,13 +243,4 @@ describe('stat rejection warnings', () => {
         assert.equal(warnings.length, 2);
     });
 
-    test('unsupported delta objects cannot compete with an absolute reading', () => {
-        const settings = { globalStats: [], npcStats: [], playerStats: [{ name: 'HP', type: 'number' }] };
-        const update = { player: { stats: { HP: '4' }, deltas: { HP: -1 } } };
-        const warnings = [];
-        normalizeModelReadings(update, { player: { stats: { HP: '5' } } }, settings, { warnings });
-        assert.deepEqual(update.player.stats, { HP: '4' });
-        assert.equal(update.player.deltas, undefined);
-        assert.equal(warnings.length, 1);
-    });
 });

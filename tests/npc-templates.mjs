@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { normalizeSystemDefinition, projectSystemTracker } from '../src/core/system-schema.js';
 import { setProfileSettingsProvider, profileFieldsForCard } from '../src/core/profile-fields.js';
-import { activeNpcSystem, npcStatsFor, npcTemplateFor, proposedNpcTemplate, describeNpcTemplates } from '../src/core/npc-templates.js';
+import { activeNpcSystem, npcStatsFor, npcTemplateFor, proposedNpcTemplate } from '../src/core/npc-templates.js';
 
 function fixture() {
     const definition = normalizeSystemDefinition({ schemaVersion: 1, name: 'Adventure',
@@ -152,8 +152,6 @@ test('a sole template is assigned without asking the reader to select it', () =>
     definition.npcTemplates = [definition.npcTemplates[0]];
     assert.equal(proposedNpcTemplate({}, {}).id, 'human');
     assert.equal(proposedNpcTemplate({}, { npcTemplateId: 'unknown' }), null);
-    assert.doesNotMatch(describeNpcTemplates(), /npcTemplateId|template|assignment/i);
-    assert.match(describeNpcTemplates(), /Human trainers/);
     const { deps, card } = applyFixture(settings);
     const preview = deps.applyUpdate({ characters: [{ name: 'Mira', stats: { HP: '8/10' } }] }, { dryRun: true });
     assert.equal(preview.characters[0].npcTemplateId, 'human');
@@ -196,15 +194,10 @@ test('an NPC without a card keeps its template when it returns to the scene', ()
     setProfileSettingsProvider(() => null);
 });
 
-test('renaming a shared stat preserves template membership and reader guidance stays compact', () => {
+test('renaming a shared stat preserves template membership', () => {
     const { settings } = fixture();
     settings.statusTracker.npcStats[0].name = 'Health';
     assert.deepEqual(npcStatsFor({ npcTemplateId: 'human' }, settings.statusTracker).map(stat => stat.name), ['Health']);
-    const note = describeNpcTemplates();
-    assert.match(note, /npcTemplateId/);
-    assert.match(note, /each unassigned NPC whose type is clear/);
-    assert.match(note, /pokemon.*Friendship/);
-    assert.equal(note.split('\n').length, 3);
     setProfileSettingsProvider(() => null);
 });
 

@@ -60,7 +60,6 @@ test('inline reading records automatic transition and keeps grants pending; rend
     assert.equal(h.calls.records[0].label, 'XP');
     assert.equal(h.message.reading.sourceText, h.message.mes);
     assert.equal(h.message.report.status, 'done');
-    assert.equal(h.message.report.summary, '1 applied · 1 awaiting review');
     assert.deepEqual(h.message.report.output, { player: { stats: { XP: '10/10' } } });
     assert.equal(h.queue(), false);
 });

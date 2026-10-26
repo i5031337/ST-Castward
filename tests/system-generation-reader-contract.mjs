@@ -8,15 +8,12 @@ import { plan, responseFor } from './fixtures/system-generation.mjs';
 const registry = allocatePlan(plan);
 const reply = ({ stage }) => responseFor(stage, registry);
 
-test('generation requests absolute earned XP readings while keeping persisted progression counters canonical', async () => {
+test('generation requests and validates canonical XP defaults and managed levels', async () => {
     const calls = [];
     const { definition } = await new SystemGenerationRun({ premise: 'A monster catching expedition.', request: args => { calls.push(args); return reply(args); } }).generate();
     const request = calls.find(call => call.stage === 'stats.character');
-    assert.match(request.systemPrompt, /absolute stat readings as strings/);
-    assert.match(request.systemPrompt, /99\/100 plus 20 becomes "119\/100"/);
-    assert.match(request.systemPrompt, /reader never reduces XP or rolls it over/);
-    assert.doesNotMatch(request.systemPrompt, /earned XP deltas/);
     const requirements = JSON.parse(request.userPrompt).counterRequirements;
+    assert.deepEqual(requirements.map(owner => owner.owner), ['player', 'creature']);
     for (const owner of requirements) {
         assert.equal(owner.xp.defaultValueExample, '0/100');
         assert.equal(owner.xp.maxStatValueExample, '100');

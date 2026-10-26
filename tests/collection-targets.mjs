@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { normalizeSystemDefinition } from '../src/core/system-schema.js';
 import { setNpcTemplateSettingsProvider } from '../src/core/npc-templates.js';
-import { collectionAppliesTo, collectionTargetLabel, collectionTargets } from '../src/core/collection-targets.js';
+import { collectionAppliesTo, collectionTargets } from '../src/core/collection-targets.js';
 import { normalizeCollectionUpdates } from '../src/tracker/extractor/status-collection-normalize.js';
 import { imageItemsFromCollections } from '../src/api/api-image-items.js';
 
@@ -34,7 +34,6 @@ test('template collection targets survive normalization and never widen a missin
     assert.equal(collectionAppliesTo(moves, 'player', pokemon), false);
     assert.equal(collectionAppliesTo(moves, 'npc'), true); // scope-wide extraction schema
     assert.equal(collectionAppliesTo({ ...moves, targets: ['template:deleted'] }, 'npc', pokemon), false);
-    assert.match(collectionTargetLabel(moves), /Pokémon.*npcTemplateId: pokemon/);
     for (const scope of ['player', 'npc']) assert.equal(collectionAppliesTo({ target: 'all' }, scope, {}), true);
     assert.equal(collectionAppliesTo({ target: 'npc' }, 'npc', {}), true);
     assert.equal(collectionAppliesTo({ target: 'player' }, 'npc', human), false);
@@ -98,7 +97,6 @@ test('multiple targets include the player and humans, exclude Pokémon, and surv
     assert.equal(collectionAppliesTo(clothes, 'npc', {}), false);
     const imported = normalizeSystemDefinition(JSON.parse(JSON.stringify(definition)));
     assert.deepEqual(imported.collections[1], clothes);
-    assert.equal(collectionTargetLabel(clothes), 'player or Human NPCs (npcTemplateId: human)');
     const several = { targets: ['template:human', 'template:pokemon'] };
     assert.equal(collectionAppliesTo(several, 'player'), false);
     assert.equal(collectionAppliesTo(several, 'npc', human), true);

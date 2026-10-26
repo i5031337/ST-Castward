@@ -50,7 +50,7 @@ test('character transfer carries the visible Cast collections and memories, but 
     assert.equal(state.characters[0].stats.HP, '3/10');
 });
 
-test('portrait gallery, tags, selection and expression reference survive image remapping', async () => {
+test('portrait gallery, tags and selection survive remapping, and the expression reference is exported by index', async () => {
     const uriA = 'data:image/png;base64,YQ==';
     const uriB = 'data:image/png;base64,Yg==';
     const saved = [];

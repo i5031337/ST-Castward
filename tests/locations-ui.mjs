@@ -98,7 +98,6 @@ test('parent places collapse independently and search reveals matching children'
     assert.ok(!cards().some(node => node.textContent === 'Inn'));
     find(f.view, el => el.textContent === 'City' && el.attributes?.['aria-expanded'] === 'false').listeners.click();
     assert.ok(find(f.view, el => el.textContent === 'Edit City' && el.tag === 'h4'));
-    assert.ok(!cards().some(node => node.textContent === 'Edit'));
     assert.ok(cards().some(node => node.textContent === 'Inn'));
     assert.ok(!cards().some(node => node.textContent === 'Room'));
     assert.ok(!cards().some(node => node.textContent === 'Clearing'));
@@ -142,7 +141,6 @@ test('current place opens its ancestor groups without reopening a manually colla
 test('Places never loads the previous chat state with no chat open', () => {
     const f = fixture(false);
     assert.equal(f.loads, 0);
-    assert.ok(find(f.view, el => /Open a chat/.test(el.textContent || '')));
 });
 
 for (const boundary of ['metadata', 'chat ID', 're-render']) {

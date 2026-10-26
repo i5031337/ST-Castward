@@ -14,17 +14,15 @@ test('canonical growth eligibility allows locked and excludes retired and progre
     assert.equal(progressionStatEligible({ ...rating, id: 'rank' }, config), false);
 });
 
-test('legacy transfer settings are retired without changing stored values', () => {
+test('legacy transfer settings migrate to carryover flags', () => {
     const definitions = [{ name: 'HP', persistence: 'variable' },
         { name: 'Wisdom', persistence: 'innate', persistenceReview: true }];
-    const values = { HP: '2/10', Wisdom: '8' };
     normaliseStatUpdatePolicies({ npcStats: definitions });
     normaliseNpcPersistence(definitions);
     assert.equal(definitions[0].carryOver, false);
     assert.equal(definitions[1].carryOver, true);
     assert.equal(definitions[0].persistence, undefined);
     assert.equal(definitions[1].persistenceReview, undefined);
-    assert.deepEqual(values, { HP: '2/10', Wisdom: '8' });
 });
 
 test('transfer carries advancement and locked fields and resets turn fields', () => {
@@ -55,7 +53,7 @@ test('legacy NPC policy remains editable after migration', () => {
     assert.equal(isReaderStat(innate), true);
 });
 
-test('existing numeric player fields keep level-up eligibility separately from turn policy', () => {
+test('legacy player fields acquire growth eligibility without enabling progression counters', () => {
     const tracker = { playerStats: [
         { id: 'strength', name: 'Strength', defaultValue: '5' },
         { id: 'xp', name: 'XP', defaultValue: '0/100' },
@@ -64,10 +62,7 @@ test('existing numeric player fields keep level-up eligibility separately from t
     ], npcStats: [] };
     normaliseStatUpdatePolicies(tracker);
     assert.equal(tracker.playerStats[0].locked, false);
-    assert.equal(progressionStatEligible(tracker.playerStats[0]), true);
-    assert.equal(progressionStatEligible(tracker.playerStats[1]), false);
-    assert.equal(tracker.playerStats[2].updatePolicy, undefined);
-    assert.equal(tracker.playerStats[3].updatePolicy, undefined);
+    assert.deepEqual(tracker.playerStats.map(stat => stat.advanceOnLevel), [true, false, false, false]);
 });
 
 test('structured growth grants wait for review while earned XP and Level apply', () => {

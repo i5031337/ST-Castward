@@ -39,19 +39,11 @@ test('editor follows System fields and keeps retired values editable', () => {
     const root = new Element('div');
     renderProfileFields(char, root);
     const grid = root.children[0];
-    assert.equal(grid.children.length, 2);
-    for (const row of grid.children) {
-        const controls = row.children[0].children[1];
-        assert.equal(controls.children.length, 2);
-        assert.ok(controls.children.every(control => control.tag === 'button'));
-        assert.equal(row.children[1].tag, 'textarea');
-    }
     const badgeInput = grid.children[0].children[1];
     badgeInput.value = 'Calm\nCurious';
     badgeInput.listeners.input();
     assert.equal(char.profile.mood, 'Calm\nCurious');
     assert.equal(fields[0].multiline, false);
-    assert.equal(root.children[1].textContent, 'Other / Legacy details');
     const retiredInput = root.children[2].children[1];
     retiredInput.value = 'Admiral';
     retiredInput.listeners.input();
@@ -61,21 +53,8 @@ test('editor follows System fields and keeps retired values editable', () => {
 test('profile view includes saved fields outside the active System', () => {
     const blocks = buildProfileBlocks({ profile: { mood: 'Calm', old_title: 'Captain' } });
     assert.equal(blocks.length, 2);
-    assert.equal(blocks[1].children[0].textContent, 'Other / Legacy details');
     assert.equal(blocks[1].children[1].children[0].textContent, 'old_title');
     assert.equal(blocks[1].children[1].children[1].textContent, 'Captain');
-});
-
-test('profile layout follows the field setting rather than the value word count', () => {
-    const blocks = buildProfileBlocks({ profile: {
-        mood: 'Calm and curious about the world', origin: 'North',
-    } });
-    assert.equal(blocks.length, 2);
-    assert.equal(blocks[0].className, 'sillynpc-cv-chips sillynpc-cv-identity');
-    assert.equal(blocks[0].children[0].children[1].textContent, 'Calm and curious about the world');
-    assert.equal(blocks[1].className, 'sillynpc-cv-block');
-    assert.equal(blocks[1].children[0].textContent, 'Origin');
-    assert.equal(blocks[1].children[1].textContent, 'North');
 });
 
 test('profile edits retain immutable IDs and retired definitions', () => {

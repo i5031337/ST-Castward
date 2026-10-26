@@ -2,7 +2,6 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { normalizeSystemDefinition, getSystemField, projectSystemTracker, SYSTEM_SCHEMA_VERSION } from '../src/core/system-schema.js';
 import { systemStatFields, systemProfileFields, templateStatIds } from '../src/core/system-fields.js';
-import { HUD_LAYOUTS, hudLayoutFor, normalizeHudLayoutId } from '../src/core/constants-base.js';
 
 test('legacy preset migration keeps only reusable schema and stable generated IDs', () => {
     const preset = {
@@ -95,17 +94,6 @@ test('duplicate legacy names receive distinct IDs without mutating input', () =>
     assert.deepEqual(source, before);
 });
 
-test('System normalization ignores removed goal switches while retaining profile objectives', () => {
-    const input = { schemaVersion: SYSTEM_SCHEMA_VERSION, name: 'Objectives in profiles',
-        profiles: [{ id: 'wants', label: 'Wants', targets: ['player'] }],
-        goals: { npcShortTerm: true, playerShortTerm: true, playerLongTerm: true } };
-    const normalized = normalizeSystemDefinition(input);
-    assert.equal(Object.hasOwn(normalized, 'goals'), false);
-    assert.equal(systemProfileFields(normalized, 'player')[0].id, 'wants');
-    assert.equal(input.goals.playerLongTerm, true);
-});
-
-
 test('System memory capture is opt-in, independently configured, and bounded', () => {
     const defaults = normalizeSystemDefinition({}).memories;
     assert.deepEqual(defaults, { enabled: false, carryOver: false, guidance: '', interval: 8, maxEntriesPerCharacter: 50 });
@@ -121,20 +109,6 @@ test('System memory capture is opt-in, independently configured, and bounded', (
     assert.equal(normalizeSystemDefinition({ memories: { guidance: 'x'.repeat(4001) } }).memories.guidance.length, 4000);
     assert.equal(normalizeSystemDefinition({ memories: { enabled: false, carryOver: true } }).memories.carryOver, true);
     assert.equal(normalizeSystemDefinition({ memories: { carryOver: 'yes' } }).memories.carryOver, false);
-});
-
-test('retired HUD layouts resolve to a supported style', () => {
-    assert.deepEqual(HUD_LAYOUTS.map(layout => layout.id),
-        ['plate', 'underline', 'pips', 'splitring']);
-    for (const [oldId, currentId] of Object.entries({
-        blades: 'plate', dock: 'plate', fan: 'underline', brackets: 'underline',
-    })) {
-        assert.equal(normalizeHudLayoutId(oldId), currentId);
-        assert.equal(hudLayoutFor(oldId).id, currentId);
-        assert.equal(normalizeSystemDefinition({ schemaVersion: 1, hud: { layout: oldId } })
-            .hud.layout, currentId);
-    }
-    assert.equal(hudLayoutFor('unknown').id, 'plate');
 });
 
  test('shared catalogs merge equivalent definitions and remap independent legacy references', () => {

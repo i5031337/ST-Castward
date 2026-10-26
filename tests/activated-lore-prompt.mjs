@@ -28,9 +28,9 @@ test('a turn with no activated lore drops previous references and a later activa
     const scene = () => prompts.get('sillynpc-status-scene');
     lore.noteActivatedLore(activated);
     deps.applyScenePrompt();
-    assert.match(scene(), /Other known characters[\s\S]*Mira - HP=7/);
+    assert.match(scene(), /Mira.*HP=7/);
     deps.onGenerationStarted('normal', {}, false);
-    assert.doesNotMatch(scene(), /Other known characters|Mira/);
+    assert.doesNotMatch(scene(), /Mira/);
     lore.noteActivatedLore(activated);
     deps.applyScenePrompt();
     assert.match(scene(), /Mira - HP=7/);

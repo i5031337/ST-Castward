@@ -1,24 +1,9 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { createBuiltinSystem } from '../src/core/builtin-systems.js';
 import { SystemGenerationRun } from '../src/generation/generate-system.js';
 import { allocatePlan } from '../src/generation/plan.js';
 import { validateDefinition } from '../src/generation/validate-definition.js';
 import { plan, responseFor } from './fixtures/system-generation.mjs';
-
-test('starter sheets reserve badges for brief identity fields', () => {
-    const badgeIds = {
-        fantasy: ['ancestry', 'calling'],
-        dating: [],
-        creature: ['species', 'element', 'nature'],
-    };
-    for (const [id, expected] of Object.entries(badgeIds)) {
-        const system = createBuiltinSystem(id);
-        assert.deepEqual(system.profiles.filter(field => !field.multiline).map(field => field.id), expected, id);
-        assert.deepEqual(validateDefinition(system), [], id);
-        assert.equal(system.profiles.find(field => field.id === 'appearance').multiline, true, id);
-    }
-});
 
 test('generated profiles preserve explicit badge and text-section choices', async () => {
     const registry = allocatePlan(plan);

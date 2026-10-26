@@ -44,14 +44,16 @@ test('only documented portable fields survive and provider selections remain sep
     raw.voices.Edge.token = 'secret';
     raw.voices.System.voiceName = 'should not survive disabled mode';
     raw.voices.Bad = { mode: 'unknown', voiceId: 'ignored' };
-    raw.voices.__proto__ = { polluted: true };
+    Object.defineProperty(raw.voices, '__proto__', {
+        value: { mode: 'voice', voiceId: 'unsafe-provider' }, enumerable: true,
+    });
     const clean = normalizeNpcPresentation(raw);
     assert.equal(JSON.stringify(clean).includes('secret'), false);
     assert.equal(clean.voices.Edge.voiceId, 'en-GB-001');
     assert.equal(clean.voices.System.mode, 'disabled');
     assert.equal(clean.voices.System.voiceName, '');
     assert.equal(clean.voices.Bad.mode, 'default');
-    assert.equal(clean.polluted, undefined);
+    assert.equal(Object.getPrototypeOf(clean.voices), Object.prototype);
     assert.deepEqual(normalizeNpcPresentation(clean), clean);
     assert.equal(raw.voices.Edge.token, 'secret');
 });
@@ -66,10 +68,9 @@ test('sprite folder bindings support host depth without paths, traversal, or URL
     }
 });
 
-test('rename preserves folder and valid card preference references', () => {
+test('normalizing a valid card preserves expression editor preference references', () => {
     const card = { name: 'Mira', presentation: normalizeNpcPresentation(preferences) };
     const existing = card.presentation;
-    card.name = 'Captain Mira';
     normalizeCharacterPresentation(card);
     assert.equal(card.presentation, existing);
     assert.equal(card.presentation.expressions.spriteFolder, 'Mira/casual');

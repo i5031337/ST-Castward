@@ -61,8 +61,6 @@ test('starter picker imports and activates a fresh System before a chat starts',
     const root = build(() => refreshes++);
     const select = find(root, element => element.tag === 'select');
     const button = find(root, element => element.textContent === 'Start from template');
-    assert.deepEqual(select.children.map(option => option.textContent),
-        ['Fantasy Adventure', 'Dating Sim', 'Creature Trainer']);
     assert.equal(button.disabled, false);
     select.value = 'creature';
     button.listeners.click();

@@ -37,8 +37,8 @@ test('switching presets and resetting remove stale inline effects without changi
     applyThemeAppearance(root, { menuStyle: 'terminal', themeOverrides });
     assert.equal(root.properties.get('--sillynpc-bg-primary'), '#123456');
     assert.equal(root.properties.get('--sillynpc-radius-md'), '0px');
-    assert.equal(root.properties.get('--sillynpc-space-md'), '9px');
-    assert.equal(root.properties.get('--sillynpc-custom-shadow'), '0 0 0 transparent');
+    assert.ok(root.properties.has('--sillynpc-space-md'));
+    assert.equal(root.attributes.get('data-theme-shadow'), '0');
     applyThemeAppearance(root, { menuStyle: 'rosewater', themeOverrides });
     assert.equal(root.properties.get('--sillynpc-fg-primary'), '#654321');
     assert.equal(root.properties.has('--sillynpc-bg-primary'), false);

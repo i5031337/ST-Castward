@@ -38,7 +38,7 @@ test('queue deduplicates pending and completed requests and serializes NPCs', as
     await engine.enqueue({ ...job('a'), sprites: [{ label: 'joy' }] });
     assert.equal(requests.length, 4);
 });
-test('changed chat, swipe, source, configuration or reset prevents pending results from applying', async () => {
+test('invalidating a job or resetting the engine prevents pending results from applying', async () => {
     for (const reset of [false, true]) {
         let resolve, current = true;
         const applied = [];

@@ -104,13 +104,6 @@ test('fresh chat and persona values start at System defaults, without old global
     assert.deepEqual(chatA.player.memories, [{ text: 'A secret' }]);
 });
 
-test('only a legacy tracker chat missing its player migrates old global values', () => {
-    const migrated = deps.migrateLegacyPlayer('Rhea.png', 'Rhea');
-    assert.equal(migrated.stats.HP, '3');
-    assert.deepEqual(migrated.collections.inventory, [{ name: 'old sword' }]);
-    assert.equal(deps.createChatPlayerSeed().stats.HP, '10');
-});
-
 test('storage loads legacy tracker player from master, but fresh chats use defaults', () => {
     const metadata = { sillynpc_status_state: { global: {}, characters: [] } };
     const storage = {
@@ -127,6 +120,7 @@ test('storage loads legacy tracker player from master, but fresh chats use defau
         ['getSettings', 'getContext', 'eventSource', 'debugLog', 'LOG_PREFIX', 'applyRosterStateSeed', 'captureNpcRoster', 'saveSettings'],
         [() => settings, () => ({ saveMetadataDebounced() {} }), { emit() {} }, () => {}, '[test]', applyRosterStateSeed, captureNpcRoster, () => {}])(storage);
     assert.equal(storage.loadStateFromMetadata().player.stats.HP, '3');
+    assert.deepEqual(storage.loadStateFromMetadata().player.collections.inventory, [{ name: 'old sword' }]);
     const loaded = storage.loadStateFromMetadata();
     loaded.locations = { enabled: false, currentId: 'inn', records: { inn: { name: 'Inn' } } };
     settings.statusTracker.locations = { enabled: true };
@@ -144,6 +138,7 @@ test('storage loads legacy tracker player from master, but fresh chats use defau
         npcMemories: { 'id:copied': { entries: [{ id: 'one', text: 'Carried memory', manual: true }], archive: [] } },
     };
     assert.equal(storage.loadStateFromMetadata().player.stats.HP, '10');
+    assert.deepEqual(storage.loadStateFromMetadata().player.collections.inventory, []);
     assert.equal(metadata.sillynpc_roster_state_seed, undefined);
     assert.equal(metadata.sillynpc_status_state.locations.records.inn.name, 'Inn');
     assert.equal(metadata.sillynpc_status_state.npcMemories['id:copied'].entries[0].text, 'Carried memory');

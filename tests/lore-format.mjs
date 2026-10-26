@@ -7,7 +7,6 @@ import { readFileSync } from 'node:fs';
 import { isReaderStat } from '../src/tracker/stat-update-policy.js';
 import { PROFILE_FIELDS, NPC_LORE_FIELDS, anyProfileFieldUnlocked } from '../src/core/constants-profile.js';
 import { formatLoreContent, parseLoreContent, parseGeneratedProfileFields, mergeLoreValues } from '../src/lore/lore-format.js';
-import { DEFAULT_LORE_PROMPT } from '../src/prompts/default-prompt-texts.js';
 import { loreReplyWasTruncated, parseLoreReply } from '../src/lore/lore-reply.js';
 import { resolveProfileFields, resolveProfileFieldsFromSystem, setProfileSettingsProvider, profileStrings, profileFieldValue } from '../src/core/profile-fields.js';
 
@@ -220,13 +219,6 @@ test('lore truncation uses provider finish reason when available', () => {
     assert.equal(loreReplyWasTruncated({ choices: [{ native_finish_reason: 'max_tokens' }] }), true);
     assert.equal(loreReplyWasTruncated({ choices: [{ finish_reason: 'stop' }] }), false);
     assert.equal(loreReplyWasTruncated({ choices: [{ text: 'Role: Professor' }] }), false);
-});
-
-test('the default lore prompt allows unsupported fields to be omitted', () => {
-    assert.match(DEFAULT_LORE_PROMPT, /Omit fields with no supported value/);
-    assert.match(DEFAULT_LORE_PROMPT, /tags: {{name}}\ncontent: \|\n{{profileTemplate}}$/);
-    assert.equal((DEFAULT_LORE_PROMPT.match(/content: \|/g) || []).length, 1);
-    assert.doesNotMatch(DEFAULT_LORE_PROMPT, /every named field|fill if known/i);
 });
 
 test('lore reply accepts plain labels and a fenced YAML wrapper', () => {

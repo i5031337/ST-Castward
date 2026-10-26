@@ -105,7 +105,6 @@ test('request failures return a warning and preserve successful tracker work', a
     assert.equal(result.raw, 'partial reply');
     assert.equal(result.warnings.length, 1);
     assert.match(result.warnings[0], /Location reading failed: Connection unavailable/);
-    assert.match(result.warnings[0], /Regenerate.*retry/);
 });
 
 test('valid no-change replies remain completed readings without an invented proposal', async () => {

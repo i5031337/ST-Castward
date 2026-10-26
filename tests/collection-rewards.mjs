@@ -68,7 +68,7 @@ test('guided intervals, disabled rewards and empty schedules grant only configur
     assert.deepEqual(scheduledCollectionRewards({ ...collection, levelUpRewards: { enabled: true } }, [2, 3]), []);
 });
 
-test('targets overlap without multiplying grants and empty/retired collections do not apply', () => {
+test('reward eligibility respects resolved templates, empty targets and retired collections', () => {
     assert.equal(collectionRewardAppliesTo(collection, 'npc', 'monster'), true);
     assert.equal(collectionRewardAppliesTo({ ...collection, targets: ['template:monster'] }, 'npc', 'other'), false);
     assert.equal(collectionRewardAppliesTo({ ...collection, targets: [] }, 'player'), false);

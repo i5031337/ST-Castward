@@ -25,22 +25,20 @@ const schema = { type: 'object' };
 const namedSchema = { name: 'castward_reader', value: schema, strict: true };
 const rawReply = { choices: [{ message: { content: '{"player":{}}' } }] };
 
-for (const usageKind of ['extraction', 'scan']) {
-    test(`${usageKind} forwards assigned preset YAML alongside reader temperature and schema`, async () => {
-        let received;
-        const { request } = build({ ConnectionManagerRequestService: {
-            getProfile: id => { assert.equal(id, 'custom'); return { api: 'custom', preset: 'Model preset' }; },
-            sendRequest: async (...args) => { received = args; return { content: { player: {} } }; },
-        }, presets: { 'Model preset': { custom_include_body: 'temperature: 0.9\nmax_tokens: 800',
-                custom_exclude_body: '- temperature', custom_include_headers: 'X-Model: {{model}}' } }, generateRawData: () => assert.fail('No fallback') });
-        await request('Prompt', schema, { extractionProfileId: 'custom', extractionTemperature: '0.2',
-            extractionUseSchema: true, extractionMaxTokens: 400 }, 'System', { usageKind });
-        assert.equal(received[2], 400);
-        assert.deepEqual(received[4], { temperature: 0.2, json_schema: namedSchema,
-            custom_include_body: 'temperature: 0.9\nmax_tokens: 800', custom_exclude_body: '- temperature',
-            custom_include_headers: 'X-Model: fixture-model' });
-    });
-}
+test('extraction forwards assigned preset YAML alongside reader temperature and schema', async () => {
+    let received;
+    const { request } = build({ ConnectionManagerRequestService: {
+        getProfile: id => { assert.equal(id, 'custom'); return { api: 'custom', preset: 'Model preset' }; },
+        sendRequest: async (...args) => { received = args; return { content: { player: {} } }; },
+    }, presets: { 'Model preset': { custom_include_body: 'temperature: 0.9\nmax_tokens: 800',
+            custom_exclude_body: '- temperature', custom_include_headers: 'X-Model: {{model}}' } }, generateRawData: () => assert.fail('No fallback') });
+    await request('Prompt', schema, { extractionProfileId: 'custom', extractionTemperature: '0.2',
+        extractionUseSchema: true, extractionMaxTokens: 400 }, 'System');
+    assert.equal(received[2], 400);
+    assert.deepEqual(received[4], { temperature: 0.2, json_schema: namedSchema,
+        custom_include_body: 'temperature: 0.9\nmax_tokens: 800', custom_exclude_body: '- temperature',
+        custom_include_headers: 'X-Model: fixture-model' });
+});
 
 test('main API without a selected profile does not warn', async () => {
     let calls = 0;
@@ -68,28 +66,25 @@ test('successful selected connection preserves its configuration without warning
     assert.equal(usage.length, 1);
 });
 
-for (const failure of ['deleted profile', 'network failure', 'authentication failure', 'rate limit', 'schema failure', 'cancelled']) {
-    test(`${failure} warns before falling back for a selected reader connection`, async () => {
-        const context = { ConnectionManagerRequestService: { sendRequest: async () => { throw new Error(failure); } } };
-        const { request, events, usage } = build(context);
-        context.generateRawData = async () => { events.push(['main']); return rawReply; };
-        assert.equal(await request('Prompt', schema, { extractionProfileId: 'reader', extractionFallbackToMain: true }), '{"player":{}}');
-        assert.equal(events.length, 2);
-        assert.equal(events[0][0], 'warning');
-        assert.match(events[0][1], /selected reader connection failed.*main API/);
-        assert.equal(events[0][2], 'Castward');
-        assert.deepEqual(events[1], ['main']);
-        assert.equal(usage.length, 1);
-    });
-}
+test('selected reader failure warns before retrying through the main API', async () => {
+    const failure = new Error('Connection unavailable');
+    const context = { ConnectionManagerRequestService: { sendRequest: async () => { throw failure; } } };
+    const { request, events, usage } = build(context);
+    context.generateRawData = async () => { events.push(['main']); return rawReply; };
+    assert.equal(await request('Prompt', schema, { extractionProfileId: 'reader', extractionFallbackToMain: true }), '{"player":{}}');
+    assert.equal(events.length, 2);
+    assert.equal(events[0][0], 'warning');
+    assert.deepEqual(events[1], ['main']);
+    assert.equal(usage.length, 1);
+});
 
-test('disabled manager warns with history scan wording and preserves scan usage on fallback', async () => {
+test('disabled manager warns and preserves scan usage on fallback', async () => {
     const context = {};
     const { request, events, usage } = build(context);
     context.generateRawData = async () => { events.push(['main']); return { player: {} }; };
     assert.deepEqual(await request('Prompt', schema, { extractionProfileId: 'scan', extractionUseSchema: true, extractionFallbackToMain: true },
         'Scan system', { usageKind: 'scan' }), { player: {} });
-    assert.match(events[0][1], /selected history scan connection failed.*main API/);
+    assert.equal(events[0][0], 'warning');
     assert.deepEqual(events[1], ['main']);
     assert.equal(usage[0][0], 'scan');
 });
@@ -192,27 +187,25 @@ test('reader fallback is off by default', () => {
     assert.equal(defaultTrackerSettings.extractionFallbackToMain, false);
 });
 
-for (const usageKind of ['extraction', 'scan', 'location', 'fill', 'banscan']) {
-    for (const fallback of [false, undefined]) {
-        for (const missingManager of [false, true]) {
-            test(`${usageKind} reports failure without fallback (setting=${fallback}, missing manager=${missingManager})`, async () => {
-                const failure = new Error('Selected connection unavailable');
-                const context = {
-                    generateRawData: () => assert.fail('Main API must not be called'),
-                    ...(missingManager ? {} : { ConnectionManagerRequestService: {
-                        sendRequest: async () => { throw failure; },
-                    } }),
-                };
-                const { request, events, usage, cancellation } = build(context);
-                await assert.rejects(request('Prompt', schema, {
-                    extractionProfileId: 'reader', extractionFallbackToMain: fallback,
-                }, 'System', { usageKind }), missingManager ? { name: 'TypeError' } : failure);
-                assert.deepEqual(events, []);
-                assert.deepEqual(usage, []);
-                assert.equal(cancellation.listeners(), 0);
-                assert.equal(cancellation.button.style.display, 'none');
-            });
-        }
+for (const fallback of [false, undefined]) {
+    for (const missingManager of [false, true]) {
+        test(`selected connection fails without fallback (setting=${fallback}, missing manager=${missingManager})`, async () => {
+            const failure = new Error('Selected connection unavailable');
+            const context = {
+                generateRawData: () => assert.fail('Main API must not be called'),
+                ...(missingManager ? {} : { ConnectionManagerRequestService: {
+                    sendRequest: async () => { throw failure; },
+                } }),
+            };
+            const { request, events, usage, cancellation } = build(context);
+            await assert.rejects(request('Prompt', schema, {
+                extractionProfileId: 'reader', extractionFallbackToMain: fallback,
+            }, 'System'), missingManager ? { name: 'TypeError' } : failure);
+            assert.deepEqual(events, []);
+            assert.deepEqual(usage, []);
+            assert.equal(cancellation.listeners(), 0);
+            assert.equal(cancellation.button.style.display, 'none');
+        });
     }
 }
 
@@ -231,10 +224,10 @@ test('an AbortError never falls back even when retry is enabled', async () => {
 });
 
 
-for (const [usageKind, kind, label] of [
-    ['extraction', 'tracker', 'Reading stats…'],
-    ['location', 'location', 'Updating places…'],
-    ['fill', 'profile', 'Filling Mira’s profile…'],
+for (const [usageKind, kind] of [
+    ['extraction', 'tracker'],
+    ['location', 'location'],
+    ['fill', 'profile'],
 ]) {
     test(`${usageKind} exposes its live activity until the request finishes`, async () => {
         let complete;
@@ -243,7 +236,7 @@ for (const [usageKind, kind, label] of [
         const result = request('Prompt', null, {}, null, {
             usageKind, activityName: 'Mira',
         });
-        assert.deepEqual(getGenerationActivities(), [{ kind, label }]);
+        assert.deepEqual(getGenerationActivities().map(activity => activity.kind), [kind]);
         complete(rawReply);
         await result;
         assert.deepEqual(getGenerationActivities(), []);

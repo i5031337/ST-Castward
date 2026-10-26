@@ -57,7 +57,8 @@ test('new Place generation is opt in and saves a linked landscape without a chat
     const task = api.generatePlaceBackground('inn', { ...f.options, automatic: true });
     assert.equal(f.requests.length, 1);
     assert.match(f.requests[0].prompt, /Blue Inn[\s\S]*Copper lamps/);
-    assert.deepEqual(f.requests[0].imageOptions.shape.pixels, { width: 1280, height: 720 });
+    const { width, height } = f.requests[0].imageOptions.shape.pixels;
+    assert.ok(width > height, 'Place backgrounds use a landscape image');
     assert.equal(f.requests[0].imageOptions.gallery, false);
     assert.equal(f.requests[0].imageOptions.extend, false);
     assert.equal(f.requests[0].imageOptions.edit, false);

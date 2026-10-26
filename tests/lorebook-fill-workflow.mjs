@@ -24,12 +24,12 @@ function fixture(defaultLorebook = '') {
 test('first generated profiles share one newly created chat-bound book', async () => {
     const f = fixture();
     const [first, second] = await Promise.all([f.fill(), f.fill()]);
-    assert.equal(first, 'Castward Chat fresh');
+    assert.equal(typeof first, 'string');
+    assert.ok(first.length > 0);
     assert.equal(second, first);
     assert.deepEqual(f.created, [first]);
     assert.equal(f.context.chatMetadata.world_info, first);
     assert.equal(f.saves(), 1);
-    assert.deepEqual(f.classes, ['world_set']);
     assert.equal(await f.fill(), first);
     assert.equal(f.created.length, 1);
     const native = { world: first, uid: 1, content: 'Generated profile' };

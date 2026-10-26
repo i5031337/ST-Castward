@@ -3,7 +3,6 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFileSync } from 'node:fs';
 import { collectionAppliesTo } from '../src/core/collection-targets.js';
-import { readerPromptTexts } from '../src/prompts/prompt-texts-reader.js';
 
 const source = path => readFileSync(new URL(path, import.meta.url), 'utf8')
     .replace(/^import\s+[\s\S]*?\s+from\s+['"][^'"]+['"];\s*/gm, '')
@@ -40,13 +39,9 @@ test('changed examples preserve configured field types', () => {
             { name: 'key', type: 'text', isPrimary: true }, { name, type },
         ] }] });
         const changed = examples.split('\n\n')[2];
-        assert.ok(changed.startsWith('Changed item:\n'));
-        assert.equal(JSON.parse(changed.slice(changed.indexOf('\n') + 1)).entries.update[0][name],
-            type === 'number' ? 2 : type === 'boolean' ? false : '<new value>');
+        assert.equal(typeof JSON.parse(changed.slice(changed.indexOf('\n') + 1)).entries.update[0][name],
+            type === 'text' ? 'string' : type);
     }
-    assert.match(readerPromptTexts.find(entry => entry.id === 'reader').text, /quantity field for the amount gained or spent/);
-    assert.match(readerPromptTexts.find(entry => entry.id === 'reader').text,
-        /replace illustrative values with supported typed details/);
 });
 
 test('missing and blank identifiers are explained for additions, updates and replacements', () => {
@@ -75,8 +70,8 @@ test('numeric identifiers including zero remain valid, and normal writes do not 
 
 test('collection examples use the primary field type consistently for all operations', () => {
     const build = new Function(`${source('../src/tracker/extractor/status-extractor-prompt-state.js')}\nreturn buildDeltaExample;`)();
-    for (const [type, expected] of [['number', 1],
-        ['boolean', true], ['text', '<exact primary field value>']]) {
+    for (const [type, expectedType] of [['number', 'number'],
+        ['boolean', 'boolean'], ['text', 'string']]) {
         const examples = build({ collections: [{ id: 'moves', fields: [
             { name: 'key', type, isPrimary: true }, { name: 'power', type: 'number' },
         ] }] }).split('\n\n').map(block => JSON.parse(block.slice(block.indexOf('\n') + 1)).moves);
@@ -84,13 +79,11 @@ test('collection examples use the primary field type consistently for all operat
         assert.deepEqual(Object.keys(examples[0]), ['add']);
         assert.deepEqual(Object.keys(examples[1]), ['remove']);
         assert.deepEqual(Object.keys(examples[2]), ['update']);
-        assert.equal(examples[0].add[0].key, expected);
-        assert.equal(examples[2].update[0].key, expected);
-        assert.equal(examples[1].remove[0], expected);
-        assert.equal(examples[0].add[0].power, 1);
-        assert.equal(examples[2].update[0].power, 2);
+        const identifier = examples[0].add[0].key;
+        assert.equal(typeof identifier, expectedType);
+        assert.equal(examples[2].update[0].key, identifier);
+        assert.equal(examples[1].remove[0], identifier);
+        assert.equal(typeof examples[0].add[0].power, 'number');
+        assert.equal(typeof examples[2].update[0].power, 'number');
     }
-    const prompt = readerPromptTexts.find(entry => entry.id === 'reader').text;
-    assert.match(prompt, /quoted collection ID as the key/);
-    assert.match(prompt, /primary field in each add, update, and counted remove object/);
 });

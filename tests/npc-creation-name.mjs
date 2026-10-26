@@ -13,7 +13,6 @@ test('optional exact name skips candidate generation and preserves spelling and 
     const prompt = JSON.parse(f.calls[0].userPrompt);
     assert.equal(prompt.request.name, result.name);
     assert.equal(prompt.creativeNudge, undefined);
-    assert.match(f.calls[0].systemPrompt, /canon/);
 });
 
 test('blank optional name preserves the random naming workflow', async () => {

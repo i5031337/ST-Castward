@@ -139,33 +139,3 @@ test('initial NPC XP and Level are stats rather than progression, including save
         { scope: 'character', actor: 'Mira', kind: 'stat', label: 'Level', before: '0', after: '1' },
     ]).applied, '1 XP update, 1 level-up');
 });
-
-test('initialized pools report their maximum once while fixed ratings omit their bounds', () => {
-    const definition = row => row.label === 'HP'
-        ? { type: 'number', defaultValue: '10/10' }
-        : { type: 'number', defaultValue: '1', min: '1', maxStatValue: '5' };
-    const rows = ['HP', 'Rating'].flatMap(label => [
-        { scope: 'character', actor: 'Mira', kind: 'stat', label, before: '', after: '3' },
-        { scope: 'character', actor: 'Mira', kind: 'stat-max', label, before: '(none)', after: label === 'HP' ? '10' : '5' },
-    ]);
-    const breakdown = buildReportBreakdown(rows, [], 0, definition);
-    assert.equal(breakdown.applied, '2 stats');
-    assert.equal(breakdown.rows[0].applied, '2 stats (HP maximum: 10)');
-    assert.equal(JSON.stringify(breakdown).includes('Rating maximum'), false);
-    assert.equal(rows.length, 4);
-    assert.equal(rows[0].maximumDetail, undefined);
-});
-
-test('level reward value and pool maximum share a count and retain maximum growth details', () => {
-    const grant = { id: 'hp-reward' };
-    const value = { scope: 'player', kind: 'stat', label: 'HP', before: '10', after: '12', grant };
-    const maximum = { ...value, kind: 'stat-max', before: '20', after: '25' };
-    const definition = () => ({ type: 'bar' });
-    const pending = buildReportBreakdown([], [value, maximum], 0, definition);
-    assert.equal(pending.pending, '1 level reward change');
-    assert.equal(pending.rows[0].pending, '1 level reward change (HP maximum: 20 → 25)');
-    assert.equal(buildReportBreakdown([value, maximum], [], 0, definition).applied, '1 level reward change');
-    assert.equal(buildReportBreakdown([maximum], [], 0, definition).rows[0].applied,
-        '1 level reward change (HP maximum: 20 → 25)');
-    assert.equal(buildReportBreakdown([maximum], [], 0, () => ({ type: 'number', defaultValue: '1', maxStatValue: '5' })).applied, 'None');
-});

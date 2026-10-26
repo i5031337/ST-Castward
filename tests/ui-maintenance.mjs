@@ -1,22 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFileSync } from 'node:fs';
-import { statPolicyMarkup } from '../src/ui/system/ui-system-stat-policy.js';
-
-test('System Builder keeps update authority separate from the progression editor', () => {
-    const escape = text => text;
-    const npc = statPolicyMarkup({ name: 'Wisdom', persistence: 'innate',
-         }, 'characterStats', escape);
-    assert.match(npc, /class="stat-carry-over"/);
-    assert.match(npc, /NPC carryover/);
-    assert.doesNotMatch(npc, /stat-persistence|Innate|Variable/);
-    assert.doesNotMatch(npc, /stat-advance-on-level/);
-
-    const player = statPolicyMarkup({ name: 'Strength', advanceOnLevel: true },
-        'playerStats', escape);
-    assert.doesNotMatch(player, /stat-advance-on-level/);
-    assert.doesNotMatch(player, /stat-persistence/);
-});
 
 class Element {
     constructor(tag) {
@@ -42,7 +26,7 @@ function load(file, names, values, result) {
     return new Function('buildNpcTemplateSelect', ...names, `${source}\nreturn ${result};`)(() => new Element('select'), ...values);
 }
 
-test('tracker display controls redraw immediately without reprocessing chat or rebuilding settings', () => {
+test('tracker display controls save and redraw without reprocessing chat', () => {
     const document = { createElement: tag => new Element(tag) };
     const control = options => ({ ...options, style: {} });
     const display = load('tracker/ui-tracker-display-reading.js', [
@@ -62,7 +46,6 @@ test('tracker display controls redraw immediately without reprocessing chat or r
     ], 'renderStatusView');
     const panel = new Element('div');
     render(panel);
-    const children = [...panel.children];
     const keys = ['placement', ...['showGlobalStats', 'showPlayerStats', 'showNpcStats',
         'showRawTrackerOutput', 'showNpcPortraits', 'characterColumns', 'summaryThreshold']
         .map(key => `statusTracker.${key}`)];
@@ -71,7 +54,6 @@ test('tracker display controls redraw immediately without reprocessing chat or r
         assert.ok(setting, key);
         setting.onChange();
         assert.deepEqual(counts, { save: index + 1, redraw: index + 1, reprocess: 0, hud: 0 });
-        assert.deepEqual(panel.children, children);
     }
 });
 
@@ -107,7 +89,7 @@ test('linked lore entry with UID zero can generate and save', async () => {
     const generate = elements.find(el => el.innerHTML?.includes('Start Generation'));
     const save = elements.find(el => el.innerHTML?.includes('Save & Close'));
     await generate.click();
-    assert.match(elements.find(el => el.className === 'sillynpc-lore-warning').textContent, /token limit/);
+    assert.ok(elements.find(el => el.className === 'sillynpc-lore-warning').textContent.trim());
     assert.equal(warnings.length, 1);
     await save.click();
     assert.deepEqual(saves, [[char, 'World', 0, 'friend', 'A useful entry', { preserveEmpty: true }]]);
@@ -115,7 +97,7 @@ test('linked lore entry with UID zero can generate and save', async () => {
     assert.equal(popup.closed, true);
 });
 
-test('editor resolves a removed Pictures tab before building its tab bar', async () => {
+test('editor leaves an unavailable pictures view and its back button returns to the character list', async () => {
     const document = { createElement: tag => new Element(tag) };
     const editorView = new Element('div');
     const char = { id: 'mira', name: 'Mira' };
@@ -138,8 +120,6 @@ test('editor resolves a removed Pictures tab before building its tab bar', async
     assert.equal(manageState.charView, 'profile');
     assert.equal(profileRendered, true);
     const sticky = editorView.children[0];
-    const tabBar = sticky.children[1];
-    assert.equal(tabBar.children.some(tab => tab.dataset.view === 'pictures'), false);
     await sticky.children[0].children[0].click();
     assert.equal(manageState.editingCharId, null);
     assert.equal(showGrid, 1);

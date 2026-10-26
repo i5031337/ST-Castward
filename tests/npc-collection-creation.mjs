@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { npcGenerationContract, npcGenerationPrompt, validateGeneratedNpc, NPC_GENERATION_INSTRUCTIONS } from '../src/npc/npc-generation.js';
+import { npcGenerationContract, npcGenerationPrompt, validateGeneratedNpc } from '../src/npc/npc-generation.js';
 import { request, fixture, generated } from './helpers/npc-creation.mjs';
 import { seedKnownNpcCollections } from '../src/npc/npc-collection-generation.js';
 
@@ -58,16 +58,11 @@ test('the contract includes only active NPC collections and exposes typed entry 
     assert.equal(props.moves.items.properties.pp.type, 'number');
 });
 
-test('the same generation request receives collection meanings, field guidance and general starting instructions', () => {
+test('the generation request includes configured collection meanings and field guidance', () => {
     const f = setup();
     const body = JSON.parse(npcGenerationPrompt(request, npcGenerationContract(f.settings), {}, () => 0));
     assert.match(body.templates[0].collections, /Garments currently worn/);
     assert.match(body.templates[0].collections, /Describe fabric and cut/);
-    assert.match(NPC_GENERATION_INSTRUCTIONS, /worn clothing, ordinary equipment/);
-    assert.match(NPC_GENERATION_INSTRUCTIONS, /innate or learned abilities\/knowledge/);
-    assert.match(NPC_GENERATION_INSTRUCTIONS, /scene props as part of the setting/);
-    assert.match(NPC_GENERATION_INSTRUCTIONS, /native JSON numbers and booleans/);
-    assert.doesNotMatch(NPC_GENERATION_INSTRUCTIONS, /collections start empty/);
 });
 
 test('starting entries are returned and saved in one request with typed defaults and empty event collections', async () => {

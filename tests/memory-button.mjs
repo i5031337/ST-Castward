@@ -23,7 +23,6 @@ function fixture() {
     let busy = false;
     let calls = 0;
     let resolve;
-    const notices = [];
     const refreshMemoryButton = new Function('document', 'getSettings', 'makeActivatable',
         'memoryReaderBusy', 'readMemories', 'toastr', 'LOG_PREFIX',
         `${source}\nreturn refreshMemoryButton;`)(document, () => settings, () => {},
@@ -31,8 +30,8 @@ function fixture() {
             assert.equal(options.manual, true);
             calls++;
             return new Promise(done => { resolve = done; });
-        }, { info: value => notices.push(value), success: value => notices.push(value) }, 'test');
-    return { settings, refreshMemoryButton, notices,
+        }, { info() {}, success() {} }, 'test');
+    return { settings, refreshMemoryButton,
         button: () => nodes.get('sillynpc-memory-button'),
         setBusy: value => { busy = value; }, calls: () => calls,
         finish: result => resolve(result) };
@@ -42,7 +41,6 @@ test('memory button follows System enablement independently of tracker and mount
     const f = fixture();
     f.refreshMemoryButton();
     const button = f.button();
-    assert.equal(button.title, 'Read memories now');
     f.refreshMemoryButton();
     assert.equal(f.button(), button);
     f.setBusy(true);
@@ -58,7 +56,7 @@ test('memory button follows System enablement independently of tracker and mount
     assert.equal(f.button(), undefined);
 });
 
-test('manual memory button prevents duplicate requests and reports pending review', async () => {
+test('manual memory button prevents duplicate requests and becomes available after completion', async () => {
     const f = fixture();
     f.refreshMemoryButton();
     const button = f.button();
@@ -69,15 +67,4 @@ test('manual memory button prevents duplicate requests and reports pending revie
     f.finish({ ok: true, pending: 2, remainingReplies: 5 });
     await request;
     assert.equal(button.attributes['aria-disabled'], 'false');
-    assert.match(f.notices[0], /2 memories awaiting review/);
-    assert.match(f.notices[1], /5 unread replies remain.*again to continue/);
-});
-
-test('manual memory button reports memories saved automatically', async () => {
-    const f = fixture();
-    f.refreshMemoryButton();
-    const request = f.button().listeners.click();
-    f.finish({ ok: true, applied: 2, pending: 0, remainingReplies: 0 });
-    await request;
-    assert.match(f.notices[0], /2 NPC memories saved/);
 });

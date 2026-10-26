@@ -54,13 +54,15 @@ test('named speakers and literal NPC aliases make offstage NPCs eligible', async
 
 test('interval, enablement and host busy gates prevent requests, manual read bypasses interval', async () => {
     const f = fixture({ count: 7 });
-    assert.match((await f.service.read()).reason, /Not enough/);
+    assert.equal((await f.service.read()).ok, false);
     assert.equal(f.calls.requests.length, 0);
     f.setBlocked(true);
-    assert.match((await f.service.read({ manual: true })).reason, /Wait/);
+    assert.equal((await f.service.read({ manual: true })).ok, false);
+    assert.equal(f.calls.requests.length, 0);
     f.setBlocked(false);
     f.settings.statusTracker.presets.genre.definition.memories.enabled = false;
-    assert.match((await f.service.read({ manual: true })).reason, /disabled/);
+    assert.equal((await f.service.read({ manual: true })).ok, false);
+    assert.equal(f.calls.requests.length, 0);
     f.settings.statusTracker.presets.genre.definition.memories.enabled = true;
     assert.equal((await f.service.read({ manual: true })).ok, true);
     assert.equal(progress(f).checkpoint, 6);

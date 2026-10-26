@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createExpressionGenerator } from '../src/expressions/expression-generation.js';
-import { EMOTION_LABELS, EMOTION_PROMPTS, normalizeExpressionGeneration, expressionPromptVariants, setExpressionPrompt, selectExpressionPrompt, expressionFolder, prepareExpressionReference, expressionWorkflow } from '../src/expressions/expression-prompts.js';
+import { EMOTION_PROMPTS, normalizeExpressionGeneration, expressionPromptVariants, setExpressionPrompt, selectExpressionPrompt, expressionFolder, prepareExpressionReference, expressionWorkflow } from '../src/expressions/expression-prompts.js';
 import { normalizeNpcPresentation } from '../src/core/npc-presentation.js';
 
 function fixture() {
@@ -17,8 +17,7 @@ function fixture() {
     return { generator, calls, packs, job };
 }
 
-test('28 saved prompts normalize, round-trip with cards, and preserve custom instructions', () => {
-    assert.equal(EMOTION_LABELS.length, 28);
+test('saved prompts normalize, round-trip with cards, and preserve custom instructions', () => {
     const generation = normalizeExpressionGeneration({ enabled: true, reference: '/a.png',
         workflow: 'Edit.json', prompts: { joy: ' My custom smile ', nonsense: 'discard' } });
     assert.deepEqual(generation.prompts.joy, ['My custom smile', null, null]);
@@ -30,17 +29,13 @@ test('28 saved prompts normalize, round-trip with cards, and preserve custom ins
     assert.notEqual(first, expressionFolder({ id: 'two' }, '/a.png'));
 });
 
-test('all emotions have three distinct variants and random selection can reach each one', () => {
-    const generation = normalizeExpressionGeneration();
-    for (const label of EMOTION_LABELS) {
-        const variants = expressionPromptVariants(generation, label);
-        assert.equal(variants.length, 3, label);
-        assert.equal(new Set(variants).size, 3, label);
-        const job = { prompt: '', promptVariants: variants };
-        for (const [index, random] of [0, 0.34, 0.999].entries()) {
-            assert.equal(selectExpressionPrompt(job, () => random), variants[index]);
-            assert.equal(selectExpressionPrompt({ ...job, prompt: 'NPC portrait prompt' }, () => random), `NPC portrait prompt\n${variants[index]}`);
-        }
+test('variant selection reaches every supplied alternative and preserves the prompt prefix', () => {
+    const variants = ['A calm expression.', 'A joyful expression.'];
+    const job = { promptVariants: variants };
+    for (const [index, random] of [0, 0.999].entries()) {
+        assert.equal(selectExpressionPrompt(job, () => random), variants[index]);
+        assert.equal(selectExpressionPrompt({ ...job, prompt: 'NPC portrait prompt' }, () => random),
+            `NPC portrait prompt\n${variants[index]}`);
     }
 });
 
@@ -61,7 +56,6 @@ test('old built-in prompts adopt variants and body language while custom prompts
 test('default prompt storage is sparse and resetting overrides removes them', () => {
     const generation = normalizeExpressionGeneration({ prompts: EMOTION_PROMPTS });
     assert.deepEqual(generation.prompts, {});
-    assert.ok(JSON.stringify(normalizeNpcPresentation()).length < 1000);
     setExpressionPrompt(generation, 'joy', 1, 'Custom pose');
     assert.deepEqual(generation.prompts.joy, [null, 'Custom pose', null]);
     setExpressionPrompt(generation, 'joy', 1, '');
@@ -69,12 +63,6 @@ test('default prompt storage is sparse and resetting overrides removes them', ()
     const variants = expressionPromptVariants(generation, 'joy');
     variants[0] = 'Mutated copy';
     assert.equal(expressionPromptVariants(generation, 'joy')[0], EMOTION_PROMPTS.joy[0]);
-});
-
-test('expression-only jobs accept an empty prefix and send just a selected variant', async () => {
-    const { generator, calls, job } = fixture();
-    await generator.generate({ ...job, prompt: '', promptVariants: EMOTION_PROMPTS.joy });
-    assert.ok(EMOTION_PROMPTS.joy.includes(calls[0].prompt));
 });
 
 test('random variants share pending jobs and failure suppression; explicit retry draws again', async () => {
@@ -119,13 +107,11 @@ test('generation prepares current reference and preserves existing packs until t
     assert.equal(card.presentation.expressions.spriteFolder, 'ExistingPack');
 });
 
-test('NPCs without portraits leave bindings untouched and per-NPC automatic switches are removed', () => {
+test('NPCs without portraits leave expression reference bindings empty', () => {
     const card = { imageUrl: '', presentation: normalizeNpcPresentation({ expressions: { enabled: true, generation: { enabled: true } } }) };
     assert.equal(prepareExpressionReference(card), false);
     assert.equal(card.presentation.expressions.spriteFolder, '');
     assert.equal(card.presentation.expressions.generation.reference, '');
-    assert.equal(card.presentation.expressions.enabled, undefined);
-    assert.equal(card.presentation.expressions.generation.enabled, undefined);
 });
 
 test('duplicate jobs share one edit, send the saved prompt unchanged, and reuse completed sprites', async () => {

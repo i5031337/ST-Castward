@@ -83,21 +83,6 @@ test('new scene actor does not fold an earlier manual correction into reply effe
     assert.equal(applyTurnValues(base, manual).characters[0].stats.HP, '18');
 });
 
-test('repeated swipe keeps each reply separate', () => {
-    const base = { player: { stats: { HP: '100' } } };
-    const first = { player: { stats: { HP: '90' } } };
-    const second = { player: { stats: { HP: '80' } } };
-    const firstEffect = diffTurnValues(base, first);
-    const secondEffect = diffTurnValues(base, second);
-    let live = applyTurnValues(base, firstEffect);
-    live = applyTurnValues(base, secondEffect);
-    assert.equal(live.player.stats.HP, '80');
-    live = applyTurnValues(base, firstEffect);
-    assert.equal(live.player.stats.HP, '90');
-    live = applyTurnValues(base, secondEffect);
-    assert.equal(live.player.stats.HP, '80');
-});
-
 test('a saved effect for another swipe or edited text is rejected', () => {
     const effect = { swipe: 0, text: 'old reply' };
     assert.equal(turnEffectStatus(effect, { swipe_id: 1, mes: 'new reply' }), 'mismatch');

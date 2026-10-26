@@ -32,6 +32,7 @@ test('selected profile receives schema, budget, signal and dedicated prompts; pr
     tracker.extractionProfileId = 'changed'; tracker.extractionUseSchema = false;
     assert.deepEqual(await request(args), { section: {}, assumptions: [] });
     assert.equal(received[0], 'local'); assert.equal(received[2], 3200);
+    assert.deepEqual(received[1], [{ role: 'system', content: args.systemPrompt }, { role: 'user', content: args.userPrompt }]);
     assert.equal(received[3].includePreset, false); assert.ok(received[3].signal instanceof AbortSignal); assert.equal(received[3].signal.aborted, false);
     assert.deepEqual(received[4], { json_schema: args.schema, temperature: 0.2 });
     assert.equal(counted[0], 'system');

@@ -35,7 +35,6 @@ test('a persona description alone supports player field generation and reaches t
     const card = structuredClone(player);
     const result = await f.fillProfile(card);
     assert.deepEqual(result, { ok: true, filled: ['Appearance'] });
-    assert.match(f.requests[0], /SillyTavern persona description for Player:/);
     assert.ok(f.requests[0].includes(persona.description));
     assert.equal(card.profile.appearance, 'Silver hair');
 });
@@ -80,5 +79,4 @@ test('the combined profile and lore request includes the player persona descript
     for (const card of [{ name: 'Player' }, { ...player, personaKey: 'other.png' }]) {
         assert.ok(!(await lorePrompt(card)).includes(persona.description));
     }
-    assert.doesNotMatch(await lorePrompt(player, { ...persona, description: '' }), /persona description/);
 });

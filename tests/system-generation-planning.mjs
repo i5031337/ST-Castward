@@ -2,17 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { allocatePlan } from '../src/generation/plan.js';
 import { SystemGenerationRun } from '../src/generation/generate-system.js';
-import { PLANNING_EXAMPLE } from '../src/generation/planning-prompt.js';
 import { plan, responseFor } from './fixtures/system-generation.mjs';
-
-test('shared planning example assigns counters to each enabled actor', () => {
-    const allocated = allocatePlan(PLANNING_EXAMPLE);
-    assert.equal(allocated.playerProgression.xpFieldId, 'xp');
-    const xp = allocated.stats.character.find(f => f.id === 'xp');
-    assert.deepEqual(xp.targets, ['player', 'template:creature']);
-    assert.equal(allocated.npcTemplates.find(t => t.name === 'Human').progression.enabled, false);
-    assert.equal(Object.hasOwn(allocated.npcTemplates[0], 'statIds'), false);
-});
 
 test('unassigned counters and unknown targets report actionable errors', () => {
     const bad = structuredClone(plan);
@@ -39,10 +29,6 @@ test('planner repairs invalid counter names without changing allocated shared fi
     } });
     const result = await run.generate();
     assert.equal(requests.filter(r => r.stage === 'plan').length, 2);
-    assert.match(requests[0].schema.properties.section.properties.playerProgression.properties.xp.description, /NAME/);
-    assert.equal(requests[0].systemPrompt.includes('0/100'), false);
-    assert.equal(requests[1].systemPrompt.includes('0/100'), false);
     assert.ok(JSON.parse(requests[1].userPrompt).repair.errors.some(message => message.includes('stats.character')));
-    assert.ok(result.assumptions.some(text => text.startsWith('Planning the rules was repaired')));
     assert.equal(result.definition.stats.character.filter(f => f.name === 'XP').length, 1);
 });

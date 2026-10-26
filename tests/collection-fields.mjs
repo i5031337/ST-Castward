@@ -83,7 +83,7 @@ test('reader changes use the pinned custom identifier instead of assuming a name
     assert.deepEqual(actor.collections.moves, [{ move: 'Thunderbolt', pp: 14 }]);
 });
 
-test('numeric collection ranges survive System export/import and text choices remain intact', () => {
+test('numeric collection ranges and text choices survive normalization and JSON round trips', () => {
     const col = normalize([
         { name: 'name', isPrimary: true },
         { name: 'pp', type: 'number', min: 0, maxStatValue: 40, options: ['1', '2'] },
