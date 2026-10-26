@@ -147,7 +147,7 @@ export async function fillProfile(char, { fields = null } = {}) {
 
     const prompt = buildProfilePrompt(char, wanted, sources);
     const raw = await requestExtraction(
-        prompt, null, getSettings().statusTracker, promptText('profileSystem'), { usageKind: 'fill' });
+        prompt, null, getSettings().statusTracker, promptText('profileSystem'), { usageKind: 'fill', activityName: char.name });
     const answer = coerceToUpdate(raw);
 
     if (!answer || typeof answer !== 'object') {

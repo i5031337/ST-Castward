@@ -1,3 +1,4 @@
+import { startActivity, getGenerationActivities } from '../src/core/generation-activity.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -9,7 +10,7 @@ function fixture() {
     const metadata = {};
     let context = { chatMetadata: metadata, getCurrentChatId: () => 'chat-a' };
     const calls = [], pending = [];
-    const dependencies = {
+    const dependencies = { startActivity,
         applyMacros: value => value,
         executeSlashCommandsWithOptions: (command, options) => {
             calls.push({ command, options });
@@ -31,6 +32,7 @@ test('overlapping images run sequentially and each retains its result', async ()
     const second = f.generate('Second landscape');
     await flush();
     assert.equal(f.calls.length, 1);
+    assert.equal(getGenerationActivities().filter(activity => activity.kind === 'image').length, 1);
     assert.equal(f.calls[0].options.source, 'Castward image generation');
     f.pending[0].resolve({ pipe: '/first.png' });
     assert.equal(await first, '/first.png');
@@ -38,6 +40,7 @@ test('overlapping images run sequentially and each retains its result', async ()
     assert.equal(f.calls.length, 2);
     f.pending[1].resolve({ pipe: '/second.png' });
     assert.equal(await second, '/second.png');
+    assert.deepEqual(getGenerationActivities(), []);
 });
 
 test('a failed command reports its error and releases the next image', async () => {

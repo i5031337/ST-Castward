@@ -41,8 +41,8 @@ export function renderTrackerDisplayAndReading({ container, settings, onApply, o
     container.append(buildSettingToggle({
         key: 'statusTracker.showRawTrackerOutput',
         label: 'Show Raw Tracker Output',
-        help: 'Shows the reader’s progress and output dropdown beneath messages. '
-            + 'Hiding it leaves tracking and change review active.',
+        help: 'Shows the reader’s results and output dropdown beneath messages. '
+            + 'Hiding it leaves tracking, change review, and live activity above the composer active.',
         onChange: onDisplay
     }));
 

@@ -45,6 +45,7 @@ import { applyDialogueFormatPrompt } from './src/prompts/dialogue-format.js';
 import { placeWritingPrompt } from './src/prompts/prompt-slot.js';
 import { applyBanList } from './src/prompts/banlist.js';
 import { initPlaceBackgrounds } from './src/locations/location-background.js';
+import { initGenerationActivity } from './src/ui/tracker/ui-generation-activity.js';
 
 async function addSettingsPanel() {
     try {
@@ -73,6 +74,7 @@ async function addSettingsPanel() {
 jQuery(async () => {
     try {
         initSettings();
+        initGenerationActivity();
         // Apply saved logging and portrait settings before startup work.
         setDebugLogging(getSettings().debugLogging);
         applyPortraitFraming();

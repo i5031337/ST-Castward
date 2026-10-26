@@ -12,7 +12,7 @@ import { generateCharacterImageLogic } from '../../api/api-image-generate.js';
 import { triggerReprocess } from '../../chat/reprocess.js';
 
 /** Generate once for newly discovered, admitted NPCs. Cards keep failed attempts editable. */
-export async function generateNewNpcProfiles(names, isCurrent) {
+export async function generateNewNpcProfiles(names, isCurrent, signal) {
     const result = { generated: 0, failed: 0 };
     if (getSettings().statusTracker.autoGenerateNpcProfiles !== true
         || getContext()?.getCurrentChatId?.() === undefined) return result;
@@ -41,7 +41,7 @@ export async function generateNewNpcProfiles(names, isCurrent) {
             && getSettings().activeSystem === system
             && JSON.stringify(profileFieldsForCard(card)) === fieldSignature;
         try {
-            const { content } = await generateLoreContent(card);
+            const { content } = await generateLoreContent(card, undefined, undefined, { signal });
             if (!canSave()) break;
             const values = parseGeneratedProfileFields(content, 'npc');
             if (!values || !fields.some(field => String(values[field.id] || '').trim())) {
@@ -61,7 +61,7 @@ export async function generateNewNpcProfiles(names, isCurrent) {
             triggerReprocess();
             if (getSettings().autoPortraitOnFill !== false && !card.imageUrl) {
                 try {
-                    const imageUrl = await generateCharacterImageLogic(card);
+                    const imageUrl = await generateCharacterImageLogic(card, { signal });
                     // Preserve a portrait selected manually while the request was running.
                     if (!canSave()) break;
                     if (getSettings().autoPortraitOnFill === false) continue;

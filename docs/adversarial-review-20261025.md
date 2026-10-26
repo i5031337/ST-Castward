@@ -91,7 +91,7 @@ as described above; no runtime change is required to close this item.
 
 Sources: `src/entry/entry-message-events.js` and `docs/ARCHITECTURE.md`.
 
-## 4. Background automation has substantial service and latency costs — fallback policy addressed; visibility open
+## 4. Background automation has substantial service and latency costs — fallback policy addressed; activity indicators implemented
 
 A tracker reading can lead to a separate location request, reward selection, and
 optional NPC profile generation. Memories, expressions, images, and speech introduce
@@ -112,10 +112,22 @@ confirmed the toggle is visible, reflects both values, and propagates a mocked
 selected-connection failure with fallback disabled. It restored in-memory settings
 and the mocked service afterward; no settings saves or model requests were made.
 
-The explicit fallback policy is addressed. Making outstanding work and its service
-costs easier to understand remains open. Sources:
+Live activity above the composer now distinguishes reading stats, updating places,
+filling named profiles, and drawing portraits or other images. Overlapping requests
+have separate indicators. Live progress appears only at the composer; reports beneath
+replies retain completed results, failures, and cancellations. Memory and History keep
+their existing indicators. Activity is transient and adds no saved chat data. All 957
+Node tests pass. A running-host fixture verified composer labels, suppression of
+duplicate reply progress, completed reports, cleanup, and wrapping at 390px without model
+requests or fixture saves. Visuals are ready for user review; this is not a usability
+study or a measurement of real-service latency.
+
+The explicit fallback policy is addressed and activity visibility is implemented.
+Additional service and latency costs remain a consequence of enabling those features.
+Sources:
 `src/tracker/extractor/status-extractor-run.js`, `status-extractor-request.js`,
-`src/ui/tracker/ui-tracker-display-reading.js`, and `src/core/usage.js`.
+`src/ui/tracker/ui-tracker-display-reading.js`, `src/ui/tracker/ui-generation-activity.js`,
+and `src/core/usage.js`.
 
 ## 5. The interface imposes a large conceptual burden — product judgment, open
 

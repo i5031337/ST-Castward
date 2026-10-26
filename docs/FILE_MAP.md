@@ -109,6 +109,7 @@ SillyTavern loads `index.js` and `style.css` from `manifest.json`. The JavaScrip
 | `src/entry/entry-chat-scope.js` | Prompt to scope a chat to its characters. |
 | `src/entry/entry-history-notes.js` | Manage copied historical notes on messages. |
 | `src/core/generation-cancellation.js` | Shared Stop-button visibility, stop/chat-change cancellation, linked dialog signals, and late-response guards for all LLM request adapters. |
+| `src/core/generation-activity.js`, `src/ui/tracker/ui-generation-activity.js` | Transient request activity and composer indicators. |
 | `src/core/constants.js` | Extension constants, themes, profile schema, and built-in writing/image prompts. |
 | `src/core/constants-base.js` | Base extension, theme, layout, and image constants. |
 | `src/core/constants-profile.js` | Built-in character profile fields and default assignments. |
@@ -421,6 +422,7 @@ SillyTavern loads `index.js` and `style.css` from `manifest.json`. The JavaScrip
 | `src/ui/locations/ui-location-lore.js` | Reference linking and explicit copying into an unsaved place description. |
 | `src/ui/locations/ui-location-review.js` | Visible place identities, containment, editable descriptions, and legacy citation display. |
 | `styles/18-locations.css` | Places editor, responsive list, and review row layout. |
+| `styles/19-generation-activity.css` | Activity indicators above the composer. |
 | `tests/locations-store.mjs`, `tests/location-proposals.mjs` | Pure identities, validation, uncited proposals, dependency, and acceptance checks. |
 | `tests/location-image.mjs`, `tests/image-command.mjs`, `tests/ui-place-background.cjs`, `tests/ui-background-generation.py` | Automatic drawing, queued image commands, stale-result guards, and live Place image editor/background recovery checks. |
 | `tests/location-context.mjs`, `tests/locations-ui.mjs` | Prompt/schema integration, bounded matching, editor controls, and stale-chat guards. |

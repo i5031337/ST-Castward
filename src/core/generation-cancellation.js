@@ -1,5 +1,6 @@
 import { eventSource, event_types } from '../../../../../events.js';
 import { isGenerating } from '../../../../../../script.js';
+import { startActivity } from './generation-activity.js';
 
 const tasks = new Set();
 let observer;
@@ -21,11 +22,12 @@ function refreshStopButton() {
 }
 
 /** Share the host Stop button without changing the host's generation state. */
-export function startGenerationTask({ signal: parentSignal } = {}) {
+export function startGenerationTask({ signal: parentSignal, activity } = {}) {
     parentSignal?.throwIfAborted();
     const controller = new AbortController();
     const signal = parentSignal ? AbortSignal.any([parentSignal, controller.signal]) : controller.signal;
     const task = { signal };
+    const progress = startActivity(activity, signal);
     const stop = () => {
         controller.abort();
         refreshStopButton();
@@ -46,6 +48,7 @@ export function startGenerationTask({ signal: parentSignal } = {}) {
         signal,
         abort: stop,
         finish() {
+            progress.finish();
             tasks.delete(task);
             signal.removeEventListener('abort', refreshStopButton);
             eventSource.removeListener(event_types.GENERATION_STOPPED, stop);

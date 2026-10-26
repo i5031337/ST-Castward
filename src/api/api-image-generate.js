@@ -9,6 +9,7 @@ import { recordUsage } from '../core/usage.js';
 import { fillImagePrompt, describeCarriedItems } from './api-lore-facts.js';
 import { characterImageDescription } from './api-image-description.js';
 import { persistGeneratedImage } from './api-image-files.js';
+import { startActivity } from '../core/generation-activity.js';
 
 let imageQueue = Promise.resolve();
 
@@ -39,10 +40,10 @@ export async function buildCharacterImagePrompt(char) {
 }
 
 /** Generate from the current character description or an explicitly edited prompt. */
-export async function generateCharacterImageLogic(char, { prompt } = {}) {
+export async function generateCharacterImageLogic(char, { prompt, signal } = {}) {
     const fullPrompt = prompt ?? await buildCharacterImagePrompt(char);
     if (!String(fullPrompt).trim()) throw new Error('Enter an image prompt first.');
-    return generateImage(fullPrompt, { owner: char });
+    return generateImage(fullPrompt, { owner: char, ...(signal ? { signal } : {}) });
 }
 
 function escapeCommandValue(value) {
@@ -58,7 +59,7 @@ function imageUrlFromResult(result) {
 
 /** Return the generated image for caller review; the caller decides whether to use it. */
 export async function generateImage(fullPrompt, { owner = null, shape = resolvePortraitShape(),
-    negativePrompt = DEFAULT_IMAGE_NEGATIVE_PROMPT, gallery, extend, edit } = {}) {
+    negativePrompt = DEFAULT_IMAGE_NEGATIVE_PROMPT, gallery, extend, edit, signal } = {}) {
     const negative = applyMacros(negativePrompt);
     const pixels = shape?.pixels;
     const size = pixels ? `width=${pixels.width} height=${pixels.height} ` : '';
@@ -72,12 +73,16 @@ export async function generateImage(fullPrompt, { owner = null, shape = resolveP
     const metadata = context.chatMetadata;
     // /imagine temporarily overrides shared provider settings. Serialize our requests,
     // and use the runner that does not silently reject a busy chat input.
-    const task = imageQueue.then(() => {
+    const task = imageQueue.then(async () => {
+        signal?.throwIfAborted();
         const now = getContext();
         if (now.getCurrentChatId() !== chatId || now.chatMetadata !== metadata) {
             throw new Error('Chat changed before image generation could start.');
         }
-        return executeSlashCommandsWithOptions(command, { source: 'Castward image generation' });
+        const progress = startActivity({ kind: 'image',
+            label: owner?.name ? `Drawing ${owner.name}’s portrait…` : 'Drawing an image…' }, signal);
+        try { return await executeSlashCommandsWithOptions(command, { source: 'Castward image generation' }); }
+        finally { progress.finish(); }
     });
     imageQueue = task.catch(() => {});
     const result = await task;

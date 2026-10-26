@@ -140,6 +140,14 @@ player’s Cast page and shows the same current state. Portrait generation uses 
 Maintained prompts use the active System's schema; the general raw-prompt editor is
 removed, while extraction diagnostics remain available.
 
+Live activity above the composer distinguishes stats, places, profile filling, and
+images. Overlapping requests keep separate entries; Memory and History retain their
+existing button indicators. Live progress appears only at the composer; reports
+beneath replies show completed results, failures, and cancellations. Activity lives in memory,
+is cleared on chat changes, and is removed when its request finishes or its linked
+signal aborts. Queued image commands appear when execution starts and remain visible
+until the host command returns. Hiding raw tracker output does not hide live activity.
+
 Collection history scans pass rolling inventory through chronological chunks. Returned
 collection arrays replace prior arrays; omissions retain prior inventory. A failed
 pass stops the scan without publishing partial proposals. Oversized transcript

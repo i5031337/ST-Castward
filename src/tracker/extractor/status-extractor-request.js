@@ -28,8 +28,11 @@ export function readerTemperature(trackerSettings) {
  * return already-parsed data rather than text, so callers must handle both.
  */
 
-export async function requestExtraction(userPrompt, schema, trackerSettings, systemPrompt = null, { usageKind = 'extraction' } = {}) {
-    const task = startGenerationTask();
+export async function requestExtraction(userPrompt, schema, trackerSettings, systemPrompt = null, { usageKind = 'extraction', activityName } = {}) {
+    const activity = usageKind === 'extraction' ? { kind: 'tracker', label: 'Reading stats…' }
+        : usageKind === 'location' ? { kind: 'location', label: 'Updating places…' }
+        : usageKind === 'fill' ? { kind: 'profile', label: `Filling ${activityName || 'character'}’s profile…` } : null;
+    const task = startGenerationTask({ activity });
     try {
         return await performExtraction(userPrompt, schema, trackerSettings, systemPrompt, usageKind, task.signal);
     } finally { task.finish(); }

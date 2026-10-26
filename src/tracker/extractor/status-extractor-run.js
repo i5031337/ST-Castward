@@ -296,7 +296,7 @@ async function performExtraction(messageText, messageId, options, signal) {
                 && getContext()?.chat?.[Number(messageId)] === reportMessage
                 && reportMessage?.mes === sourceText
                 && extractionSwipe(reportMessage) === swipe
-                && Number(messageId) === trackerMessageIndex(getContext()?.chat || []),
+                && Number(messageId) === trackerMessageIndex(getContext()?.chat || []), run.signal,
         ), run.signal);
         if (profiles.generated) parts.push(`${profiles.generated} NPC profile(s) generated`);
         if (profiles.failed) parts.push(`${profiles.failed} NPC profile(s) failed`);

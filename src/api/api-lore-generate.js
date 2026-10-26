@@ -88,8 +88,8 @@ export function getLastLoreConnection() {
     return lastLoreConnection;
 }
 
-export async function requestLore(prompt, { signal } = {}) {
-    const task = startGenerationTask({ signal });
+export async function requestLore(prompt, { signal, activity = { kind: 'profile', label: 'Writing lore…' } } = {}) {
+    const task = startGenerationTask({ signal, activity });
     try { return await performLoreRequest(prompt, task.signal); }
     finally { task.finish(); }
 }
@@ -170,7 +170,9 @@ async function performLoreRequest(prompt, signal) {
  * @returns {Promise<{ tags: string, content: string, followedFormat: boolean, truncated: boolean, excerpt: object }>}
  */
 export async function generateLoreContent(char, world, uid, options = {}) {
-    const task = startGenerationTask({ signal: options.signal });
+    const task = startGenerationTask({ signal: options.signal, activity: {
+        kind: 'profile', label: `Filling ${char.name}’s profile…`,
+    } });
     try {
         return await awaitGenerationRequest(buildLoreContent(char, world, uid, { ...options, signal: task.signal }), task.signal);
     } finally { task.finish(); }
@@ -237,7 +239,7 @@ async function buildLoreContent(char, world, uid, options) {
         if (description) prompt += `\n\nSillyTavern persona description for ${char.name}:\n${description}`;
     }
 
-    const { text, truncated } = await requestLore(prompt, { signal: options.signal });
+    const { text, truncated } = await requestLore(prompt, { signal: options.signal, activity: null });
 
     let { tags, content, followedSections } = parseLoreReply(text,
         !options.template ? profileFieldsForCard(char) : []);

@@ -1,0 +1,22 @@
+#sillynpc-generation-activity {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 5px 10px;
+    padding: 5px 10px;
+    color: var(--SmartThemeBodyColor);
+    background: var(--SmartThemeBlurTintColor);
+    border: 1px solid var(--SmartThemeBorderColor);
+    border-bottom: 0;
+    border-radius: 8px 8px 0 0;
+    font-size: 0.8em;
+    line-height: 1.5;
+    pointer-events: none;
+}
+.sillynpc-activity-brand { opacity: 0.6; font-size: 0.9em; }
+.sillynpc-activity-chip { display: inline-flex; align-items: center; gap: 6px; min-width: 0; overflow-wrap: anywhere; }
+.sillynpc-activity-chip i { color: var(--SmartThemeQuoteColor); }
+@media (prefers-reduced-motion: no-preference) {
+    .sillynpc-activity-chip i { animation: sillynpc-activity-pulse 1.6s ease-in-out infinite; }
+}
+@keyframes sillynpc-activity-pulse { 50% { opacity: 0.4; } }

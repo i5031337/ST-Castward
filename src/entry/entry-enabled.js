@@ -14,6 +14,7 @@ import { refreshScanButton } from '../ui/tracker/ui-scan-button.js';
 import { refreshMemoryButton } from '../ui/tracker/ui-memory-button.js';
 import { npcCreationService } from '../npc/npc-tool.js';
 import { syncPlaceBackground } from '../locations/location-background.js';
+import { refreshGenerationActivity } from '../ui/tracker/ui-generation-activity.js';
 
 /** Apply the master switch immediately; keep saved characters and tracker state. */
 export function refreshExtensionEnabled() {
@@ -36,5 +37,6 @@ export function refreshExtensionEnabled() {
     refreshReadButton();
     refreshScanButton();
     refreshMemoryButton();
+    refreshGenerationActivity();
     triggerReprocess();
 }

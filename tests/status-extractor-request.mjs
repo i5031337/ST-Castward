@@ -1,3 +1,4 @@
+import { getGenerationActivities } from '../src/core/generation-activity.js';
 import { defaultTrackerSettings } from '../src/core/settings-tracker-defaults.js';
 import { readerCancellationHarness } from './helpers/reader-cancellation.mjs';
 import { readerSchemaForConnection } from '../src/tracker/extractor/status-extractor-schema-provider.js';
@@ -228,3 +229,23 @@ test('an AbortError never falls back even when retry is enabled', async () => {
     assert.deepEqual(events, []);
     assert.deepEqual(usage, []);
 });
+
+
+for (const [usageKind, kind, label] of [
+    ['extraction', 'tracker', 'Reading stats…'],
+    ['location', 'location', 'Updating places…'],
+    ['fill', 'profile', 'Filling Mira’s profile…'],
+]) {
+    test(`${usageKind} exposes its live activity until the request finishes`, async () => {
+        let complete;
+        const pending = new Promise(resolve => { complete = resolve; });
+        const { request } = build({ generateRawData: () => pending });
+        const result = request('Prompt', null, {}, null, {
+            usageKind, activityName: 'Mira',
+        });
+        assert.deepEqual(getGenerationActivities(), [{ kind, label }]);
+        complete(rawReply);
+        await result;
+        assert.deepEqual(getGenerationActivities(), []);
+    });
+}

@@ -29,13 +29,6 @@
     clear: both;
 }
 
-.sillynpc-reader-report.sillynpc-reader-running {
-    border-color: var(--sillynpc-accent);
-    color: var(--sillynpc-accent-text, var(--sillynpc-accent));
-    font-weight: 600;
-}
-
-.sillynpc-reader-running i { margin-right: 4px; }
 .sillynpc-reader-report summary { cursor: pointer; font-weight: 600; }
 .sillynpc-reader-report summary:hover { color: var(--sillynpc-accent-text, var(--sillynpc-accent)); }
 .sillynpc-reader-content {

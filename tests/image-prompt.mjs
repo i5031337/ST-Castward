@@ -1,3 +1,4 @@
+import { startActivity } from '../src/core/generation-activity.js';
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFileSync } from 'node:fs';
@@ -51,9 +52,9 @@ test('landscape generation uses the host image command without portrait prompt c
         .replaceAll('export function ', 'function ').replaceAll('export async function ', 'async function ');
     let command = '';
     const context = { getCurrentChatId: () => 'chat-a', chatMetadata: {} };
-    const generate = new Function('applyMacros', 'executeSlashCommandsWithOptions', 'recordUsage',
+    const generate = new Function('startActivity', 'applyMacros', 'executeSlashCommandsWithOptions', 'recordUsage',
         'debugLog', 'persistGeneratedImage', 'DEFAULT_IMAGE_NEGATIVE_PROMPT', 'getContext',
-        `${source}\nreturn generateImage;`)(value => value, async value => {
+        `${source}\nreturn generateImage;`)(startActivity, value => value, async value => {
         command = value; return { pipe: 'user/images/place.png' };
     }, () => {}, () => {}, async value => value, 'portrait negatives', () => context);
     const path = await generate('Stone bridge at dusk', {
