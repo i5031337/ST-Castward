@@ -44,6 +44,7 @@ const sourceFiles = ['src/core/builtin-systems.js', 'src/core/settings-tracker-d
     'src/core/constants-prompts.js', 'src/prompts/prompt-texts-reader.js',
     'src/tracker/extractor/status-extractor-prompt.js', 'src/tracker/extractor/status-extractor-prompt-state.js',
     'src/tracker/extractor/status-extractor-schema.js', 'src/tracker/stat-prompt-definitions.js',
+    'src/tracker/extractor/status-extractor-schema-provider.js', 'src/tracker/extractor/status-extractor-request.js',
     'src/tracker/collection-prompt-definitions.js',
     'src/tracker/ui/status-ui-placement.js',
     'src/core/npc-templates.js', 'src/core/collection-fields.js', 'src/locations/location-context.js',

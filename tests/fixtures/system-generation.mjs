@@ -8,7 +8,7 @@ export const plan = {
         { name: 'Motivation', purpose: 'What the character wants', targets: ['player', 'Creature'] }],
     stats: { world: [{ name: 'Weather', purpose: 'Current weather' }],
         character: [{ name: 'XP', purpose: 'Earned XP', targets: ['player', 'Creature'] }, { name: 'Level', purpose: 'Learned level', targets: ['player', 'Creature'] },
-            { name: 'Energy', purpose: 'Spent on expeditions', targets: ['player'] }, { name: 'Vigor', purpose: 'Combat stamina', targets: ['Creature'] }] },
+            { name: 'Energy', purpose: 'Energy for activity. Effort drains it; rest and relief replenish it.', targets: ['player'] }, { name: 'Vigor', purpose: 'Combat stamina. Injury and illness reduce current Vigor; established physical recovery restores it. Partial recovery increases current Vigor below maximum while symptoms remain; established complete recovery restores the maximum.', targets: ['Creature'] }] },
     playerProgression: { enabled: true, xp: 'XP', level: 'Level', growth: 'All selected stats gain small increases; resources reset.' },
     npcTemplates: [{ name: 'Creature', description: 'Catchable monsters.', progression: { enabled: true, xp: 'XP', level: 'Level', growth: 'All selected stats grow; Level persists.' } }],
     collections: [{ name: 'Techniques', purpose: 'Learned combat actions', targets: ['player', 'Creature'], trackQuantity: false,

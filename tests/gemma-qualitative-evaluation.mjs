@@ -69,11 +69,13 @@ test('all twenty prompts include the exchange and exclude authoring and scoring 
         assert.ok(failures(bundle, raw).some(check => check.name.startsWith('npcBelowCapacity')));
     });
 
-    test(`absolute: mixed feelings require trust and affection to move independently`, async () => {
+    test(`absolute: mixed feelings allow existing low Trust to remain while Affection increases`, async () => {
         const bundle = await fixture('dating-q-misplaced-confidence');
-        const raw = { locationChanged: false, characters: [{ name: 'Sam', stats: { Trust: '10', Affection: '22' } }] };
+        const raw = { locationChanged: false, characters: [{ name: 'Sam', stats: { Trust: '10', Affection: '30' } }] };
         assert.deepEqual(failures(bundle, raw), []);
         raw.characters = [npc('Sam', 'Affection', '22')];
+        assert.deepEqual(failures(bundle, raw), []);
+        raw.characters[0].stats.Trust = '13';
         assert.ok(failures(bundle, raw).some(check => check.name.startsWith('npcChangeBetween Sam Trust')));
     });
 }
@@ -94,4 +96,77 @@ test('fresh user consumption counts once and does not bring the contemplated cal
     assert.ok(failures(bundle, raw).some(check => check.name.startsWith('itemRemove')));
     raw.characters = [{ name: 'Sam' }];
     assert.ok(failures(bundle, raw).some(check => check.name.startsWith('npcAbsent')));
+});
+
+test('accepted boundary permits modest easing of Comfort and Trust', async () => {
+    const bundle = await fixture('dating-q-accepted-boundary');
+    const raw = { locationChanged: false, player: { stats: { 'Social Energy': '5/10' } },
+        characters: [{ name: 'Sam', stats: { Comfort: '15', Trust: '8' } }] };
+    assert.deepEqual(failures(bundle, raw), []);
+    raw.characters[0].stats.Comfort = '20';
+    assert.deepEqual(failures(bundle, raw), []);
+    raw.characters[0].stats.Comfort = '21';
+    assert.ok(failures(bundle, raw).some(check => check.name.startsWith('npcChangeBetween Sam Comfort')));
+});
+
+test('brief rain permits unchanged Condition and a garment-only description update', async () => {
+    const bundle = await fixture('fantasy-q-brief-soaking');
+    const raw = { locationChanged: false, characters: [{ name: 'Mira' }] };
+    assert.deepEqual(failures(bundle, raw), []);
+    raw.player = { collections: { equipment: { update: [{ name: 'travel cloak', description: 'Damp wool cloak' }] } } };
+    assert.deepEqual(failures(bundle, raw), []);
+    raw.player.stats = { HP: '11/12' };
+    assert.ok(failures(bundle, raw).some(check => check.name.startsWith('playerUnchanged HP')));
+});
+
+test('current Dating prompts and schemas use descriptive-name Clothing and bidirectional Trust', async () => {
+    const bundle = await fixture('dating-q-accepted-boundary');
+    const clothing = bundle.reader.settings.collections.find(col => col.id === 'clothing');
+    assert.deepEqual(clothing.fields.map(field => field.name), ['name']);
+    const prompt = bundle.reader.prompt(bundle.scenario.text, bundle.scenario.earlier);
+    assert.match(prompt, /Increase when actions earn confidence; decrease when actions undermine it/);
+    assert.doesNotMatch(prompt, /slot, color, details/);
+    assert.doesNotMatch(JSON.stringify(bundle.reader.schema), /"(?:slot|color|details)":/);
+});
+
+test('explicit relationship improvements allow broad plausible magnitudes', async () => {
+    const confidence = await fixture('dating-q-kept-confidence');
+    const raw = { locationChanged: false, player: { stats: { 'Social Energy': '5/10' } },
+        characters: [{ name: 'June', stats: { Trust: '24' } }] };
+    assert.deepEqual(failures(confidence, raw), []);
+    raw.characters[0].stats.Trust = '60';
+    assert.ok(failures(confidence, raw).some(check => check.name.startsWith('npcChangeBetween June Trust')));
+    const quiet = await fixture('dating-q-quiet-company');
+    const rested = { locationChanged: false, player: { stats: { 'Social Energy': '8/10' } },
+        characters: [{ name: 'June', stats: { Comfort: '25' } }] };
+    assert.deepEqual(failures(quiet, rested), []);
+    rested.characters[0].stats.Comfort = '80';
+    assert.ok(failures(quiet, rested).some(check => check.name.startsWith('npcChangeBetween June Comfort')));
+});
+
+test('a successful soothing spell permits a small caster XP award while preserving NPC XP', async () => {
+    const bundle = await fixture('fantasy-q-pain-easing-spell');
+    const raw = { locationChanged: false, player: { stats: { Mana: '7/10', XP: '1/100' } },
+        characters: [{ name: 'Mira', stats: { Condition: 'Injured ankle; cramp eased' } }] };
+    for (const xp of [0, 1, 5]) {
+        raw.player.stats.XP = `${xp}/100`;
+        assert.deepEqual(failures(bundle, raw), []);
+    }
+    raw.player.stats.XP = '6/100';
+    assert.ok(failures(bundle, raw).some(check => check.name.startsWith('playerChangeBetween XP')));
+    raw.player.stats.XP = '1/100';
+    raw.characters[0].stats.XP = '1/100';
+    assert.ok(failures(bundle, raw).some(check => check.name.startsWith('noNpcXp')));
+});
+
+test('fever recovery accepts a four-point gain while retaining capacity and remaining-symptom checks', async () => {
+    const bundle = await fixture('fantasy-q-fever-easing');
+    const raw = { locationChanged: false, player: { stats: { HP: '8/12', Condition: 'Fever easing; weak limbs' } },
+        characters: [{ name: 'Mira' }] };
+    assert.deepEqual(failures(bundle, raw), []);
+    raw.player.stats.HP = '9/12';
+    assert.ok(failures(bundle, raw).some(check => check.name.startsWith('playerChangeBetween HP')));
+    raw.player.stats.HP = '12/12';
+    assert.ok(failures(bundle, raw).some(check => check.name.startsWith('playerBelowCapacity HP')));
+    assert.match(bundle.reader.prompt(bundle.scenario.text, bundle.scenario.earlier), /New injuries and illness lower current HP/);
 });

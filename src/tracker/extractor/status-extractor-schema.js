@@ -8,7 +8,8 @@ import { isReaderStat } from '../stat-update-policy.js';
 /**
  * A JSON schema describing exactly the stats and collections this user has configured.
  *
- * Deliberately restricted to the keywords Google's structured-output subset accepts:
+ * Request adaptation removes numeric patterns for portable provider schemas.
+ * Otherwise restricted to the keywords Google's structured-output subset accepts:
  * type, properties, items, required. An earlier version used additionalProperties,
  * which Gemini does not support - the schema was rejected and every reply came back as
  * an empty object. The system prompt carries the "no other keys" rule instead.
@@ -25,9 +26,12 @@ export function buildExtractionSchema(trackerSettings, { strangers = [], state =
             .filter(stat => stat?.name && (initializeNpc || isReaderStat(stat)))
             .map(stat => [
                 stat.name,
-                stat.hint?.trim()
-                    ? { type: 'string', description: stat.hint.trim() }
-                    : { type: 'string' },
+                { type: 'string', ...(['number', 'bar'].includes(stat.type) ? {
+                    pattern: '^-?[0-9]+(\\.[0-9]+)?(/-?[0-9]+(\\.[0-9]+)?)?$',
+                } : {}), ...(['number', 'bar'].includes(stat.type) || stat.hint?.trim() ? {
+                    description: [stat.hint?.trim(), ['number', 'bar'].includes(stat.type)
+                        ? 'A nonblank absolute numeric reading as a string. Omit this field when unchanged.' : ''].filter(Boolean).join(' '),
+                } : {}) },
             ])),
     });
 
@@ -51,7 +55,7 @@ export function buildExtractionSchema(trackerSettings, { strangers = [], state =
             properties: Object.fromEntries(relevant.map(col => [col.id, {
                 type: 'object',
                 properties: {
-                    add: { type: 'array', items: itemShape(col) },
+                    add: { type: 'array', description: 'Newly acquired items and additional copies; quantity gained.', items: itemShape(col) },
                     remove: { type: 'array', items: collectionQuantityField(col) ? {
                         type: 'object', required: itemShape(col).required,
                         properties: {

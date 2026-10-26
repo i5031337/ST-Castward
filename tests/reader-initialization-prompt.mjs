@@ -200,7 +200,8 @@ test('recovery covers live pools, excluding progression', () => {
     }
     assert.match(prompt, /Match recovery to the affected owner and pools/);
     assert.match(prompt, /Sound sleep followed by waking refreshed/);
-    assert.match(prompt, /Report an intermediate final reading for partial recovery/);
+    assert.match(prompt, /Partial recovery increases the affected pool’s current reading while staying below maximum/);
+    assert.match(prompt, /Established complete recovery restores the maximum/);
     const unrelated = builder([]).buildUserPrompt({ player: { stats: { Focus: '2' } }, characters: [] },
         'Alex rests.', { playerStats: [{ name: 'Focus', type: 'number' }] });
     assert.doesNotMatch(unrelated, /Sound sleep followed by waking refreshed/);
@@ -223,8 +224,8 @@ test('configured health pools keep narrated injury from becoming only a text con
     const settings = { playerStats: [{ name: 'Health', type: 'bar', purpose: 'Remaining bodily health' }] };
     const prompt = builder([]).buildUserPrompt({ player: { stats: { Health: '10/10' } }, characters: [] },
         'Alex falls and bruises a shoulder.', settings);
-    assert.match(prompt, /Report bodily injury as a lower resulting reading in player\.stats\.Health/);
-    assert.match(prompt, /Report effective wound care or healing as a higher resulting reading in that field/);
+    assert.match(prompt, /player\.stats: Health/);
+    assert.match(prompt, /Report established physical recovery as a higher resulting reading for the affected character/);
     assert.match(prompt, /Include any text condition change separately/);
 });
 
@@ -288,7 +289,7 @@ test('inline example uses absolute string readings and typed counted collection 
 test('injury guidance respects pool types and permissions', () => {
     const prompt = stat => builder([]).buildUserPrompt({ player: { stats: { Health: '10/10' } }, characters: [] },
         'Alex is injured.', { playerStats: [{ name: 'Health', ...stat }] });
-    assert.match(prompt({ type: 'number', defaultValue: '10/10' }), /Report bodily injury as a lower resulting reading in player\.stats\.Health/);
-    assert.doesNotMatch(prompt({ type: 'number', defaultValue: '10' }), /Report bodily injury as a lower resulting reading/);
-    assert.doesNotMatch(prompt({ type: 'number', defaultValue: '10/10', locked: true }), /Report bodily injury as a lower resulting reading/);
+    assert.match(prompt({ type: 'number', defaultValue: '10/10' }), /player\.stats: Health/);
+    assert.doesNotMatch(prompt({ type: 'number', defaultValue: '10' }), /Health fields:/);
+    assert.doesNotMatch(prompt({ type: 'number', defaultValue: '10/10', locked: true }), /Health fields:/);
 });

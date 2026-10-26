@@ -209,7 +209,8 @@ SillyTavern loads `index.js` and `style.css` from `manifest.json`. The JavaScrip
 | --- | --- |
 | `src/tracker/extractor/status-extractor.js` | Public entry point for model extraction. |
 | `src/tracker/extractor/status-extractor-schema.js` | Structured extraction schema and unknown speaker classification. |
-| `src/tracker/extractor/status-extractor-readings.js` | Absolute model readings, earned-only XP protection, and rejected stat-delta output. |
+| `src/tracker/extractor/status-extractor-schema-provider.js` | Keep numeric patterns on llama.cpp/GGUF routes and adapt portable schemas per request destination. |
+| `src/tracker/extractor/status-extractor-readings.js` | Absolute model readings, numeric punctuation repair, earned-only XP protection, and rejected stat-delta output. |
 | `src/tracker/stat-reading-equality.js` | Compare unchanged stat readings while respecting explicit pool maximum edits. |
 | `src/tracker/extractor/status-extractor-prompt.js` | Extraction prompt assembly and recent message context. |
 | `src/tracker/extractor/status-extractor-prompt-state.js` | Describe current state, collections, and limits for prompts. |
@@ -352,6 +353,10 @@ SillyTavern loads `index.js` and `style.css` from `manifest.json`. The JavaScrip
 | `src/ui/system/ui-system-context.js` | Explicit live Builder data/save/rename callbacks; draft contexts use the same interface. |
 | `src/ui/system/ui-draft-details.js` | Draft description and display choices outside the Builder tabs. |
 | `tests/system-generation-planning.mjs` | Regression for Gemma counter defaults, missing counters, and cross-scope template selections. |
+| `tests/stat-guidance.mjs` | Validate generated stat purposes and player/NPC injury prompt coverage. |
+| `tests/tracker-reading-integrity.mjs` | Model blank-reading protection, acquisition prompt guidance, and legitimate stack gains. |
+| `tests/model-numeric-reading-repair.mjs` | Production numeric repair across scopes, conservative exclusions, and retained XP/lock/cap safeguards. |
+| `tests/reader-numeric-schema.mjs` | Numeric pattern acceptance/rejection, provider compatibility, and purposeful XP prompt coverage. |
 | `tests/system-generation.mjs`, `tests/system-generation-request.mjs` | Staged contracts, semantic corruption, limits, retries, cancellation, requests, and fixture progression. |
 | `tests/ui-system-generation.py` | Mocked, unsaved Firefox generator workflow and live-state isolation checks. |
 | `tests/fixtures/system-generation.mjs` | Shared staged-generation plan and mock responses; excluded from the test entry glob. |

@@ -12,7 +12,7 @@ Clear changes use direction plus broad bounds on the difference from the startin
 
 The intervals are authored evaluation judgments, not a claim that prose specifies an exact magnitude. They are fixed before tracker inference, applied equally to both contracts, and should be reconsidered if a reasonable interpretation lies outside them. Some ordinary first aid can improve Condition without HP recovery. General anxiety need not reduce Comfort around a trusted friend. Liking someone and trusting them can move independently.
 
-All twenty are marked `holdout: true`. At authoring time they have not been used for tracker inference or prompt tuning. Keep them separate from development scenes when comparing contracts. No production reader prompt or contract was changed to fit them.
+All twenty retain their original `holdout: true` metadata. They were unused at authoring time, but have since been evaluated and used during prompt development. They are development evidence, not a fresh holdout; keep future validation scenes separate.
 
 The [first frozen E4B comparison](../../../../docs/evaluations/gemma-e4b-qualitative-20261020-report.md) ran three repetitions per scene per contract: current mixed/delta 588/609 checks (96.6%), absolute strings 580/609 (95.2%). Raw numeric-stat violations fell from 16/60 replies to 1/60. Both runs had valid JSON throughout. These scenes have now been evaluated; future prompt tuning against them makes them development evidence rather than a fresh holdout.
 
@@ -62,3 +62,27 @@ node tests/eval-gemma-tracker.js --run qualitative-current-schema --repeats 3 --
 Port 9931 served the roleplay authoring model, not a tracker benchmark, during creation of this set. Regeneration with `node tests/generate-roleplay-scenes.js --qualitative --overwrite` intentionally replaces reviewed text and clears its review record; review again before evaluating.
 
 New snapshots always use the production absolute contract; `--absolute` is an optional alias. Earlier mixed/delta snapshots are retained as read-only historical artifacts.
+
+## Final rubric and production validation, 2026-10-25
+
+Use broad plausible magnitudes rather than exact game rules:
+
+- Accepted-boundary permits Comfort gains of 0–10 and Trust changes of -2–+5.
+- Kept-confidence Trust and quiet-company Comfort gains may be 1–15.
+- Misplaced-confidence may confirm unchanged low Trust (-6–0); Affection may rise 1–10.
+- Quiet-company energy recovery may gain 1–5; fever HP recovery may gain 1–4. Both
+  partial recoveries remain below capacity.
+- A successful soothing spell may award 0–5 caster XP while NPC XP stays unchanged.
+- Brief rain may leave player Condition unchanged or update a garment. Presence,
+  damage, location and holdings checks remain. Unknown offstage readings are not
+  compared against invented held stats.
+
+The [final evaluation](../../../../docs/evaluations/tracker-model-evaluation-20261025-report.md)
+retains one fresh E4B prompt/result pair, one historical 26B reference pair and a
+current-rubric audit. Intermediate development results were removed. Original
+published evaluations remain historical evidence; their scores are not rewritten.
+
+Current inputs use descriptive-name-only Clothing, injury/illness-aware HP, explicit
+energy recovery, and the production numeric repair and blank-reading guards. The
+llama.cpp evaluation enforces numeric string patterns; production adapts the schema
+per connection and respects the reader's schema toggle.

@@ -60,6 +60,7 @@ export function validateFields(fields, path, errors, kind = 'stat') {
         if (kind === 'collection' && field.isPrimary && field.isStatic !== true) errors.push(`${p}.isStatic: identifiers must be static`);
         if (kind === 'collection' && field.type === 'number' && !field.isPrimary && field.isStatic) errors.push(`${p}.isStatic: numeric values must be personal`);
         if (kind !== 'stat') return;
+        if (!field.retired && field.purpose !== undefined && !String(field.purpose).trim()) errors.push(`${p}.purpose: describe what changes this stat`);
         if (/level bonus/i.test(field.name)) errors.push(`${p}.name: Level Bonus is not a narrative stat`);
         if (field.maxLength !== undefined && field.maxLength !== '' && (!Number.isSafeInteger(Number(field.maxLength)) || Number(field.maxLength) < 1)) errors.push(`${p}.maxLength: expected a positive integer or blank`);
         if (field.format !== undefined && !['{{name}}: {{value}}', '{{value}}'].includes(field.format)) errors.push(`${p}.format: choose name and value or value only`);

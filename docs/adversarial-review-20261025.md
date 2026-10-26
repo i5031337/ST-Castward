@@ -2,7 +2,8 @@
 
 This review examines trust, recovery, operational complexity, and maintenance.
 Product judgments below are distinguished from reproduced behavior. No live model
-quality evaluation was performed for this review.
+quality evaluation was performed for the original review; the subsequent comparison
+for item #2 is linked below.
 
 ## 1. Overlapping readings lose turns — queue implemented
 
@@ -27,18 +28,31 @@ Implementation: `src/tracker/extractor/status-extractor-queue.js` and
 `status-extractor-run.js`. Regression coverage: `tests/extraction-queue.mjs` and
 `tests/tracker-regenerate.mjs`.
 
-## 2. Aggregate accuracy overstates complete-turn reliability — open
+## 2. Aggregate accuracy overstates complete-turn reliability — reader and reporting updated
 
-The README's 96.4% headline counts individual checks. The cited schema-constrained
-evaluation passed every check on 44 of 60 replies; inferred numeric changes passed
-76 of 96 checks (79.2%). The report explains these limits, but the headline is much
-more reassuring. Review defaults to off, so valid-looking semantic mistakes can
-become state automatically.
+The original README's 96.4% headline counted individual checks without showing that
+44/60 replies passed every check and inferred numeric changes passed 76/96 checks.
+The README now identifies E4B as the minimum local-reader target and presents all
+three measures from the final configuration: 584/606 checks (96.4%), 45/60 complete
+replies (75.0%), and 84/99 numeric checks (84.8%).
 
-Recommendation: present complete-reply and numeric-inference results alongside the
-aggregate, and evaluate default review policy against correction burden in actual
-campaigns. Source: `evaluations/gemma-e4b-qualitative-schema-20261020-report.md` and
-`src/core/settings-tracker-defaults.js`.
+The reader now constrains numeric strings on compatible schema-enabled connections,
+repairs unambiguous surrounding punctuation, and preserves held values for blank
+numeric readings. Definitions clarify injury, illness, recovery and relationship
+changes; purposeful skill/spell use can earn modest XP. Scoring permits the agreed
+range of reasonable roleplay interpretations. Final outputs contain no malformed
+numeric strings, but semantic HP/energy, inventory and XP errors remain.
+
+One historical 26B reference is retained alongside the final E4B run, with its older
+configuration explicitly distinguished from current defaults. Both are scored under
+the final rubric in the [consolidated report and audit](evaluations/tracker-model-evaluation-20261025-report.md).
+Intermediate development runs were removed. All 925 Node tests and a mocked
+running-host schema-routing fixture pass.
+
+Review still defaults to automatic application. The default review policy and
+correction burden need evidence from fresh multi-turn campaigns; this development
+suite does not settle those questions. Sources: the linked final evaluation,
+`src/core/settings-tracker-defaults.js`, and the reader's normalization/request modules.
 
 ## 3. Recovery is shallow relative to probabilistic changes — open
 

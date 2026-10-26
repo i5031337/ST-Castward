@@ -80,19 +80,28 @@ function describePoolRecovery(state, settings) {
         return [`${owner.label}.${stat.name} ${current}/${maximum} can recover to ${maximum}/${maximum}.`];
     }));
     if (!entries.length) return '';
-    return 'For complete recovery, report each affected pool at its existing maximum.\n'
+    return 'Partial recovery increases the affected pool’s current reading while staying below maximum.\n'
+        + 'Established complete recovery restores the maximum.\n'
         + 'Sound sleep followed by waking refreshed, effective healing, or recharging can establish complete recovery when field rules permit.\n'
         + 'Match recovery to the affected owner and pools.\n'
-        + 'Report an intermediate final reading for partial recovery.\n'
         + 'Affected pools:\n' + entries.join('\n');
 }
 
 /** Keep narrated harm and healing aligned with a configured health pool. */
-function describeInjuryConsequence(settings) {
-    const health = (settings.playerStats || []).find(stat => isReaderStat(stat)
+function describeInjuryConsequence(state, settings) {
+    const owners = [
+        { path: 'player.stats', definitions: settings.playerStats || [] },
+        ...(state?.characters || []).filter(actor => actor?.name && !actor.offstage).map(actor => ({
+            path: `characters[].stats (${actor.name})`, definitions: npcStatsFor(actor, settings),
+        })),
+    ];
+    const fields = owners.flatMap(owner => owner.definitions.filter(stat => isReaderStat(stat)
         && ['number', 'bar'].includes(stat.type) && isPoolStat(stat)
-        && /\b(?:hp|health|hit points|vitality)\b/i.test(`${stat.name || ''} ${stat.purpose || ''} ${stat.guidance || ''}`));
-    return health ? `Report bodily injury as a lower resulting reading in player.stats.${health.name}.\nReport effective wound care or healing as a higher resulting reading in that field.\nInclude any text condition change separately.\nEstimate a conservative improvement and report the resulting reading.` : '';
+        && /\b(?:hp|health|hit points|vitality)\b/i.test(`${stat.name || ''} ${stat.purpose || ''} ${stat.guidance || ''}`))
+        .map(stat => `${owner.path}: ${stat.name}`));
+    return fields.length ? 'For each injured player or NPC, report bodily injury, including minor scrapes, as a lower resulting health reading.\n'
+        + 'Report established physical recovery as a higher resulting reading for the affected character, following the field rules.\n'
+        + 'Include any text condition change separately.\nHealth fields:\n' + fields.join('\n') : '';
 }
 
 /** Separate the unresolved player turn from history already accounted for. */
@@ -123,7 +132,7 @@ function readerValues(state, messageText, trackerSettings, leadUp = [], { strang
         locationReminder: state?.locations?.enabled
             ? 'Include the top-level boolean "locationChanged": true for a changed scene location, false otherwise.' : '',
         poolRecovery: describePoolRecovery(state, trackerSettings),
-        injuryConsequence: describeInjuryConsequence(trackerSettings),
+        injuryConsequence: describeInjuryConsequence(state, trackerSettings),
         ...strangerValues(strangers),
         collections: describeCollections(trackerSettings),
         collectionExample: buildDeltaExample(trackerSettings),

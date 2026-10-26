@@ -89,3 +89,10 @@ docs/evaluations/*.json
 !docs/evaluations/gemma-e4b-roleplay-xp-threshold-control-20261020-prompts.json
 !docs/evaluations/gemma-e4b-roleplay-xp-threshold-control-20261020-results.json
 !docs/evaluations/gemma-e4b-stat-echo-warning-replay-20261020.json
+
+# Final tracker evaluation and one retained larger-model reference.
+!docs/evaluations/gemma-e4b-tracker-final-20261025-prompts.json
+!docs/evaluations/gemma-e4b-tracker-final-20261025-results.json
+!docs/evaluations/gemma-26b-tracker-reference-20261025-prompts.json
+!docs/evaluations/gemma-26b-tracker-reference-20261025-results.json
+!docs/evaluations/tracker-model-evaluation-20261025-audit.json

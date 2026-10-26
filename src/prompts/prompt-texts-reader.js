@@ -21,7 +21,7 @@ export const readerPromptTexts = [
             newNpcReply: 'A new NPC reply example with configured stat guidance, even with an empty scene.',
             locationReminder: 'Final check for the scene-location change flag.',
             poolRecovery: 'Recovery rule and final readings for configured pools.',
-            injuryConsequence: 'Conditional harm and healing reminder for a configured player health pool.',
+            injuryConsequence: 'Conditional harm and recovery reminder for configured player and present NPC health pools.',
             earlier: 'Older messages already reflected in state.',
             userTurn: 'The fresh player turn preceding the assistant reply, when present.',
             message: 'The message being read.',
@@ -47,7 +47,8 @@ Use the field's current scale for estimates.
 Apply configured persistence and reset rules.
 Update the listed editable fields.
 {{#collections}}
-Add physical items when the recipient acquires them.
+Add newly acquired items and additional copies, reporting the quantity gained.
+Match each item’s placement to the collection’s purpose.
 Use established possessions for a new NPC's starting items.
 Treat scene props as part of the setting.
 Add missing abilities or knowledge when demonstrated, including during a failed action.
@@ -58,7 +59,8 @@ Reusable entries stay held after use.
 ### EXPERIENCE
 Award XP once per concrete accomplishment by its recipient.
 Meaningful active progress toward a goal qualifies.
-Rest, care, accidents, rumours, and routine conversation leave XP unchanged.
+Award modest XP for successful, purposeful use of a skill or spell.
+Rest, accidents, rumours, and routine conversation leave XP unchanged.
 For earned XP, add the award to the current reading and report the resulting total as a string.
 Keep the existing XP threshold, even when the total exceeds it.
 The application handles level-ups and the XP remainder; report the total before that calculation.
@@ -142,6 +144,7 @@ Quoted readings include "17", "9/12", and text values such as "Calm".
 For an existing pool, keep its maximum and report the new "current/maximum" reading.
 Use these same stat objects for initial values and changes.
 Report each field once.
+Omit unchanged numeric fields; never use an empty string in place of a numeric reading.
 
 "characters" is an array of objects.
 Each object has the NPC's exact "name".
@@ -253,14 +256,16 @@ Earlier events are already reflected in current status.
 Update the listed editable fields.
 {{#xpProgression}}
 Award positive XP for concrete accomplishments or meaningful active progress by the recipient.
-Rest, care, accidents, rumours, and routine conversation leave XP unchanged.
+Award modest XP for successful, purposeful use of a skill or spell.
+Rest, accidents, rumours, and routine conversation leave XP unchanged.
 Add earned XP to the current reading in the recipient's configured XP field and report the total as a string.
 Keep the existing XP threshold, even when the total exceeds it.
 The application handles level-ups and the XP remainder; report the total before that calculation.
 Omit existing configured level and level-bonus fields. A blank NPC level field may be initialized.
 {{/xpProgression}}
 {{#schemas}}
-Add physical items when the recipient acquires them.
+Add newly acquired items and additional copies, reporting the quantity gained.
+Match each item’s placement to the collection’s purpose.
 Use established possessions for a new NPC's starting items.
 Treat scene props as part of the setting.
 Add missing abilities or knowledge when demonstrated, including during a failed action.
@@ -281,6 +286,7 @@ Quoted readings include "17", "9/12", and text values such as "Calm".
 For an existing pool, keep its maximum and report the new "current/maximum" reading.
 Use these same stat objects for initial values and changes.
 Report each field once.
+Omit unchanged numeric fields; never use an empty string in place of a numeric reading.
 
 "characters" is an array of objects with exact NPC "name" values.
 List every present NPC, including those with no changes.

@@ -1,4 +1,5 @@
 import { readerCancellationHarness } from './helpers/reader-cancellation.mjs';
+import { readerSchemaForConnection } from '../src/tracker/extractor/status-extractor-schema-provider.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
@@ -11,11 +12,11 @@ function build(context) {
     const events = [], usage = [];
     const cancellation = readerCancellationHarness();
     const request = new Function('getContext', 'applyMacros', 'LOG_PREFIX', 'debugLog', 'SYSTEM_PROMPT',
-        'describeConnection', 'extractJSON', 'safeJsonParse', 'recordUsage', 'extractMessageFromData', 'toastr', 'console', 'customProfilePayload', 'startGenerationTask', 'awaitGenerationRequest',
+        'describeConnection', 'extractJSON', 'safeJsonParse', 'recordUsage', 'extractMessageFromData', 'toastr', 'console', 'customProfilePayload', 'startGenerationTask', 'awaitGenerationRequest', 'readerSchemaForConnection',
         `${source}\nreturn requestExtraction;`)(
         () => context, value => value, '[Castward]', () => {}, 'System', () => 'Connection',
         value => value, JSON.parse, (...args) => usage.push(args), raw => raw.choices[0].message.content,
-        { warning: (...args) => events.push(['warning', ...args]) }, { warn: () => {} }, customProfilePayload, cancellation.startGenerationTask, cancellation.awaitGenerationRequest);
+        { warning: (...args) => events.push(['warning', ...args]) }, { warn: () => {} }, customProfilePayload, cancellation.startGenerationTask, cancellation.awaitGenerationRequest, readerSchemaForConnection);
     return { request, events, usage, cancellation };
 }
 const schema = { type: 'object' };
@@ -162,5 +163,26 @@ for (const profile of [false, true]) {
         assert.deepEqual(usage, []);
         assert.equal(cancellation.listeners(), 0);
         assert.equal(cancellation.button.style.display, 'none');
+    });
+}
+
+for (const profileSupportsPatterns of [true, false]) {
+    test(`fallback chooses numeric pattern support per destination (profile=${profileSupportsPatterns})`, async () => {
+        let profileSchema, mainSchema;
+        const patterned = { type: 'object', properties: { Rating: { type: 'string', pattern: '^[0-9]+$' } } };
+        const { request } = build({
+            mainApi: profileSupportsPatterns ? 'openai' : 'textgenerationwebui',
+            chatCompletionSettings: { chat_completion_source: 'makersuite' },
+            textCompletionSettings: { type: 'llamacpp' },
+            ConnectionManagerRequestService: {
+                getProfile: () => ({ api: profileSupportsPatterns ? 'llamacpp' : 'google' }),
+                sendRequest: async (...args) => { profileSchema = args[4].json_schema.value; throw Error('Unavailable'); },
+            },
+            generateRawData: async args => { mainSchema = args.jsonSchema.value; return { player: {} }; },
+        });
+        await request('Prompt', patterned, { extractionProfileId: 'reader', extractionUseSchema: true });
+        assert.equal(Boolean(profileSchema.properties.Rating.pattern), profileSupportsPatterns);
+        assert.equal(Boolean(mainSchema.properties.Rating.pattern), !profileSupportsPatterns);
+        assert.equal(patterned.properties.Rating.pattern, '^[0-9]+$');
     });
 }

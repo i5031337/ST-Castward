@@ -6,6 +6,7 @@ import { LOG_PREFIX, debugLog, SYSTEM_PROMPT } from '../../core/constants.js';
 import { describeConnection, extractJSON, safeJsonParse } from '../../core/utils.js';
 import { recordUsage } from '../../core/usage.js';
 import { customProfilePayload } from '../../api/api-connection-profile.js';
+import { readerSchemaForConnection } from './status-extractor-schema-provider.js';
 
 /** What a reply cost, whether it arrived as text or as already-parsed data. */
 function describeAnswer(answer) {
@@ -43,8 +44,8 @@ async function performExtraction(userPrompt, schema, trackerSettings, systemProm
     const maxTokens = Number(trackerSettings.extractionMaxTokens) || 1200;
     const temperature = readerTemperature(trackerSettings);
     // SillyTavern expects its named wrapper, then forwards value as the provider schema.
-    const jsonSchema = schema && trackerSettings.extractionUseSchema
-        ? { name: 'castward_reader', value: schema, strict: true } : null;
+    const schemaFor = selectedProfile => schema && trackerSettings.extractionUseSchema
+        ? { name: 'castward_reader', value: readerSchemaForConnection(schema, context, selectedProfile), strict: true } : null;
 
     debugLog(`Extraction -> ${describeConnection(profileId)}, reply budget ${maxTokens}`);
 
@@ -62,7 +63,7 @@ async function performExtraction(userPrompt, schema, trackerSettings, systemProm
                     // Structured output is opt-in: some backends return an empty object
                     // rather than reject a schema they dislike, which loses the update
                     // silently. The system prompt pins the shape without it.
-                    ...(jsonSchema ? { json_schema: jsonSchema } : {}),
+                    ...(schema && trackerSettings.extractionUseSchema ? { json_schema: schemaFor(profileId) } : {}),
                     // Sent only when you set one. Nothing of the story preset comes with the
                     // request (includePreset is off). Without a reader or custom-profile
                     // temperature, the model's own default decides.
@@ -89,7 +90,7 @@ async function performExtraction(userPrompt, schema, trackerSettings, systemProm
         prompt: userPrompt,
         systemPrompt,
         responseLength: maxTokens,
-        jsonSchema,
+        jsonSchema: schemaFor(),
     }), signal);
     signal.throwIfAborted();
     // Without a schema, generateRawData returns the provider response. Its text may

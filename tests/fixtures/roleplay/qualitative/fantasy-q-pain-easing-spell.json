@@ -31,7 +31,10 @@
       true
     ],
     [
-      "noXp",
+      "playerChangeBetween",
+      "XP",
+      0,
+      5,
       true
     ],
     [

@@ -118,6 +118,9 @@ function sanitizeModelUpdate(update, state, trackerSettings = getSettings().stat
                 continue;
             }
             if (!def) continue;
+            if (isNumericStat(def) && !String(stats[key] ?? '').trim()) {
+                reject('numeric readings must not be blank; omit unchanged fields'); continue;
+            }
             if (levelField && (!Number.isSafeInteger(Number(stats[key])) || Number(stats[key]) < 1)) {
                 reject('initial Level must be a positive whole number'); continue;
             }

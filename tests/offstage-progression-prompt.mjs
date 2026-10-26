@@ -32,7 +32,8 @@ test('schema offers known offstage absolute experience readings and explicit abs
     const actor = schema.properties.characters.items.properties;
     assert.equal(actor.offstage.type, 'boolean');
     assert.equal(actor.deltas, undefined);
-    assert.deepEqual(actor.stats.properties.Experience, { type: 'string' });
+    assert.equal(actor.stats.properties.Experience.type, 'string');
+    assert.match(actor.stats.properties.Experience.description, /nonblank absolute numeric reading/);
     assert.equal(actor.stats.properties.Rank.type, 'string'); // Blank locked NPC stats can be initialized.
 });
 

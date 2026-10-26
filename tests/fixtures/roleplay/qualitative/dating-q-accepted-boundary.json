@@ -52,8 +52,8 @@
       "npcChangeBetween",
       "Sam",
       "Trust",
-      -1,
-      0,
+      -2,
+      5,
       true
     ],
     [
@@ -61,7 +61,7 @@
       "Sam",
       "Comfort",
       0,
-      4,
+      10,
       true
     ],
     [

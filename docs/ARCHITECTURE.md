@@ -116,6 +116,20 @@ current marker. Editing a newly discovered place manually adopts its record acro
 reply replacement, with missing parents detached. Choosing a System for an unplayed
 chat resets rule-owned defaults while preserving its place records.
 
+Structured reader schemas include numeric-string patterns for native llama.cpp and
+GGUF-named Custom connections. Other providers receive portable schemas, selected
+per destination even on profile fallback. Patterns constrain syntax; runtime checks
+still enforce numeric bounds, pool maxima, locks and XP progression.
+
+Reader and inline model updates use absolute stat readings. Numeric strings may be
+repaired when removing surrounding serialization punctuation leaves one complete
+numeric or pool reading. Repairs are diagnosed before XP, lock, maximum and bounds
+validation. Comparators, explicit plus signs, internal separators and units remain
+invalid. Blank numeric readings are skipped with diagnostics, preserving held values;
+manual edits and text clearing keep their existing behavior. Collection additions describe
+new acquisitions, not a restatement of holdings. Additional copies of an existing
+item still increase its stack; prompts distinguish those gains from mentions and use.
+
 New installations apply valid reader changes automatically; saved review preferences
 remain effective. Level-derived stat growth and collection rewards remain review
 proposals and depend on their originating XP transition. See

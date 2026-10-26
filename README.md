@@ -16,9 +16,9 @@ Switch between the included Fantasy Adventure, Dating Sim, and Creature Trainer 
 
 Other trackers often failed because my local model couldn't return the JSON they needed. Castward is built to make tracking usable with a small local model. It repairs common JSON formatting mistakes and keeps usable updates when individual fields need to be skipped or corrected.
 
-With **Gemma 4 E4B**, the absolute-reading tracker evaluation with JSON schema enforcement passed **587 of 609 checks (96.4%)** across 60 replies covering 20 roleplay scenes. All 60 replies parsed successfully and matched their schemas. The separate profile evaluation passed **78 of 78 checks**. A model this small will miss some story details, but it can still handle useful bookkeeping.
+**Gemma 4 E4B is our minimum target for the tracker’s reader**, chosen to keep Castward accessible to local users. In a 60-reply evaluation with JSON schema enforcement, it passed **584 of 606 checks (96.4%)**, with **45 replies passing every check**. Numeric changes inferred from the story passed **84 of 99 checks (84.8%)**. A small model can handle useful bookkeeping, but some updates will need correction. Choose **Every change** under **Ask Before Applying** to review each update.
 
-The [tracker report](docs/evaluations/gemma-e4b-qualitative-schema-20261020-report.md) and [profile report](docs/evaluations/gemma-e4b-profile-report.md) include the test setup and full results.
+The separate profile evaluation passed **78 of 78 checks**. The [tracker report](docs/evaluations/tracker-model-evaluation-20261025-report.md) and [profile report](docs/evaluations/gemma-e4b-profile-report.md) include the setup, results, and important limits.
 
 ## Two turns of Fantasy Adventure
 

@@ -1,0 +1,4191 @@
+{
+  "auditedAt": "2026-10-26T03:36:56.747Z",
+  "finalArtifacts": {
+    "prompts": "gemma-e4b-tracker-final-20261025-prompts.json",
+    "results": "gemma-e4b-tracker-final-20261025-results.json"
+  },
+  "referenceArtifacts": {
+    "prompts": "gemma-26b-tracker-reference-20261025-prompts.json",
+    "results": "gemma-26b-tracker-reference-20261025-results.json"
+  },
+  "method": "Final E4B is fresh inference with final production prompts and current scoring. Historical 26B raw replies are normalized and rescored under current rules; its frozen inference configuration is older.",
+  "finalSourceHashesMatch": true,
+  "sameNarratives": true,
+  "sameSamplingDefaults": true,
+  "e4b": {
+    "model": "/mnt/D/backup_models/gemma-4-E4B-it-qat-UD-Q4_K_XL.gguf",
+    "summary": {
+      "trials": 60,
+      "checks": 606,
+      "passed": 584,
+      "fullyPassingReplies": 45,
+      "numericChecks": 99,
+      "numericPassed": 84,
+      "strictJsonValid": 60,
+      "requestErrors": 0,
+      "normalizationErrors": 0,
+      "inventoryFailures": 2,
+      "warnings": 0,
+      "rawNumericReadings": 466,
+      "invalidNumericReadings": [],
+      "medianElapsedMs": 17243,
+      "failures": [
+        {
+          "id": "dating-q-accepted-boundary",
+          "repeat": 1,
+          "check": "playerChangeBetween Social Energy -4 -1"
+        },
+        {
+          "id": "dating-q-closing-shift",
+          "repeat": 1,
+          "check": "playerChangeBetween Social Energy -5 -1"
+        },
+        {
+          "id": "dating-q-misplaced-confidence",
+          "repeat": 0,
+          "check": "npcChangeBetween Sam Affection 1 10"
+        },
+        {
+          "id": "dating-q-quiet-company",
+          "repeat": 2,
+          "check": "playerChangeBetween Social Energy 1 5"
+        },
+        {
+          "id": "dating-q-unwelcome-notification",
+          "repeat": 1,
+          "check": "npcChangeBetween June Comfort -1 1"
+        },
+        {
+          "id": "fantasy-q-falling-plaster",
+          "repeat": 0,
+          "check": "npcChangeBetween Mira HP -4 -1"
+        },
+        {
+          "id": "fantasy-q-falling-plaster",
+          "repeat": 0,
+          "check": "npcStatMatches Mira Condition bruis|shoulder|sore|pain"
+        },
+        {
+          "id": "fantasy-q-falling-plaster",
+          "repeat": 1,
+          "check": "npcChangeBetween Mira HP -4 -1"
+        },
+        {
+          "id": "fantasy-q-falling-plaster",
+          "repeat": 2,
+          "check": "npcChangeBetween Mira HP -4 -1"
+        },
+        {
+          "id": "fantasy-q-fever-easing",
+          "repeat": 2,
+          "check": "sameHoldings "
+        },
+        {
+          "id": "fantasy-q-fever-easing",
+          "repeat": 2,
+          "check": "noXp "
+        },
+        {
+          "id": "fantasy-q-loose-scree",
+          "repeat": 0,
+          "check": "noXp "
+        },
+        {
+          "id": "fantasy-q-loose-scree",
+          "repeat": 1,
+          "check": "playerChangeBetween HP -4 -1"
+        },
+        {
+          "id": "fantasy-q-loose-scree",
+          "repeat": 1,
+          "check": "npcChangeBetween Mira HP -4 -1"
+        },
+        {
+          "id": "fantasy-q-pain-easing-spell",
+          "repeat": 1,
+          "check": "sameHoldings "
+        },
+        {
+          "id": "fantasy-q-pain-easing-spell",
+          "repeat": 1,
+          "check": "playerChangeBetween XP 0 5"
+        },
+        {
+          "id": "fantasy-q-practice-impact",
+          "repeat": 0,
+          "check": "playerChangeBetween HP -4 -1"
+        },
+        {
+          "id": "fantasy-q-practice-impact",
+          "repeat": 0,
+          "check": "playerBelowCapacity HP"
+        },
+        {
+          "id": "fantasy-q-practice-impact",
+          "repeat": 2,
+          "check": "playerChangeBetween HP -4 -1"
+        },
+        {
+          "id": "fantasy-q-practice-impact",
+          "repeat": 2,
+          "check": "playerBelowCapacity HP"
+        },
+        {
+          "id": "fantasy-q-sheltered-breather",
+          "repeat": 2,
+          "check": "playerChangeBetween HP 1 3"
+        },
+        {
+          "id": "fantasy-q-sheltered-breather",
+          "repeat": 2,
+          "check": "npcChangeBetween Mira HP 1 3"
+        }
+      ],
+      "perScene": [
+        {
+          "id": "dating-q-accepted-boundary",
+          "passed": 29,
+          "checks": 30,
+          "fullyPassingReplies": 2
+        },
+        {
+          "id": "dating-q-candy-before-call",
+          "passed": 21,
+          "checks": 21,
+          "fullyPassingReplies": 3
+        },
+        {
+          "id": "dating-q-closing-shift",
+          "passed": 26,
+          "checks": 27,
+          "fullyPassingReplies": 2
+        },
+        {
+          "id": "dating-q-kept-confidence",
+          "passed": 27,
+          "checks": 27,
+          "fullyPassingReplies": 3
+        },
+        {
+          "id": "dating-q-misplaced-confidence",
+          "passed": 26,
+          "checks": 27,
+          "fullyPassingReplies": 2
+        },
+        {
+          "id": "dating-q-ordinary-pause",
+          "passed": 33,
+          "checks": 33,
+          "fullyPassingReplies": 3
+        },
+        {
+          "id": "dating-q-passing-joke",
+          "passed": 30,
+          "checks": 30,
+          "fullyPassingReplies": 3
+        },
+        {
+          "id": "dating-q-pressure-lifted",
+          "passed": 33,
+          "checks": 33,
+          "fullyPassingReplies": 3
+        },
+        {
+          "id": "dating-q-quiet-company",
+          "passed": 29,
+          "checks": 30,
+          "fullyPassingReplies": 2
+        },
+        {
+          "id": "dating-q-unwelcome-notification",
+          "passed": 29,
+          "checks": 30,
+          "fullyPassingReplies": 2
+        },
+        {
+          "id": "fantasy-q-brief-soaking",
+          "passed": 30,
+          "checks": 30,
+          "fullyPassingReplies": 3
+        },
+        {
+          "id": "fantasy-q-cleaned-cut",
+          "passed": 33,
+          "checks": 33,
+          "fullyPassingReplies": 3
+        },
+        {
+          "id": "fantasy-q-falling-plaster",
+          "passed": 29,
+          "checks": 33,
+          "fullyPassingReplies": 0
+        },
+        {
+          "id": "fantasy-q-fever-easing",
+          "passed": 31,
+          "checks": 33,
+          "fullyPassingReplies": 2
+        },
+        {
+          "id": "fantasy-q-loose-scree",
+          "passed": 27,
+          "checks": 30,
+          "fullyPassingReplies": 1
+        },
+        {
+          "id": "fantasy-q-pain-easing-spell",
+          "passed": 31,
+          "checks": 33,
+          "fullyPassingReplies": 2
+        },
+        {
+          "id": "fantasy-q-practice-impact",
+          "passed": 29,
+          "checks": 33,
+          "fullyPassingReplies": 1
+        },
+        {
+          "id": "fantasy-q-sheltered-breather",
+          "passed": 31,
+          "checks": 33,
+          "fullyPassingReplies": 2
+        },
+        {
+          "id": "fantasy-q-sustained-ward",
+          "passed": 30,
+          "checks": 30,
+          "fullyPassingReplies": 3
+        },
+        {
+          "id": "fantasy-q-unspent-threat",
+          "passed": 30,
+          "checks": 30,
+          "fullyPassingReplies": 3
+        }
+      ]
+    },
+    "schemaValidation": {
+      "validator": "jsonschema 4.19.2",
+      "validReplies": 60,
+      "errors": []
+    }
+  },
+  "gemma26bReference": {
+    "model": "/mnt/D/backup_models/gemma-4-26B-A4B-it-qat-UD-Q4_K_XL.gguf",
+    "originalSummary": {
+      "checks": 606,
+      "passed": 594,
+      "rate": 0.9801980198019802,
+      "criticalFailures": [
+        "dating-q-accepted-boundary #3: npcChangeBetween Sam Comfort 0 5",
+        "dating-q-candy-before-call #1: npcAbsent Sam",
+        "dating-q-misplaced-confidence #1: npcChangeBetween Sam Trust -6 -1",
+        "dating-q-misplaced-confidence #2: npcChangeBetween Sam Trust -6 -1",
+        "dating-q-misplaced-confidence #3: npcChangeBetween Sam Trust -6 -1",
+        "dating-q-quiet-company #1: playerChangeBetween Social Energy 1 4",
+        "dating-q-quiet-company #2: sameHoldings ",
+        "dating-q-quiet-company #2: npcChangeBetween June Comfort 1 15",
+        "dating-q-quiet-company #3: playerChangeBetween Social Energy 1 4",
+        "dating-q-unwelcome-notification #2: npcChangeBetween June Comfort -1 1",
+        "fantasy-q-sheltered-breather #1: playerChangeBetween HP 1 3",
+        "fantasy-q-sheltered-breather #1: npcChangeBetween Mira HP 1 3"
+      ],
+      "systems": {
+        "fantasy": 0.9937106918238994,
+        "dating": 0.9652777777777778
+      },
+      "perSystemCounts": {
+        "fantasy": {
+          "checks": 318,
+          "passed": 316,
+          "rate": 0.9937106918238994
+        },
+        "dating": {
+          "checks": 288,
+          "passed": 278,
+          "rate": 0.9652777777777778
+        }
+      },
+      "splits": {
+        "main": {
+          "checks": 0,
+          "passed": 0,
+          "rate": null
+        },
+        "originalHoldout": {
+          "checks": 606,
+          "passed": 594,
+          "rate": 0.9801980198019802
+        }
+      },
+      "auditFailures": [],
+      "endpoints": {
+        "http://127.0.0.1:9931/v1": {
+          "trials": 60,
+          "checks": 606,
+          "passed": 594,
+          "criticalFailures": 12
+        }
+      },
+      "acceptable": false
+    },
+    "summary": {
+      "trials": 60,
+      "checks": 606,
+      "passed": 598,
+      "fullyPassingReplies": 54,
+      "numericChecks": 99,
+      "numericPassed": 93,
+      "strictJsonValid": 60,
+      "requestErrors": 0,
+      "normalizationErrors": 0,
+      "inventoryFailures": 1,
+      "warnings": 28,
+      "rawNumericReadings": 185,
+      "invalidNumericReadings": [
+        {
+          "id": "dating-q-candy-before-call",
+          "repeat": 0,
+          "owner": "Sam",
+          "field": "Affection",
+          "value": "><? 0, "
+        },
+        {
+          "id": "dating-q-candy-before-call",
+          "repeat": 2,
+          "owner": "Sam",
+          "field": "Affection",
+          "value": "@0"
+        },
+        {
+          "id": "dating-q-candy-before-call",
+          "repeat": 2,
+          "owner": "Sam",
+          "field": "Trust",
+          "value": "@0"
+        },
+        {
+          "id": "dating-q-candy-before-call",
+          "repeat": 2,
+          "owner": "Sam",
+          "field": "Comfort",
+          "value": "@0"
+        },
+        {
+          "id": "dating-q-quiet-company",
+          "repeat": 1,
+          "owner": "June",
+          "field": "Affection",
+          "value": ", 16"
+        },
+        {
+          "id": "dating-q-quiet-company",
+          "repeat": 1,
+          "owner": "June",
+          "field": "Trust",
+          "value": ""
+        },
+        {
+          "id": "dating-q-quiet-company",
+          "repeat": 1,
+          "owner": "June",
+          "field": "Comfort",
+          "value": ""
+        },
+        {
+          "id": "fantasy-q-cleaned-cut",
+          "repeat": 0,
+          "owner": "Mira",
+          "field": "Armor",
+          "value": ""
+        },
+        {
+          "id": "fantasy-q-cleaned-cut",
+          "repeat": 0,
+          "owner": "Mira",
+          "field": "Strength",
+          "value": ""
+        },
+        {
+          "id": "fantasy-q-cleaned-cut",
+          "repeat": 0,
+          "owner": "Mira",
+          "field": "Dexterity",
+          "value": ""
+        },
+        {
+          "id": "fantasy-q-cleaned-cut",
+          "repeat": 0,
+          "owner": "Mira",
+          "field": "Constitution",
+          "value": ""
+        },
+        {
+          "id": "fantasy-q-cleaned-cut",
+          "repeat": 0,
+          "owner": "Mira",
+          "field": "Intelligence",
+          "value": ""
+        },
+        {
+          "id": "fantasy-q-cleaned-cut",
+          "repeat": 0,
+          "owner": "Mira",
+          "field": "Wisdom",
+          "value": ""
+        },
+        {
+          "id": "fantasy-q-cleaned-cut",
+          "repeat": 0,
+          "owner": "Mira",
+          "field": "Charisma",
+          "value": ""
+        },
+        {
+          "id": "fantasy-q-cleaned-cut",
+          "repeat": 0,
+          "owner": "Mira",
+          "field": "Currency",
+          "value": ""
+        },
+        {
+          "id": "fantasy-q-cleaned-cut",
+          "repeat": 0,
+          "owner": "Mira",
+          "field": "Level",
+          "value": ""
+        },
+        {
+          "id": "fantasy-q-fever-easing",
+          "repeat": 2,
+          "owner": "Mira",
+          "field": "Armor",
+          "value": ""
+        },
+        {
+          "id": "fantasy-q-fever-easing",
+          "repeat": 2,
+          "owner": "Mira",
+          "field": "Strength",
+          "value": ""
+        },
+        {
+          "id": "fantasy-q-fever-easing",
+          "repeat": 2,
+          "owner": "Mira",
+          "field": "Dexterity",
+          "value": ""
+        },
+        {
+          "id": "fantasy-q-fever-easing",
+          "repeat": 2,
+          "owner": "Mira",
+          "field": "Constitution",
+          "value": ""
+        },
+        {
+          "id": "fantasy-q-fever-easing",
+          "repeat": 2,
+          "owner": "Mira",
+          "field": "Intelligence",
+          "value": ""
+        },
+        {
+          "id": "fantasy-q-fever-easing",
+          "repeat": 2,
+          "owner": "Mira",
+          "field": "Wisdom",
+          "value": ""
+        },
+        {
+          "id": "fantasy-q-fever-easing",
+          "repeat": 2,
+          "owner": "Mira",
+          "field": "Charisma",
+          "value": ""
+        },
+        {
+          "id": "fantasy-q-fever-easing",
+          "repeat": 2,
+          "owner": "Mira",
+          "field": "Currency",
+          "value": ""
+        },
+        {
+          "id": "fantasy-q-fever-easing",
+          "repeat": 2,
+          "owner": "Mira",
+          "field": "Level",
+          "value": ""
+        }
+      ],
+      "medianElapsedMs": 27369,
+      "failures": [
+        {
+          "id": "dating-q-candy-before-call",
+          "repeat": 0,
+          "check": "npcAbsent Sam"
+        },
+        {
+          "id": "dating-q-quiet-company",
+          "repeat": 0,
+          "check": "playerChangeBetween Social Energy 1 5"
+        },
+        {
+          "id": "dating-q-quiet-company",
+          "repeat": 1,
+          "check": "sameHoldings "
+        },
+        {
+          "id": "dating-q-quiet-company",
+          "repeat": 1,
+          "check": "npcChangeBetween June Comfort 1 15"
+        },
+        {
+          "id": "dating-q-quiet-company",
+          "repeat": 2,
+          "check": "playerChangeBetween Social Energy 1 5"
+        },
+        {
+          "id": "dating-q-unwelcome-notification",
+          "repeat": 1,
+          "check": "npcChangeBetween June Comfort -1 1"
+        },
+        {
+          "id": "fantasy-q-sheltered-breather",
+          "repeat": 0,
+          "check": "playerChangeBetween HP 1 3"
+        },
+        {
+          "id": "fantasy-q-sheltered-breather",
+          "repeat": 0,
+          "check": "npcChangeBetween Mira HP 1 3"
+        }
+      ],
+      "perScene": [
+        {
+          "id": "dating-q-accepted-boundary",
+          "passed": 30,
+          "checks": 30,
+          "fullyPassingReplies": 3
+        },
+        {
+          "id": "dating-q-candy-before-call",
+          "passed": 20,
+          "checks": 21,
+          "fullyPassingReplies": 2
+        },
+        {
+          "id": "dating-q-closing-shift",
+          "passed": 27,
+          "checks": 27,
+          "fullyPassingReplies": 3
+        },
+        {
+          "id": "dating-q-kept-confidence",
+          "passed": 27,
+          "checks": 27,
+          "fullyPassingReplies": 3
+        },
+        {
+          "id": "dating-q-misplaced-confidence",
+          "passed": 27,
+          "checks": 27,
+          "fullyPassingReplies": 3
+        },
+        {
+          "id": "dating-q-ordinary-pause",
+          "passed": 33,
+          "checks": 33,
+          "fullyPassingReplies": 3
+        },
+        {
+          "id": "dating-q-passing-joke",
+          "passed": 30,
+          "checks": 30,
+          "fullyPassingReplies": 3
+        },
+        {
+          "id": "dating-q-pressure-lifted",
+          "passed": 33,
+          "checks": 33,
+          "fullyPassingReplies": 3
+        },
+        {
+          "id": "dating-q-quiet-company",
+          "passed": 26,
+          "checks": 30,
+          "fullyPassingReplies": 0
+        },
+        {
+          "id": "dating-q-unwelcome-notification",
+          "passed": 29,
+          "checks": 30,
+          "fullyPassingReplies": 2
+        },
+        {
+          "id": "fantasy-q-brief-soaking",
+          "passed": 30,
+          "checks": 30,
+          "fullyPassingReplies": 3
+        },
+        {
+          "id": "fantasy-q-cleaned-cut",
+          "passed": 33,
+          "checks": 33,
+          "fullyPassingReplies": 3
+        },
+        {
+          "id": "fantasy-q-falling-plaster",
+          "passed": 33,
+          "checks": 33,
+          "fullyPassingReplies": 3
+        },
+        {
+          "id": "fantasy-q-fever-easing",
+          "passed": 33,
+          "checks": 33,
+          "fullyPassingReplies": 3
+        },
+        {
+          "id": "fantasy-q-loose-scree",
+          "passed": 30,
+          "checks": 30,
+          "fullyPassingReplies": 3
+        },
+        {
+          "id": "fantasy-q-pain-easing-spell",
+          "passed": 33,
+          "checks": 33,
+          "fullyPassingReplies": 3
+        },
+        {
+          "id": "fantasy-q-practice-impact",
+          "passed": 33,
+          "checks": 33,
+          "fullyPassingReplies": 3
+        },
+        {
+          "id": "fantasy-q-sheltered-breather",
+          "passed": 31,
+          "checks": 33,
+          "fullyPassingReplies": 2
+        },
+        {
+          "id": "fantasy-q-sustained-ward",
+          "passed": 30,
+          "checks": 30,
+          "fullyPassingReplies": 3
+        },
+        {
+          "id": "fantasy-q-unspent-threat",
+          "passed": 30,
+          "checks": 30,
+          "fullyPassingReplies": 3
+        }
+      ]
+    },
+    "rescoredTrials": [
+      {
+        "id": "dating-q-accepted-boundary",
+        "repeat": 0,
+        "checks": [
+          {
+            "name": "validJsonAndNotTruncated",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "preservedPoolMaxima",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "sameHoldings ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "noXp ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "locationFlag no",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcPresent Sam",
+            "critical": false,
+            "passed": true
+          },
+          {
+            "name": "relationshipUnchanged Sam",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcChangeBetween Sam Trust -2 5",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcChangeBetween Sam Comfort 0 10",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerChangeBetween Social Energy -4 -1",
+            "critical": true,
+            "passed": true
+          }
+        ],
+        "warnings": []
+      },
+      {
+        "id": "dating-q-accepted-boundary",
+        "repeat": 1,
+        "checks": [
+          {
+            "name": "validJsonAndNotTruncated",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "preservedPoolMaxima",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "sameHoldings ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "noXp ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "locationFlag no",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcPresent Sam",
+            "critical": false,
+            "passed": true
+          },
+          {
+            "name": "relationshipUnchanged Sam",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcChangeBetween Sam Trust -2 5",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcChangeBetween Sam Comfort 0 10",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerChangeBetween Social Energy -4 -1",
+            "critical": true,
+            "passed": true
+          }
+        ],
+        "warnings": []
+      },
+      {
+        "id": "dating-q-accepted-boundary",
+        "repeat": 2,
+        "checks": [
+          {
+            "name": "validJsonAndNotTruncated",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "preservedPoolMaxima",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "sameHoldings ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "noXp ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "locationFlag no",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcPresent Sam",
+            "critical": false,
+            "passed": true
+          },
+          {
+            "name": "relationshipUnchanged Sam",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcChangeBetween Sam Trust -2 5",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcChangeBetween Sam Comfort 0 10",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerChangeBetween Social Energy -4 -1",
+            "critical": true,
+            "passed": true
+          }
+        ],
+        "warnings": []
+      },
+      {
+        "id": "dating-q-candy-before-call",
+        "repeat": 0,
+        "checks": [
+          {
+            "name": "validJsonAndNotTruncated",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "preservedPoolMaxima",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "noXp ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "locationFlag no",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "itemRemove items mint candy 1",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcAbsent Sam",
+            "critical": true,
+            "passed": false
+          },
+          {
+            "name": "playerChangeBetween Social Energy 0 1",
+            "critical": true,
+            "passed": true
+          }
+        ],
+        "warnings": [
+          "Sam \u00b7 Mood: skipped: the NPC is offstage and has no saved card.",
+          "Sam \u00b7 Affection: skipped: the NPC is offstage and has no saved card."
+        ]
+      },
+      {
+        "id": "dating-q-candy-before-call",
+        "repeat": 1,
+        "checks": [
+          {
+            "name": "validJsonAndNotTruncated",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "preservedPoolMaxima",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "noXp ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "locationFlag no",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "itemRemove items mint candy 1",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcAbsent Sam",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerChangeBetween Social Energy 0 1",
+            "critical": true,
+            "passed": true
+          }
+        ],
+        "warnings": []
+      },
+      {
+        "id": "dating-q-candy-before-call",
+        "repeat": 2,
+        "checks": [
+          {
+            "name": "validJsonAndNotTruncated",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "preservedPoolMaxima",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "noXp ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "locationFlag no",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "itemRemove items mint candy 1",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcAbsent Sam",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerChangeBetween Social Energy 0 1",
+            "critical": true,
+            "passed": true
+          }
+        ],
+        "warnings": [
+          "Sam \u00b7 Mood: skipped: the NPC is offstage and has no saved card.",
+          "Sam \u00b7 Affection: skipped: the NPC is offstage and has no saved card.",
+          "Sam \u00b7 Trust: skipped: the NPC is offstage and has no saved card.",
+          "Sam \u00b7 Comfort: skipped: the NPC is offstage and has no saved card.",
+          "Sam \u00b7 Relationship: skipped: the NPC is offstage and has no saved card."
+        ]
+      },
+      {
+        "id": "dating-q-closing-shift",
+        "repeat": 0,
+        "checks": [
+          {
+            "name": "validJsonAndNotTruncated",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "preservedPoolMaxima",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "sameHoldings ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "noXp ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "locationFlag no",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcPresent Sam",
+            "critical": false,
+            "passed": true
+          },
+          {
+            "name": "relationshipUnchanged Sam",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerChangeBetween Social Energy -5 -1",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcChangeBetween Sam Affection 1 7",
+            "critical": true,
+            "passed": true
+          }
+        ],
+        "warnings": []
+      },
+      {
+        "id": "dating-q-closing-shift",
+        "repeat": 1,
+        "checks": [
+          {
+            "name": "validJsonAndNotTruncated",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "preservedPoolMaxima",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "sameHoldings ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "noXp ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "locationFlag no",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcPresent Sam",
+            "critical": false,
+            "passed": true
+          },
+          {
+            "name": "relationshipUnchanged Sam",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerChangeBetween Social Energy -5 -1",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcChangeBetween Sam Affection 1 7",
+            "critical": true,
+            "passed": true
+          }
+        ],
+        "warnings": []
+      },
+      {
+        "id": "dating-q-closing-shift",
+        "repeat": 2,
+        "checks": [
+          {
+            "name": "validJsonAndNotTruncated",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "preservedPoolMaxima",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "sameHoldings ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "noXp ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "locationFlag no",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcPresent Sam",
+            "critical": false,
+            "passed": true
+          },
+          {
+            "name": "relationshipUnchanged Sam",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerChangeBetween Social Energy -5 -1",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcChangeBetween Sam Affection 1 7",
+            "critical": true,
+            "passed": true
+          }
+        ],
+        "warnings": []
+      },
+      {
+        "id": "dating-q-kept-confidence",
+        "repeat": 0,
+        "checks": [
+          {
+            "name": "validJsonAndNotTruncated",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "preservedPoolMaxima",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "sameHoldings ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "noXp ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "locationFlag no",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcPresent June",
+            "critical": false,
+            "passed": true
+          },
+          {
+            "name": "relationshipUnchanged June",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcChangeBetween June Trust 1 15",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerChangeBetween Social Energy -4 -1",
+            "critical": true,
+            "passed": true
+          }
+        ],
+        "warnings": []
+      },
+      {
+        "id": "dating-q-kept-confidence",
+        "repeat": 1,
+        "checks": [
+          {
+            "name": "validJsonAndNotTruncated",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "preservedPoolMaxima",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "sameHoldings ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "noXp ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "locationFlag no",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcPresent June",
+            "critical": false,
+            "passed": true
+          },
+          {
+            "name": "relationshipUnchanged June",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcChangeBetween June Trust 1 15",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerChangeBetween Social Energy -4 -1",
+            "critical": true,
+            "passed": true
+          }
+        ],
+        "warnings": []
+      },
+      {
+        "id": "dating-q-kept-confidence",
+        "repeat": 2,
+        "checks": [
+          {
+            "name": "validJsonAndNotTruncated",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "preservedPoolMaxima",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "sameHoldings ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "noXp ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "locationFlag no",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcPresent June",
+            "critical": false,
+            "passed": true
+          },
+          {
+            "name": "relationshipUnchanged June",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcChangeBetween June Trust 1 15",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerChangeBetween Social Energy -4 -1",
+            "critical": true,
+            "passed": true
+          }
+        ],
+        "warnings": []
+      },
+      {
+        "id": "dating-q-misplaced-confidence",
+        "repeat": 0,
+        "checks": [
+          {
+            "name": "validJsonAndNotTruncated",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "preservedPoolMaxima",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "sameHoldings ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "noXp ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "locationFlag no",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcPresent Sam",
+            "critical": false,
+            "passed": true
+          },
+          {
+            "name": "relationshipUnchanged Sam",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcChangeBetween Sam Trust -6 0",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcChangeBetween Sam Affection 1 10",
+            "critical": true,
+            "passed": true
+          }
+        ],
+        "warnings": []
+      },
+      {
+        "id": "dating-q-misplaced-confidence",
+        "repeat": 1,
+        "checks": [
+          {
+            "name": "validJsonAndNotTruncated",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "preservedPoolMaxima",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "sameHoldings ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "noXp ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "locationFlag no",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcPresent Sam",
+            "critical": false,
+            "passed": true
+          },
+          {
+            "name": "relationshipUnchanged Sam",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcChangeBetween Sam Trust -6 0",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcChangeBetween Sam Affection 1 10",
+            "critical": true,
+            "passed": true
+          }
+        ],
+        "warnings": []
+      },
+      {
+        "id": "dating-q-misplaced-confidence",
+        "repeat": 2,
+        "checks": [
+          {
+            "name": "validJsonAndNotTruncated",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "preservedPoolMaxima",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "sameHoldings ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "noXp ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "locationFlag no",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcPresent Sam",
+            "critical": false,
+            "passed": true
+          },
+          {
+            "name": "relationshipUnchanged Sam",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcChangeBetween Sam Trust -6 0",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcChangeBetween Sam Affection 1 10",
+            "critical": true,
+            "passed": true
+          }
+        ],
+        "warnings": []
+      },
+      {
+        "id": "dating-q-ordinary-pause",
+        "repeat": 0,
+        "checks": [
+          {
+            "name": "validJsonAndNotTruncated",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "preservedPoolMaxima",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "sameHoldings ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "noXp ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "locationFlag no",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcPresent Sam",
+            "critical": false,
+            "passed": true
+          },
+          {
+            "name": "relationshipUnchanged Sam",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerChangeBetween Social Energy -1 1",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcChangeBetween Sam Affection -1 1",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcChangeBetween Sam Trust -1 1",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcChangeBetween Sam Comfort -1 1",
+            "critical": true,
+            "passed": true
+          }
+        ],
+        "warnings": []
+      },
+      {
+        "id": "dating-q-ordinary-pause",
+        "repeat": 1,
+        "checks": [
+          {
+            "name": "validJsonAndNotTruncated",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "preservedPoolMaxima",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "sameHoldings ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "noXp ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "locationFlag no",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcPresent Sam",
+            "critical": false,
+            "passed": true
+          },
+          {
+            "name": "relationshipUnchanged Sam",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerChangeBetween Social Energy -1 1",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcChangeBetween Sam Affection -1 1",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcChangeBetween Sam Trust -1 1",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcChangeBetween Sam Comfort -1 1",
+            "critical": true,
+            "passed": true
+          }
+        ],
+        "warnings": []
+      },
+      {
+        "id": "dating-q-ordinary-pause",
+        "repeat": 2,
+        "checks": [
+          {
+            "name": "validJsonAndNotTruncated",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "preservedPoolMaxima",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "sameHoldings ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "noXp ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "locationFlag no",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcPresent Sam",
+            "critical": false,
+            "passed": true
+          },
+          {
+            "name": "relationshipUnchanged Sam",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerChangeBetween Social Energy -1 1",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcChangeBetween Sam Affection -1 1",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcChangeBetween Sam Trust -1 1",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcChangeBetween Sam Comfort -1 1",
+            "critical": true,
+            "passed": true
+          }
+        ],
+        "warnings": []
+      },
+      {
+        "id": "dating-q-passing-joke",
+        "repeat": 0,
+        "checks": [
+          {
+            "name": "validJsonAndNotTruncated",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "preservedPoolMaxima",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "sameHoldings ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "noXp ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "locationFlag no",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcPresent June",
+            "critical": false,
+            "passed": true
+          },
+          {
+            "name": "relationshipUnchanged June",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerChangeBetween Social Energy -1 0",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcChangeBetween June Affection 0 4",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcChangeBetween June Trust 0 1",
+            "critical": true,
+            "passed": true
+          }
+        ],
+        "warnings": []
+      },
+      {
+        "id": "dating-q-passing-joke",
+        "repeat": 1,
+        "checks": [
+          {
+            "name": "validJsonAndNotTruncated",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "preservedPoolMaxima",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "sameHoldings ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "noXp ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "locationFlag no",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcPresent June",
+            "critical": false,
+            "passed": true
+          },
+          {
+            "name": "relationshipUnchanged June",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerChangeBetween Social Energy -1 0",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcChangeBetween June Affection 0 4",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcChangeBetween June Trust 0 1",
+            "critical": true,
+            "passed": true
+          }
+        ],
+        "warnings": []
+      },
+      {
+        "id": "dating-q-passing-joke",
+        "repeat": 2,
+        "checks": [
+          {
+            "name": "validJsonAndNotTruncated",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "preservedPoolMaxima",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "sameHoldings ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "noXp ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "locationFlag no",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcPresent June",
+            "critical": false,
+            "passed": true
+          },
+          {
+            "name": "relationshipUnchanged June",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerChangeBetween Social Energy -1 0",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcChangeBetween June Affection 0 4",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcChangeBetween June Trust 0 1",
+            "critical": true,
+            "passed": true
+          }
+        ],
+        "warnings": []
+      },
+      {
+        "id": "dating-q-pressure-lifted",
+        "repeat": 0,
+        "checks": [
+          {
+            "name": "validJsonAndNotTruncated",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "preservedPoolMaxima",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "sameHoldings ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "noXp ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "locationFlag no",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcPresent June",
+            "critical": false,
+            "passed": true
+          },
+          {
+            "name": "relationshipUnchanged June",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerChangeBetween Social Energy 1 3",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerBelowCapacity Social Energy",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "worldExcludes Occasion party",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcChangeBetween June Trust 0 2",
+            "critical": true,
+            "passed": true
+          }
+        ],
+        "warnings": []
+      },
+      {
+        "id": "dating-q-pressure-lifted",
+        "repeat": 1,
+        "checks": [
+          {
+            "name": "validJsonAndNotTruncated",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "preservedPoolMaxima",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "sameHoldings ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "noXp ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "locationFlag no",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcPresent June",
+            "critical": false,
+            "passed": true
+          },
+          {
+            "name": "relationshipUnchanged June",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerChangeBetween Social Energy 1 3",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerBelowCapacity Social Energy",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "worldExcludes Occasion party",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcChangeBetween June Trust 0 2",
+            "critical": true,
+            "passed": true
+          }
+        ],
+        "warnings": []
+      },
+      {
+        "id": "dating-q-pressure-lifted",
+        "repeat": 2,
+        "checks": [
+          {
+            "name": "validJsonAndNotTruncated",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "preservedPoolMaxima",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "sameHoldings ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "noXp ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "locationFlag no",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcPresent June",
+            "critical": false,
+            "passed": true
+          },
+          {
+            "name": "relationshipUnchanged June",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerChangeBetween Social Energy 1 3",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerBelowCapacity Social Energy",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "worldExcludes Occasion party",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcChangeBetween June Trust 0 2",
+            "critical": true,
+            "passed": true
+          }
+        ],
+        "warnings": []
+      },
+      {
+        "id": "dating-q-quiet-company",
+        "repeat": 0,
+        "checks": [
+          {
+            "name": "validJsonAndNotTruncated",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "preservedPoolMaxima",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "sameHoldings ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "noXp ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "locationFlag no",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcPresent June",
+            "critical": false,
+            "passed": true
+          },
+          {
+            "name": "relationshipUnchanged June",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerChangeBetween Social Energy 1 5",
+            "critical": true,
+            "passed": false
+          },
+          {
+            "name": "playerBelowCapacity Social Energy",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcChangeBetween June Comfort 1 15",
+            "critical": true,
+            "passed": true
+          }
+        ],
+        "warnings": []
+      },
+      {
+        "id": "dating-q-quiet-company",
+        "repeat": 1,
+        "checks": [
+          {
+            "name": "validJsonAndNotTruncated",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "preservedPoolMaxima",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "sameHoldings ",
+            "critical": true,
+            "passed": false
+          },
+          {
+            "name": "noXp ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "locationFlag no",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcPresent June",
+            "critical": false,
+            "passed": true
+          },
+          {
+            "name": "relationshipUnchanged June",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerChangeBetween Social Energy 1 5",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerBelowCapacity Social Energy",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcChangeBetween June Comfort 1 15",
+            "critical": true,
+            "passed": false
+          }
+        ],
+        "warnings": [
+          "June \u00b7 Affection: numeric reading \", 16\" repaired to \"16\".",
+          "June \u00b7 Trust: \"\" skipped: numeric readings must not be blank; omit unchanged fields.",
+          "June \u00b7 Comfort: \"\" skipped: numeric readings must not be blank; omit unchanged fields."
+        ]
+      },
+      {
+        "id": "dating-q-quiet-company",
+        "repeat": 2,
+        "checks": [
+          {
+            "name": "validJsonAndNotTruncated",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "preservedPoolMaxima",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "sameHoldings ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "noXp ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "locationFlag no",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcPresent June",
+            "critical": false,
+            "passed": true
+          },
+          {
+            "name": "relationshipUnchanged June",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerChangeBetween Social Energy 1 5",
+            "critical": true,
+            "passed": false
+          },
+          {
+            "name": "playerBelowCapacity Social Energy",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcChangeBetween June Comfort 1 15",
+            "critical": true,
+            "passed": true
+          }
+        ],
+        "warnings": []
+      },
+      {
+        "id": "dating-q-unwelcome-notification",
+        "repeat": 0,
+        "checks": [
+          {
+            "name": "validJsonAndNotTruncated",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "preservedPoolMaxima",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "sameHoldings ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "noXp ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "locationFlag no",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcPresent June",
+            "critical": false,
+            "passed": true
+          },
+          {
+            "name": "relationshipUnchanged June",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcChangeBetween June Comfort -1 1",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcUnchanged June Trust",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcStatMatches June Mood anx|tense|unsett|worri|uneas|alarm|stress",
+            "critical": true,
+            "passed": true
+          }
+        ],
+        "warnings": []
+      },
+      {
+        "id": "dating-q-unwelcome-notification",
+        "repeat": 1,
+        "checks": [
+          {
+            "name": "validJsonAndNotTruncated",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "preservedPoolMaxima",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "sameHoldings ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "noXp ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "locationFlag no",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcPresent June",
+            "critical": false,
+            "passed": true
+          },
+          {
+            "name": "relationshipUnchanged June",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcChangeBetween June Comfort -1 1",
+            "critical": true,
+            "passed": false
+          },
+          {
+            "name": "npcUnchanged June Trust",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcStatMatches June Mood anx|tense|unsett|worri|uneas|alarm|stress",
+            "critical": true,
+            "passed": true
+          }
+        ],
+        "warnings": []
+      },
+      {
+        "id": "dating-q-unwelcome-notification",
+        "repeat": 2,
+        "checks": [
+          {
+            "name": "validJsonAndNotTruncated",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "preservedPoolMaxima",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "sameHoldings ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "noXp ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "locationFlag no",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcPresent June",
+            "critical": false,
+            "passed": true
+          },
+          {
+            "name": "relationshipUnchanged June",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcChangeBetween June Comfort -1 1",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcUnchanged June Trust",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcStatMatches June Mood anx|tense|unsett|worri|uneas|alarm|stress",
+            "critical": true,
+            "passed": true
+          }
+        ],
+        "warnings": []
+      },
+      {
+        "id": "fantasy-q-brief-soaking",
+        "repeat": 0,
+        "checks": [
+          {
+            "name": "validJsonAndNotTruncated",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "preservedPoolMaxima",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "sameHoldings ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "noXp ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "locationFlag no",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcPresent Mira",
+            "critical": false,
+            "passed": true
+          },
+          {
+            "name": "noNpcXp Mira",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerUnchanged HP",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerUnchanged Mana",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcUnchanged Mira HP",
+            "critical": true,
+            "passed": true
+          }
+        ],
+        "warnings": []
+      },
+      {
+        "id": "fantasy-q-brief-soaking",
+        "repeat": 1,
+        "checks": [
+          {
+            "name": "validJsonAndNotTruncated",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "preservedPoolMaxima",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "sameHoldings ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "noXp ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "locationFlag no",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcPresent Mira",
+            "critical": false,
+            "passed": true
+          },
+          {
+            "name": "noNpcXp Mira",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerUnchanged HP",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerUnchanged Mana",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcUnchanged Mira HP",
+            "critical": true,
+            "passed": true
+          }
+        ],
+        "warnings": []
+      },
+      {
+        "id": "fantasy-q-brief-soaking",
+        "repeat": 2,
+        "checks": [
+          {
+            "name": "validJsonAndNotTruncated",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "preservedPoolMaxima",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "sameHoldings ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "noXp ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "locationFlag no",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcPresent Mira",
+            "critical": false,
+            "passed": true
+          },
+          {
+            "name": "noNpcXp Mira",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerUnchanged HP",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerUnchanged Mana",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcUnchanged Mira HP",
+            "critical": true,
+            "passed": true
+          }
+        ],
+        "warnings": []
+      },
+      {
+        "id": "fantasy-q-cleaned-cut",
+        "repeat": 0,
+        "checks": [
+          {
+            "name": "validJsonAndNotTruncated",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "preservedPoolMaxima",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "sameHoldings ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "noXp ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "locationFlag no",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcPresent Mira",
+            "critical": false,
+            "passed": true
+          },
+          {
+            "name": "noNpcXp Mira",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerChangeBetween HP 0 2",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerBelowCapacity HP",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerStatMatches Condition bandag|dress|wrapp|covered",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcUnchanged Mira HP",
+            "critical": true,
+            "passed": true
+          }
+        ],
+        "warnings": [
+          "Mira \u00b7 Armor: \"\" skipped: numeric readings must not be blank; omit unchanged fields.",
+          "Mira \u00b7 Strength: \"\" skipped: numeric readings must not be blank; omit unchanged fields.",
+          "Mira \u00b7 Dexterity: \"\" skipped: numeric readings must not be blank; omit unchanged fields.",
+          "Mira \u00b7 Constitution: \"\" skipped: numeric readings must not be blank; omit unchanged fields.",
+          "Mira \u00b7 Intelligence: \"\" skipped: numeric readings must not be blank; omit unchanged fields.",
+          "Mira \u00b7 Wisdom: \"\" skipped: numeric readings must not be blank; omit unchanged fields.",
+          "Mira \u00b7 Charisma: \"\" skipped: numeric readings must not be blank; omit unchanged fields.",
+          "Mira \u00b7 Currency: \"\" skipped: numeric readings must not be blank; omit unchanged fields.",
+          "Mira \u00b7 Level: \"\" skipped: Level is managed by XP progression."
+        ]
+      },
+      {
+        "id": "fantasy-q-cleaned-cut",
+        "repeat": 1,
+        "checks": [
+          {
+            "name": "validJsonAndNotTruncated",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "preservedPoolMaxima",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "sameHoldings ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "noXp ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "locationFlag no",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcPresent Mira",
+            "critical": false,
+            "passed": true
+          },
+          {
+            "name": "noNpcXp Mira",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerChangeBetween HP 0 2",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerBelowCapacity HP",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerStatMatches Condition bandag|dress|wrapp|covered",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcUnchanged Mira HP",
+            "critical": true,
+            "passed": true
+          }
+        ],
+        "warnings": []
+      },
+      {
+        "id": "fantasy-q-cleaned-cut",
+        "repeat": 2,
+        "checks": [
+          {
+            "name": "validJsonAndNotTruncated",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "preservedPoolMaxima",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "sameHoldings ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "noXp ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "locationFlag no",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcPresent Mira",
+            "critical": false,
+            "passed": true
+          },
+          {
+            "name": "noNpcXp Mira",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerChangeBetween HP 0 2",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerBelowCapacity HP",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerStatMatches Condition bandag|dress|wrapp|covered",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcUnchanged Mira HP",
+            "critical": true,
+            "passed": true
+          }
+        ],
+        "warnings": []
+      },
+      {
+        "id": "fantasy-q-falling-plaster",
+        "repeat": 0,
+        "checks": [
+          {
+            "name": "validJsonAndNotTruncated",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "preservedPoolMaxima",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "sameHoldings ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "noXp ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "locationFlag no",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcPresent Mira",
+            "critical": false,
+            "passed": true
+          },
+          {
+            "name": "noNpcXp Mira",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcChangeBetween Mira HP -4 -1",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerUnchanged HP",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerUnchanged Mana",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcStatMatches Mira Condition bruis|shoulder|sore|pain",
+            "critical": true,
+            "passed": true
+          }
+        ],
+        "warnings": []
+      },
+      {
+        "id": "fantasy-q-falling-plaster",
+        "repeat": 1,
+        "checks": [
+          {
+            "name": "validJsonAndNotTruncated",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "preservedPoolMaxima",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "sameHoldings ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "noXp ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "locationFlag no",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcPresent Mira",
+            "critical": false,
+            "passed": true
+          },
+          {
+            "name": "noNpcXp Mira",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcChangeBetween Mira HP -4 -1",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerUnchanged HP",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerUnchanged Mana",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcStatMatches Mira Condition bruis|shoulder|sore|pain",
+            "critical": true,
+            "passed": true
+          }
+        ],
+        "warnings": []
+      },
+      {
+        "id": "fantasy-q-falling-plaster",
+        "repeat": 2,
+        "checks": [
+          {
+            "name": "validJsonAndNotTruncated",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "preservedPoolMaxima",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "sameHoldings ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "noXp ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "locationFlag no",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcPresent Mira",
+            "critical": false,
+            "passed": true
+          },
+          {
+            "name": "noNpcXp Mira",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcChangeBetween Mira HP -4 -1",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerUnchanged HP",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerUnchanged Mana",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcStatMatches Mira Condition bruis|shoulder|sore|pain",
+            "critical": true,
+            "passed": true
+          }
+        ],
+        "warnings": []
+      },
+      {
+        "id": "fantasy-q-fever-easing",
+        "repeat": 0,
+        "checks": [
+          {
+            "name": "validJsonAndNotTruncated",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "preservedPoolMaxima",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "sameHoldings ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "noXp ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "locationFlag no",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcPresent Mira",
+            "critical": false,
+            "passed": true
+          },
+          {
+            "name": "noNpcXp Mira",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerChangeBetween HP 1 4",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerBelowCapacity HP",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerStatMatches Condition weak|recover|tired|fever.*(?:eas|break|gone)",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcUnchanged Mira HP",
+            "critical": true,
+            "passed": true
+          }
+        ],
+        "warnings": []
+      },
+      {
+        "id": "fantasy-q-fever-easing",
+        "repeat": 1,
+        "checks": [
+          {
+            "name": "validJsonAndNotTruncated",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "preservedPoolMaxima",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "sameHoldings ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "noXp ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "locationFlag no",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcPresent Mira",
+            "critical": false,
+            "passed": true
+          },
+          {
+            "name": "noNpcXp Mira",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerChangeBetween HP 1 4",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerBelowCapacity HP",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerStatMatches Condition weak|recover|tired|fever.*(?:eas|break|gone)",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcUnchanged Mira HP",
+            "critical": true,
+            "passed": true
+          }
+        ],
+        "warnings": []
+      },
+      {
+        "id": "fantasy-q-fever-easing",
+        "repeat": 2,
+        "checks": [
+          {
+            "name": "validJsonAndNotTruncated",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "preservedPoolMaxima",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "sameHoldings ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "noXp ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "locationFlag no",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcPresent Mira",
+            "critical": false,
+            "passed": true
+          },
+          {
+            "name": "noNpcXp Mira",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerChangeBetween HP 1 4",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerBelowCapacity HP",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerStatMatches Condition weak|recover|tired|fever.*(?:eas|break|gone)",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcUnchanged Mira HP",
+            "critical": true,
+            "passed": true
+          }
+        ],
+        "warnings": [
+          "Mira \u00b7 Armor: \"\" skipped: numeric readings must not be blank; omit unchanged fields.",
+          "Mira \u00b7 Strength: \"\" skipped: numeric readings must not be blank; omit unchanged fields.",
+          "Mira \u00b7 Dexterity: \"\" skipped: numeric readings must not be blank; omit unchanged fields.",
+          "Mira \u00b7 Constitution: \"\" skipped: numeric readings must not be blank; omit unchanged fields.",
+          "Mira \u00b7 Intelligence: \"\" skipped: numeric readings must not be blank; omit unchanged fields.",
+          "Mira \u00b7 Wisdom: \"\" skipped: numeric readings must not be blank; omit unchanged fields.",
+          "Mira \u00b7 Charisma: \"\" skipped: numeric readings must not be blank; omit unchanged fields.",
+          "Mira \u00b7 Currency: \"\" skipped: numeric readings must not be blank; omit unchanged fields.",
+          "Mira \u00b7 Level: \"\" skipped: Level is managed by XP progression."
+        ]
+      },
+      {
+        "id": "fantasy-q-loose-scree",
+        "repeat": 0,
+        "checks": [
+          {
+            "name": "validJsonAndNotTruncated",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "preservedPoolMaxima",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "sameHoldings ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "noXp ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "locationFlag no",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcPresent Mira",
+            "critical": false,
+            "passed": true
+          },
+          {
+            "name": "noNpcXp Mira",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerChangeBetween HP -4 -1",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcChangeBetween Mira HP -4 -1",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerUnchanged Mana",
+            "critical": true,
+            "passed": true
+          }
+        ],
+        "warnings": []
+      },
+      {
+        "id": "fantasy-q-loose-scree",
+        "repeat": 1,
+        "checks": [
+          {
+            "name": "validJsonAndNotTruncated",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "preservedPoolMaxima",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "sameHoldings ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "noXp ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "locationFlag no",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcPresent Mira",
+            "critical": false,
+            "passed": true
+          },
+          {
+            "name": "noNpcXp Mira",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerChangeBetween HP -4 -1",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcChangeBetween Mira HP -4 -1",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerUnchanged Mana",
+            "critical": true,
+            "passed": true
+          }
+        ],
+        "warnings": []
+      },
+      {
+        "id": "fantasy-q-loose-scree",
+        "repeat": 2,
+        "checks": [
+          {
+            "name": "validJsonAndNotTruncated",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "preservedPoolMaxima",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "sameHoldings ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "noXp ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "locationFlag no",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcPresent Mira",
+            "critical": false,
+            "passed": true
+          },
+          {
+            "name": "noNpcXp Mira",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerChangeBetween HP -4 -1",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcChangeBetween Mira HP -4 -1",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerUnchanged Mana",
+            "critical": true,
+            "passed": true
+          }
+        ],
+        "warnings": []
+      },
+      {
+        "id": "fantasy-q-pain-easing-spell",
+        "repeat": 0,
+        "checks": [
+          {
+            "name": "validJsonAndNotTruncated",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "preservedPoolMaxima",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "sameHoldings ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerChangeBetween XP 0 5",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "locationFlag no",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcPresent Mira",
+            "critical": false,
+            "passed": true
+          },
+          {
+            "name": "noNpcXp Mira",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerChangeBetween Mana -5 -1",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerUnchanged HP",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcUnchanged Mira HP",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcStatMatches Mira Condition ankle|injur|sore|tender",
+            "critical": true,
+            "passed": true
+          }
+        ],
+        "warnings": []
+      },
+      {
+        "id": "fantasy-q-pain-easing-spell",
+        "repeat": 1,
+        "checks": [
+          {
+            "name": "validJsonAndNotTruncated",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "preservedPoolMaxima",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "sameHoldings ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerChangeBetween XP 0 5",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "locationFlag no",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcPresent Mira",
+            "critical": false,
+            "passed": true
+          },
+          {
+            "name": "noNpcXp Mira",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerChangeBetween Mana -5 -1",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerUnchanged HP",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcUnchanged Mira HP",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcStatMatches Mira Condition ankle|injur|sore|tender",
+            "critical": true,
+            "passed": true
+          }
+        ],
+        "warnings": []
+      },
+      {
+        "id": "fantasy-q-pain-easing-spell",
+        "repeat": 2,
+        "checks": [
+          {
+            "name": "validJsonAndNotTruncated",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "preservedPoolMaxima",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "sameHoldings ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerChangeBetween XP 0 5",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "locationFlag no",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcPresent Mira",
+            "critical": false,
+            "passed": true
+          },
+          {
+            "name": "noNpcXp Mira",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerChangeBetween Mana -5 -1",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerUnchanged HP",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcUnchanged Mira HP",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcStatMatches Mira Condition ankle|injur|sore|tender",
+            "critical": true,
+            "passed": true
+          }
+        ],
+        "warnings": []
+      },
+      {
+        "id": "fantasy-q-practice-impact",
+        "repeat": 0,
+        "checks": [
+          {
+            "name": "validJsonAndNotTruncated",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "preservedPoolMaxima",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "sameHoldings ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "noXp ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "locationFlag no",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcPresent Rowan",
+            "critical": false,
+            "passed": true
+          },
+          {
+            "name": "noNpcXp Rowan",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerChangeBetween HP -4 -1",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcUnchanged Rowan HP",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerUnchanged Mana",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerBelowCapacity HP",
+            "critical": true,
+            "passed": true
+          }
+        ],
+        "warnings": []
+      },
+      {
+        "id": "fantasy-q-practice-impact",
+        "repeat": 1,
+        "checks": [
+          {
+            "name": "validJsonAndNotTruncated",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "preservedPoolMaxima",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "sameHoldings ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "noXp ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "locationFlag no",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcPresent Rowan",
+            "critical": false,
+            "passed": true
+          },
+          {
+            "name": "noNpcXp Rowan",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerChangeBetween HP -4 -1",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcUnchanged Rowan HP",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerUnchanged Mana",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerBelowCapacity HP",
+            "critical": true,
+            "passed": true
+          }
+        ],
+        "warnings": []
+      },
+      {
+        "id": "fantasy-q-practice-impact",
+        "repeat": 2,
+        "checks": [
+          {
+            "name": "validJsonAndNotTruncated",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "preservedPoolMaxima",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "sameHoldings ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "noXp ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "locationFlag no",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcPresent Rowan",
+            "critical": false,
+            "passed": true
+          },
+          {
+            "name": "noNpcXp Rowan",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerChangeBetween HP -4 -1",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcUnchanged Rowan HP",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerUnchanged Mana",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerBelowCapacity HP",
+            "critical": true,
+            "passed": true
+          }
+        ],
+        "warnings": []
+      },
+      {
+        "id": "fantasy-q-sheltered-breather",
+        "repeat": 0,
+        "checks": [
+          {
+            "name": "validJsonAndNotTruncated",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "preservedPoolMaxima",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "sameHoldings ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "noXp ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "locationFlag no",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcPresent Mira",
+            "critical": false,
+            "passed": true
+          },
+          {
+            "name": "noNpcXp Mira",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerChangeBetween HP 1 3",
+            "critical": true,
+            "passed": false
+          },
+          {
+            "name": "npcChangeBetween Mira HP 1 3",
+            "critical": true,
+            "passed": false
+          },
+          {
+            "name": "playerBelowCapacity HP",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcBelowCapacity Mira HP",
+            "critical": true,
+            "passed": true
+          }
+        ],
+        "warnings": []
+      },
+      {
+        "id": "fantasy-q-sheltered-breather",
+        "repeat": 1,
+        "checks": [
+          {
+            "name": "validJsonAndNotTruncated",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "preservedPoolMaxima",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "sameHoldings ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "noXp ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "locationFlag no",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcPresent Mira",
+            "critical": false,
+            "passed": true
+          },
+          {
+            "name": "noNpcXp Mira",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerChangeBetween HP 1 3",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcChangeBetween Mira HP 1 3",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerBelowCapacity HP",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcBelowCapacity Mira HP",
+            "critical": true,
+            "passed": true
+          }
+        ],
+        "warnings": []
+      },
+      {
+        "id": "fantasy-q-sheltered-breather",
+        "repeat": 2,
+        "checks": [
+          {
+            "name": "validJsonAndNotTruncated",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "preservedPoolMaxima",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "sameHoldings ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "noXp ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "locationFlag no",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcPresent Mira",
+            "critical": false,
+            "passed": true
+          },
+          {
+            "name": "noNpcXp Mira",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerChangeBetween HP 1 3",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcChangeBetween Mira HP 1 3",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerBelowCapacity HP",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcBelowCapacity Mira HP",
+            "critical": true,
+            "passed": true
+          }
+        ],
+        "warnings": []
+      },
+      {
+        "id": "fantasy-q-sustained-ward",
+        "repeat": 0,
+        "checks": [
+          {
+            "name": "validJsonAndNotTruncated",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "preservedPoolMaxima",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "sameHoldings ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "noXp ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "locationFlag no",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcPresent Mira",
+            "critical": false,
+            "passed": true
+          },
+          {
+            "name": "noNpcXp Mira",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerChangeBetween Mana -6 -1",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerUnchanged HP",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcUnchanged Mira HP",
+            "critical": true,
+            "passed": true
+          }
+        ],
+        "warnings": []
+      },
+      {
+        "id": "fantasy-q-sustained-ward",
+        "repeat": 1,
+        "checks": [
+          {
+            "name": "validJsonAndNotTruncated",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "preservedPoolMaxima",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "sameHoldings ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "noXp ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "locationFlag no",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcPresent Mira",
+            "critical": false,
+            "passed": true
+          },
+          {
+            "name": "noNpcXp Mira",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerChangeBetween Mana -6 -1",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerUnchanged HP",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcUnchanged Mira HP",
+            "critical": true,
+            "passed": true
+          }
+        ],
+        "warnings": []
+      },
+      {
+        "id": "fantasy-q-sustained-ward",
+        "repeat": 2,
+        "checks": [
+          {
+            "name": "validJsonAndNotTruncated",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "preservedPoolMaxima",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "sameHoldings ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "noXp ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "locationFlag no",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcPresent Mira",
+            "critical": false,
+            "passed": true
+          },
+          {
+            "name": "noNpcXp Mira",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerChangeBetween Mana -6 -1",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerUnchanged HP",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcUnchanged Mira HP",
+            "critical": true,
+            "passed": true
+          }
+        ],
+        "warnings": []
+      },
+      {
+        "id": "fantasy-q-unspent-threat",
+        "repeat": 0,
+        "checks": [
+          {
+            "name": "validJsonAndNotTruncated",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "preservedPoolMaxima",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "sameHoldings ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "noXp ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "locationFlag no",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcPresent Mira",
+            "critical": false,
+            "passed": true
+          },
+          {
+            "name": "noNpcXp Mira",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerUnchanged HP",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerUnchanged Mana",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcUnchanged Mira HP",
+            "critical": true,
+            "passed": true
+          }
+        ],
+        "warnings": []
+      },
+      {
+        "id": "fantasy-q-unspent-threat",
+        "repeat": 1,
+        "checks": [
+          {
+            "name": "validJsonAndNotTruncated",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "preservedPoolMaxima",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "sameHoldings ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "noXp ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "locationFlag no",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcPresent Mira",
+            "critical": false,
+            "passed": true
+          },
+          {
+            "name": "noNpcXp Mira",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerUnchanged HP",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerUnchanged Mana",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcUnchanged Mira HP",
+            "critical": true,
+            "passed": true
+          }
+        ],
+        "warnings": []
+      },
+      {
+        "id": "fantasy-q-unspent-threat",
+        "repeat": 2,
+        "checks": [
+          {
+            "name": "validJsonAndNotTruncated",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "preservedPoolMaxima",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "sameHoldings ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "noXp ",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "locationFlag no",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcPresent Mira",
+            "critical": false,
+            "passed": true
+          },
+          {
+            "name": "noNpcXp Mira",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerUnchanged HP",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "playerUnchanged Mana",
+            "critical": true,
+            "passed": true
+          },
+          {
+            "name": "npcUnchanged Mira HP",
+            "critical": true,
+            "passed": true
+          }
+        ],
+        "warnings": []
+      }
+    ],
+    "schemaValidation": {
+      "validator": "jsonschema 4.19.2",
+      "validReplies": 60,
+      "errors": []
+    }
+  },
+  "browserCheck": {
+    "numericPattern": true,
+    "requestPattern": true,
+    "signal": true,
+    "requestReturned": true,
+    "googlePortable": true,
+    "originalPreserved": true
+  },
+  "numericRepairVerification": {
+    "tests": 7,
+    "scope": "Reader and inline model normalization only; XP/lock/bounds/maximum validation remains active."
+  }
+}

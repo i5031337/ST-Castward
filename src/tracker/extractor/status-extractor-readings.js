@@ -5,6 +5,25 @@ import { sameStatReading } from '../stat-reading-equality.js';
 const READING = /^\s*(-?\d+(?:\.\d+)?)(?:\s*\/\s*(-?\d+(?:\.\d+)?))?\s*$/;
 const FRAGMENT = /_(?:current|cur|now|value|val|maximum|max|total|cap)$/i;
 
+/** Recover one complete numeric reading from surrounding serialization punctuation. */
+function repairNumericReadings(values, defs, label, warnings) {
+    if (!values || typeof values !== 'object' || Array.isArray(values)) return;
+    for (const [key, value] of Object.entries(values)) {
+        const def = (defs || []).find(def => String(def?.name).toLowerCase() === key.toLowerCase());
+        if (!['number', 'bar'].includes(def?.type) || typeof value !== 'string' || READING.test(value)) continue;
+        const reading = value.replace(/^[\s{}\[\](),;:"']+|[\s{}\[\](),;:"']+$/g, '');
+        const match = reading.match(READING);
+        if (!match || ![match[1], match[2] ?? '0'].every(part => Number.isFinite(Number(part)))) continue;
+        values[key] = reading;
+        warnings.push(`${label} · ${key}: numeric reading ${JSON.stringify(value)} repaired to ${JSON.stringify(reading)}.`);
+    }
+}
+
+function repairOwnerReadings(owner, defs, label, warnings) {
+    if (!owner || typeof owner !== 'object') return;
+    repairNumericReadings(owner.stats && typeof owner.stats === 'object' ? owner.stats : owner, defs, label, warnings);
+}
+
 function heldValue(values, name) {
     const key = Object.keys(values || {}).find(key => key.toLowerCase() === name.toLowerCase());
     return key === undefined ? undefined : values[key];
@@ -69,6 +88,8 @@ export function normalizeModelReadings(update, state, settings, { cards = [], wa
         }
     };
 
+    repairNumericReadings(update.global, settings?.globalStats, 'World', warnings);
+    repairOwnerReadings(update.player, settings?.playerStats, 'Player', warnings);
     discardDeltas(update, 'globalDeltas', 'World');
     discardDeltas(update.player, 'deltas', 'Player');
     guardXp(update.player, settings?.playerStats, progressionFields(settings, { isPlayer: true }),
@@ -81,8 +102,10 @@ export function normalizeModelReadings(update, state, settings, { cards = [], wa
         const selected = proposedNpcTemplate(held?.npcTemplateId ? held : card, actor);
         const effective = { ...(held || card || actor), npcTemplateId: selected?.id
             || held?.npcTemplateId || card?.npcTemplateId || actor.npcTemplateId };
+        const defs = npcStatsFor(effective, settings);
+        repairOwnerReadings(actor, defs, actor.name || 'NPC', warnings);
         discardDeltas(actor, 'deltas', actor.name || 'NPC');
-        guardXp(actor, npcStatsFor(effective, settings), progressionFields(settings, { actor: effective }),
+        guardXp(actor, defs, progressionFields(settings, { actor: effective }),
             held?.stats, card?.statusOverrides, actor.name || 'NPC', true);
     }
     return update;
