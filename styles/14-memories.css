@@ -7,7 +7,7 @@
 .sillynpc-memory-controls { display: flex; gap: 6px; justify-content: flex-end; }
 .sillynpc-system-memory-controls { display: grid; gap: 8px; }
 .sillynpc-system-memory-controls h4 { margin: 0; }
-.sillynpc-system-builder .sillynpc-system-memory-controls .sillynpc-check-group {
+.sillynpc-system-memory-controls .sillynpc-check-group {
     display: flex; flex-direction: row; align-items: center; gap: 6px; margin: 0;
 }
 .sillynpc-system-memory-controls input[type="checkbox"] { flex: none; margin: 0; }

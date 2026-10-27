@@ -30,7 +30,7 @@ export function renderWritingRulesView(view, onReprocessMessages) {
             + 'An optional exact name preserves a previously mentioned or canon character; matching cards are reused. '
             + 'The narrator selects the character type when your System has multiple NPC templates. '
             + 'Requires a Chat Completion model with SillyTavern function calling enabled. '
-            + 'Uses the Lore Connection and Lore Reply Budget; each creation makes one generation request, with one repair if needed. '
+            + 'Uses the Profile Connection and Profile Reply Budget under Profiles; each creation makes one generation request, with one repair if needed. '
             + 'Cards belong to this chat and remain available across swipes and regeneration. '
             + 'Uses your System’s collection guidance for starting entries; named NPCs keep already tracked stats and belongings. Missing portraits follow the automatic Fill portrait setting.',
         onChange: () => npcCreationService.invalidate(),

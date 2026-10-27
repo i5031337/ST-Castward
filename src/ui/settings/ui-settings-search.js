@@ -4,15 +4,17 @@ import { getSettings } from '../../core/settings.js';
 
 /** A control's own label, taken from the wrap that carries its key. */
 function labelWithin(wrap) {
+    let rowText = '';
     for (const el of walk(wrap)) {
         const cls = String(el?.className || '');
         // Most controls name themselves on a label; a text area does it on the row.
-        if (cls.includes('sillynpc-setting-label') || cls === 'sillynpc-setting-row') {
+        if (cls.includes('sillynpc-setting-label')) {
             const text = String(el.textContent || '').trim();
             if (text) return text;
         }
+        if (!rowText && cls === 'sillynpc-setting-row') rowText = String(el.textContent || '').trim();
     }
-    return '';
+    return rowText;
 }
 
 /** Every element under one, itself included. */

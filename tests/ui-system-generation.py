@@ -76,6 +76,8 @@ with browser_session() as browser:
             input(panel.querySelector('.sillynpc-npc-templates textarea'), 'Catchable monsters encountered in the wild.', 'change');
             tab('Profile fields');
             input(panel.querySelector('.profile-guidance'), 'Describe the species clearly.');
+            results.draftMemories = !!panel.querySelector('.profile-memory-enabled');
+            input(panel.querySelector('.profile-memory-interval'), '6', 'change');
             tab('Collections');
             input(panel.querySelector('.col-hint'), 'Learned combat techniques.');
             input(panel.querySelector('.f-hint'), 'The unique technique name.');
@@ -90,6 +92,7 @@ with browser_session() as browser:
             results.savedDraft = saved.stats.character.some(f => f.name === 'Focus')
               && saved.npcTemplates[0].description === 'Catchable monsters encountered in the wild.'
               && saved.profiles[0].guidance === 'Describe the species clearly.'
+              && saved.memories.interval === 6
               && saved.collections[0].guidance === 'Learned combat techniques.'
               && saved.collections[0].fields[0].guidance === 'The unique technique name.'
               && saved.collections[0].fields[0].name === 'title'

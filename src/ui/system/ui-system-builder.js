@@ -5,6 +5,7 @@ import { makeActivatable } from '../../core/utils.js';
 import { buildCollectionsEditor } from './ui-system-collections.js';
 import { buildStatsEditor } from './ui-system-stats.js';
 import { buildProfilesEditor } from './ui-system-profiles.js';
+import { buildMemoryControls } from './ui-system-memories.js';
 
 /**
  * System Builder: the stats, collections and fields a System is made of.
@@ -13,10 +14,8 @@ import { buildProfilesEditor } from './ui-system-profiles.js';
  * saving, restoring and swapping whole Systems, which is System Manager's.
  */
 
-let systemBuilderActiveTab = 'global';
-
 export function buildSystemBuilder(onRefresh, context = liveSystemContext) {
-    let activeTab = context === liveSystemContext ? systemBuilderActiveTab : (context.builderActiveTab || 'global');
+    let activeTab = context.builderActiveTab || 'global';
     const wrap = document.createElement('div');
     wrap.className = 'sillynpc-system-builder';
     wrap.style.border = '1px solid var(--sillynpc-border)';
@@ -63,7 +62,6 @@ export function buildSystemBuilder(onRefresh, context = liveSystemContext) {
             btn.addEventListener('click', () => {
                 activeTab = tab.id;
                 context.builderActiveTab = tab.id;
-                if (context === liveSystemContext) systemBuilderActiveTab = tab.id;
                 renderTabs();
                 renderContent();
             });
@@ -83,6 +81,8 @@ export function buildSystemBuilder(onRefresh, context = liveSystemContext) {
             content.appendChild(buildProgressionEditor({ onRefresh, context }));
         } else if (activeTab === 'profiles') {
             content.appendChild(buildProfilesEditor(onRefresh, context));
+            // Draft review includes optional memories before saving the whole System.
+            if (context !== liveSystemContext) content.appendChild(buildMemoryControls(context));
         } else if (activeTab === 'collections') {
             content.appendChild(buildCollectionsEditor(onRefresh, context));
         }

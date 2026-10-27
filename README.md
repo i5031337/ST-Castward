@@ -47,11 +47,11 @@ His character sheet brings those details together. Here's Joram's sheet from lat
 
 You can read the [full session and reader outputs](docs/evaluations/fantasy-adventure-live-demo.json), including the details it missed.
 
-Profiles are filled on click by default. Turn on **Tracker → Generate Profiles For New NPCs** to fill them as you meet people. Portraits need a configured SillyTavern Image Generation service.
+Profiles are filled on click by default. Turn on **Profiles → Generate Profiles For New NPCs** to fill them as you meet people. Enable **Profiles → Draw Portrait Automatically** to give them pictures too; portraits need a configured SillyTavern Image Generation service.
 
 The narrator can create NPCs with fresh names, distinct personalities, stats, and suitable starting belongings and abilities before introducing them into the story. Previously mentioned or canon characters can keep their established names.
 
-To use this, enable SillyTavern's **Enable function calling** with a supported Chat Completion model. Find the feature under **Writing → Let The Narrator Create NPCs** (on by default). Profiles use your **Lore Connection**. An optional [tool-enabled Narrator card](examples/narrator-tools.json) includes prompts for this feature.
+To use this, enable SillyTavern's **Enable function calling** with a supported Chat Completion model. Find the feature under **Dialogue → Let The Narrator Create NPCs** (on by default). Choose the profile-writing model under **Profiles → Profile Connection**. An optional [tool-enabled Narrator card](examples/narrator-tools.json) includes prompts for this feature.
 
 ## What it does
 

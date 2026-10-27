@@ -56,7 +56,7 @@ This map covers tracked runtime files, tests and support files. Source files and
 | `tests/chat-character-ownership.mjs` | Character visibility, chat NPC routing, persona identity, and chat-local player state boundaries. |
 | `src/characters/system-npc-roster.js`, `src/characters/system-npc-roster-runtime.js` | Opt-in local System rosters, portable snapshots, and one-time independent chat seeding. |
 | `src/characters/system-roster-state.js` | Optional map and NPC memory snapshots, provenance-free memory copies, and deferred tracker-state seeds. |
-| `src/ui/system/ui-system-reuse.js` | Local per-System NPC reuse, Places carryover controls, and saved-roster clearing. Memory carryover is a canonical Builder profile setting. |
+| `src/ui/system/ui-system-reuse.js` | Local per-System NPC reuse, Places carryover controls, and saved-roster clearing. Memory carryover is a canonical System rule edited under Profiles. |
 | `tests/system-npc-roster.mjs`, `tests/ui-system-npc-roster.py` | Roster defaults, carryover, independent copies, stale-copy protection, System boundaries, and unsaved host UI check. |
 | `tests/system-roster-state.mjs` | Independent map and memory copies, opt-outs, stale-copy protection, source invalidation, and tracker save integration. |
 | `tests/character-memory-transfer.mjs` | Source/destination memory carryover policy, active/archive transfer, provenance removal, and same-name chat isolation. |
@@ -374,7 +374,7 @@ This map covers tracked runtime files, tests and support files. Source files and
 | `src/ui/settings/ui-settings-writing.js` | Writing rule settings. |
 | `src/ui/settings/ui-settings-advanced.js` | Advanced settings. |
 | `src/ui/settings/ui-settings-defaults.js` | Fallback portrait pool and tag management, with stranger portrait retention and reset. |
-| `src/ui/settings/ui-settings-generation.js` | Separate Lorebook and Images settings views. |
+| `src/ui/settings/ui-settings-generation.js` | Profile generation and active System memory settings, and the separate Images view. |
 | `src/ui/settings/ui-settings-generation-helpers.js` | Shared helpers for generation settings. |
 | `src/ui/settings/ui-settings-generation-image.js` | Portrait generation, automatic Place backgrounds, present NPC sprites, and automatic NPC expression controls. |
 | `src/ui/settings/ui-expression-workflow.js` | Shared expression-edit workflow selector, independent of the ST portrait workflow. |
@@ -389,6 +389,7 @@ This map covers tracked runtime files, tests and support files. Source files and
 | `tests/npc-templates.mjs` | Template normalization, assignment, validation, review, and scene return tests. |
 | `src/ui/system/ui-system-builder.js` | Public entry point for system schema editor. |
 | `src/ui/system/ui-system-profiles.js` | Player and NPC profile field controls in System Builder. |
+| `src/ui/system/ui-system-memories.js` | Per-System NPC memory controls for Profiles and generated draft review. |
 | `src/ui/system/ui-system-profile-operations.js` | Pure add, rename, retire, and restore operations for profile fields. |
 | `src/ui/system/ui-system-collections.js` | Collection schema editor, including NPC template targets. |
 | `src/ui/system/ui-collection-rewards.js` | Collapsed Level-up rewards controls with field-driven schedules and guided selection settings. |

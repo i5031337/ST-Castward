@@ -106,16 +106,6 @@ export function renderTrackerDisplayAndReading({ container, settings, onApply, o
                 + 'through another connection. Applies to all requests using the reader connection.',
             onChange: onApply,
         }));
-        container.append(buildSettingToggle({
-            key: 'statusTracker.autoGenerateNpcProfiles',
-            label: 'Generate Profiles For New NPCs',
-            help: 'When the reader identifies an NPC without a character card, creates a '
-                + 'card in this chat and writes its configured profile fields to lore. '
-                + 'Uses the lore generation connection and context settings, with one extra '
-                + 'request per new NPC. Unsupported details may stay blank. Existing cards '
-                + 'are left as they are. Draw Portrait Automatically under Images controls image requests.',
-            onChange: onApply,
-        }));
     }
 
     container.append(buildSettingSlider({

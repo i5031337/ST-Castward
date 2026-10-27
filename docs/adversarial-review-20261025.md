@@ -129,16 +129,53 @@ Sources:
 `src/ui/tracker/ui-tracker-display-reading.js`, `src/ui/tracker/ui-generation-activity.js`,
 and `src/core/usage.js`.
 
-## 5. The interface imposes a large conceptual burden — product judgment, open
+## 5. Related settings and recovery actions need better discovery — Profiles implemented; chooser and refresh planned
 
-Ten management sections encompass rules, profiles, places, lorebooks, speech, images,
-and presentation. Users must distinguish Fill, tracker reading, memory reading, lore
-synchronization, and carryover. These boundaries have implementation reasons but can
-make basic setup and correction difficult to learn. Retry tracker button should be on the tracker display, not the raw output display.
+The original claim of a large conceptual burden was too broad. Fantasy Adventure
+and automatic tracking are ready on a fresh install, other starter Systems provide
+ready-made rules, and customization is optional. Clearly named sections, settings
+search and collapsible controls already help users find what they need. There is no
+usability study establishing that the menu needs a broad redesign or fewer options.
+Visible automation status is addressed by item #4.
 
-Recommendation: prioritize a clear first-session workflow and visible automation
-status over more customization. Source inspection: `manage.html` and
-`src/ui/manage/ui-manage.js`; this is not a completed usability study.
+The concerns were specific: creating profiles and portraits involved settings
+under Tracker, Lorebook and Images; other starter Systems are easy to miss before a
+chat's System becomes fixed; and retrying a tracker reading requires opening its
+output dropdown. Hiding raw output can also hide that recovery action.
+
+Agreed plan:
+
+1. **Profiles menu tab — implemented.** Profiles replaces Lorebook and brings profile
+   generation, connection, context and automatic portrait-after-Fill settings together.
+   Lore Connection is now Profile Connection. A collapsed NPC memories section names the
+   active System and controls memory reading, frequency, limits, guidance and carryover.
+   Profile field definitions remain in System Builder alongside other System definitions;
+   Profiles links directly to that tab. Generated drafts expose both fields and memories.
+   Lorebook linking is collapsed so a long book list does not bury generation controls.
+   Search finds the moved controls and opens the appropriate disclosure. General image
+   settings and expression generation remain under Images. Existing setting keys and
+   System definitions are unchanged.
+2. **New-chat System chooser — planned.** When the extension is enabled, offer the
+   starter and saved Systems once per new chat, before the first player message.
+   Show short starter descriptions, preselect the current System, and offer automatic
+   reuse of that choice for future chats. Existing chats do not prompt. Reuse saved
+   Systems directly; choosing a starter creates an editable copy.
+3. **Tracker refresh action — planned.** Put a refresh icon beside the in-chat tracker
+   controls, independent of raw-output visibility. Its tooltip and accessible label
+   distinguish retrying a failed reading from regenerating the latest reading.
+   Disable it while the reading runs, and preserve the targeted retry when only
+   level-up rewards failed.
+
+These changes address discoverability while retaining customization. The findings
+come from source inspection of `manage.html`, `src/ui/manage/ui-manage.js` and the
+tracker report/settings views; they are not measured first-session outcomes.
+
+Profiles verification: all 928 Node tests pass. Five running-host checks in headless
+Chromium cover settings navigation/search, moved profile/portrait controls, tracker
+and editor behavior, memory controls/review, and generated System draft editing. Unsaved fixtures preserve
+chat/settings and make no model or image generation requests. Visual and DOM checks
+at 1280px and 390px confirm the Profiles panel and expanded memory controls fit without
+horizontal overflow. This is UI verification, not a usability study.
 
 ## 6. File size limits do not remove architectural coupling — tracker update path addressed; broader coupling remains
 

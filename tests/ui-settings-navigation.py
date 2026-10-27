@@ -16,21 +16,33 @@ with browser_session() as browser:
     assert execute("return !!document.querySelector('#sillynpc-writing-view').children.length")
     assert execute("""return [...document.querySelectorAll('.sillynpc-section')]
         .map(button => button.textContent.trim());""") == [
-        'Cast', 'Places', 'System', 'Dialogue', 'Speech', 'Tracker', 'Lorebook', 'Images', 'Appearance', 'Extension'
+        'Cast', 'Places', 'System', 'Dialogue', 'Speech', 'Tracker', 'Profiles', 'Images', 'Appearance', 'Extension'
     ]
     for section, key, excluded in [
-        ('lorebook', 'defaultLorebook', 'autoPortraitOnFill'),
-        ('images', 'autoPortraitOnFill', 'defaultLorebook'),
+        ('profiles', 'autoPortraitOnFill', 'autoPlaceBackgrounds'),
+        ('images', 'autoPlaceBackgrounds', 'autoPortraitOnFill'),
+        ('status', 'statusTracker.enabled', 'statusTracker.autoGenerateNpcProfiles'),
     ]:
         execute(f"document.querySelector('.sillynpc-section[data-section={section}]').click()")
         assert execute(f"""const panel = document.querySelector('[data-panel={section}]');
-            return !!panel.querySelector('[data-setting={key}]')
-                && !panel.querySelector('[data-setting={excluded}]')
+            return !!panel.querySelector('[data-setting="{key}"]')
+                && !panel.querySelector('[data-setting="{excluded}"]')
                 && panel.getAttribute('aria-labelledby') === 'sillynpc-section-{section}'
                 && document.querySelector('.sillynpc-subtabs').hidden;""")
+    execute("document.querySelector('.sillynpc-section[data-section=profiles]').click()")
+    assert execute("""const view = document.querySelector('#sillynpc-profiles-settings-view');
+        const editor = view.querySelector('.sillynpc-system-memory-controls');
+        return !!view.querySelector('[data-setting=defaultLorebook]')
+            && !view.querySelector('.profile-new-label')
+            && !!editor?.querySelector('.profile-memory-enabled')
+            && editor.closest('details')?.open === false
+            && !document.querySelector('.sillynpc-section[data-section=lorebook]')
+            && !document.querySelector('[data-panel=lorebook]');""")
     for query, section, key in [
-        ('Default Target Lorebook', 'lorebook', 'defaultLorebook'),
-        ('Draw Portrait Automatically', 'images', 'autoPortraitOnFill'),
+        ('Default Target Lorebook', 'profiles', 'defaultLorebook'),
+        ('Draw Portrait Automatically', 'profiles', 'autoPortraitOnFill'),
+        ('Generate Profiles For New NPCs', 'profiles', 'statusTracker.autoGenerateNpcProfiles'),
+        ('Profile Connection', 'profiles', 'loreProfileId'),
         ('Narrator voice', 'speech', 'tts.narratorVoice'),
     ]:
         execute(f"""const input = document.querySelector('#sillynpc-settings-search input');
@@ -41,6 +53,14 @@ with browser_session() as browser:
         assert execute(f"""return document.querySelector('.sillynpc-section.active')
             ?.dataset.section === '{section}'
             && !!document.querySelector('[data-panel={section}] [data-setting="{key}"]');""")
+    execute("""const input = document.querySelector('#sillynpc-settings-search input');
+        input.value = 'NPC memories';
+        input.dispatchEvent(new Event('input', {bubbles: true}));""")
+    execute("document.querySelector('.sillynpc-settings-search-hit').click()")
+    assert execute("""return document.querySelector('.sillynpc-section.active')?.dataset.section === 'profiles'
+        && document.querySelector('[data-setting="system.memories"]').open
+        && !!document.querySelector('[data-setting="system.memories"] .profile-memory-enabled');""")
+    execute("document.querySelector('.sillynpc-section[data-section=speech]').click()")
     assert execute("""return !document.querySelector('#extensions_settings2 #sillynpc-tts-settings')
         && document.querySelector('#sillynpc-tts-settings input[type=url]').readOnly
         && document.querySelector('[data-panel=speech] h3.sillynpc-section-title')?.textContent === 'Castward speech'
@@ -59,6 +79,12 @@ with browser_session() as browser:
         builderVisible: !!document.querySelector('.sillynpc-system-builder')};""")
     assert system_nav == {'section': 'System', 'page': 'systems', 'subtabsHidden': True,
                           'panelLabel': 'sillynpc-section-systems', 'builderVisible': True}, system_nav
+    execute("document.querySelector('.sillynpc-section[data-section=profiles]').click()")
+    execute("document.querySelector('.sillynpc-edit-profile-fields').click()")
+    assert execute("""return document.querySelector('.sillynpc-section.active')?.dataset.section === 'systems'
+        && !!document.querySelector('.sillynpc-system-builder .profile-new-label')
+        && !!document.querySelector('.sillynpc-system-builder .profile-image-prompt')
+        && !document.querySelector('.sillynpc-system-builder .profile-memory-enabled');""")
     execute("""const input = document.querySelector('#sillynpc-settings-search input');
         input.value = 'Speech Block Dividers'; input.dispatchEvent(new Event('input', {bubbles: true}));""")
     execute("document.querySelector('.sillynpc-settings-search-hit').click()")
@@ -82,4 +108,4 @@ with browser_session() as browser:
           visiblePages: [...document.querySelectorAll('.sillynpc-subtabs .sillynpc-tab')]
             .filter(tab => !tab.hidden).length};""")
     assert narrow == {'overflow': False, 'visiblePages': 0}, narrow
-    print('Settings navigation passed: ten sections, Speech controls and search, separate Lorebook/Images, narrow layout')
+    print('Settings navigation passed: ten sections, Speech controls and search, Profiles controls and search, separate Images, narrow layout')

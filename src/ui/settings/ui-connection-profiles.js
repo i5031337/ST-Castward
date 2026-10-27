@@ -55,6 +55,7 @@ export function buildConnectionProfilePicker(onChange, options = {}) {
 
     const wrap = document.createElement('div');
     wrap.className = 'sillynpc-setting';
+    wrap.dataset.setting = scope === 'root' ? key : `statusTracker.${key}`;
 
     const row = document.createElement('div');
     row.className = 'sillynpc-setting-row';

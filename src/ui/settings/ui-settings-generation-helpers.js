@@ -94,8 +94,8 @@ export function buildLastLoreConnectionNote() {
 
     const last = getLastLoreConnection();
     note.textContent = last
-        ? `Last lore request used: ${last.label}. Your chat's own connection is never changed by this.`
-        : "No lore generated yet this session. Your chat's own connection is never changed by this.";
+        ? `Last profile request used: ${last.label}. Your chat's own connection is never changed by this.`
+        : "No profiles generated yet this session. Your chat's own connection is never changed by this.";
     return note;
 }
 

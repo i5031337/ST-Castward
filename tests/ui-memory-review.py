@@ -16,26 +16,26 @@ with browser_session() as browser:
           const { renderReviewPanel } = await import(root + 'src/ui/tracker/ui-change-review.js');
           const { renderStatusTrackerBox } = await import(root + 'src/tracker/ui/status-ui-box.js');
           const { isEditingInside, insideTracker } = await import(root + 'src/tracker/ui/status-ui-guards.js');
-          const { buildProfilesEditor } = await import(root + 'src/ui/system/ui-system-profiles.js');
+          const { buildMemoryControls } = await import(root + 'src/ui/system/ui-system-memories.js');
           const { createMemoryService } = await import(root + 'src/memory/memory-service.js');
           const { applyReviewedMemories } = await import(root + 'src/memory/memory-review.js');
           ({ refreshMemoryButton } = await import(root + 'src/ui/tracker/ui-memory-button.js'));
           const { normalizeSystemDefinition } = await import(root + 'src/core/system-schema.js');
           const definition = normalizeSystemDefinition({schemaVersion:2, profiles: [], memories: {enabled:false,guidance:'',interval:8,maxEntriesPerCharacter:50} });
           let saves = 0, refreshes = 0;
-          const controls = buildProfilesEditor(() => {}, {
+          const controls = buildMemoryControls({
             definition: () => definition, getSettings: () => ({statusTracker: {}}), saveSettings: () => saves++, refreshMemoryButton: () => refreshes++ });
           result.systemControls = !!controls.querySelector('.profile-memory-guidance')
             && controls.querySelector('.profile-memory-interval').value === '8'
             && controls.querySelector('.profile-memory-limit').value === '50';
           const captureToggle = controls.querySelector('.profile-memory-enabled'); captureToggle.checked = true;
           const carryToggle = controls.querySelector('.profile-memory-carryover');
-          if (!carryToggle || carryToggle.checked || carryToggle.disabled) throw Error('Missing default-off Builder carryover control');
+          if (!carryToggle || carryToggle.checked || carryToggle.disabled) throw Error('Missing default-off memory carryover control');
           result.readerTooltip = captureToggle.closest('label').title.startsWith('A separate reader')
             && !controls.querySelector('.profile-memory-reader-help')
             && carryToggle.closest('label').previousElementSibling === captureToggle.closest('label');
           controlsHost = document.createElement('div');
-          controlsHost.className = 'sillynpc sillynpc-manage sillynpc-system-builder';
+          controlsHost.className = 'sillynpc sillynpc-manage';
           controlsHost.style.cssText = 'position:fixed;top:0;left:0;';
           controlsHost.append(controls); document.body.append(controlsHost);
           result.checkboxLayout = [700, 320].every(width => {

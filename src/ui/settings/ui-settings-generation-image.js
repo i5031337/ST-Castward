@@ -14,11 +14,6 @@ export function renderImageGenerationSettings(view, rerender) {
     view.append(title, buildBackendDestinationNote());
 
     view.append(buildSettingToggle({
-        key: 'autoPortraitOnFill', label: 'Draw Portrait Automatically',
-        help: 'Draw and assign a missing portrait after empty-card Fill or Generate Profiles For New NPCs. '
-            + 'Uses profile fields selected for image prompts with SillyTavern Image Generation, which may be billed separately.',
-    }));
-    view.append(buildSettingToggle({
         key: 'autoPlaceBackgrounds', label: 'Draw New Place Backgrounds Automatically',
         help: 'Draw and link a landscape image when the Places reader saves a new place. '
             + 'Uses SillyTavern Image Generation and may be billed separately. Existing places are unchanged.',

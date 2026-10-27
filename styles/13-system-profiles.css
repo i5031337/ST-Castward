@@ -46,7 +46,7 @@
 .col-targets { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; margin: 0; min-width: 0; }
 .col-targets-caption { opacity: .7; white-space: nowrap; }
 .sillynpc-system-profile-row .sillynpc-system-profile-options > label,
-.sillynpc-system-builder .col-targets > label.sillynpc-check-group {
+:is(.sillynpc-system-builder, .sillynpc-system-profiles) .col-targets > label.sillynpc-check-group {
     display: inline-flex; flex-direction: row; align-items: center; gap: 6px; margin: 0; white-space: nowrap;
 }
 .sillynpc-system-profile-options input[type="checkbox"], .col-targets input[type="checkbox"] { flex: none; margin: 0; }

@@ -8,12 +8,13 @@ import { resetLorebookState } from '../story/ui-lorebook-section.js';
 import { renderAppearanceView } from '../settings/ui-settings-appearance.js';
 import { renderWritingRulesView } from '../settings/ui-settings-writing.js';
 import { renderAdvancedView } from '../settings/ui-settings-advanced.js';
-import { renderImageSettingsView, renderLoreSettingsView } from '../settings/ui-settings-generation.js';
+import { renderImageSettingsView, renderProfileSettingsView } from '../settings/ui-settings-generation.js';
 import { renderStatusView } from '../tracker/ui-tracker-settings.js';
 import { renderTtsSettings } from '../tts/ui-tts-settings.js';
 import { stopNpcTts, previewNpcVoice } from '../../tts/npc-tts.js';
 import { buildSystemBuilder } from '../system/ui-system-builder.js';
 import { buildSystemManager } from '../system/ui-system-manager.js';
+import { liveSystemContext } from '../system/ui-system-context.js';
 import { updateExtensionTheme, repositionCloseButton, hideEmptySections } from '../shared/ui-shared.js';
 import { buildSettingsSearch, buildSettingsIndex } from '../settings/ui-settings-search.js';
 import { manageState } from './ui-manage-state.js';
@@ -28,7 +29,7 @@ import { exportData, importData } from './ui-manage-transfer.js';
 // Redraw after the host has loaded the new state; do not write old fields into it.
 for (const type of [event_types.CHAT_CHANGED, event_types.PERSONA_CHANGED]) {
     eventSource.on(type, () => setTimeout(() => {
-        const relevant = manageState.activeTab === 'player'
+        const relevant = ['player', 'profiles'].includes(manageState.activeTab)
             || (manageState.activeTab === 'places' && type === event_types.CHAT_CHANGED);
         if (manageState.manageRoot && relevant) renderManageView();
     }, 0));
@@ -329,8 +330,12 @@ function settingsTabs() {
           render: v => renderStatusView(v) },
         { id: 'systems', label: 'System', container: 'sillynpc-systems-view',
           render: v => renderSystemsView(v) },
-        { id: 'lorebook', label: 'Lorebook', container: 'sillynpc-lorebook-settings-view',
-          render: v => renderLoreSettingsView(v) },
+        { id: 'profiles', label: 'Profiles', container: 'sillynpc-profiles-settings-view',
+          render: v => renderProfileSettingsView(v, () => {
+              liveSystemContext.builderActiveTab = 'profiles';
+              manageState.systemsView = 'builder';
+              switchTab('systems');
+          }) },
         { id: 'images', label: 'Images', container: 'sillynpc-image-settings-view',
           render: v => renderImageSettingsView(v) },
         { id: 'advanced', label: 'Extension', container: 'sillynpc-advanced-view',

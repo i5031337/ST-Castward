@@ -51,7 +51,7 @@ character-transfer files are separate formats with different import behavior.
 
 Local carryover options can also include Places independently of NPC reuse. Memory
 carryover is the canonical System rule `memories.carryOver`, controlled beside automatic
-reading in Builder → Profile fields. It defaults off, independently of `memories.enabled`,
+reading in Profiles → NPC memories. It defaults off, independently of `memories.enabled`,
 and governs active and archived memories during roster reuse. Explicit character
 exports include memories regardless of this setting; only stats use carryover as
 an export filter.

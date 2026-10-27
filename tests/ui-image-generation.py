@@ -10,26 +10,41 @@ with browser_session() as browser:
           const root = ${JSON.stringify(new URL('.', entry.src).href)};
           const { buildCharacterImagePrompt } = await import(root + 'src/api/api-image-generate.js');
           const { generateCharacterImage } = await import(root + 'src/ui/api/ui-api-image.js');
-          const { renderImageSettingsView } = await import(root + 'src/ui/settings/ui-settings-generation.js');
+          const { renderImageSettingsView, renderProfileSettingsView } = await import(root + 'src/ui/settings/ui-settings-generation.js');
           const { renderTrackerDisplayAndReading } = await import(root + 'src/ui/tracker/ui-tracker-display-reading.js');
           const { getSettings } = await import(root + 'src/core/settings.js');
           const { buildProfilesEditor } = await import(root + 'src/ui/system/ui-system-profiles.js');
+          const { buildMemoryControls } = await import(root + 'src/ui/system/ui-system-memories.js');
           const result = {};
           const { normalizeSystemDefinition } = await import(root + 'src/core/system-schema.js');
           const fixture = normalizeSystemDefinition({ schemaVersion: 2, profiles: [{ id: 'species', label: 'Species', targets: ['npc'], includeInImagePrompt: true }] });
           const host = document.createElement('div');
           let saves = 0;
+          const originalMode = getSettings().statusTracker.extractionMode;
           try {
             const imageSettings = document.createElement('div');
             renderImageSettingsView(imageSettings);
-            result.noAutomaticFillHeading = ![...imageSettings.querySelectorAll('h3')].some(el => el.textContent === 'Automatic NPC Fill');
-            const portraitToggle = imageSettings.querySelector('[data-setting=autoPortraitOnFill]');
-            let heading = portraitToggle?.previousElementSibling;
-            while (heading && heading.tagName !== 'H3') heading = heading.previousElementSibling;
-            result.portraitUnderImages = heading?.textContent === 'Image Generation'
-              && imageSettings.querySelectorAll('[data-setting=autoPortraitOnFill]').length === 1;
+            const profileSettings = document.createElement('div');
+            renderProfileSettingsView(profileSettings);
+            const portraitToggle = profileSettings.querySelector('[data-setting=autoPortraitOnFill]');
+            const generationToggle = profileSettings.querySelector('[data-setting="statusTracker.autoGenerateNpcProfiles"]');
+            result.portraitUnderProfiles = profileSettings.querySelectorAll('[data-setting=autoPortraitOnFill]').length === 1
+              && portraitToggle.querySelector('input[type="checkbox"]').checked === !!getSettings().autoPortraitOnFill;
+            result.generationUnderProfiles = profileSettings.querySelectorAll('[data-setting="statusTracker.autoGenerateNpcProfiles"]').length === 1
+              && generationToggle.querySelector('input[type="checkbox"]').checked === !!getSettings().statusTracker.autoGenerateNpcProfiles;
+            result.memoriesSeparateFromFields = !profileSettings.querySelector('.profile-new-label')
+              && !!profileSettings.querySelector('.profile-memory-enabled')
+              && profileSettings.querySelector('.sillynpc-system-memory-controls').closest('details')?.open === false;
+            result.noImageProfileToggles = !imageSettings.querySelector('[data-setting=autoPortraitOnFill]')
+              && !imageSettings.querySelector('[data-setting="statusTracker.autoGenerateNpcProfiles"]');
+            getSettings().statusTracker.extractionMode = 'inline';
+            const inlineProfiles = document.createElement('div');
+            renderProfileSettingsView(inlineProfiles);
+            result.inlineProfileControls = !!inlineProfiles.querySelector('[data-setting=autoPortraitOnFill]')
+              && !!inlineProfiles.querySelector('[data-setting="statusTracker.autoGenerateNpcProfiles"]');
+            getSettings().statusTracker.extractionMode = originalMode;
             const expressionToggle = imageSettings.querySelector('[data-setting=autoGenerateNpcExpressions]');
-            result.expressionToggleBesidePortrait = expressionToggle?.previousElementSibling === portraitToggle
+            result.imageAutomationPreserved = !!imageSettings.querySelector('[data-setting=autoPlaceBackgrounds]')
               && expressionToggle.querySelector('input[type="checkbox"]').checked === !!getSettings().autoGenerateNpcExpressions;
             result.sharedExpressionWorkflow = expressionToggle?.nextElementSibling?.dataset.setting === 'npcExpressionWorkflow'
               && !!imageSettings.querySelector('[data-setting=npcExpressionWorkflow] select');
@@ -42,8 +57,8 @@ with browser_session() as browser:
             renderTrackerDisplayAndReading({ container: tracker,
               settings: { ...getSettings().statusTracker, extractionMode: 'extract' },
               onApply: () => {}, onDisplay: () => {}, onChange: () => {}, section: () => {} });
-            result.noTrackerPortraitToggle = !tracker.querySelector('[data-setting=autoPortraitOnFill]')
-              && !!tracker.querySelector('[data-setting=\"statusTracker.autoGenerateNpcProfiles\"]');
+            result.noTrackerProfileToggles = !tracker.querySelector('[data-setting=autoPortraitOnFill]')
+              && !tracker.querySelector('[data-setting=\"statusTracker.autoGenerateNpcProfiles\"]');
             host.append(imageSettings);
             const prefix = imageSettings.querySelector('[data-setting=imgGenPromptPrefix] textarea');
             result.noImageContextSetting = !imageSettings.querySelector('[data-setting=imgGenContextMessages]');
@@ -54,6 +69,17 @@ with browser_session() as browser:
             result.fieldSelected = checkbox.checked;
             checkbox.click();
             result.fieldToggle = !fixture.profiles[0].includeInImagePrompt && saves === 1;
+            const memoryContext = { definition: () => fixture, getSettings: () => ({ statusTracker: {} }),
+              saveSettings: () => saves++, refreshMemoryButton: () => {} };
+            const memories = buildMemoryControls(memoryContext);
+            host.append(memories);
+            const interval = memories.querySelector('.profile-memory-interval');
+            interval.value = '6'; interval.dispatchEvent(new Event('change'));
+            const carry = memories.querySelector('.profile-memory-carryover');
+            const heldCarryover = fixture.memories.carryOver;
+            carry.click();
+            result.memoryEdits = fixture.memories.interval === 6 && fixture.memories.carryOver === !heldCarryover
+              && saves === 3 && !editor.querySelector('.profile-memory-enabled');
             const card = { name: 'Portrait Smoke NPC', profile: { age: '30', appearance: 'Blue coat' } };
             const expectedPrompt = await buildCharacterImagePrompt(card);
             const task = generateCharacterImage(card);
@@ -74,7 +100,7 @@ with browser_session() as browser:
             cancel.click(); await task;
             result.cancelClosed = !document.querySelector('.sillynpc-image-prompt');
           } catch (error) { result.error = error.stack || String(error); }
-          finally { host.remove(); document.getElementById('sillynpc-image-smoke')?.remove(); }
+          finally { getSettings().statusTracker.extractionMode = originalMode; host.remove(); document.getElementById('sillynpc-image-smoke')?.remove(); }
           document.documentElement.setAttribute('data-image-smoke', JSON.stringify(result));
         `;
         document.body.append(script);""")
