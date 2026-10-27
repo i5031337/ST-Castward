@@ -1,5 +1,4 @@
-import * as statValues from '../src/tracker/stat-value-utils.js';
-import * as statFields from '../src/tracker/stat-field-utils.js';
+import { bind as bindConstraints } from '../src/tracker/status-update-constraints.js';
 import { groupIncomingStats } from '../src/tracker/status-update-parser.js';
 import { progressionFields } from '../src/tracker/progression-fields.js';
 import { npcStatsFor, npcTemplateFor, proposedNpcTemplate } from '../src/core/npc-templates.js';
@@ -7,7 +6,6 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFileSync } from 'node:fs';
 import { progressXp } from '../src/tracker/progression.js';
-import { sameStatReading } from '../src/tracker/stat-reading-equality.js';
 
 // This module's SillyTavern imports require a browser. Inject those boundaries
 // while exercising its real bind(deps) implementation in Node.
@@ -246,18 +244,8 @@ test('dry-run collection writes carry preview options for both player and NPC', 
 
 test('preview warnings cover unknown and refused stats across actors without mutating state', () => {
     const { deps, initial, settings, card, calls } = fixture();
-    const load = (path, globals) => {
-        const source = readFileSync(new URL(path, import.meta.url), 'utf8')
-            .replace(/^import .*;\n/gm, '').replace('export function bind', 'function bind');
-        new Function(...Object.keys(globals), `${source}\nreturn bind;`)(...Object.values(globals))(deps);
-    };
     deps.groupIncomingStats = groupIncomingStats;
-    load('../src/tracker/status-update-constraints.js', {
-        ...statValues, ...statFields,
-        sameStatReading,
-        debugLog: () => {}, constrainNumericStat: (_def, value) => value,
-        splitValue: value => { const [current, max] = String(value).split('/'); return { current, max }; },
-    });
+    bindConstraints(deps);
     settings.statusTracker.globalStats[0].options = ['old'];
     settings.statusTracker.playerStats[0].options = ['5'];
     settings.statusTracker.npcStats[0].options = ['4'];

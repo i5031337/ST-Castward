@@ -1,144 +1,30 @@
-import { debugLog } from '../core/constants.js';
 import { splitValue } from '../core/utils-format.js';
 import { mergeStatValue, clampToCeiling } from './stat-value-utils.js';
 import { allowedValues, findMatchingStatKey } from './stat-field-utils.js';
-import { constrainNumericStat } from './numeric-stat-bounds.js';
-import { sameStatReading } from './stat-reading-equality.js';
+import { calculateFieldValue, calculateOptionValue, capToLength } from './stat-field-calculation.js';
 
 export function bind(deps) {
-/**
- * Holds a field to the values it is allowed to have.
- *
- * A field with no options allows anything, which is every field until somebody says
- * otherwise. With options, a value that is not on the list is refused and whatever was
- * there stays - the point of declaring a vocabulary is that the extractor cannot quietly
- * widen it, and inventing a synonym every few messages is exactly what it does otherwise.
- *
- * Matching is exact after trimming. "healthy" is refused rather than corrected to
- * "Healthy": a list of allowed values is also a list of allowed spellings, and silently
- * rewriting one is how the sheet and the story start disagreeing about what it says.
- *
- * Refusing means keeping what is there, so a value stored before the list was narrowed
- * survives untouched. Narrowing a list in the builder must not rewrite characters nobody
- * was looking at - the same rule renaming a field follows.
- *
- * @param {object} def The stat or field definition.
- * @param {*} incoming What is being written.
- * @param {*} existing What is there now.
- * @returns {*} The value to store.
- */
-/**
- * Values refused since the last time anybody asked, as lines to show.
- *
- * A word that is not on a field's list is thrown away and the old value kept, which is
- * right - a vocabulary nothing enforces is not one. But it happened in the console only,
- * and from outside it looks exactly like a reader that never reports that field: a fight
- * starts, the reader says "Tense", the list allows nine other words, and Condition sits at
- * "Happy" with nothing said. The reply is still refused; now it is said out loud.
- */
 const refused = [];
 
-/** The refusals since the last call, and clears them. */
+function recordRefusedValues(values) {
+    refused.push(...values);
+}
+
 function takeRefusedValues() {
-    return refused.splice(0, refused.length);
+    return refused.splice(0);
 }
 
 function constrainToOptions(def, incoming, existing) {
-    const allowed = allowedValues(def);
-    if (!allowed.length) return incoming;
-
-    const wanted = String(incoming ?? '').trim();
-    // Clearing a field is always allowed: empty means "use the default" on a card, and
-    // refusing it would make a value impossible to take back.
-    if (!wanted) return incoming;
-    if (allowed.includes(wanted)) return incoming;
-
-    debugLog(`"${wanted}" is not an allowed value for ${def?.name || 'this field'} `
-        + `(${allowed.join(', ')}); kept "${existing ?? ''}"`);
-    refused.push({ field: def?.name || 'a field', wanted, allowed, kept: String(existing ?? '') });
-    return existing;
-}
-
-/**
- * Cuts a value down to the field's length, if it has one.
- *
- * At a word boundary, and marked. A value cut mid-word reads as corruption rather than as
- * a limit doing its job, and an unmarked one reads as the reader's own wording - which
- * matters here because the value goes back to the reader next turn as the current state.
- *
- * @param {object} def The stat or field definition.
- * @param {*} value
- * @returns {*} Unchanged when there is no limit, or none is needed.
- */
-function capToLength(def, value) {
-    const limit = Number(def?.maxLength);
-    if (!Number.isFinite(limit) || limit <= 0) return value;
-
-    const text = String(value ?? '');
-    if (text.length <= limit) return value;
-
-    const cut = text.slice(0, limit);
-    const lastSpace = cut.lastIndexOf(' ');
-    // Only back off to a word boundary when there is a reasonable amount of it left;
-    // one very long word would otherwise cut down to nothing.
-    const body = (lastSpace > limit * 0.5 ? cut.slice(0, lastSpace) : cut).trimEnd();
-
-    debugLog(`"${def?.name || 'field'}" trimmed from ${text.length} to ${limit} characters`);
-    return `${body}…`;
-}
-
-/**
- * Every rule a field's definition places on an incoming value.
- *
- * One function because there is one choke point - world stats, player stats, character
- * stats and collection fields all pass through here - and two rules that both have to
- * hold. It is not called constrainToOptions any more because it no longer only does that,
- * and a name that describes half of what a function does is worse than a longer one.
- *
- * @param {object} def
- * @param {*} incoming
- * @param {*} existing
- * @returns {*}
- */
-/**
- * The wording a prompt uses for a value, handed back as if it were one.
- *
- * "current/maximum" is what the fill prompt calls the shape of a value with a ceiling, and
- * a model filling in a new character wrote exactly that into Health, Essence and every text
- * field it had nothing to say about. Angle brackets are the other shape: the worked examples
- * use "<new value>" and "<exact name>". Neither is ever a value somebody meant.
- */
-function looksUnfilled(value) {
-    const text = String(value ?? '').trim();
-    if (!text) return false;
-    return /^current\s*\/\s*maximum$/i.test(text) || /^<[^>]*>$/.test(text);
+    const result = calculateOptionValue(def, incoming, existing);
+    recordRefusedValues(result.refusedValues);
+    return result.value;
 }
 
 function constrainToDefinition(def, incoming, existing, onWarning = () => {}) {
-    if (sameStatReading(def, incoming, existing, { allowBarePool: false })) return existing;
-    const warn = reason => onWarning(`"${String(incoming)}" skipped: ${reason}; kept "${String(existing ?? '')}".`);
-    if (looksUnfilled(incoming)) {
-        warn('this is a prompt placeholder, not a value');
-        debugLog(`Refused "${String(incoming).trim()}" for ${def?.name || 'a field'}: that is the prompt's wording, not a value`);
-        return existing;
-    }
-    const bounded = constrainNumericStat(def, incoming, existing);
-    if (bounded !== incoming) {
-        onWarning(`"${String(incoming)}" adjusted or refused: outside the numeric bounds or not a valid numeric reading; using "${String(bounded ?? '')}".`);
-    }
-    const allowed = allowedValues(def);
-    if (allowed.length && String(bounded ?? '').trim() && !allowed.includes(String(bounded).trim())) {
-        warn(`allowed values are ${allowed.join(', ')}`);
-    }
-    const kept = constrainToOptions(def, bounded, existing);
-    // Only ever cut what was actually written. When the options guard refuses a value it
-    // hands back the one already stored, and trimming that would rewrite something nobody
-    // submitted - the same rule that stops narrowing a list rewriting characters nobody
-    // was looking at.
-    if (kept !== incoming) return kept;
-    const capped = capToLength(def, kept);
-    if (capped !== kept) onWarning(`"${String(kept)}" shortened: exceeds the ${def.maxLength} character limit; using "${capped}".`);
-    return capped;
+    const result = calculateFieldValue(def, incoming, existing);
+    recordRefusedValues(result.refusedValues);
+    result.warnings.forEach(onWarning);
+    return result.value;
 }
 
 function combineStatValue(existingValue, group, statDef, options = {}) {
@@ -166,6 +52,7 @@ function combineStatValue(existingValue, group, statDef, options = {}) {
 }
 
 Object.defineProperties(deps, {
+    recordRefusedValues: { enumerable: true, configurable: true, get: () => recordRefusedValues },
     allowedValues: { enumerable: true, configurable: true, get: () => allowedValues },
     takeRefusedValues: { enumerable: true, configurable: true, get: () => takeRefusedValues },
     constrainToOptions: { enumerable: true, configurable: true, get: () => constrainToOptions },

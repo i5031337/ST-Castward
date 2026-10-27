@@ -1,3 +1,4 @@
+import { bindCollectionUpdates } from './fixtures/collection-updates-bind.mjs';
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFileSync } from 'node:fs';
@@ -18,8 +19,7 @@ function fixture({ counted = true, primary = 'name', quantity = 'quantity' } = {
     const settings = { collections: [col] };
     const deps = { committedState: {}, getCurrentPersonaName: () => 'Player',
         constrainToDefinition: (_field, value) => value, getMergedItem: (_id, item) => item };
-    load('../src/tracker/status-collection-updates.js', { collectionQuantityField, collectionAppliesTo,
-        getSettings: () => ({ statusTracker: settings }), debugLog() {}, LOG_PREFIX: '[test]' }, 'bind')(deps);
+    bindCollectionUpdates(deps, { getSettings: () => ({ statusTracker: settings }) });
     const actor = { name: 'Player', collections: {} };
     const apply = update => deps.applyCollectionUpdate(actor, 'items', update, { dryRun: true });
     return { deps, actor, apply, col, settings };

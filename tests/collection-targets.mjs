@@ -1,7 +1,6 @@
-import { collectionQuantityField } from '../src/core/collection-fields.js';
+import { bindCollectionUpdates } from './fixtures/collection-updates-bind.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
 import { normalizeSystemDefinition } from '../src/core/system-schema.js';
 import { setNpcTemplateSettingsProvider } from '../src/core/npc-templates.js';
 import { collectionAppliesTo, collectionTargets } from '../src/core/collection-targets.js';
@@ -20,9 +19,6 @@ const settings = { activeSystem: 'Types', statusTracker: { ...tracker, presets: 
 const human = { name: 'Trainer', npcTemplateId: 'human', collections: {} };
 const pokemon = { name: 'Pikachu', npcTemplateId: 'pokemon', collections: {} };
 function fixture() { setNpcTemplateSettingsProvider(() => settings); }
-const source = path => readFileSync(new URL(path, import.meta.url), 'utf8')
-    .replace(/^import\s+[\s\S]*?\s+from\s+['"][^'"]+['"];\s*/gm, '')
-    .replaceAll('export function ', 'function ') + `\n${collectionQuantityField.toString()}\n`;
 
 test('template collection targets survive normalization and never widen a missing template to all NPCs', () => {
     fixture();
@@ -60,9 +56,7 @@ test('model adds, removals, updates and replacements cannot change another templ
         constrainToDefinition: (field, value) => value,
         getMergedItem: (id, item) => item,
     };
-    new Function('collectionAppliesTo', 'getSettings', 'debugLog', 'LOG_PREFIX',
-        `${source('../src/tracker/status-collection-updates.js')}\nreturn bind;`)(
-        collectionAppliesTo, () => settings, () => {}, 'test')(deps);
+    bindCollectionUpdates(deps, { getSettings: () => settings });
     const trainer = { ...human, collections: { moves: [{ name: 'Old move' }] } };
     for (const update of [
         { add: [{ name: 'New move' }] }, { remove: ['Old move'] },
@@ -125,9 +119,7 @@ test('shared collections accept updates for the player and humans while refusing
         constrainToDefinition: (field, value) => value,
         getMergedItem: (id, item) => item,
     };
-    new Function('collectionAppliesTo', 'getSettings', 'debugLog', 'LOG_PREFIX',
-        `${source('../src/tracker/status-collection-updates.js')}\nreturn bind;`)(
-        collectionAppliesTo, () => settings, () => {}, 'test')(deps);
+    bindCollectionUpdates(deps, { getSettings: () => settings });
     for (const actor of [{ name: 'Player', collections: {} }, structuredClone(human), structuredClone(pokemon)]) {
         const before = structuredClone(actor);
         deps.applyCollectionUpdate(actor, 'clothes', { add: [{ name: 'Coat' }] });

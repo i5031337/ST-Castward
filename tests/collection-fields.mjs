@@ -1,9 +1,8 @@
-import { readFileSync } from 'node:fs';
+import { bindCollectionUpdates } from './fixtures/collection-updates-bind.mjs';
 import { isStaticField } from '../src/core/constants-profile.js';
-import { collectionAppliesTo } from '../src/core/collection-targets.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { collectionQuantityField, ensureCollectionIdentifier, deleteCollectionField } from '../src/core/collection-fields.js';
+import { ensureCollectionIdentifier, deleteCollectionField } from '../src/core/collection-fields.js';
 import { normalizeSystemDefinition } from '../src/core/system-schema.js';
 
 const normalize = fields => normalizeSystemDefinition({ schemaVersion: 1,
@@ -66,13 +65,9 @@ test('deletion cannot replace the identifier, even after every other field is re
 
 test('reader changes use the pinned custom identifier instead of assuming a name field', () => {
     const collection = normalize([{ name: 'pp', type: 'number' }, { name: 'move', isPrimary: true }]);
-    const source = readFileSync(new URL('../src/tracker/status-collection-updates.js', import.meta.url), 'utf8')
-        .replace(/^import\s+[\s\S]*?\s+from\s+['"][^'"]+['"];\s*/gm, '')
-        .replace('export function bind', 'function bind') + `\n${collectionQuantityField.toString()}\n`;
     const deps = { committedState: {}, getCurrentPersonaName: () => 'Player',
         constrainToDefinition: (field, value) => value };
-    new Function('collectionAppliesTo', 'getSettings', 'debugLog', 'LOG_PREFIX', source + '\nreturn bind;')(
-        collectionAppliesTo, () => ({ statusTracker: { collections: [collection] } }), () => {}, 'test')(deps);
+    bindCollectionUpdates(deps, { getSettings: () => ({ statusTracker: { collections: [collection] } }) });
     const actor = { name: 'Player', collections: {} };
     deps.applyCollectionUpdate(actor, 'moves', { add: [{ move: 'Thunderbolt', pp: 15 }] });
     deps.applyCollectionUpdate(actor, 'moves', { update: [{ move: 'Thunderbolt', pp: 14 }] });
@@ -100,13 +95,9 @@ test('collection additions, replacements, defaults and updates respect optional 
     const col = normalize([{ name: 'name', isPrimary: true },
         { name: 'pp', type: 'number', min: '-2.5', maxStatValue: '5.5', defaultValue: '99' },
         { name: 'unbounded', type: 'number' }]);
-    const source = readFileSync(new URL('../src/tracker/status-collection-updates.js', import.meta.url), 'utf8')
-        .replace(/^import\s+[\s\S]*?\s+from\s+['"][^'"]+['"];\s*/gm, '')
-        .replace('export function bind', 'function bind') + `\n${collectionQuantityField.toString()}\n`;
     const deps = { committedState: {}, getCurrentPersonaName: () => 'Player',
         constrainToDefinition: constrainNumericStat, getMergedItem: (id, item) => item };
-    new Function('collectionAppliesTo', 'getSettings', 'debugLog', 'LOG_PREFIX', source + '\nreturn bind;')(
-        collectionAppliesTo, () => ({ statusTracker: { collections: [col] } }), () => {}, 'test')(deps);
+    bindCollectionUpdates(deps, { getSettings: () => ({ statusTracker: { collections: [col] } }) });
     const actor = { name: 'Player', collections: {} };
     deps.applyCollectionUpdate(actor, 'moves', { add: [{ name: 'Thunderbolt', pp: 10, unbounded: 999 }] });
     assert.deepEqual(actor.collections.moves, [{ name: 'Thunderbolt', pp: 5.5, unbounded: 999 }]);

@@ -1,3 +1,4 @@
+import { bind as bindConstraints } from '../src/tracker/status-update-constraints.js';
 import * as statValues from '../src/tracker/stat-value-utils.js';
 import * as statFields from '../src/tracker/stat-field-utils.js';
 import { groupIncomingStats } from '../src/tracker/status-update-parser.js';
@@ -33,7 +34,8 @@ function harness({ state, cards = [], settings, openChat = true }) {
     const deps = { ...statValues, groupIncomingStats, loadStateFromMetadata: () => live,
         saveStateToMetadata: state => { live = state; }, hasOpenChat: () => openChat,
         resolveCanonicalName: name => name, mayJoinScene: () => true, applyCollectionUpdate() {} };
-    for (const path of ['status-stat-values', 'status-update-constraints', 'status-apply-update', 'status-scene-presence']) {
+    bindConstraints(deps);
+    for (const path of ['status-stat-values', 'status-apply-update', 'status-scene-presence']) {
         load(`tracker/${path}.js`, 'bind', globals).bind(deps);
     }
     const { buildUpdateFromChanges } = load('tracker/status-diff-review.js', 'buildUpdateFromChanges', {

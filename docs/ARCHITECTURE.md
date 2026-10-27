@@ -175,11 +175,28 @@ remaining providers while their callers are migrated. Diagnostics remain isolate
 constraints binding. Fourteen bound providers remain; writes and lifecycle behavior
 still use the existing orchestration.
 
-The next stage should extract collection calculation before actor and full-update
-calculation. Inputs must include the active System as well as projected tracker rules:
-NPC template and progression helpers otherwise fall back to a global settings provider.
-Collection tombstone checks currently use committed state while the update ages a cloned
-copy; preserve that timing unless a separate behavior change is reviewed.
+Collection updates now delegate to `collection-calculation.js`. The calculation takes
+captured actor collections, explicit player/NPC scope, projected tracker rules, the active
+System, committed tombstones and Item Library data. It returns new collections,
+tombstones, proposed library additions, warnings and refused values without changing
+inputs or reading host state. Field validation in `stat-field-calculation.js` returns
+its diagnostics as data; the existing constraint/collection wrappers forward them to
+the reader's queues while callers are migrated. The collection wrapper applies accepted
+results and saves planned library changes once per operation; the broader update still
+owns chat saves. Removal/update/clear-only and rejected operations do not load or repair
+chat state just to calculate collection changes.
+
+Ordinary arrays remain additions, explicit replacements retain their meaning, and direct
+manual add/remove retain their existing tombstone behavior. Checks still use committed
+tombstones while the full update ages a cloned map. Repeated new names in a committed
+replacement inherit the first row's newly registered static library fields; previews
+continue using only the existing library. This preview/application difference is preserved
+for now. The calculation's preview flag controls that policy and manual tombstone clearing;
+it never enables writes to external stores.
+
+Next, extract actor and full-update calculation. Their captured inputs must also include
+the active System: NPC template and progression helpers otherwise fall back to a global
+settings provider. Keep tombstone policy changes separate from this refactor.
 
 The planned calculation returns next state, proposed card/library changes, local warnings,
 and separate offstage comparisons. Current previews append detached offstage NPCs for
@@ -187,8 +204,8 @@ diffing without actually admitting them to the scene; those comparison actors mu
 leak into committed presence. A later commit boundary will validate chat, persona,
 System and source ownership before related writes, maintain existing undo/swipe behavior,
 request saves, and emit the existing status event. Settings and metadata remain separate
-host saves, without a cross-store atomicity guarantee. These calculation and commit
-boundaries are planned, not implemented by the utility extraction.
+host saves, without a cross-store atomicity guarantee. The full-update calculation and commit
+boundaries remain planned; the collection calculation is implemented.
 
 ## Verification
 

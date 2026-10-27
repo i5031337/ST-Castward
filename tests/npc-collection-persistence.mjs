@@ -1,3 +1,4 @@
+import { bindCollectionUpdates } from './fixtures/collection-updates-bind.mjs';
 import { collectionQuantityField } from '../src/core/collection-fields.js';
 import assert from 'node:assert/strict';
 import test from 'node:test';
@@ -33,7 +34,8 @@ function fixture() {
     resolveCanonicalName: name => name, mayJoinScene: () => true,
     mergeDuplicateCharacters: () => false, groupIncomingStats: () => new Map(),
     getMergedItem: (_id, item) => item, constrainToDefinition: (_field, value) => value };
-    for (const module of ['status-collection-updates', 'status-scene-presence', 'status-apply-update']) {
+    bindCollectionUpdates(deps, globals);
+    for (const module of ['status-scene-presence', 'status-apply-update']) {
         load(`tracker/${module}.js`, globals).bind(deps);
     }
     const ui = load('ui/collections/ui-collection.js', { ...globals,

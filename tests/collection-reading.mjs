@@ -1,8 +1,8 @@
+import { bindCollectionUpdates } from './fixtures/collection-updates-bind.mjs';
 import { collectionQuantityField } from '../src/core/collection-fields.js';
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFileSync } from 'node:fs';
-import { collectionAppliesTo } from '../src/core/collection-targets.js';
 
 const source = path => readFileSync(new URL(path, import.meta.url), 'utf8')
     .replace(/^import\s+[\s\S]*?\s+from\s+['"][^'"]+['"];\s*/gm, '')
@@ -12,9 +12,7 @@ function fixture() {
         fields: [{ name: 'dex', type: 'number', isPrimary: true }, { name: 'power', type: 'number' }] }] } };
     const deps = { committedState: {}, getCurrentPersonaName: () => 'Player',
         getMergedItem: (_id, item) => item, constrainToDefinition: (_field, value) => value };
-    new Function('getSettings', 'collectionAppliesTo', 'debugLog', 'LOG_PREFIX',
-        `${source('../src/tracker/status-collection-updates.js')}\nreturn bind;`)(
-        () => settings, collectionAppliesTo, () => {}, 'test')(deps);
+    bindCollectionUpdates(deps, { getSettings: () => settings });
     return deps;
 }
 

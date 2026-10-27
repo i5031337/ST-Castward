@@ -1,335 +1,85 @@
-import { collectionQuantityField } from '../core/collection-fields.js';
-import { collectionAppliesTo } from '../core/collection-targets.js';
 import { getSettings } from '../core/settings.js';
+import { saveSettings } from '../core/settings.js';
+import { activeNpcSystem } from '../core/npc-templates.js';
+import { collectionAppliesTo } from '../core/collection-targets.js';
+import { collectionQuantityField } from '../core/collection-fields.js';
 import { LOG_PREFIX, debugLog } from '../core/constants.js';
+import { calculateCollectionUpdate } from './collection-calculation.js';
 
 export function bind(deps) {
-// The reader drains preview diagnostics around its dry run; ordinary writes do not queue them.
-const warnings = [];
-function takeCollectionWarnings() {
-    return [...new Set(warnings.splice(0))];
-}
-function warnSkipped(actor, collectionId, reason, dryRun) {
-    const message = `Collection "${collectionId}" for ${actor.name || 'unnamed actor'} skipped: ${reason}`;
-    if (dryRun) warnings.push(message);
-    debugLog(message);
-}
-function itemIdentifier(actor, collectionId, itemData, primary, dryRun) {
-    const value = itemData?.[primary] ?? itemData?.name;
-    if (value === undefined || value === null || !String(value).trim()) {
-        warnSkipped(actor, collectionId, `entry requires primary field "${primary}".`, dryRun);
-        return undefined;
+    // The existing reader drains preview diagnostics around its disposable update.
+    const warnings = [];
+    function takeCollectionWarnings() {
+        return [...new Set(warnings.splice(0))];
     }
-    return value;
-}
-function normaliseItem(itemData, fields, previous = null) {
-    const out = {};
-    for (const fieldDef of fields || []) {
-        let val = deps.constrainToDefinition(fieldDef, itemData?.[fieldDef.name], previous?.[fieldDef.name]);
 
-        if (val === undefined || val === null) {
-            val = fieldDef.defaultValue !== undefined && fieldDef.defaultValue !== ''
-                ? fieldDef.defaultValue
-                : (fieldDef.type === 'number' ? 0 : (fieldDef.type === 'boolean' ? false : ''));
+    function calculate(actor, collectionId, update, { allowReplace = false, dryRun = false,
+        operation = 'update', isManual = false } = {}) {
+        const settings = getSettings();
+        const tracker = settings.statusTracker;
+        const system = activeNpcSystem(settings) ?? null;
+        const scope = actor.name === deps.getCurrentPersonaName() ? 'player' : 'npc';
+        const definition = tracker.collections.find(col => operation === 'update'
+            ? col.id.toLowerCase() === collectionId.toLowerCase() : col.id === collectionId);
+        const primary = definition?.fields.find(field => field.isPrimary)?.name || 'name';
+        const hasIdentifier = item => {
+            const name = item?.[primary] ?? item?.name;
+            return name !== undefined && name !== null && !!String(name).trim();
+        };
+        const quantity = collectionQuantityField(definition);
+        const amount = quantity ? update?.[quantity.name] ?? 1 : null;
+        const validAddition = hasIdentifier(update) && (!quantity
+            || typeof amount === 'number' && Number.isFinite(amount) && amount > 0);
+        const rows = Array.isArray(update) ? update : Array.isArray(update?.replace) ? update.replace
+            : update?.clear === true ? [] : update?.add || [];
+        // Only additions/replacements consult tombstones. Remove/update/clear-only
+        // operations, including offstage edits, must not load or repair chat state.
+        const needsState = operation === 'remove'
+            ? isManual && !!actor.collections?.[collectionId] && update !== undefined && update !== null
+            : !!definition && (operation === 'add' ? validAddition
+                : collectionAppliesTo(definition, scope, actor, system) && Array.isArray(rows) && rows.some(hasIdentifier));
+        // Read committed tombstones, not applyUpdate's already-aged state clone.
+        const state = needsState ? deps.committedState || deps.loadStateFromMetadata() : null;
+        const result = calculateCollectionUpdate({ actor, collectionId, update,
+            tracker, system, scope,
+            tombstones: state?.recently_deleted ?? null, itemLibrary: settings.master_items || {},
+            allowReplace, preview: dryRun, operation, isManual });
+        if (result.collections !== undefined) actor.collections = result.collections;
+        if (operation === 'update' && !definition) {
+            console.warn(LOG_PREFIX, `Attempted to update non-existent collection: ${collectionId}`);
         }
-
-        if (fieldDef.type === 'number') {
-            out[fieldDef.name] = parseFloat(deps.constrainToDefinition(fieldDef, parseFloat(val) || 0, previous?.[fieldDef.name])) || 0;
-        } else if (fieldDef.type === 'boolean') {
-            out[fieldDef.name] = (val === true || val === 'true');
-        } else {
-            out[fieldDef.name] = String(val);
-        }
-    }
-    return out;
-}
-function applyCollectionUpdate(actor, collectionId, update, { allowReplace = false, dryRun = false } = {}) {
-    const settings = getSettings().statusTracker;
-    const colDef = settings.collections.find(c => c.id.toLowerCase() === collectionId.toLowerCase());
-    
-    // Validate collection exists
-    if (!colDef) {
-        warnSkipped(actor, collectionId, `unknown collection ID. Expected one of: ${settings.collections.map(col => `"${col.id}"`).join(', ') || '(none configured)'}.`, dryRun);
-        console.warn(LOG_PREFIX, `Attempted to update non-existent collection: ${collectionId}`);
-        return;
-    }
-
-    const actualCollectionId = colDef.id;
-
-    // Validate target
-    const isPlayer = actor.name === deps.getCurrentPersonaName(); // Simple check for player
-    if (!collectionAppliesTo(colDef, isPlayer ? 'player' : 'npc', actor)) {
-        warnSkipped(actor, collectionId, `does not apply to ${isPlayer ? 'the player' : `NPC template "${actor.npcTemplateId || '(unassigned)'}"`}. Check the collection's targets.`, dryRun);
-        return;
-    }
-
-    if (!actor.collections) actor.collections = {};
-    
-    // A bare array used to mean "this is everything" whatever asked for it, so a reply
-    // that listed items instead of reporting changes emptied the collection and rebuilt
-    // it from that list - deleting everything the reply happened not to restate. The
-    // system prompt asks for {add, remove} and says omission is not removal; a small
-    // model disobeys anyway, and the code has to survive that.
-    //
-    // Replacement is still right for the history scan, which reads the whole story to
-    // produce a corrected list and puts it through the review panel. It is never right
-    // for a single message, so the caller has to say so.
-    // An explicit replacement: code that rebuilt the list itself and means it. Said in
-    // the data rather than through an option on the call, because the flag had to be
-    // remembered by every caller of buildUpdateFromChanges and three of the four forgot -
-    // so an accepted removal was read as a list of additions and the item never left.
-    if (update && !Array.isArray(update) && Array.isArray(update.replace)) {
-        return applyCollectionUpdate(actor, collectionId, update.replace, { allowReplace: true, dryRun });
-    }
-
-    if (Array.isArray(update) && !allowReplace) {
-        debugLog(`Collection "${actualCollectionId}" arrived as a list; treating it as additions.`);
-        return applyCollectionUpdate(actor, collectionId, { add: update }, { allowReplace, dryRun });
-    }
-    // Handle Full State Sync (Array)
-    if (Array.isArray(update)) {
-        actor.collections[actualCollectionId] = [];
-        const validFields = colDef.fields;
-        const primaryField = validFields.find(f => f.isPrimary) || { name: 'name' };
-
-        update.forEach(itemData => {
-            const itemName = itemIdentifier(actor, actualCollectionId, itemData, primaryField.name, dryRun);
-            if (itemName === undefined) return;
-
-            // Skip if recently deleted (tombstone)
-            const lowerName = String(itemName).toLowerCase();
-            const state = deps.committedState || deps.loadStateFromMetadata();
-            if (state && state.recently_deleted && state.recently_deleted[actualCollectionId] && state.recently_deleted[actualCollectionId][lowerName]) {
-                debugLog(`Skipping tombstoned item: ${itemName} in ${actualCollectionId}`);
-                return;
-            }
-
-            // Master Database Merge Logic
-            const masterItem = deps.getMergedItem(actualCollectionId, itemData, { dryRun });
-
-            actor.collections[actualCollectionId].push(normaliseItem(masterItem, validFields));
-        });
-        return;
-    }
-
-    if (!actor.collections[actualCollectionId]) actor.collections[actualCollectionId] = [];
-    
-    // Handle Delta Update (Object)
-    /* "clear" is a replacement like any other, and is gated like one.
-     *
-     * It was not, which made it the one way past the care taken directly above: a bare list
-     * is downgraded to additions unless the caller says otherwise, precisely because a small
-     * model restating an inventory would otherwise delete everything it did not mention.
-     * `clear` skipped all of that and emptied the collection outright. Nothing in the
-     * extension sends it and no shipped prompt mentions it, so it was unreachable by design
-     * and fully reachable by accident - a model emitting a plausible "clear": true.
-     *
-     * Kept rather than deleted because the history scan does legitimately rebuild a list,
-     * and allowReplace is exactly the flag that says so. */
-    if (update.clear === true) {
-        if (!allowReplace) {
-            debugLog(`Ignored "clear" on "${actualCollectionId}": a single message may not empty a collection.`);
-            return;
-        }
-        actor.collections[actualCollectionId] = [];
-        return;
-    }
-
-    // Handle "add"
-    if (Array.isArray(update.add)) {
-            for (const itemData of update.add) {
-                const primaryField = colDef.fields.find(f => f.isPrimary) || { name: 'name' };
-                const itemName = itemIdentifier(actor, actualCollectionId, itemData, primaryField.name, dryRun);
-                if (itemName === undefined) continue;
-                const lowerName = String(itemName).toLowerCase();
-                const state = deps.committedState || deps.loadStateFromMetadata();
-                
-                if (state?.recently_deleted?.[actualCollectionId]?.[lowerName]) {
-                    debugLog(`Skipping AI-added tombstoned item: ${itemName} in ${actualCollectionId}`);
-                    continue;
+        if (dryRun) warnings.push(...result.warnings);
+        result.warnings.forEach(message => debugLog(message));
+        deps.recordRefusedValues(result.refusedValues);
+        if (!dryRun) {
+            if (state && result.tombstones) state.recently_deleted = result.tombstones;
+            if (result.libraryChanges.length) {
+                settings.master_items ||= {};
+                for (const change of result.libraryChanges) {
+                    settings.master_items[change.collectionId] ||= {};
+                    settings.master_items[change.collectionId][String(change.itemName).toLowerCase()] = change.fields;
                 }
-                addItem(actor, actualCollectionId, itemData, { dryRun });
+                saveSettings();
             }
-    }
-
-    // Handle "remove"
-    if (Array.isArray(update.remove)) {
-        for (const removal of update.remove) {
-            const qtyField = collectionQuantityField(colDef);
-            const primary = colDef.fields.find(field => field.isPrimary)?.name || 'name';
-            const structured = removal && typeof removal === 'object';
-            const itemName = structured
-                ? itemIdentifier(actor, actualCollectionId, removal, primary, dryRun) : removal;
-            if (itemName === undefined) continue;
-            if (!qtyField || (structured && removal.all === true)) {
-                removeItem(actor, actualCollectionId, itemName);
-                continue;
-            }
-            const amount = structured ? removal[qtyField.name] ?? 1 : 1;
-            if (typeof amount !== 'number' || !Number.isFinite(amount) || amount <= 0) {
-                warnSkipped(actor, actualCollectionId, 'removal requires a positive quantity.', dryRun);
-                continue;
-            }
-            const item = actor.collections[actualCollectionId].find(entry =>
-                String(entry[primary]).toLowerCase() === String(itemName).toLowerCase());
-            if (!item) continue;
-            const remaining = Math.max(0, (Number(item[qtyField.name] ?? 1) || 0) - amount);
-            if (remaining === 0) removeItem(actor, actualCollectionId, itemName);
-            else item[qtyField.name] = remaining;
         }
     }
 
-    // Handle "update"
-    if (Array.isArray(update.update)) {
-        const primary = colDef.fields.find(field => field.isPrimary)?.name || 'name';
-        for (const upd of update.update) {
-            const itemName = itemIdentifier(actor, actualCollectionId, upd, primary, dryRun);
-            if (itemName !== undefined) updateItem(actor, actualCollectionId, itemName, upd, { dryRun });
-        }
-    }
-}
-
-/**
- * Adds an item to an actor's collection.
- */
-function addItem(actor, collectionId, itemData, { dryRun = false } = {}) {
-    if (!actor.collections) actor.collections = {};
-    if (!actor.collections[collectionId]) actor.collections[collectionId] = [];
-    
-    const settings = getSettings().statusTracker;
-    const colDef = settings.collections.find(c => c.id === collectionId);
-    if (!colDef) return;
-
-    const primaryField = colDef.fields.find(f => f.isPrimary) || { name: 'name' };
-    const itemName = itemIdentifier(actor, collectionId, itemData, primaryField.name, dryRun);
-    if (itemName === undefined) return;
-
-    const qtyField = collectionQuantityField(colDef);
-    const amount = qtyField ? itemData[qtyField.name] ?? 1 : null;
-    if (qtyField && (typeof amount !== 'number' || !Number.isFinite(amount) || amount <= 0)) {
-        warnSkipped(actor, collectionId, 'addition requires a positive quantity.', dryRun);
-        return;
+    function applyCollectionUpdate(actor, collectionId, update, options) {
+        calculate(actor, collectionId, update, options);
     }
 
-    // Clear from recently_deleted if it was there
-    const lowerName = String(itemName).toLowerCase();
-    const state = deps.committedState || deps.loadStateFromMetadata();
-    if (!dryRun && state && state.recently_deleted && state.recently_deleted[collectionId]) {
-        if (state.recently_deleted[collectionId][lowerName]) {
-            delete state.recently_deleted[collectionId][lowerName];
-        }
+    function addItem(actor, collectionId, itemData, options) {
+        calculate(actor, collectionId, itemData, { ...options, operation: 'add' });
     }
 
-    const validFields = new Set(colDef.fields.map(f => f.name));
+    function removeItem(actor, collectionId, itemName, isManual = false) {
+        calculate(actor, collectionId, itemName, { operation: 'remove', isManual });
+    }
 
-    // Filter fields to only allowed ones
-    const filteredItem = { [primaryField.name]: itemName };
-    Object.keys(itemData).forEach(key => {
-        if (validFields.has(key)) {
-            filteredItem[key] = itemData[key];
-        }
+    Object.defineProperties(deps, {
+        takeCollectionWarnings: { enumerable: true, configurable: true, get: () => takeCollectionWarnings },
+        applyCollectionUpdate: { enumerable: true, configurable: true, get: () => applyCollectionUpdate },
+        addItem: { enumerable: true, configurable: true, get: () => addItem },
+        removeItem: { enumerable: true, configurable: true, get: () => removeItem },
     });
-
-    // Find if item with same primary field value exists (case-insensitive)
-    const existingIndex = actor.collections[collectionId].findIndex(i => String(i[primaryField.name]).toLowerCase() === String(itemName).toLowerCase());
-    
-    if (existingIndex !== -1) {
-        const existing = actor.collections[collectionId][existingIndex];
-        // Merge fields
-        const merged = { ...existing, ...filteredItem };
-        
-        if (qtyField) merged[qtyField.name] = (Number(existing[qtyField.name] ?? 1) || 0) + amount;
-
-        // Normalised like any other item: the merge could otherwise leave a quantity the
-        // model sent as text sitting beside one already stored as a number.
-        actor.collections[collectionId][existingIndex] = normaliseItem(merged, colDef.fields, existing);
-    } else {
-        // This branch filled in defaults but never enforced types, so an item added
-        // through the delta path - which is every item the per-message extractor adds -
-        // kept "4" as a string where the replace path would have stored 4.
-        actor.collections[collectionId].push(normaliseItem(qtyField ? { ...filteredItem, [qtyField.name]: amount } : filteredItem, colDef.fields));
-    }
-}
-
-/**
- * Removes an item from an actor's collection by name.
- */
-function removeItem(actor, collectionId, itemName, isManual = false) {
-    if (!actor.collections || !actor.collections[collectionId] || itemName === undefined || itemName === null) return;
-    
-    const settings = getSettings().statusTracker;
-    const colDef = settings.collections.find(c => c.id === collectionId);
-    const primaryField = colDef ? colDef.fields.find(f => f.isPrimary) : { name: 'name' };
-    const primaryFieldName = primaryField ? primaryField.name : 'name';
-
-    const lowerName = String(itemName).toLowerCase();
-    actor.collections[collectionId] = actor.collections[collectionId].filter(i => String(i[primaryFieldName]).toLowerCase() !== lowerName);
-
-    if (isManual) {
-        const state = deps.committedState || deps.loadStateFromMetadata();
-        if (state && state.recently_deleted) {
-            if (!state.recently_deleted[collectionId]) state.recently_deleted[collectionId] = {};
-            state.recently_deleted[collectionId][lowerName] = 3; // TTL 3 messages
-        }
-    }
-}
-
-/**
- * Updates an item in an actor's collection.
- */
-function updateItem(actor, collectionId, itemName, updates, { dryRun = false } = {}) {
-    if (!actor.collections || !actor.collections[collectionId] || itemName === undefined || itemName === null) return;
-    
-    const settings = getSettings().statusTracker;
-    const colDef = settings.collections.find(c => c.id === collectionId);
-    if (!colDef) return;
-
-    const primaryField = colDef.fields.find(f => f.isPrimary) || { name: 'name' };
-    const primaryFieldName = primaryField.name;
-    const validFields = new Set(colDef.fields.map(f => f.name));
-
-    const lowerName = String(itemName).toLowerCase();
-    const itemIndex = actor.collections[collectionId].findIndex(i => String(i[primaryFieldName]).toLowerCase() === lowerName);
-    
-    if (itemIndex !== -1) {
-        const item = actor.collections[collectionId][itemIndex];
-
-        const qtyField = collectionQuantityField(colDef);
-        if (qtyField && Object.hasOwn(updates, qtyField.name)) {
-            const amount = updates[qtyField.name];
-            if (typeof amount !== 'number' || !Number.isFinite(amount) || amount < 0) {
-                warnSkipped(actor, collectionId, 'update requires a nonnegative quantity.', dryRun);
-                return;
-            }
-            if (amount === 0) {
-                removeItem(actor, collectionId, itemName);
-                return;
-            }
-        }
-        const merged = { ...item };
-        Object.keys(updates).forEach(key => {
-            if (validFields.has(key)) merged[key] = updates[key];
-        });
-
-        /* Normalised like the add and replace paths, which this used to skip: writing
-           straight through meant the field-name check was the only guard, so an update row
-           could store "seven" in a number field and a value outside a configured options
-           list. Both are reachable from an ordinary per-message reply.
-
-           `item` as the previous value for the same reason addItem passes it: a value
-           already stored off-list must not be refused on every later write. */
-        actor.collections[collectionId][itemIndex] = normaliseItem(merged, colDef.fields, item);
-    }
-}
-
-/**
- * Synchronizes a manual override change immediately into the active chat metadata state.
- */
-
-Object.defineProperties(deps, {
-    takeCollectionWarnings: { enumerable: true, configurable: true, get: () => takeCollectionWarnings },
-    applyCollectionUpdate: { enumerable: true, configurable: true, get: () => applyCollectionUpdate },
-    addItem: { enumerable: true, configurable: true, get: () => addItem },
-    removeItem: { enumerable: true, configurable: true, get: () => removeItem },
-});
 }

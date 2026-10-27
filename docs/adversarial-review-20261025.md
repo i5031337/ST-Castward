@@ -140,7 +140,7 @@ Recommendation: prioritize a clear first-session workflow and visible automation
 status over more customization. Source inspection: `manage.html` and
 `src/ui/manage/ui-manage.js`; this is not a completed usability study.
 
-## 6. File size limits do not remove architectural coupling — utility extraction started; state transitions open
+## 6. File size limits do not remove architectural coupling — collection calculation extracted; commit boundary open
 
 At review time, `src/` contained 322 JavaScript modules and approximately 39,730 lines.
 The tracker binds 15 providers into a shared runtime dependency registry. Understanding
@@ -155,10 +155,17 @@ The cleanup removed dead tracker APIs and redundant persistence work. The first
 architectural stage now removes the parser's provider binding and makes stat arithmetic,
 field choices and name matching explicit imports. This breaks the stat-values/constraints
 cycle and removes stat synonyms from session state. Fourteen bound providers remain.
-The next collection/actor calculation and commit boundaries are described in
+Collection updates now calculate from explicit actor/rule/System/library/tombstone
+inputs and return proposed effects without writing stores. Field validation likewise
+returns diagnostics rather than writing shared queues; existing wrappers retain those
+queues for current callers. The actor/full-update calculation and commit boundaries
+remain next, as described in
 [ARCHITECTURE.md](ARCHITECTURE.md#tracker-dependency-refactor). Shared mutable state,
-write side effects and lifecycle coupling remain open; utility extraction alone does
-not close this finding.
+write side effects and lifecycle coupling remain open; these extractions do not
+close this finding. All 881 Node tests, `git diff --check`, the running-host smoke check,
+and the unsaved collection quantity UI fixture pass. A temporary 112-case comparison
+with the utility checkpoint found matching collection, library, tombstone and diagnostic
+results; library saves are now batched per operation.
 
 ## Evidence and limits
 

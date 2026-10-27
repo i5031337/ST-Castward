@@ -105,6 +105,8 @@ This map covers tracked runtime files, tests and support files. Source files and
 | `tests/status-dependencies.mjs` | Shared status dependency provider contract test, including independently imported helpers. |
 | `tests/status-update-parser.mjs` | Inline update extraction and grouped stat fragments through ordinary imports. |
 | `tests/stat-utilities.mjs` | Stat name precedence, allowed values, and constraint diagnostic isolation. |
+| `tests/collection-calculation.mjs` | Immutable collection calculations, explicit ownership, planned library changes, and manual/automatic tombstone rules. |
+| `tests/fixtures/collection-updates-bind.mjs` | Load the collection host wrapper with isolated storage and production calculation imports. |
 | `tests/ui-chat-boundaries.mjs` | Chat-switch confirmation guards and bulk deletion selection snapshots. |
 | `tests/world-character-export.mjs` | Inactive System export rules and reusable/chat NPC inclusion. |
 | `tests/ui-maintenance.mjs` | Lore generation and character editor routing tests. |
@@ -200,11 +202,13 @@ This map covers tracked runtime files, tests and support files. Source files and
 | `src/tracker/status-status-summary.js` | Format status summaries. |
 | `src/tracker/status-scene-prompt.js` | Build scene context and status instructions. |
 | `src/tracker/status-update-parser.js` | Ordinary exports for parsing inline updates and grouping stat fragments. |
-| `src/tracker/status-update-constraints.js` | Validate update values against configured fields. |
+| `src/tracker/stat-field-calculation.js` | Pure field validation returning values, warnings, and refusals. |
+| `src/tracker/status-update-constraints.js` | Adapt field validation to existing tracker APIs and diagnostic queues. |
 | `src/tracker/status-apply-update.js` | Apply accepted model updates to state. |
 | `src/tracker/status-cast-decisions.js` | Record player, excluded, and character cast decisions. |
 | `src/tracker/status-scene-presence.js` | Reconcile scene presence and active characters. |
-| `src/tracker/status-collection-updates.js` | Add, remove, and update tracked items. |
+| `src/tracker/collection-calculation.js` | Calculate collections, tombstones, and proposed Item Library additions from explicit inputs. |
+| `src/tracker/status-collection-updates.js` | Capture live collection inputs and apply calculated results through existing tracker APIs. |
 | `src/tracker/npc-collections.js` | Copy current NPC collections onto character cards so belongings survive scene departure. |
 | `src/tracker/status-collection-schema.js` | Rename collection fields and stat schema references. |
 | `src/tracker/status-system-presets.js` | Active System, reusable definitions, chat locking, import, detail edits, and independent duplication of rules and local carryover rosters. Renames update display metadata and definition names while retaining library keys used by chats and rosters. |
