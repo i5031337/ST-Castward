@@ -109,9 +109,9 @@ test('editor leaves an unavailable pictures view and its back button returns to 
     let profileRendered = false;
     const renderEditor = load('manage/ui-manage-editor.js', [
         'document', 'manageState', 'findCharacter',
-        'taggedFields', 'renderProfileView', 'LOG_PREFIX',
+        'renderProfileView', 'LOG_PREFIX',
     ], [
-        document, manageState, () => char, () => [],
+        document, manageState, () => char,
         async () => { profileRendered = true; }, '[test]',
     ], 'renderEditor');
     let showGrid = 0;

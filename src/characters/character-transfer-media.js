@@ -2,7 +2,6 @@ import { getRequestHeaders } from '../../../../../../script.js';
 import { loadSpritePack } from '../expressions/host-expressions.js';
 import { normalizeSpriteFolder } from '../core/npc-presentation.js';
 import { adoptImageForCharacter } from '../api/api.js';
-import { tagsFromFilename, valuesByField } from './image-tags.js';
 
 const IMAGE_TYPES = new Set(['image/png', 'image/jpeg', 'image/webp', 'image/gif', 'image/avif']);
 
@@ -38,7 +37,7 @@ export async function captureCharacterMedia(char, record) {
         record.images.push(await imageData(path));
         const name = path.startsWith('/user/images/') ? decodeURIComponent(path.split('?')[0].split('/').pop()) : '';
         record.imageNames.push(name);
-        const tags = { ...tagsFromFilename(name, valuesByField()), ...(char.imageTags?.[path] || {}) };
+        const tags = char.imageTags?.[path] || {};
         if (Object.keys(tags).length) record.imageTags[index] = structuredClone(tags);
     }
     const folder = normalizeSpriteFolder(record.presentation?.expressions?.spriteFolder);
@@ -64,8 +63,7 @@ export async function restoreCharacterImages(char, record) {
         const path = await adoptImageForCharacter(char, dataUri);
         stored.push(path);
         const index = stored.length - 1;
-        const tags = { ...tagsFromFilename(record.imageNames?.[index], valuesByField()),
-            ...(record.imageTags?.[index] || {}) };
+        const tags = record.imageTags?.[index];
         if (tags && typeof tags === 'object' && !Array.isArray(tags)) {
             char.imageTags[path] = Object.fromEntries(Object.entries(tags)
                 .filter(([key, value]) => key && typeof value === 'string'));

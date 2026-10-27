@@ -9,7 +9,6 @@ import { renameLorebookEntry } from '../../lore/lorebook.js';
 import { buildPortraitBlock } from '../characters/ui-portrait.js';
 import { buildExpressionsSection } from '../characters/ui-expressions.js';
 import { buildVoicesSection } from '../characters/ui-voices.js';
-import { taggedFields } from '../../characters/image-tags.js';
 import { folderFor, moveFolder } from '../../characters/character-images.js';
 import { renderLorebookSection } from '../story/ui-lorebook-section.js';
 import { renderProfileView, renderProfileFields } from '../characters/ui-profile.js';
@@ -18,7 +17,6 @@ import { readLoreEntry } from '../../characters/character-fill.js';
 import { readLoreValues } from '../../lore/lore-sync.js';
 import { exportCharacterFile } from '../shared/ui-transfer.js';
 import { manageState } from './ui-manage-state.js';
-import { renderPictureTagsSection } from './ui-manage-pictures.js';
 import { renderCollectionsSection, renderCategorySelect } from './ui-manage-collections.js';
 import { renderOverridesSection, buildAliasRow, commitStatEdits } from './ui-manage-overrides.js';
 import { buildManualLevelUpSection } from '../characters/ui-manual-level-up.js';
@@ -27,12 +25,11 @@ import { renderCharacterMemorySection } from '../characters/ui-character-memory-
 import { eventSource } from '../../../../../../events.js';
 
 /** Inner tabs use separate selectors from the popup's main navigation. */
-function buildViewTabs(viewState, refreshEditor, { pictures = true } = {}) {
+function buildViewTabs(viewState, refreshEditor) {
     const bar = document.createElement('div');
     bar.className = 'sillynpc-charview-tabs';
 
     const views = [['profile', 'Profile'], ['edit', 'Edit']];
-    if (pictures && taggedFields().length > 0) views.push(['pictures', 'Pictures']);
 
     for (const [view, label] of views) {
         const tab = document.createElement('button');
@@ -84,7 +81,7 @@ function buildEditorHeader(char, showGrid, refreshEditor, viewState) {
     }
     const sticky = document.createElement('div');
     sticky.className = 'sillynpc-editor-sticky';
-    sticky.append(header, buildViewTabs(viewState, refreshEditor, { pictures: !char.isPlayer }));
+    sticky.append(header, buildViewTabs(viewState, refreshEditor));
     return { sticky, title };
 }
 
@@ -303,7 +300,7 @@ export function renderCharacterEditor(char, editView, { showGrid = () => {}, vie
         renderCharacterEditor(char, editView, { showGrid, viewState });
     };
     editView.replaceChildren();
-    if (viewState.charView === 'pictures' && (char.isPlayer || taggedFields().length === 0)) viewState.charView = 'profile';
+    if (!['profile', 'edit'].includes(viewState.charView)) viewState.charView = 'profile';
     const { sticky, title } = buildEditorHeader(char, showGrid, refreshEditor, viewState);
     if (!char.isPlayer) sticky.appendChild(buildNpcTemplateSelect(char, refreshEditor));
 
@@ -311,11 +308,6 @@ export function renderCharacterEditor(char, editView, { showGrid = () => {}, vie
         const view = document.createElement('div');
         editView.append(sticky, view);
         renderProfileView(char, view).catch(err => console.error(LOG_PREFIX, 'renderProfileView failed', err));
-    } else if (viewState.charView === 'pictures') {
-        const view = document.createElement('div');
-        view.className = 'sillynpc-charview-body';
-        editView.append(sticky, view);
-        renderPictureTagsSection(char, view, refreshEditor);
     } else {
         renderEditForm(char, editView, sticky, title, refreshEditor);
     }

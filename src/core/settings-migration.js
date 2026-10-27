@@ -71,10 +71,7 @@ function normalizeCharactersAndCategories(settings) {
         if (typeof char.category !== 'string') char.category = '';
         if (typeof char.imageFit !== 'string') char.imageFit = '';
         if (!char.statusOverrides || typeof char.statusOverrides !== 'object') char.statusOverrides = {};
-        /* Which picture means which field value. Absent on every card until one is
-           tagged, and deliberately not seeded to `{}` here - a card nobody has tagged
-           should carry no key at all rather than an empty object per character. See
-           image-tags.js, which creates it on the first write. */
+        // Preserve saved portrait tags without seeding new tag maps.
         if ('imageTags' in char && (!char.imageTags || typeof char.imageTags !== 'object')) {
             delete char.imageTags;
         }

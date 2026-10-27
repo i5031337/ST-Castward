@@ -4,7 +4,6 @@ import { listChatHeaders } from '../chat/chat-listing.js';
 import { chatNpcImagePaths } from '../chat/chat-npc-sources.js';
 import { saveBase64AsFile } from '../../../../../utils.js';
 import { LOG_PREFIX, debugLog } from '../core/constants.js';
-import { forgetImageTags } from '../characters/image-tags.js';
 import { claimFolder, sharedFolder } from '../characters/character-images.js';
 import { triggerReprocess } from '../chat/reprocess.js';
 import { getSettings, saveSettings } from '../core/settings.js';
@@ -188,7 +187,10 @@ export async function removeCharacterImage(char, path, { deleteFile = false } = 
        entry left behind would come back to life the moment the same file was adopted
        again - which is the ordinary case, since taking a picture off a character does
        not delete it. */
-    forgetImageTags(char, path);
+    if (char.imageTags?.[path]) {
+        delete char.imageTags[path];
+        if (!Object.keys(char.imageTags).length) delete char.imageTags;
+    }
 
     // Step to whatever is left rather than leaving the character pointing at a gap.
     if (char.imageUrl === path) {

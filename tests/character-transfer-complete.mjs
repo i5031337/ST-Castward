@@ -56,7 +56,6 @@ test('portrait gallery, tags and selection survive remapping, and the expression
     const saved = [];
     const deps = {
         loadSpritePack: async () => [], normalizeSpriteFolder: value => value || '',
-        tagsFromFilename: () => ({}), valuesByField: () => ({}),
         adoptImageForCharacter: async (char, uri) => {
             const path = `/user/images/imported/${saved.length}.png`;
             saved.push([uri, path]); char.images.push(path); return path;

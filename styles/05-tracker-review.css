@@ -472,3 +472,14 @@ span.sillynpc-review-to {
     background: color-mix(in srgb, var(--sillynpc-fg-primary), transparent 85%) !important;
     flex-shrink: 0 !important;
 }
+
+/* Keep unmatched review notes folded so they do not obscure the change rows. */
+.sillynpc-review-loose-notes > summary {
+    cursor: pointer;
+    list-style-position: outside;
+}
+
+.sillynpc-review-loose-notes > summary:focus-visible {
+    outline: 2px solid var(--sillynpc-accent);
+    outline-offset: 2px;
+}

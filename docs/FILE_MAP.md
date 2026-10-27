@@ -43,7 +43,7 @@ This map covers tracked runtime files, tests and support files. Source files and
 | `docs/ARCHITECTURE.md` | Current storage ownership, reader behavior, review, and verification boundaries. |
 | `docs/AUDIT_FOLLOWUP.md` | Historical cleanup decisions and focused verification guidance. |
 | `docs/tts-expressions-audit.md` | Speech and expression audit findings and fix status. |
-| `docs/code-cleanup-audit.md` | Completed obsolete and redundant code cleanup, verification, and shared reply gate, and retained integration boundaries. |
+| `docs/code-cleanup-audit.md` | Completed obsolete and redundant code cleanup, verification, shared reply gate, and removed image-tag integration. |
 | `docs/test-audit.csv` | Test audit decisions, rationale, and replacement coverage references. |
 | `docs/tracker-prompt-draft.txt` | Archived tracker prompt draft from before the absolute-reading contract. |
 | `docs/REWRITE_HOST_SMOKE.md` | Dated user-reported host results and remaining manual checks. |
@@ -268,7 +268,6 @@ This map covers tracked runtime files, tests and support files. Source files and
 | `src/characters/character-fill.js` | Audit missing lore and portrait data, gather story sources, and fill profile fields. |
 | `src/characters/character-fill-lore.js` | Fill or generate character lore. |
 | `src/characters/default-portraits.js` | Stranger portrait pool and assignments. |
-| `src/characters/image-tags.js` | Portrait tag fields and tag lookup. |
 | `src/lore/lorebook.js` | Lorebook linking, identity, and synchronization. |
 | `src/lore/lore-entries.js` | Create or reuse lore entries for player and NPC identities. |
 | `src/lore/lore-entry-store.js` | Serialize entry allocation and reuse ownership markers. |
@@ -409,7 +408,6 @@ This map covers tracked runtime files, tests and support files. Source files and
 | `src/ui/manage/ui-manage-grid.js` | Character grid assembly and filtering. |
 | `src/ui/manage/ui-manage-cards.js` | Character card controls in the management grid. |
 | `src/ui/manage/ui-manage-editor.js` | Character editor tabs and form assembly. |
-| `src/ui/manage/ui-manage-pictures.js` | Character picture and tag editor. |
 | `src/ui/manage/ui-manage-collections.js` | Character collection editor. |
 | `src/ui/manage/ui-manage-overrides.js` | Character override and alias editor. |
 | `src/ui/manage/ui-manage-transfer.js` | Management popup import/export actions. |
@@ -428,7 +426,6 @@ This map covers tracked runtime files, tests and support files. Source files and
 | `styles/09-hud-meters-layouts.css` | HUD meters and layout variants. |
 | `styles/10-hud-layouts-fill.css` | HUD placement and automatic fill views. |
 | `styles/11-character-sheets.css` | Character sheets and related settings views. |
-| `styles/12-picture-tags.css` | Picture tag editor and gallery. |
 | `styles/13-system-profiles.css` | System profile field Builder and shared drag/reorder controls. |
 | `styles/14-memories.css` | Character memory editor and archive presentation. |
 | `styles/15-setting-help.css` | Settings help icons and popover styling. |
