@@ -9,6 +9,7 @@ import { getAllCharacters } from '../../characters/character-repository.js';
 import { acceptedByDefault } from '../../tracker/status-diff.js';
 import { buildPointAllocation } from './ui-point-allocation.js';
 import { buildLocationReviewRow } from '../locations/ui-location-review.js';
+import { bindTrackerEditor, isTrackerEditLocked } from '../../tracker/tracker-edit-lock.js';
 
 /**
  * The inline review panel.
@@ -179,6 +180,7 @@ function buildReviewPanel(messageId, review = {}) {
     apply.className = 'menu_button';
     apply.innerHTML = '<i class="fa-solid fa-check"></i> Apply selected';
     apply.addEventListener('click', () => {
+        if (isTrackerEditLocked()) return;
         const accepted = rows.filter(r => r.accepted).map(r => ({
             ...r.change, after: r.value,
             scope: r.scope, actor: r.actor, collectionId: r.collectionId,
@@ -197,6 +199,7 @@ function buildReviewPanel(messageId, review = {}) {
     discard.title = 'Leave everything as it is';
     discard.innerHTML = '<i class="fa-solid fa-xmark"></i> Discard all';
     discard.addEventListener('click', () => {
+        if (isTrackerEditLocked()) return;
         // Declining is about this message. Only a ticked never-again box is permanent.
         const dismissed = rows.filter(r => r.dismiss).map(r => r.change);
         (review.resolvePendingChanges || resolvePendingChanges)(messageId, [], dismissed, { discardAll: true });
@@ -205,6 +208,7 @@ function buildReviewPanel(messageId, review = {}) {
 
     actions.append(apply, discard);
     panel.appendChild(actions);
+    bindTrackerEditor(panel, 'input, select, textarea, button, [contenteditable]');
     return panel;
 }
 

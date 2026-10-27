@@ -6,6 +6,7 @@ import { readFileSync } from 'node:fs';
 import { normalizeCollectionUpdates } from '../src/tracker/extractor/status-collection-normalize.js';
 import { diffTurnValues, applyTurnValues, turnEffectStatus } from '../src/tracker/snapshots/status-turn-delta.js';
 import { normalizeModelReadings } from '../src/tracker/extractor/status-extractor-readings.js';
+import { lockTrackerEdits, isTrackerEditLocked } from '../src/tracker/tracker-edit-lock.js';
 
 const settings = { enabled: true, extractionMode: 'extract', collections: [
     { id: 'inventory', target: 'player' }, { id: 'abilities', target: 'npc' },
@@ -62,6 +63,7 @@ function harness(mode = 'extract') {
     const cancellation = readerCancellationHarness();
     const extraction = loadModule('../src/tracker/extractor/status-extractor-run.js', {
         createExtractionQueue,
+        lockTrackerEdits,
         ...cancellation,
         ...deps, ...snapshots, normalizeCollectionUpdates,
         trackerMessageIndex: chat => chat.length - 1,
@@ -113,6 +115,32 @@ function harness(mode = 'extract') {
         setWarnings: value => { previewWarnings = value; },
         rejectUpdate: phase => { rejectedPhase = phase; }, application };
 }
+test('reader locks editing before the request and releases it on success and failure', async () => {
+    for (const fail of [false, true]) {
+        const h = harness();
+        h.onRequest(() => {
+            assert.equal(isTrackerEditLocked(), true);
+            if (fail) throw new Error('Fixture request failed');
+        });
+        const result = await h.run({});
+        assert.equal(result.applied, !fail);
+        assert.equal(isTrackerEditLocked(), false);
+    }
+});
+
+test('Stop releases editing even while the cancelled service request is still waiting', async () => {
+    const h = harness();
+    let release;
+    h.onRequest(() => new Promise(resolve => { release = resolve; }));
+    const pending = h.run({});
+    assert.equal(isTrackerEditLocked(), true);
+    h.cancellation.emit('stop');
+    assert.equal(isTrackerEditLocked(), false);
+    release();
+    assert.equal((await pending).reason, 'cancelled');
+    assert.equal(isTrackerEditLocked(), false);
+});
+
 test('overlapping automatic turns read in order using the preceding applied state', async () => {
     const h = harness();
     let release;

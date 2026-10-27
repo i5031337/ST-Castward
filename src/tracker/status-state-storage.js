@@ -10,6 +10,7 @@ import { getSettings, saveSettings } from '../core/settings.js';
 import { captureNpcRoster } from '../characters/system-npc-roster.js';
 import { applyRosterStateSeed } from '../characters/system-roster-state.js';
 import { LOG_PREFIX, debugLog } from '../core/constants.js';
+import { isTrackerEditLocked } from './tracker-edit-lock.js';
 
 const stateMetadata = new WeakMap();
 /** Read the current raw state without repairing or saving an editor's source data. */
@@ -293,6 +294,7 @@ function getHistoryEntries() {
  *   The entry restored, or null when there is nothing to undo.
  */
 function undoLastChange() {
+    if (isTrackerEditLocked()) return null;
     const metadata = getMetadata();
     const history = metadata?.[HISTORY_KEY];
     if (!Array.isArray(history) || history.length === 0) return null;

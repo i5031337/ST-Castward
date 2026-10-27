@@ -37,7 +37,8 @@ export function calculateSchemaOperation({ tracker, system, state, personaData =
         const value = renamed(target?.[key], oldName, newName);
         if (value) { target[key] = value; result.values++; }
     };
-    const actors = [nextState?.player, ...(nextState?.characters || [])].filter(Boolean);
+    const players = [nextState?.player, ...Object.values(nextState?.players || {})].filter(Boolean);
+    const actors = [...players, ...(nextState?.characters || [])].filter(Boolean);
     const renameDefinition = (target, key) => {
         if (target && target[key] !== oldName) return false;
         if (target) put(target, key, newName);
@@ -50,8 +51,7 @@ export function calculateSchemaOperation({ tracker, system, state, personaData =
         for (const scope of scopes) {
             if (scope === 'globalStats') moveState(nextState, 'global');
             if (scope === 'playerStats') {
-                moveState(nextState?.player, 'stats');
-                for (const player of Object.values(nextState?.players || {})) moveState(player, 'stats');
+                for (const player of players) moveState(player, 'stats');
                 for (const persona of Object.values(personaData)) move(persona, 'stats');
             }
             if (scope === 'npcStats') {

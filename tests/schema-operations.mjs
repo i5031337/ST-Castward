@@ -10,7 +10,8 @@ function fixture() {
     const tracker = { presets: { story: { definition: system } }, playerStats: [field], npcStats: [field], collections: [collection],
         template: 'HP [{{HP}}] {{HPMax}}', customCSS: '.HP {}' };
     const state = { global: {}, player: { name: 'Hero', stats: { HP: '3' }, collections: { gear: [{ name: 'Wand', kind: 'wood' }] } },
-        players: { other: { stats: { HP: '9' } } }, characters: [{ npcTemplateId: 'mage', stats: { HP: '4' }, collections: { gear: [{ name: 'Hat', kind: 'cloth' }] } },
+        players: { other: { stats: { HP: '9' }, collections: { gear: [{ name: 'Ring', kind: 'gold' }], keepsakes: [{ name: 'Letter' }] } },
+            empty: { stats: {} } }, characters: [{ npcTemplateId: 'mage', stats: { HP: '4' }, collections: { gear: [{ name: 'Hat', kind: 'cloth' }] } },
             { npcTemplateId: 'beast', stats: { HP: '8' } }], recently_deleted: { gear: { hat: 2 } } };
     const cards = [{ npcTemplateId: 'mage', statusOverrides: { HP: '5' }, statusCollections: { gear: [{ name: 'Hat', kind: 'cloth' }] } }];
     const personaData = { p: { stats: { HP: '7' }, collections: { gear: [{ name: 'Cane', kind: 'wood' }] } } };
@@ -37,25 +38,45 @@ test('shared stat plan leaves inputs untouched, includes schema and assigned sto
     assert.equal(f.field.id, 'hp');
 });
 
-test('collection field and ID plans cover library, personas, offstage cards, live actors and tombstones', () => {
+test('collection field and ID plans cover library, all personas, offstage cards, live actors and tombstones', () => {
     const f = fixture();
     const oldField = f.collection.fields[1];
     const before = structuredClone(f);
     const plan = calculateSchemaOperation({ ...f, operation: { type: 'collection-field', collectionId: 'gear', oldName: 'kind', newName: 'material', field: oldField } });
     assert.deepEqual(f, before);
-    assert.equal(plan.result.values, 5);
+    assert.equal(plan.result.values, 6);
+    assert.deepEqual(plan.nextState.players.other.collections, {
+        gear: [{ name: 'Ring', material: 'gold' }], keepsakes: [{ name: 'Letter' }],
+    });
+    assert.deepEqual(plan.nextState.players.empty, { stats: {} });
     installSchemaWrites(plan.writes);
     assert.equal(oldField.name, 'material');
     assert.deepEqual(f.itemLibrary.gear.wand, { name: 'Wand', material: 'wood' });
     assert.deepEqual(f.cards[0].statusCollections.gear[0], { name: 'Hat', material: 'cloth' });
     assert.equal(plan.nextState.player.collections.gear[0].material, 'wood');
+    const idBefore = structuredClone(f);
     const idPlan = calculateSchemaOperation({ ...f, operation: { type: 'collection-id', oldName: 'gear', newName: 'equipment', definition: f.collection } });
-    assert.equal(f.collection.id, 'gear');
+    assert.deepEqual(f, idBefore);
     installSchemaWrites(idPlan.writes);
     assert.equal(f.collection.id, 'equipment');
     assert.equal(f.itemLibrary.gear, undefined);
     assert.ok(f.itemLibrary.equipment.wand);
+    assert.deepEqual(idPlan.nextState.players.other.collections, {
+        equipment: [{ name: 'Ring', kind: 'gold' }], keepsakes: [{ name: 'Letter' }],
+    });
+    assert.deepEqual(idPlan.nextState.players.empty, { stats: {} });
     assert.deepEqual(idPlan.nextState.recently_deleted, { equipment: { hat: 2 } });
+});
+
+test('collection renames retain migrated inactive persona holdings through installation', () => {
+    const f = runtimeFixture();
+    assert.ok(f.run({ type: 'collection-field', collectionId: 'gear', oldName: 'kind', newName: 'material', field: f.collection.fields[1] }));
+    assert.ok(f.run({ type: 'collection-id', oldName: 'gear', newName: 'equipment', definition: f.collection }));
+    assert.deepEqual(f.stateNow().players.other.collections, {
+        equipment: [{ name: 'Ring', material: 'gold' }], keepsakes: [{ name: 'Letter' }],
+    });
+    assert.deepEqual(f.stateNow().players.empty, { stats: {} });
+    assert.equal(f.settingsSaves(), 2);
 });
 
 test('collection field collision keeps occupied destination and key order in both orders', () => {

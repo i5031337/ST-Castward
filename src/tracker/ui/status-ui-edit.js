@@ -1,6 +1,7 @@
 import { loadStateFromMetadata, applyUpdate, removeActiveCharacter } from '../status-logic.js';
 import { announceSceneChange } from './status-ui-menu.js';
 import { fillNewCharacter } from '../../ui/characters/ui-fill-new.js';
+import { bindTrackerEditor, isTrackerEditLocked } from '../tracker-edit-lock.js';
 
 /**
  * @param {HTMLElement} container
@@ -9,6 +10,7 @@ import { fillNewCharacter } from '../../ui/characters/ui-fill-new.js';
  *   message's state, not the live one.
  */
 export function attachInlineEditListeners(container, { state: drawnState = null, redrawMessage = null, onRedraw = null } = {}) {
+    bindTrackerEditor(container, '.sillynpc-status-editable, .sillynpc-char-remove, .sillynpc-status-add-btn, .sillynpc-status-undo-btn');
     container.querySelectorAll('.sillynpc-char-fill').forEach(button => {
         button.addEventListener('click', async (event) => {
             event.preventDefault();
@@ -24,6 +26,7 @@ export function attachInlineEditListeners(container, { state: drawnState = null,
     });
     container.querySelectorAll('.sillynpc-status-editable').forEach(el => {
         el.addEventListener('blur', () => {
+            if (isTrackerEditLocked()) return;
             const type = el.dataset.type;
             const key = el.dataset.key;
             const newValue = el.innerText.trim();
@@ -87,6 +90,7 @@ export function attachInlineEditListeners(container, { state: drawnState = null,
     container.querySelectorAll('.sillynpc-char-remove').forEach(el => {
         el.addEventListener('click', (e) => {
             e.stopPropagation();
+            if (isTrackerEditLocked()) return;
             const name = el.dataset.name;
             if (removeActiveCharacter(name)) {
                 const mesEl = container.closest('.mes');

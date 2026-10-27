@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFileSync } from 'node:fs';
 import { calculateCollectionEdit, commitCollectionEdit } from '../src/tracker/collection-editor-calculation.js';
+import { lockTrackerEdits, isTrackerEditLocked, trackerEditRevision } from '../src/tracker/tracker-edit-lock.js';
 
 function fixture({ offstage = false, noChat = false, boundSystem = 'World' } = {}) {
     const settings = { activeSystem: 'World', master_items: { inventory: { sword: { name: 'Sword', kind: 'Steel' } } },
@@ -32,7 +33,7 @@ function fixture({ offstage = false, noChat = false, boundSystem = 'World' } = {
             return true;
         },
         saveSettings: () => saves++, eventSource: { emit: () => emitted++ },
-        calculateCollectionEdit, commitCollectionEdit };
+        calculateCollectionEdit, commitCollectionEdit, isTrackerEditLocked, trackerEditRevision };
     const source = readFileSync(new URL('../src/tracker/collection-editor.js', import.meta.url), 'utf8')
         .replace(/^import\s+[\s\S]*?\s+from\s+['"][^'"]+['"];\s*/gm, '').replace('export function', 'function');
     const create = new Function(...Object.keys(globals), `${source}\nreturn createCollectionEditor;`)(...Object.values(globals));
@@ -44,6 +45,19 @@ function fixture({ offstage = false, noChat = false, boundSystem = 'World' } = {
         reject: () => { rejectStorage = true; }, saves: () => saves, emitted: () => emitted,
         history: () => history, reads: () => reads };
 }
+
+test('reading locks reject pending item edits and confirmations even after the reading finishes', () => {
+    const f = fixture();
+    const before = JSON.stringify([f.settings, f.card, f.context.chatMetadata]);
+    const unlock = lockTrackerEdits();
+    try {
+        assert.equal(f.editor.commit(f.change, 'Item edited'), false);
+    } finally { unlock(); }
+    assert.equal(f.editor.commit(f.change, 'Delayed item edit'), false);
+    assert.equal(JSON.stringify([f.settings, f.card, f.context.chatMetadata]), before);
+    assert.equal(f.saves(), 0);
+    assert.equal(f.emitted(), 0);
+});
 
 for (const boundary of ['chat', 'metadata', 'persona', 'rules', 'canonical rules', 'System binding', 'player owner', 'storage', 'item']) {
     test(`manual item edit rejected at ${boundary} leaves related stores untouched`, () => {

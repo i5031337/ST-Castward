@@ -359,7 +359,7 @@ An unsaved running-host Chromium fixture confirmed the dashboard action/export a
 gone, the Chat Size report remains, and the HTML/CSS template editor still opens.
 No fixture edits, model requests or saves were made.
 
-### 10. Collection schema renames omit inactive personas — open
+### 10. Collection schema renames omit inactive personas — fixed
 
 **P2.** `src/tracker/schema-operation-calculation.js` includes the active player
 and NPCs in collection migrations but skips chat-owned records in `state.players`.
@@ -368,10 +368,17 @@ Direct production-calculation checks confirmed that renaming an item field from
 active persona. Returning to an inactive persona restores unmigrated holdings,
 hiding field values or the whole collection under the current schema.
 
-Include inactive chat personas in both migrations. Existing stat-rename coverage
-already handles that store; collection fixtures did not give it any holdings.
+Both migrations now include inactive chat personas, using a shared player list
+with stat renames. Collection fixtures now give inactive personas holdings and
+verify field and collection ID changes, preservation of unrelated collections,
+unchanged calculation inputs, and installation of sequential renames through the
+existing schema storage boundary. Personas without collections remain unchanged.
 
-### 11. In-flight readings overwrite newer corrections to the same field — open
+Verification: all 948 Node tests, the changed runtime module's syntax check and
+`git diff --check` pass. These are isolated calculation/storage fixtures; no UI or
+host event behavior changed.
+
+### 11. In-flight readings overwrite newer corrections to the same field — fixed by pausing edits
 
 **P2.** `src/tracker/extractor/status-extractor-run.js` checks reply, persona and
 System identity after awaiting the model, but does not detect intervening edits to
@@ -380,10 +387,22 @@ with HP 95, manually correct HP to 80 while waiting, receive HP 90, then install
 and report success. Existing coverage changes HP while the response changes XP,
 so it verifies only preservation of unrelated edits.
 
-This is missing conflict handling across the model request, rather than a failure
-of the narrower synchronous commit guard described in item #6. Preserve newer
-corrections or require review when a returned field's held reading changed during
-the request. The reproduction used mocked host/request boundaries.
+Decision: pause manual edits during the reader instead of adding conflict resolution.
+A shared transient lock disables inline stats, player/NPC sheet stats and collections,
+review actions, scene add/remove controls, and undo. A notice explains when editing
+will be available. Save handlers also refuse edits while locked. Focused edits settle
+before prompt state is captured; open sheets and collection editors refresh afterward.
+Delayed collection edits and deletion confirmations from before a reading are refused
+even after it finishes. Reader success, failure and cancellation release the lock;
+an obsolete reading cannot unlock a newer one. This addresses manual editing races,
+not arbitrary programmatic writes to tracker state.
+
+Verification: all 953 Node tests pass, including reader lifecycle, cancellation,
+overlapping lock ownership, undo and delayed item edit checks. An unsaved running-host
+Chromium fixture verifies inline and player/NPC sheet controls, choice fields, collection
+editing, review actions, editors opened mid-reading, restored values and cancellation.
+It uses isolated stores and mocked saves without model requests. Changed JavaScript
+syntax/source-size checks and `git diff --check` also pass.
 
 ## Evidence and limits
 

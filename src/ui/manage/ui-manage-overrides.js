@@ -6,6 +6,7 @@ import { escapeHtml } from '../../core/utils.js';
 import { syncOverrideToActiveState, loadStateFromMetadata, applyUpdate, getCurrentPersonaKey } from '../../tracker/status-logic.js';
 import { constrainNumericStat, isPoolStat } from '../../tracker/numeric-stat-bounds.js';
 import { buildChoiceSelect, isChoiceField } from '../shared/ui-shared.js';
+import { bindTrackerEditor, isTrackerEditLocked } from '../../tracker/tracker-edit-lock.js';
 
 export function renderOverridesSection(char, container) {
     if (!container) return;
@@ -19,9 +20,9 @@ export function renderOverridesSection(char, container) {
     const tracker = getSettings().statusTracker;
     const origin = char.isPlayer ? { metadata: getContext().chatMetadata,
         chatId: getContext().getCurrentChatId?.(), personaKey: getCurrentPersonaKey(), system: getSettings().activeSystem } : null;
-    const canWrite = () => !origin || (getContext().chatMetadata === origin.metadata
+    const canWrite = () => !isTrackerEditLocked() && (!origin || (getContext().chatMetadata === origin.metadata
         && getContext().getCurrentChatId?.() === origin.chatId && getCurrentPersonaKey() === origin.personaKey
-        && getSettings().activeSystem === origin.system);
+        && getSettings().activeSystem === origin.system));
     const stats = char.isPlayer ? tracker.playerStats : npcStatsFor(char, tracker);
     const readStat = stat => char.isPlayer
         ? Object.entries(loadStateFromMetadata().player?.stats || {})
@@ -151,6 +152,7 @@ export function renderOverridesSection(char, container) {
     });
 
     container.appendChild(grid);
+    bindTrackerEditor(container, 'input, select', () => { if (canWrite()) renderOverridesSection(char, container); });
 }
 
 export function buildAliasRow(char, index, refreshEditor) {

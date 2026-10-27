@@ -75,11 +75,12 @@ with browser_session() as browser:
               : !!host.querySelector('.name-input') && !!host.querySelector('.sillynpc-delete-btn') && !!host.querySelector('.sillynpc-trigger-level-up');
           }
           const strip = text => text.replace(/^import\\s+[\\s\\S]*?\\s+from\\s+['"][^'"]+['"];\\s*/gm, '').replaceAll('export function ', 'function ');
+          const { bindTrackerEditor, isTrackerEditLocked } = await import(root + 'src/tracker/tracker-edit-lock.js');
           const source = await (await fetch(root+'src/ui/manage/ui-manage-overrides.js')).text();
           let writes=[]; const state={player:{stats:{Health:'20'}}};
-          const api = new Function('npcStatsFor','getSettings','saveSettings','triggerReprocess','escapeHtml',
+          const api = new Function('bindTrackerEditor','isTrackerEditLocked','npcStatsFor','getSettings','saveSettings','triggerReprocess','escapeHtml',
             'syncOverrideToActiveState','loadStateFromMetadata','applyUpdate','getCurrentPersonaKey','getContext','constrainNumericStat','isPoolStat','buildChoiceSelect','isChoiceField',
-            strip(source)+'; return {renderOverridesSection,commitStatEdits};')(
+            strip(source)+'; return {renderOverridesSection,commitStatEdits};')(bindTrackerEditor,isTrackerEditLocked,
               ()=>[],()=>settings,()=>{},()=>{},value=>value,()=>{},()=>state,(change)=>{writes.push(change);Object.assign(state.player.stats,change.player.stats);},()=>fixturePersona,fixtureContext,
               (stat,value,existing)=>/^\\d+$/.test(value)?value:existing,()=>false,()=>{},()=>false);
           host.replaceChildren(); api.renderOverridesSection({isPlayer:true},host);

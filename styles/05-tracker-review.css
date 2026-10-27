@@ -495,3 +495,8 @@ span.sillynpc-review-to {
     outline: 2px solid var(--sillynpc-accent);
     outline-offset: 2px;
 }
+
+[data-sillynpc-tracker-editor] [aria-disabled="true"] {
+    cursor: wait;
+    opacity: 0.6;
+}

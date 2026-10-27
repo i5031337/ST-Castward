@@ -1,5 +1,6 @@
 /** Production editor and calculator with isolated stores; never saves host settings. */
 export async function collectionEditorFixture(root, { settings, state, cards = [] }) {
+    const { isTrackerEditLocked, trackerEditRevision } = await import(root + 'src/tracker/tracker-edit-lock.js');
     const { calculateCollectionEdit, commitCollectionEdit } = await import(root + 'src/tracker/collection-editor-calculation.js');
     const source = await (await fetch(root + 'src/tracker/collection-editor.js')).text();
     const strip = text => text.replace(/^import\s+[\s\S]*?\s+from\s+['"][^'"]+['"];\s*/gm, '').replaceAll('export function ', 'function ');
@@ -26,7 +27,7 @@ export async function collectionEditorFixture(root, { settings, state, cards = [
             return true;
         },
         saveSettings: () => writes++, eventSource: { emit(type, ...args) { events++; handler(...args); } },
-        calculateCollectionEdit, commitCollectionEdit,
+        calculateCollectionEdit, commitCollectionEdit, isTrackerEditLocked, trackerEditRevision,
     };
     const createCollectionEditor = new Function(...Object.keys(globals), strip(source)
         + '; return createCollectionEditor;')(...Object.values(globals));
@@ -36,6 +37,7 @@ export async function collectionEditorFixture(root, { settings, state, cards = [
 }
 
 export async function runCollectionEditorFixture(root) {
+    const { bindTrackerEditor, isTrackerEditLocked } = await import(root + 'src/tracker/tracker-edit-lock.js');
     const { renderCollectionUI } = await import(root + 'src/ui/collections/ui-collection.js');
     const source = await (await fetch(root + 'src/ui/collections/ui-collection.js')).text();
     const strip = text => text.replace(/^import\s+[\s\S]*?\s+from\s+['"][^'"]+['"];\s*/gm, '').replaceAll('export function ', 'function ');
@@ -47,7 +49,7 @@ export async function runCollectionEditorFixture(root) {
     const fixture = await collectionEditorFixture(root, { settings, state });
     const { constrainNumericStat } = await import(root + 'src/tracker/numeric-stat-bounds.js');
     let confirm;
-    const globals = { constrainNumericStat, getSettings: () => settings,
+    const globals = { constrainNumericStat, bindTrackerEditor, isTrackerEditLocked, getSettings: () => settings,
         loadStateFromMetadata: () => state, createCollectionEditor: fixture.createCollectionEditor,
         Popup: { show: { confirm: () => new Promise(resolve => { confirm = resolve; }) } } };
     const attach = new Function(...Object.keys(globals), strip(source) + '; return attachCollectionListeners;')(...Object.values(globals));

@@ -13,6 +13,7 @@ import { hasVisibleContent } from './status-ui-hidden.js';
 import { buildStatusHtml } from './status-ui-template.js';
 import { showAddCharacterDropdown } from './status-ui-menu.js';
 import { attachInlineEditListeners } from './status-ui-edit.js';
+import { isTrackerEditLocked } from '../tracker-edit-lock.js';
 import { renderExtractionReport } from './status-ui-report.js';
 import { buildTrackerReadButton } from './status-ui-refresh.js';
 import { trackerMessageIndex } from './status-ui-placement.js';
@@ -213,6 +214,7 @@ export function buildTrackerBox(state, {
         makeActivatable(undoBtn);
         undoBtn.addEventListener('click', (e) => {
             e.stopPropagation();
+            if (isTrackerEditLocked()) return;
             const entry = undoLastChange();
             if (entry) {
                 toastr.info(`Reverted: ${entry.label}`, 'Castward');

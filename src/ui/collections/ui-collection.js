@@ -5,6 +5,7 @@ import { loadStateFromMetadata } from '../../tracker/status-logic.js';
 import { createCollectionEditor } from '../../tracker/collection-editor.js';
 import { escapeHtml } from '../../core/utils.js';
 import { Popup } from '../../../../../../popup.js';
+import { bindTrackerEditor, isTrackerEditLocked } from '../../tracker/tracker-edit-lock.js';
 
 export function renderCollectionUI(tabId, actor, settings, options = {}) {
     const colDef = settings.collections.find(c => c.id === tabId);
@@ -92,6 +93,7 @@ export function renderCollectionUI(tabId, actor, settings, options = {}) {
  * @param {Function} onRefresh Refreshes the UI; may return its replacement container.
  */
 export function attachCollectionListeners(dom, actor, onRefresh) {
+    bindTrackerEditor(dom, '.item-field-input, .sillynpc-add-item, .drop-item', onRefresh);
     const isPlayer = actor.isPlayer ?? (actor === loadStateFromMetadata().player);
 
     const editor = createCollectionEditor(actor, isPlayer);
@@ -102,6 +104,7 @@ export function attachCollectionListeners(dom, actor, onRefresh) {
     dom.querySelectorAll('.sillynpc-add-item').forEach(btn => {
         if (btn.dataset.listenerAttached) return;
         btn.addEventListener('click', () => {
+            if (isTrackerEditLocked()) return;
             const colId = btn.dataset.col;
             const settings = getSettings().statusTracker;
             const colDef = settings.collections.find(c => c.id === colId);
@@ -135,6 +138,7 @@ export function attachCollectionListeners(dom, actor, onRefresh) {
     const COMMIT_DELAY_MS = 400;
 
     const commitField = (input) => {
+        if (isTrackerEditLocked()) return;
         const card = input.closest('.sillynpc-item-card');
         if (!card) return;
         const colId = card.dataset.col;
@@ -190,6 +194,7 @@ export function attachCollectionListeners(dom, actor, onRefresh) {
         if (btn.dataset.listenerAttached) return;
         btn.addEventListener('click', async (e) => {
             e.stopPropagation();
+            if (isTrackerEditLocked()) return;
             const card = btn.closest('.sillynpc-item-card');
             const colId = card.dataset.col;
             const idx = parseInt(card.dataset.idx);

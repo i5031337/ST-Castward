@@ -6,9 +6,11 @@ import { activeNpcSystem } from '../core/npc-templates.js';
 import { getCurrentPersonaKey } from './status-persona-state.js';
 import { loadStateFromMetadata, saveStateToMetadata } from './status-state-storage.js';
 import { calculateCollectionEdit, commitCollectionEdit } from './collection-editor-calculation.js';
+import { isTrackerEditLocked, trackerEditRevision } from './tracker-edit-lock.js';
 
 /** Keep the editor bound to the chat, persona, rules and card it displayed. */
 export function createCollectionEditor(actor, isPlayer) {
+    const editRevision = trackerEditRevision();
     const context = getContext();
     const settings = getSettings();
     const owner = { chatId: context?.getCurrentChatId?.(), metadata: context?.chatMetadata,
@@ -45,6 +47,7 @@ export function createCollectionEditor(actor, isPlayer) {
     return {
         current: resolve,
         commit(change, label) {
+            if (isTrackerEditLocked() || trackerEditRevision() !== editRevision) return false;
             const where = resolve();
             if (!where) return false;
             const { state, target } = where;

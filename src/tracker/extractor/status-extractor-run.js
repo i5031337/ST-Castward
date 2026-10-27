@@ -1,5 +1,6 @@
 import { startGenerationTask, awaitGenerationRequest } from '../../core/generation-cancellation.js';
 import { createExtractionQueue } from './status-extractor-queue.js';
+import { lockTrackerEdits } from '../tracker-edit-lock.js';
 import { prepareSceneLocationReading } from '../../locations/location-reading.js';
 import { getAllCharacters } from '../../characters/character-repository.js';
 import { getContext } from '../../../../../../st-context.js';
@@ -127,7 +128,9 @@ async function performExtraction(messageText, messageId, options, signal) {
         }
     };
     refreshReport();
+    let unlockEdits;
     try {
+        unlockEdits = lockTrackerEdits(run.signal);
         const state = options.regenerate ? replacementReadingState(messageId) : loadStateFromMetadata();
         const locationBase = state.locations?.enabled ? { locations: structuredClone(state.locations) } : null;
         // Before anything is applied. A later swipe of this message rebuilds from here
@@ -315,6 +318,7 @@ async function performExtraction(messageText, messageId, options, signal) {
         reportExtractionProblem(`The tracker could not read this message: ${err?.message || err}`);
         return { applied: false, reason: String(err?.message || err) };
     } finally {
+        unlockEdits?.();
         if (run.signal.aborted && report.status !== 'done') {
             report = { ...report, status: 'cancelled', summary: 'Cancelled' };
         }

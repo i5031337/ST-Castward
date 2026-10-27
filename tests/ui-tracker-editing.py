@@ -15,6 +15,7 @@ with browser_session() as browser:
         host.className = 'sillynpc-status-box';
         Object.assign(host.style, {position:'fixed',inset:'20px',zIndex:'999999',background:'#222'});
         try {
+          const { bindTrackerEditor, isTrackerEditLocked } = await import(root + 'src/tracker/tracker-edit-lock.js');
           const { renderFieldSet } = await import(root + 'src/tracker/ui/status-ui-template-core.js');
           const source = await (await fetch(root + 'src/tracker/ui/status-ui-edit.js')).text();
           const code = source.split(String.fromCharCode(10)).filter(line => !line.startsWith('import '))
@@ -22,8 +23,8 @@ with browser_session() as browser:
             .replaceAll('export function ', 'function ');
           const updates = [];
           const state = {characters:[{name:'Empty fixture'}]};
-          const attach = new Function('loadStateFromMetadata','applyUpdate',
-            code + ';return attachInlineEditListeners;')(() => state,
+          const attach = new Function('bindTrackerEditor','isTrackerEditLocked','loadStateFromMetadata','applyUpdate',
+            code + ';return attachInlineEditListeners;')(bindTrackerEditor, isTrackerEditLocked, () => state,
               (update, options) => updates.push({update,options}));
           const fields = [{name:'Condition',type:'text',format:'{{name}}: {{value}}'},
             {name:'Counter',type:'number',format:'{{value}}'}];

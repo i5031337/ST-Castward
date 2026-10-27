@@ -3,6 +3,7 @@ import { loadStateFromMetadata, registerActiveCharacter } from '../status-logic.
 import { LOG_PREFIX } from '../../core/constants.js';
 import { makeActivatable } from '../../core/utils.js';
 import { getActiveCharacters } from '../../characters/characters.js';
+import { bindTrackerEditor, isTrackerEditLocked } from '../tracker-edit-lock.js';
 
 /**
  * Where a menu opened from a button goes, in the window's coordinates.
@@ -41,7 +42,7 @@ export function announceSceneChange() {
 }
 
 export function showAddCharacterDropdown(btn, mesEl, onRedraw = null, redrawMessage = null) {
-    if (!btn) return;
+    if (!btn || isTrackerEditLocked()) return;
     const existing = document.querySelector('.sillynpc-add-char-dropdown');
     if (existing) {
         existing.remove();
@@ -67,6 +68,7 @@ export function showAddCharacterDropdown(btn, mesEl, onRedraw = null, redrawMess
         makeActivatable(item, { label: `Add ${char.name} to the scene` });
         item.addEventListener('click', (e) => {
             e.stopPropagation();
+            if (isTrackerEditLocked()) return;
             if (registerActiveCharacter(char.name)) {
                 if (mesEl) redrawMessage?.(mesEl);
                 onRedraw?.();
@@ -76,6 +78,7 @@ export function showAddCharacterDropdown(btn, mesEl, onRedraw = null, redrawMess
         });
         dropdown.appendChild(item);
     });
+    bindTrackerEditor(dropdown, '.list-group-item');
 
     const closeDropdown = (e) => {
         if (!dropdown.contains(e.target) && e.target !== btn) {

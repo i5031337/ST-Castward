@@ -14,6 +14,7 @@ with browser_session() as browser:
             const { collectionEditorFixture } = await import(root + 'tests/fixtures/ui-collection-editor.js');
             const { buildCollectionRewardsEditor } = await import(root + 'src/ui/system/ui-collection-rewards.js');
             const { getSettings } = await import(root + 'src/core/settings.js');
+            const { bindTrackerEditor, isTrackerEditLocked } = await import(root + 'src/tracker/tracker-edit-lock.js');
             const source = await (await fetch(root + 'src/ui/collections/ui-collection.js')).text();
             const manageSource = await (await fetch(root + 'src/ui/manage/ui-manage.js')).text();
             const npcSource = await (await fetch(root + 'src/ui/manage/ui-manage-collections.js')).text();
@@ -35,9 +36,9 @@ with browser_session() as browser:
             fixture.onStatus((...args) => statusHandler(...args));
             const html = value => String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('"', '&quot;');
             const popup = { show: { confirm: async () => { confirmations++; return true; } } };
-            const api = new Function('constrainNumericStat', 'choiceOptionsHtml', 'isChoiceField',
+            const api = new Function('bindTrackerEditor', 'isTrackerEditLocked', 'constrainNumericStat', 'choiceOptionsHtml', 'isChoiceField',
                 'getSettings', 'loadStateFromMetadata', 'createCollectionEditor', 'escapeHtml', 'Popup',
-                strip(source) + '; return { renderCollectionUI, attachCollectionListeners };')(
+                strip(source) + '; return { renderCollectionUI, attachCollectionListeners };')(bindTrackerEditor, isTrackerEditLocked,
                     (field, value) => value, () => '', () => false, () => settings, () => state,
                     fixture.createCollectionEditor, html, popup);
             const renderNpc = new Function('buildProfileSection', 'collectionAppliesTo', 'Popup', 'getSettings', 'saveSettings',

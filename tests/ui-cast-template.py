@@ -93,10 +93,11 @@ with browser_session() as browser:
           const fillButtons = [...trackerHost.querySelectorAll('.sillynpc-char-fill')];
           result.trackerFillNames = fillButtons.map(button => button.dataset.name);
           result.noPersonIcons = !trackerHost.textContent.includes('👤') && !renderTracker(true).includes('👤');
+          const { bindTrackerEditor, isTrackerEditLocked } = await import(root + 'src/tracker/tracker-edit-lock.js');
           const editSource = (await (await fetch(root + 'src/tracker/ui/status-ui-edit.js')).text())
             .replace(/^import .*;$/gm, '').replace('export function', 'function');
           let finishFill, fillCalls = [];
-          const attach = new Function('fillNewCharacter', editSource + '; return attachInlineEditListeners;')(
+          const attach = new Function('bindTrackerEditor', 'isTrackerEditLocked', 'fillNewCharacter', editSource + '; return attachInlineEditListeners;')(bindTrackerEditor, isTrackerEditLocked,
             (name, options) => { fillCalls.push(name); return new Promise(resolve => { finishFill = resolve; }); });
           attach(trackerHost);
           fillButtons[0].click(); fillButtons[0].click();
