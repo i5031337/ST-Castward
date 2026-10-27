@@ -19,13 +19,12 @@ function fixture() {
 test('collection previews explain unknown IDs and target mismatches without changing actors', () => {
     const deps = fixture();
     const actor = { name: 'Delphie', npcTemplateId: 'pokemon', collections: {} };
-    deps.applyCollectionUpdate(actor, 'Moves label', { add: [{ dex: 653 }] }, { dryRun: true });
-    deps.applyCollectionUpdate(actor, 'moves', { add: [{ dex: 653 }] }, { dryRun: true });
-    const warnings = deps.takeCollectionWarnings();
+    const first = deps.applyCollectionUpdate(actor, 'Moves label', { add: [{ dex: 653 }] }, { dryRun: true });
+    const second = deps.applyCollectionUpdate(actor, 'moves', { add: [{ dex: 653 }] }, { dryRun: true });
+    const warnings = [...first.warnings, ...second.warnings];
     assert.match(warnings[0], /Delphie.*unknown collection ID.*"moves"/);
     assert.match(warnings[1], /does not apply to NPC template "pokemon"/);
     assert.deepEqual(actor.collections, {});
-    assert.deepEqual(deps.takeCollectionWarnings(), []);
 });
 
 test('changed examples preserve configured field types', () => {
@@ -47,13 +46,13 @@ test('missing and blank identifiers are explained for additions, updates and rep
         { replace: [{ dex: null }] }]) {
         const deps = fixture();
         const actor = { name: 'Player', collections: {} };
-        deps.applyCollectionUpdate(actor, 'moves', update, { dryRun: true });
-        assert.match(deps.takeCollectionWarnings()[0], /requires primary field "dex"/);
+        const result = deps.applyCollectionUpdate(actor, 'moves', update, { dryRun: true });
+        assert.match(result.warnings[0], /requires primary field "dex"/);
         assert.deepEqual(actor.collections.moves, []);
     }
 });
 
-test('numeric identifiers including zero remain valid, and normal writes do not leak preview warnings', () => {
+test('numeric identifiers including zero remain valid', () => {
     const deps = fixture();
     const actor = { name: 'Player', collections: {} };
     deps.applyCollectionUpdate(actor, 'moves', { add: [{ dex: 0, power: 5 }] }, { dryRun: true });
@@ -61,9 +60,7 @@ test('numeric identifiers including zero remain valid, and normal writes do not 
     assert.deepEqual(actor.collections.moves, [{ dex: 0, power: 7 }]);
     deps.applyCollectionUpdate(actor, 'moves', { remove: [0] }, { dryRun: true });
     assert.deepEqual(actor.collections.moves, []);
-    assert.deepEqual(deps.takeCollectionWarnings(), []);
     deps.applyCollectionUpdate(actor, 'moves', { add: [{}] });
-    assert.deepEqual(deps.takeCollectionWarnings(), []);
 });
 
 test('collection examples use the primary field type consistently for all operations', () => {

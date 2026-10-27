@@ -1,25 +1,20 @@
-import { collectionQuantityField } from '../src/core/collection-fields.js';
+import { bindStatusModule } from './helpers/status-module.mjs';
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { readFileSync } from 'node:fs';
 import { npcStatsFor } from '../src/core/npc-templates.js';
 import { promptText } from '../src/prompts/prompt-texts.js';
-
-const source = path => readFileSync(new URL(path, import.meta.url), 'utf8')
-    .replace(/^import\s+[\s\S]*?\s+from\s+['"][^'"]+['"];\s*/gm, '')
-    .replaceAll('export function ', 'function ') + `\n${collectionQuantityField.toString()}\n`;
 
 function renderer(tracker, referenced = [], renderPrompt = promptText) {
     const deps = {};
     const getSettings = () => ({ statusTracker: tracker });
-    new Function('getSettings', 'npcStatsFor',
-        source('../src/tracker/status-stat-schema.js') + '\nreturn bind;')(
-        getSettings, (actor, settings) => npcStatsFor(actor, settings, {
+    bindStatusModule(new URL('../src/tracker/status-stat-filter.js', import.meta.url), deps, {
+        getSettings, npcStatsFor: (actor, settings) => npcStatsFor(actor, settings, {
             npcTemplates: [{ id: 'human', statIds: ['hp', 'resolve'] }],
-        }))(deps);
-    new Function('getSettings', 'promptText', 'charactersFromActivatedLore',
-        source('../src/tracker/status-status-summary.js') + '\nreturn bind;')(
-        getSettings, renderPrompt, () => referenced)(deps);
+        }),
+    });
+    bindStatusModule(new URL('../src/tracker/status-status-summary.js', import.meta.url), deps, {
+        getSettings, promptText: renderPrompt, charactersFromActivatedLore: () => referenced,
+    });
     return (state, places = '') => deps.formatCompactStatus(state, true, places);
 }
 

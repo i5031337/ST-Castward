@@ -1,4 +1,5 @@
-import { bind as bindConstraints } from '../src/tracker/status-update-constraints.js';
+import * as constraints from '../src/tracker/status-update-constraints.js';
+const bindConstraints = deps => Object.assign(deps, constraints);
 import assert from 'node:assert/strict';
 import test, { describe } from 'node:test';
 import { constrainNumericStat, keepNumericMaximum } from '../src/tracker/numeric-stat-bounds.js';

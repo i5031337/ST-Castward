@@ -1,7 +1,9 @@
+import { bindStatusModule } from './helpers/status-module.mjs';
 import { bindTrackerUpdate } from './fixtures/tracker-update-bind.mjs';
 import { bindCollectionUpdates } from './fixtures/collection-updates-bind.mjs';
 import { buildActorState } from '../src/tracker/actor-calculation.js';
-import { bind as bindConstraints } from '../src/tracker/status-update-constraints.js';
+import * as constraints from '../src/tracker/status-update-constraints.js';
+const bindConstraints = deps => Object.assign(deps, constraints);
 import * as statValues from '../src/tracker/stat-value-utils.js';
 import * as statFields from '../src/tracker/stat-field-utils.js';
 import { groupIncomingStats } from '../src/tracker/status-update-parser.js';
@@ -23,7 +25,7 @@ const source = path => readFileSync(new URL(`../src/${path}`, import.meta.url), 
     .replace(/^import .*;\n/gm, '').replace(/export /g, '');
 const utils = readFileSync(new URL('../src/core/utils-format.js', import.meta.url), 'utf8');
 const splitValue = new Function(`${utils.match(/export function splitValue\(value\) \{[\s\S]*?\n\}/)[0].replace('export ', '')}; return splitValue;`)();
-const load = (path, names, deps) => new Function(...Object.keys(deps), source(path) + `\nreturn {${names}};`)(...Object.values(deps));
+const load = (path, names, deps) => names === 'bind' ? { bind: state => bindStatusModule(new URL(`../src/${path}`, import.meta.url), state, deps) } : new Function(...Object.keys(deps), source(path) + `\nreturn {${names}};`)(...Object.values(deps));
 
 function harness({ state, cards = [], settings, openChat = true }) {
     let live = state;

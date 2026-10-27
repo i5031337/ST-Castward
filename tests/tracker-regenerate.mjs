@@ -48,7 +48,6 @@ function harness(mode = 'extract') {
     let onRequest = () => {};
     let enabled = true;
     let previewWarnings = [];
-    let collectionWarnings = [];
     let rejectedPhase;
     const application = { attempts: [], records: 0, readingSaves: 0 };
     let prompted;
@@ -74,13 +73,13 @@ function harness(mode = 'extract') {
         applyUpdate: (parsed, options) => {
             application.attempts.push(options);
             if (rejectedPhase === (options?.dryRun ? 'preview' : 'commit')) return null;
-            if (options?.dryRun) collectionWarnings.push(...previewWarnings);
+            if (options?.dryRun) options.diagnostics.collectionWarnings.push(...previewWarnings);
             const result = structuredClone(live);
             Object.assign(result.player.stats, parsed.player?.stats || {});
             if (!options?.dryRun) live = result;
             return result;
         },
-        takeCollectionWarnings: () => collectionWarnings.splice(0), takeRefusedValues: () => [], computeStateDiff: (before, after) =>
+        computeStateDiff: (before, after) =>
             before.player.stats.XP === after.player.stats.XP ? [] : [{ label: 'XP', after: after.player.stats.XP }],
         partitionChanges: changes => ({ auto: changes, pending: [] }),
         buildUpdateFromChanges: () => ({}), attachReasons: () => [],

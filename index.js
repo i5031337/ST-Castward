@@ -36,7 +36,7 @@ import { refreshReadButton } from './src/ui/tracker/ui-read-button.js';
 import { refreshMemoryButton } from './src/ui/tracker/ui-memory-button.js';
 import { setMemoryButtonRefresh, resetMemorySchedule } from './src/memory/memory-reader.js';
 import { applyPortraitFraming, applySpeechPadding } from './src/ui/shared/ui-shared.js';
-import { applyScenePrompt } from './src/tracker/status-logic.js';
+import { applyScenePrompt, onGenerationStarted } from './src/tracker/status-logic.js';
 import { noteActivatedLore } from './src/lore/activated-lore.js';
 import { activateCastLore } from './src/lore/cast-lore-runtime.js';
 import { setDebugLogging } from './src/core/constants.js';
@@ -93,7 +93,7 @@ jQuery(async () => {
                 }
             })
             .catch(err => console.warn(LOG_PREFIX, 'Could not move pictures into folders', err));
-        initStatusLogic();
+        initStatusLogic({ refreshPrompts: applyScenePrompt, onGenerationStarted });
         initNpcCreationTool();
         initNpcExpressions();
         initNpcTts();

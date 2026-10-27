@@ -1,3 +1,4 @@
+import { bindStatusModule } from './helpers/status-module.mjs';
 import { collectionQuantityField } from '../src/core/collection-fields.js';
 import { profileFieldsForCard } from '../src/core/profile-fields.js';
 import { normalizeMemoryStore } from '../src/core/profile-memories.js';
@@ -59,10 +60,9 @@ test('scene status contains tracker fields but no player, present NPC, or refere
     const deps = { statsInSystem: stats => stats || {},
         getPlayerCard: () => { throw new Error('Profiles must not be read'); },
         findCardForName: () => { throw new Error('Profiles must not be read'); } };
-    const bind = new Function('promptText', 'getSettings', 'charactersFromActivatedLore',
-        source('../src/tracker/status-status-summary.js') + '\nreturn bind;')(
-        promptText, () => settings, () => [referenced]);
-    bind(deps);
+    bindStatusModule(new URL('../src/tracker/status-status-summary.js', import.meta.url), deps, {
+        promptText, getSettings: () => settings, charactersFromActivatedLore: () => [referenced],
+    });
     const state = { global: { Time: 'Noon' },
         player: { name: 'Hero', stats: { HP: '10' }, profile: { appearance: 'PLAYER_PROFILE' } },
         characters: [{ name: 'Mira', stats: { HP: '8' }, profile: { appearance: 'NPC_PROFILE' } }] };

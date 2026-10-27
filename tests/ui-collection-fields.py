@@ -56,16 +56,23 @@ with browser_session() as browser:
           const rangeRoundtrip = imported.fields[1].min === '-2.5' && imported.fields[1].maxStatValue === '5.5';
           const itemUrl = root + 'src/ui/collections/ui-collection.js';
           let itemSource = await (await fetch(itemUrl)).text();
-          itemSource = itemSource.replace(/import [{] getSettings, saveSettings [}] from '[^']+';/,
-            'let fixtureSettings, fixtureState; const getSettings = () => fixtureSettings; const saveSettings = () => {}; export function installFixture(settings, state) { fixtureSettings = settings; fixtureState = state; }');
-          itemSource = itemSource.replace(/import [{] loadStateFromMetadata, saveStateToMetadata, addItem, removeItem, updateMasterItem, renameMasterItem [}] from '[^']+';/,
-            'const loadStateFromMetadata = () => fixtureState; const saveStateToMetadata = () => {}; const addItem = () => {}; const removeItem = () => {}; const updateMasterItem = () => {}; const renameMasterItem = () => {};');
-          itemSource = itemSource.replace(/import [{] eventSource [}] from '[^']+';/, 'const eventSource = { emit() {} };');
+          itemSource = itemSource.replace(/import [{] getSettings [}] from '[^']+';/,
+            'let fixtureSettings, fixtureState; const getSettings = () => fixtureSettings; export function installFixture(settings, state) { fixtureSettings = settings; fixtureState = state; }');
+          itemSource = itemSource.replace(/import [{] loadStateFromMetadata [}] from '[^']+';/,
+            'const loadStateFromMetadata = () => fixtureState;');
+          const { collectionEditorFixture } = await import(root + 'tests/fixtures/ui-collection-editor.js');
+          const itemActor = { name: 'Player', isPlayer: true, collections: { [col.id]: [{ move: 'Thunderbolt', pp: 3 }] } };
+          const itemSettings = { collections: [col] };
+          const itemFixture = await collectionEditorFixture(root, { settings: { statusTracker: itemSettings }, state: { player: itemActor, characters: [] } });
+          const fixtureKey = '__castwardCollectionFieldsFixture';
+          globalThis[fixtureKey] = itemFixture;
+          itemSource = itemSource.replace(/import [{] createCollectionEditor [}] from '[^']+';/,
+            'const createCollectionEditor = globalThis.__castwardCollectionFieldsFixture.createCollectionEditor;');
           itemSource = itemSource.replace(/from '([^']+)'/g, (match, path) => "from '" + new URL(path, itemUrl).href + "'");
           itemModuleUrl = URL.createObjectURL(new Blob([itemSource], { type: 'text/javascript' }));
           const { renderCollectionUI, attachCollectionListeners, installFixture } = await import(itemModuleUrl);
-          const actor = { name: 'Player', collections: { [col.id]: [{ move: 'Thunderbolt', pp: 3 }] } };
-          const itemSettings = { collections: [col] };
+          delete globalThis.__castwardCollectionFieldsFixture;
+          const actor = itemActor;
           installFixture({ statusTracker: itemSettings }, { player: actor, characters: [] });
           const items = document.createElement('div'); host.append(items);
           items.innerHTML = renderCollectionUI(col.id, actor, itemSettings);
@@ -94,7 +101,7 @@ with browser_session() as browser:
             finalPrimary: col.fields[0].isPrimary,
             finalDeleteButtons: host.querySelectorAll('.delete-field-btn').length };
         } catch (error) { result = { error: error.stack }; }
-        finally { host.remove(); if (moduleUrl) URL.revokeObjectURL(moduleUrl); if (itemModuleUrl) URL.revokeObjectURL(itemModuleUrl); }
+        finally { delete globalThis.__castwardCollectionFieldsFixture; host.remove(); if (moduleUrl) URL.revokeObjectURL(moduleUrl); if (itemModuleUrl) URL.revokeObjectURL(itemModuleUrl); }
         document.body.setAttribute('data-npc-template-smoke', JSON.stringify(result));
       `; document.body.append(script);""")
     result = None

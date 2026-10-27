@@ -1,3 +1,4 @@
+import { getInitialStatValue } from './stat-value-utils.js';
 import { collectionAppliesTo } from '../core/collection-targets.js';
 import { user_avatar } from '../../../../../../script.js';
 import { getContext } from '../../../../../st-context.js';
@@ -6,7 +7,6 @@ import { getSettings, saveSettings } from '../core/settings.js';
 import { debugLog } from '../core/constants.js';
 import { resolveProfileFields, profileFieldValue } from '../core/profile-fields.js';
 
-export function bind(deps) {
 function getCurrentPersonaName() {
     return resolvePersonaAvatarAndName().name;
 }
@@ -199,7 +199,7 @@ function createChatPlayerSeed() {
     const stats = {};
     const collections = {};
     for (const stat of trackerSettings.playerStats || []) {
-        if (stat?.name) stats[stat.name] = deps.getInitialStatValue(stat.defaultValue);
+        if (stat?.name) stats[stat.name] = getInitialStatValue(stat.defaultValue);
     }
     for (const col of trackerSettings.collections || []) {
         if (col?.id && collectionAppliesTo(col, 'player')) collections[col.id] = [];
@@ -291,17 +291,4 @@ function activatePersona(state, key, name = key) {
  * @property {number} timestamp
  */
 
-
-Object.defineProperties(deps, {
-    getCurrentPersonaName: { enumerable: true, configurable: true, get: () => getCurrentPersonaName },
-    getCurrentPersonaKey: { enumerable: true, configurable: true, get: () => getCurrentPersonaKey },
-    resolvePersonaAvatarAndName: { enumerable: true, configurable: true, get: () => resolvePersonaAvatarAndName },
-    personaDescription: { enumerable: true, configurable: true, get: () => personaDescription },
-    getPlayerCard: { enumerable: true, configurable: true, get: () => getPlayerCard },
-    getPlayerImageUrl: { enumerable: true, configurable: true, get: () => getPlayerImageUrl },
-    mergeCollectionMaps: { enumerable: true, configurable: true, get: () => mergeCollectionMaps },
-    createChatPlayerSeed: { enumerable: true, configurable: true, get: () => createChatPlayerSeed },
-    migrateLegacyPlayer: { enumerable: true, configurable: true, get: () => migrateLegacyPlayer },
-    activatePersona: { enumerable: true, configurable: true, get: () => activatePersona },
-});
-}
+export { getCurrentPersonaName, getCurrentPersonaKey, resolvePersonaAvatarAndName, personaDescription, getPlayerCard, getPlayerImageUrl, mergeCollectionMaps, createChatPlayerSeed, migrateLegacyPlayer, activatePersona };

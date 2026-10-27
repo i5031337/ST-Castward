@@ -1,3 +1,7 @@
+import { sessionCache } from './status-session-context.js';
+import { loadStateFromMetadata } from './status-state-storage.js';
+import { formatCompactStatus } from './status-status-summary.js';
+import { describeNpcStatFields } from './status-stat-values.js';
 import { getContext } from '../../../../../st-context.js';
 import { buildLocationSceneContext, recentLocationMessages } from '../locations/location-context.js';
 import { collectionQuantityField } from '../core/collection-fields.js';
@@ -13,14 +17,13 @@ import { DEFAULT_INLINE_RULES } from '../core/settings-tracker-defaults.js';
 import { debugLog } from '../core/constants.js';
 import { noteActivatedLore } from '../lore/activated-lore.js';
 
-export function bind(deps) {
 /**
  * Builds the system instruction for the AI
  */
 // Exported for the tests: the prompt texts are checked to send exactly what they did.
 function getStatusInstructions() {
     const settings = getSettings().statusTracker;
-    const currentState = deps.committedState || deps.loadStateFromMetadata();
+    const currentState = sessionCache.state || loadStateFromMetadata();
 
     const statDefinitions = describeStatDefinitions(settings);
 
@@ -48,10 +51,10 @@ function getStatusInstructions() {
     const places = currentState?.locations?.enabled
         ? buildLocationSceneContext(currentState, recentLocationMessages(getContext()?.chat)) : '';
     return '\n' + promptText('storyBlock', {
-        status: deps.formatCompactStatus(currentState, true, places),
+        status: formatCompactStatus(currentState, true, places),
         rules: applyMacros(DEFAULT_INLINE_RULES),
         statDefinitions,
-        npcFields: deps.describeNpcStatFields(settings),
+        npcFields: describeNpcStatFields(settings),
         schemas,
         xpProgression: progressionFields(settings, { isPlayer: true }).enabled
             || (settings.npcTemplates || []).some(template => template.progression?.enabled) ? 'on' : '',
@@ -65,7 +68,7 @@ function getStatusInstructions() {
 function getStatusExample() {
     // Use configured fields so the example does not invent stats or imply a genre.
     const settings = getSettings().statusTracker;
-    const state = deps.committedState || deps.loadStateFromMetadata();
+    const state = sessionCache.state || loadStateFromMetadata();
     const first = (list) => (list || []).map(s => s?.name).filter(Boolean)[0];
 
     const statExample = (definitions, values, progression) => {
@@ -194,7 +197,7 @@ function buildSceneContext(given = null) {
         // produce full detail. It was in which argument this passed. A test that called the
         // renderer directly would have gone on passing throughout - and did, until it was
         // pointed here instead.
-        const state = given || deps.committedState || deps.loadStateFromMetadata();
+        const state = given || sessionCache.state || loadStateFromMetadata();
         if (!state) return '';
         /* Full detail, which this asked for and did not get for a long time.
 
@@ -210,7 +213,7 @@ function buildSceneContext(given = null) {
            precisely because it is writing the scene. */
         const places = state.locations?.enabled
             ? buildLocationSceneContext(state, recentLocationMessages(getContext()?.chat)) : '';
-        return deps.formatCompactStatus(state, true, places).trim();
+        return formatCompactStatus(state, true, places).trim();
     } catch (err) {
         debugLog('Could not build the scene context', err);
         return '';
@@ -221,11 +224,4 @@ function buildSceneContext(given = null) {
  * Parses a message for status updates.
  */
 
-Object.defineProperties(deps, {
-    getStatusInstructions: { enumerable: true, configurable: true, get: () => getStatusInstructions },
-    getStatusExample: { enumerable: true, configurable: true, get: () => getStatusExample },
-    applyScenePrompt: { enumerable: true, configurable: true, get: () => applyScenePrompt },
-    onGenerationStarted: { enumerable: true, configurable: true, get: () => onGenerationStarted },
-    buildSceneContext: { enumerable: true, configurable: true, get: () => buildSceneContext },
-});
-}
+export { getStatusInstructions, getStatusExample, applyScenePrompt, onGenerationStarted, buildSceneContext };

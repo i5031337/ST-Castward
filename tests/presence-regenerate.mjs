@@ -1,3 +1,4 @@
+import { bindStatusModule } from './helpers/status-module.mjs';
 import { buildActorState } from '../src/tracker/actor-calculation.js';
 import { activeNpcSystem } from '../src/core/npc-templates.js';
 import assert from 'node:assert/strict';
@@ -6,6 +7,7 @@ import { readFileSync } from 'node:fs';
 import { diffTurnValues, applyTurnValues, turnEffectStatus } from '../src/tracker/snapshots/status-turn-delta.js';
 
 function load(path, deps, exports) {
+    if (exports === 'bind') return { bind: state => bindStatusModule(new URL(path, import.meta.url), state, deps) };
     const source = readFileSync(new URL(path, import.meta.url), 'utf8')
         .replace(/^import\s+[\s\S]*?\s+from\s+['"][^'"]+['"];\s*/gm, '')
         .replaceAll('export ', '');

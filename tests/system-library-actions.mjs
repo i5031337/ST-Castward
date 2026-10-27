@@ -1,6 +1,6 @@
+import { bindStatusModule } from './helpers/status-module.mjs';
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { readFileSync } from 'node:fs';
 import { createInitialSettings } from '../src/core/settings-initial.js';
 import { defaultSettings } from '../src/core/settings-defaults.js';
 import { normalizeSystemDefinition, projectSystemTracker, SYSTEM_SCHEMA_VERSION } from '../src/core/system-schema.js';
@@ -16,16 +16,14 @@ function library() {
     let saves = 0;
     const noop = () => {};
     const inputs = {
-        getSettings: () => settings,
+        getSettings: () => settings, getContext: () => context, restoreNpcRoster() {},
         saveSettings: () => { saves++; captureNpcRoster(settings, context); },
         defaultSettings, normaliseStatDefs: noop,
         normaliseStatUpdatePolicies: noop, normalizeTrackerProgression: noop,
         normalizeSystemDefinition, projectSystemTracker, SYSTEM_SCHEMA_VERSION, systemStatFields, debugLog: noop,
     };
-    const source = readFileSync(new URL('../src/tracker/status-system-presets.js', import.meta.url), 'utf8')
-        .replace(/^import[\s\S]*?;\s*/gm, '').replace('export function bind(deps)', 'function bind(deps)');
     const deps = { chatHasStarted: () => true, getChatSystem: () => context.chatMetadata.sillynpc_system };
-    new Function(...Object.keys(inputs), `${source}\nreturn bind;`)(...Object.values(inputs))(deps);
+    bindStatusModule(new URL('../src/tracker/status-system-presets.js', import.meta.url), deps, inputs);
     return { settings, context, key, deps, saves: () => saves };
 }
 

@@ -42,7 +42,7 @@ with browser_session() as browser:
                 try {
                     const { bind, installFixture } = await import(url);
                     installFixture(settings);
-                    const deps = { committedState: {}, getCurrentPersonaName: () => 'Player', recordRefusedValues() {} };
+                    const deps = { committedState: {}, getCurrentPersonaName: () => 'Player' };
                     bind(deps);
                     const actor = { name: 'Player', collections: {} };
                     deps.applyCollectionUpdate(actor, 'inventory', { add: [{ name: 'Potion', quantity: 2 }] }, { dryRun: true });

@@ -1,6 +1,6 @@
+import { bindStatusModule } from './helpers/status-module.mjs';
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { readFileSync } from 'node:fs';
 import { captureNpcRoster, seedNpcRoster, setNpcRosterEnabled, setNpcRosterOption } from '../src/characters/system-npc-roster.js';
 import { applyRosterStateSeed, clearRosterState } from '../src/characters/system-roster-state.js';
 import { readNpcMemories, writeNpcMemories } from '../src/tracker/npc-memories.js';
@@ -167,15 +167,10 @@ test('clear saved roster clears map and memories without republishing unchanged 
 test('tracker-only saves publish Places and memory edits through the production storage boundary', () => {
     const { settings, context, enable, state, card } = fixture();
     enable();
-    const source = readFileSync(new URL('../src/tracker/status-state-storage.js', import.meta.url), 'utf8')
-        .replace(/^import\s+[\s\S]*?\s+from\s+['"][^'"]+['"];\s*/gm, '')
-        .replace('export function bind', 'function bind');
     let saves = 0;
-    const bind = new Function('getSettings', 'getContext', 'captureNpcRoster', 'saveSettings',
-        `${source}\nreturn bind;`)(() => settings, () => context, captureNpcRoster, () => { saves++; });
     const deps = { getMetadata: () => context.chatMetadata, hasOpenChat: () => true,
         currentChatId: () => 'old', stateOrigin: new WeakMap(), STATE_KEY: 'sillynpc_status_state' };
-    bind(deps);
+    bindStatusModule(new URL('../src/tracker/status-state-storage.js', import.meta.url), deps, { getSettings: () => settings, getContext: () => context, captureNpcRoster, saveSettings: () => { saves++; } });
     const updated = structuredClone(state);
     updated.locations.records.inn.description = 'Changed by tracker';
     writeNpcMemories(updated, card, { entries: ['Changed by memory reader'] });

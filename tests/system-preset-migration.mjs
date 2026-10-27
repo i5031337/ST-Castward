@@ -1,3 +1,4 @@
+import { bindStatusModule } from './helpers/status-module.mjs';
 import { normalizeTrackerProgression } from '../src/core/progression-config.js';
 import assert from 'node:assert/strict';
 import test from 'node:test';
@@ -17,11 +18,9 @@ const settings = {
 let saves = 0;
 const deps = {};
 function loadBind(file, names, values) {
-    const source = readFileSync(new URL(`../src/tracker/${file}`, import.meta.url), 'utf8')
-        .replace(/^import[\s\S]*?;\s*/gm, '')
-        .replace('export function bind(deps)', 'function bind(deps)');
-    return new Function(...names, `${source}\nreturn bind;`)(...values);
+    return deps => bindStatusModule(new URL(`../src/tracker/${file}`, import.meta.url), deps, { getContext: () => null, restoreNpcRoster() {}, ...Object.fromEntries(names.map((name, index) => [name, values[index]])) });
 }
+
 const bindPresets = loadBind('status-system-presets.js', [
     'getSettings', 'saveSettings', 'defaultSettings', 'normaliseStatDefs',
     'normaliseStatUpdatePolicies', 'normalizeSystemDefinition',

@@ -5,7 +5,7 @@ import { getAllCharacters } from '../../characters/character-repository.js';
 import { getContext } from '../../../../../../st-context.js';
 import { getSettings } from '../../core/settings.js';
 import { LOG_PREFIX, debugLog } from '../../core/constants.js';
-import { loadStateFromMetadata, getCurrentPersonaKey, getCurrentPersonaName, rememberSwipeBase, refreshTurnBase, sanitizeModelUpdate, reconcileScenePresence, applyUpdate, takeRefusedValues, takeCollectionWarnings } from '../status-logic.js';
+import { loadStateFromMetadata, getCurrentPersonaKey, getCurrentPersonaName, rememberSwipeBase, refreshTurnBase, sanitizeModelUpdate, reconcileScenePresence, applyUpdate } from '../status-logic.js';
 import { computeStateDiff, partitionChanges, buildUpdateFromChanges, attachReasons } from '../status-diff.js';
 import { setPendingChanges, isItemDecided } from '../status-review.js';
 import { recordAppliedChanges } from '../snapshots/status-snapshots.js';
@@ -215,13 +215,11 @@ async function performExtraction(messageText, messageId, options, signal) {
         // removals and implausible jumps can be held back for a look rather than
         // becoming fact.
         const currentState = loadStateFromMetadata();
-        // Isolate this reply's preview diagnostics.
-        takeRefusedValues();
-        takeCollectionWarnings();
-        const wouldBe = applyUpdate(parsed, { dryRun: true, admitCharacters: true, warnings, messageId });
+        const diagnostics = { refusedValues: [], collectionWarnings: [] };
+        const wouldBe = applyUpdate(parsed, { dryRun: true, admitCharacters: true, warnings, diagnostics, messageId });
         if (!wouldBe) return staleResult();
-        warnings.push(...takeCollectionWarnings());
-        const refused = takeRefusedValues().map(({ field, wanted, allowed, kept }) =>
+        warnings.push(...diagnostics.collectionWarnings);
+        const refused = diagnostics.refusedValues.map(({ field, wanted, allowed, kept }) =>
             `${field}: "${wanted}" is not one of ${allowed.join(', ')} - kept "${kept}"`);
         if (refused.length) debugLog('Values refused by their allowed lists', refused);
         const proposed = computeStateDiff(currentState, wouldBe, trackerSettings);

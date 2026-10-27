@@ -1,3 +1,4 @@
+import { bindStatusModule } from '../helpers/status-module.mjs';
 import * as statValueUtils from '../../src/tracker/stat-value-utils.js';
 import { groupIncomingStats } from '../../src/tracker/status-update-parser.js';
 import { readFileSync } from 'node:fs';
@@ -66,14 +67,17 @@ export async function harness(systemId, state, { chat = [] } = {}) {
     cache.set(new URL('../../src/core/profile-fields.js', import.meta.url).href, profiles);
     const prompt = await load('../../src/tracker/extractor/status-extractor-prompt.js');
     const schema = await load('../../src/tracker/extractor/status-extractor-schema.js');
-    const statValues = await load('../../src/tracker/status-stat-values.js');
     const deps = { ...statValueUtils, findCardForName: () => null, allowedValues: def => def.options || [],
         findMatchingStatKey: (values, name) => Object.keys(values).find(key => key.toLowerCase() === name.toLowerCase()) };
-    statValues.bind(deps);
-    (await load('../../src/tracker/status-update-constraints.js')).bind(deps);
+    const host = { ...templates, ...profiles, ...constants, ...bounds, ...statValueUtils,
+        getSettings: () => root, saveSettings() {}, getAllCharacters: () => [],
+        getContext: () => ({ chat }), eventSource: { emit() {} } };
+    const bind = file => bindStatusModule(new URL(`../../src/tracker/${file}.js`, import.meta.url), deps, host);
+    bind('status-stat-values');
+    bind('status-update-constraints');
     deps.groupIncomingStats = groupIncomingStats;
     Object.assign(deps, { committedState: {}, getCurrentPersonaName: () => 'Alex', getMergedItem: (_id, item) => item });
-    (await load('../../src/tracker/status-collection-updates.js')).bind(deps);
+    bind('status-collection-updates');
     Object.assign(deps, {
         resolveCanonicalName: name => name,
         mayJoinScene: () => true,
@@ -81,7 +85,7 @@ export async function harness(systemId, state, { chat = [] } = {}) {
         hasOpenChat: () => true,
         saveStateToMetadata() {},
     });
-    (await load('../../src/tracker/status-apply-update.js')).bind(deps);
+    bind('status-apply-update');
     return { settings, system, collectLeadUp: prompt.collectLeadUp,
         prompt: (text, earlier = []) => prompt.buildUserPrompt(state, text, settings, earlier),
         schema: schema.buildExtractionSchema(settings, { state }),
@@ -95,19 +99,24 @@ export async function harness(systemId, state, { chat = [] } = {}) {
             // XP progression and collection updates to a disposable state copy.
             deps.committedState = structuredClone(state);
             deps.committedState.player.name ||= 'Alex';
-            const effective = deps.applyUpdate(update, { dryRun: true, admitCharacters: true, warnings });
+            const diagnostics = {};
+            const effective = deps.applyUpdate(update, { dryRun: true, admitCharacters: true, warnings, diagnostics });
+            const collectionWarnings = [...diagnostics.collectionWarnings];
             const holdings = { player: { ...structuredClone(state.player), name: 'Alex' }, characters: structuredClone(state.characters) };
             for (const [owner, proposed] of [[holdings.player, update.player], ...(update.characters || []).map(actor => {
                 let held = holdings.characters.find(entry => entry.name.toLowerCase() === actor.name.toLowerCase());
                 if (!held) { held = { name: actor.name, npcTemplateId: actor.npcTemplateId || 'character', collections: {} }; holdings.characters.push(held); }
                 return [held, actor];
             })]) {
-                for (const [id, change] of Object.entries(proposed?.collections || {})) deps.applyCollectionUpdate(owner, id, change, { dryRun: true });
+                for (const [id, change] of Object.entries(proposed?.collections || {})) {
+                    const result = deps.applyCollectionUpdate(owner, id, change, { dryRun: true });
+                    collectionWarnings.push(...result.warnings);
+                }
             }
             const playerXp = update.player?.stats?.XP ?? update.player?.XP;
             const progression = playerXp === undefined ? null : progressXp(state.player.stats.XP, playerXp, state.player.stats.Level);
             return { update, effective, progression, holdings,
-                warnings: [...warnings, ...places.warnings, ...deps.takeCollectionWarnings()], places: places.rows };
+                warnings: [...warnings, ...places.warnings, ...new Set(collectionWarnings)], places: places.rows };
         } };
 }
 export { constants, bounds };

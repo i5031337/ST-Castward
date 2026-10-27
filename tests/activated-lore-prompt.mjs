@@ -1,3 +1,4 @@
+import { bindStatusModule } from './helpers/status-module.mjs';
 import { collectionQuantityField } from '../src/core/collection-fields.js';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -15,15 +16,15 @@ test('a turn with no activated lore drops previous references and a later activa
     const settings = { enabled: true, statusTracker: { enabled: true, extractionMode: 'extract', collections: [] } };
     const deps = { committedState: { characters: [], player: { name: 'Hero', stats: {} } },
         statsInSystem: stats => stats || {} };
-    new Function('promptText', 'getSettings', 'charactersFromActivatedLore',
-        source('../src/tracker/status-status-summary.js') + '\nreturn bind;')(
-        promptText, () => settings, lore.charactersFromActivatedLore)(deps);
+    bindStatusModule(new URL('../src/tracker/status-status-summary.js', import.meta.url), deps, {
+        promptText, getSettings: () => settings, charactersFromActivatedLore: lore.charactersFromActivatedLore,
+    });
     const prompts = new Map();
-    new Function('getSettings', 'noteActivatedLore', 'setExtensionPrompt',
-        'extension_prompt_types', 'extension_prompt_roles', 'debugLog',
-        source('../src/tracker/status-scene-prompt.js') + '\nreturn bind;')(
-        () => settings, lore.noteActivatedLore, (key, value) => prompts.set(key, value),
-        { IN_CHAT: 1 }, { SYSTEM: 0 }, error => { throw error; })(deps);
+    bindStatusModule(new URL('../src/tracker/status-scene-prompt.js', import.meta.url), deps, {
+        getSettings: () => settings, noteActivatedLore: lore.noteActivatedLore,
+        setExtensionPrompt: (key, value) => prompts.set(key, value), extension_prompt_types: { IN_CHAT: 1 },
+        extension_prompt_roles: { SYSTEM: 0 }, debugLog: error => { throw error; },
+    });
     const activated = [{ world: 'Cast', uid: 1 }];
     const scene = () => prompts.get('sillynpc-status-scene');
     lore.noteActivatedLore(activated);

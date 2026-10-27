@@ -1,3 +1,4 @@
+import { bindStatusModule } from './helpers/status-module.mjs';
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFileSync } from 'node:fs';
@@ -142,19 +143,16 @@ test('changed reply uses the configured counted removal key and typed identifier
 });
 
 test('inline example uses absolute string readings and typed counted collection removals', () => {
-    const inlineSource = readFileSync(new URL('../src/tracker/status-scene-prompt.js', import.meta.url), 'utf8')
-        .replace(/^import\s+[\s\S]*?\s+from\s+['"][^'"]+['"];\s*/gm, '')
-        .replaceAll('export function ', 'function ');
     const settings = { playerStats: [{ name: 'HP', type: 'number' }], npcStats: [], collections: [
         { id: 'gear', targets: ['npc'], trackQuantity: true, fields: [
             { name: 'code', type: 'number', isPrimary: true }, { name: 'count', type: 'number' },
         ] },
     ] };
     const deps = { committedState: { player: { stats: { HP: '5/10' } }, characters: [{ name: 'Mira' }] } };
-    new Function('getSettings', 'isReaderStat', 'progressionFields', 'collectionAppliesTo',
-        'collectionQuantityField', 'promptText', `${inlineSource}\nreturn bind;`)(
-        () => ({ statusTracker: settings }), stat => !stat.locked, progressionFields,
-        collectionAppliesTo, collectionQuantityField, promptText)(deps);
+    bindStatusModule(new URL('../src/tracker/status-scene-prompt.js', import.meta.url), deps, {
+        getSettings: () => ({ statusTracker: settings }), isReaderStat: stat => !stat.locked,
+        progressionFields, collectionAppliesTo, collectionQuantityField, promptText,
+    });
     const example = JSON.parse(deps.getStatusExample().match(/<status_update>(.*)<\/status_update>/)[1]);
     assert.deepEqual(example.global, {});
     assert.deepEqual(example.player, { stats: { HP: '4/10' } });

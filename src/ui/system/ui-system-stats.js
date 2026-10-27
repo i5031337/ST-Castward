@@ -127,14 +127,12 @@ export function buildStatsEditor(settingsKey, onRefresh, context = liveSystemCon
                 return;
             }
 
-            stat.name = newName;
             const targets = fieldTargets(stat);
             const scopes = settingsKey === 'characterStats'
                 ? [targets.includes('player') && 'playerStats', targets.some(target => target === 'npc' || target.startsWith('template:')) && 'npcStats'].filter(Boolean)
                 : [settingsKey];
-            const carried = scopes.map(scope => renameStat(scope, oldName, newName, stat)).reduce((sum, result) => ({
-                values: sum.values + (result.values || 0), templateUpdated: sum.templateUpdated || result.templateUpdated, cssMentions: sum.cssMentions || result.cssMentions,
-            }), { values: 0 });
+            const carried = renameStat(scopes, oldName, newName, stat);
+            if (!carried) { e.target.value = oldName; return; }
             saveSettings();
 
             const parts = [];

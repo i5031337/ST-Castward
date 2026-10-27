@@ -24,6 +24,7 @@ export function renderCollectionsSection(char, container) {
             const charInState = char.isPlayer ? state?.player
                 : state?.characters?.find(c => c.name.toLowerCase() === char.name.toLowerCase());
             const actor = charInState ? { ...charInState, isPlayer: Boolean(char.isPlayer) } : {
+                id: char.id,
                 name: char.name,
                 isPlayer: Boolean(char.isPlayer),
                 npcTemplateId: char.npcTemplateId || '',

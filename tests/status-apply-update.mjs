@@ -1,10 +1,11 @@
-import { bind as bindConstraints } from '../src/tracker/status-update-constraints.js';
+import { bindStatusModule } from './helpers/status-module.mjs';
+import * as constraints from '../src/tracker/status-update-constraints.js';
+const bindConstraints = deps => Object.assign(deps, constraints);
 import { bindTrackerUpdate } from './fixtures/tracker-update-bind.mjs';
 import { buildActorState } from '../src/tracker/actor-calculation.js';
 import { activeNpcSystem } from '../src/core/npc-templates.js';
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { readFileSync } from 'node:fs';
 
 function fixture({ openChat = true } = {}) {
     const card = { id: 'mira', name: 'Mira', aliases: [], statusOverrides: {}, statusCollections: {} };
@@ -22,14 +23,13 @@ function fixture({ openChat = true } = {}) {
             { name: 'Jon', stats: { HP: '3' }, collections: {} },
         ], recently_deleted: { items: { lost: 1, retained: 2 } } };
     const metadata = { state: initial };
-    const calls = { saved: [], emitted: [], settings: 0, collectionWarnings: [] };
+    const calls = { saved: [], emitted: [], settings: 0 };
     const deps = { committedState: initial, committedChatId: 'test-chat',
         STATE_KEY: 'state', SYSTEM_KEY: 'system', getMetadata: () => metadata,
         currentChatId: () => 'test-chat', getCurrentPersonaKey: () => 'Alex.png',
         hasOpenChat: () => openChat,
         loadStateFromMetadata: () => initial, getCurrentPersonaName: () => 'Alex',
         resolveCanonicalName: name => name, mayJoinScene: () => true,
-        recordCollectionWarnings: values => calls.collectionWarnings.push(...values),
         saveStateToMetadata: (state, options) => {
             if (options.isCurrent && !options.isCurrent()) return false;
             options.beforeCommit?.();
@@ -110,11 +110,6 @@ test('missing chat rejects before card writes', () => {
 });
 
 test('reader-reported NPC survives speaker redraw without speaking', () => {
-    const source = readFileSync(new URL('../src/tracker/status-scene-presence.js', import.meta.url), 'utf8')
-        .replace(/^import\s+[\s\S]*?\s+from\s+['"][^'"]+['"];\s*/gm, '')
-        .replace('export function bind', 'function bind');
-    const bindPresence = new Function('activeNpcSystem', 'buildActorState', 'eventSource', 'getSettings', 'getAllCharacters', 'debugLog', 'getContext', 'syncNpcCollectionsToCards',
-        `${source}\nreturn bind;`);
     const settings = { statusTracker: {
         npcStats: [{ name: 'HP', defaultValue: '' }],
     } };
@@ -129,7 +124,7 @@ test('reader-reported NPC survives speaker redraw without speaking', () => {
         resolveMaxValue: () => '',
         saveStateToMetadata(state) { saved.push(structuredClone(state)); this.committedState = state; },
     };
-    bindPresence(activeNpcSystem, buildActorState, { emit() {} }, () => settings, () => [], () => {}, () => ({ chat: [] }), () => {})(deps);
+    bindStatusModule(new URL('../src/tracker/status-scene-presence.js', import.meta.url), deps, { activeNpcSystem, buildActorState, eventSource: { emit() {} }, getSettings: () => settings, getAllCharacters: () => [], debugLog() {}, getContext: () => ({ chat: [] }), syncNpcCollectionsToCards() {} });
 
     deps.reconcileScenePresence(['Other'], '4');
     deps.reconcileScenePresence(['Mira', 'Rejected'], '4', { authoritative: true });
@@ -234,4 +229,23 @@ test('preview warnings cover unknown and refused stats across actors without mut
     const nextWarnings = [];
     deps.applyUpdate({ player: { stats: { HP: '5' } } }, { dryRun: true, warnings: nextWarnings });
     assert.deepEqual(nextWarnings, []);
+});
+
+
+test('preview diagnostics belong to each call, including discarded previews', () => {
+    const { deps, settings } = fixture();
+    settings.statusTracker.playerStats[0].options = ['5'];
+    const first = {};
+    deps.applyUpdate({ player: { stats: { HP: 'invalid' }, collections: { missing: { add: [{ name: 'Key' }] } } } },
+        { dryRun: true, diagnostics: first });
+    assert.deepEqual(first.refusedValues, [{ field: 'HP', wanted: 'invalid', allowed: ['5'], kept: '5' }]);
+    assert.equal(first.collectionWarnings.length, 1);
+    assert.match(first.collectionWarnings[0], /unknown collection ID/);
+    const captured = structuredClone(first);
+    // A caller may discard its preview without consuming any shared diagnostics.
+    deps.applyUpdate({ player: { stats: { HP: 'other invalid' } } }, { dryRun: true });
+    const next = {};
+    deps.applyUpdate({ player: { stats: { HP: '5' } } }, { dryRun: true, diagnostics: next });
+    assert.deepEqual(next, { refusedValues: [], collectionWarnings: [] });
+    assert.deepEqual(first, captured);
 });

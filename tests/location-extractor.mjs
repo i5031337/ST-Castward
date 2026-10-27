@@ -55,7 +55,7 @@ function fixture({ enabled = true, afterRequest, afterLocationRequest, reviewMod
         loadStateFromMetadata: () => state, getCurrentPersonaKey: () => context.personaId, getCurrentPersonaName: () => 'Alex',
         prepareSceneLocationReading,
         rememberSwipeBase: () => {}, refreshTurnBase: () => {}, sanitizeModelUpdate: () => {},
-        reconcileScenePresence: () => {}, takeRefusedValues: () => [], takeCollectionWarnings: () => [],
+        reconcileScenePresence: () => {},
         applyUpdate: (update, options) => {
             const next = { ...state, global: { ...state.global, ...update.global } };
             if (!options.dryRun) state = next;

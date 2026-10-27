@@ -92,6 +92,9 @@ This map covers tracked runtime files, tests and support files. Source files and
 | `tests/status-apply-update.mjs` | Tracker update, dry-run, and no-chat behavior tests. |
 | `tests/tracker-update-calculation.mjs` | Immutable full update plans, explicit System, offstage separation and progression policies. |
 | `tests/tracker-update-commit.mjs` | Ownership and storage rejection, accepted effect ordering, undo/swipe, and cache provenance checks. |
+| `tests/collection-editor.mjs`, `tests/schema-operations.mjs`, `tests/tracker-lifecycle.mjs` | Guarded manual/schema edits, no-chat operations, and stale/reentrant lifecycle activation. |
+| `tests/helpers/status-module.mjs` | Evaluate production module exports with isolated named host imports for Node tests. |
+| `tests/ui-architectural-cleanup.py`, `tests/fixtures/ui-collection-editor.js`, `tests/fixtures/ui-tracker-lifecycle.js`, `tests/fixtures/ui-schema-operations.js` | Unsaved browser fixtures for accepted/stale item and schema edits and real host-emitter lifecycle wiring. |
 | `tests/fixtures/tracker-update-bind.mjs` | Load the update host wrapper with production calculation imports and isolated host stores. |
 | `tests/settings-migration.mjs` | Settings import repair and version-gated HUD migration tests. |
 | `tests/field-assignments.mjs` | Shared field assignment overlap and conflict rules. |
@@ -194,29 +197,37 @@ This map covers tracked runtime files, tests and support files. Source files and
 | `src/tracker/stat-persistence.js` | Rules for NPC stat persistence. |
 | `src/tracker/stat-update-policy.js` | Reader locking and migration of retired stat policies. |
 | `src/tracker/status-history.js` | Raw status block preservation and chat overhead measurement. |
-| `src/tracker/status-logic.js` | Player and NPC state, model updates, cast, items, and Systems. |
+| `src/tracker/status-logic.js` | Public exports for tracker state, model updates, cast, items, and Systems. |
 | `src/tracker/stat-value-utils.js` | Host-independent stat merging, pool ceilings, defaults, and meter predicates. |
 | `src/tracker/stat-field-utils.js` | Allowed-value lists and stat-name/synonym matching. |
 | `src/tracker/status-stat-values.js` | Model update sanitization and NPC field descriptions. |
-| `src/tracker/status-stat-schema.js` | Stat definition lookup and schema helpers. |
+| `src/tracker/status-stat-schema.js` | Submit stat and collection-field rename operations with explicit storage capabilities. |
+| `src/tracker/status-stat-filter.js` | Read declared stat values without importing schema mutations. |
 | `src/tracker/status-persona-state.js` | Reusable persona identity/profile and chat-local player stats, collections, and memories. |
-| `src/tracker/status-chat-session.js` | Chat persona/system session lifecycle. |
+| `src/tracker/status-chat-session.js` | Wire lifecycle events, restore chat bindings, and maintain reply/swipe snapshots. |
+| `src/tracker/status-session-context.js` | Chat identity/bindings, transient cache/provenance, and the explicit swipe-alignment hook. |
+| `src/tracker/tracker-lifecycle.js` | Coordinate System, roster, persona and view activation; serialize host restores and discard obsolete continuations. |
 | `src/tracker/status-state-storage.js` | Validate cached-state provenance, accept guarded commits, and retain metadata history/undo. |
 | `src/tracker/status-status-summary.js` | Format status summaries. |
 | `src/tracker/status-scene-prompt.js` | Build scene context and status instructions. |
 | `src/tracker/status-update-parser.js` | Ordinary exports for parsing inline updates and grouping stat fragments. |
 | `src/tracker/stat-field-calculation.js` | Pure field validation returning values, warnings, and refusals. |
-| `src/tracker/status-update-constraints.js` | Adapt field validation to existing tracker APIs and diagnostic queues. |
+| `src/tracker/status-update-constraints.js` | Adapt field validation to scalar APIs with explicit diagnostic callbacks. |
 | `src/tracker/actor-calculation.js` | Pure NPC initialization and stat readings with explicit System and local diagnostics. |
 | `src/tracker/tracker-update-calculation.js` | Pure full update calculation returning state, card/library plans and separate offstage comparisons. |
 | `src/tracker/status-apply-update.js` | Capture host inputs and ownership, adapt previews, and submit calculated plans to the commit boundary. |
 | `src/tracker/tracker-update-commit.js` | Validate captured ownership and commit related effects only after storage acceptance. |
 | `src/tracker/status-cast-decisions.js` | Record player, excluded, and character cast decisions. |
+| `src/tracker/status-character-match.js` | Resolve card names and aliases without depending on tracker storage. |
 | `src/tracker/status-scene-presence.js` | Reconcile scene presence and active characters using pure actor initialization. |
 | `src/tracker/collection-calculation.js` | Calculate collections, tombstones, and proposed Item Library additions from explicit inputs. |
 | `src/tracker/status-collection-updates.js` | Capture live collection inputs and apply calculated results through existing tracker APIs. |
 | `src/tracker/npc-collections.js` | Copy current NPC collections onto character cards so belongings survive scene departure. |
-| `src/tracker/status-collection-schema.js` | Rename collection fields and stat schema references. |
+| `src/tracker/status-collection-schema.js` | Item Library operations, collection-ID renames, and card override synchronization. |
+| `src/tracker/schema-operation-calculation.js` | Calculate schema/library writes and stored-value migrations from supplied data. |
+| `src/tracker/schema-operation-runtime.js` | Validate operation ownership and install schema/library plans after storage acceptance. |
+| `src/tracker/collection-editor-calculation.js` | Calculate authoritative manual item edits and commit related accepted effects. |
+| `src/tracker/collection-editor.js` | Keep delayed manual item edits bound to their displayed owner and item. |
 | `src/tracker/status-system-presets.js` | Active System, reusable definitions, chat locking, import, detail edits, and independent duplication of rules and local carryover rosters. Renames update display metadata and definition names while retaining library keys used by chats and rosters. |
 | `src/tracker/npc-memories.js` | Store NPC memories in chat-owned or reusable character records. |
 | `src/memory/memory-batch.js`, `src/memory/memory-prompt.js` | Bound transcript batches, validate sourced NPC additions, and build the separate memory request. |

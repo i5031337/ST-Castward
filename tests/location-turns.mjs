@@ -1,3 +1,4 @@
+import { bindStatusModule } from './helpers/status-module.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -6,8 +7,9 @@ import { diffTurnValues, applyTurnValues, turnEffectStatus } from '../src/tracke
 const source = file => readFileSync(new URL(file, import.meta.url), 'utf8')
     .replace(/^import\s+[\s\S]*?\s+from\s+['"][^'"]+['"];\s*/gm, '')
     .replaceAll('export function ', 'function ');
-const evaluate = (file, dependencies, result) => new Function(...Object.keys(dependencies),
-    `${source(file)}\nreturn ${result};`)(...Object.values(dependencies));
+const evaluate = (file, dependencies, result) => result === 'bind'
+    ? deps => bindStatusModule(new URL(file, import.meta.url), deps, dependencies)
+    : new Function(...Object.keys(dependencies), `${source(file)}\nreturn ${result};`)(...Object.values(dependencies));
 
 function fixture(initial) {
     let state = structuredClone(initial);

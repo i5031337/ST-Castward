@@ -1,119 +1,22 @@
-// Public status API. Implementation is grouped by responsibility in status-*.js.
-import { bind as bind_stat_values } from './status-stat-values.js';
-import { bind as bind_persona_state } from './status-persona-state.js';
-import { bind as bind_chat_session } from './status-chat-session.js';
-import { bind as bind_state_storage } from './status-state-storage.js';
-import { bind as bind_status_summary } from './status-status-summary.js';
-import { bind as bind_scene_prompt } from './status-scene-prompt.js';
-import { clampToCeiling, getInitialStatValue } from './stat-value-utils.js';
-import { bind as bind_update_constraints } from './status-update-constraints.js';
-import { bind as bind_apply_update } from './status-apply-update.js';
-import { bind as bind_cast_decisions } from './status-cast-decisions.js';
-import { bind as bind_scene_presence } from './status-scene-presence.js';
-import { bind as bind_collection_updates } from './status-collection-updates.js';
-import { bind as bind_collection_schema } from './status-collection-schema.js';
-import { bind as bind_stat_schema } from './status-stat-schema.js';
-import { bind as bind_system_presets } from './status-system-presets.js';
-
-// Bind every provider before callers use the shared API. Each provider registers
-// named getters, so cross-module calls resolve after initialization completes.
-const deps = { clampToCeiling, getInitialStatValue };
-for (const bind of [
-    bind_stat_values,
-    bind_persona_state,
-    bind_chat_session,
-    bind_state_storage,
-    bind_status_summary,
-    bind_scene_prompt,
-    bind_update_constraints,
-    bind_apply_update,
-    bind_cast_decisions,
-    bind_scene_presence,
-    bind_collection_updates,
-    bind_collection_schema,
-    bind_stat_schema,
-    bind_system_presets,
-]) bind(deps);
-Object.freeze(deps);
-
+// Public tracker API; implementations declare their own dependencies.
 export { mergeStatValue, resolveMaxValue, promptCeiling, isNumericStat, meterHasCeiling,
     drawsMeter, clampToCeiling, getInitialStatValue } from './stat-value-utils.js';
 export { parseMessageForUpdates, splitStatKeyPart } from './status-update-parser.js';
 
-export const sanitizeModelUpdate = deps.sanitizeModelUpdate;
-export const describeNpcStatFields = deps.describeNpcStatFields;
-export const getCurrentPersonaKey = deps.getCurrentPersonaKey;
-export const getCurrentPersonaName = deps.getCurrentPersonaName;
-export const getPlayerCard = deps.getPlayerCard;
-export const getPlayerImageUrl = deps.getPlayerImageUrl;
-export const createChatPlayerSeed = deps.createChatPlayerSeed;
-export const activatePersona = deps.activatePersona;
-export const getPersonaData = deps.getPersonaData;
-export const rememberSwipeBase = deps.rememberSwipeBase;
-export const restoreProfiles = deps.restoreProfiles;
-export const getSwipeBase = deps.getSwipeBase;
-export const swipeBaseRecord = deps.swipeBaseRecord;
-export const setSwipeBaseAligner = deps.setSwipeBaseAligner;
-export const getProfileBase = deps.getProfileBase;
-export const snapshotProfiles = deps.snapshotProfiles;
-export const recordTurnEffects = deps.recordTurnEffects;
-export const refreshTurnBase = deps.refreshTurnBase;
-export const initStatusLogic = deps.initStatusLogic;
-export const PERSONA_KEY = deps.PERSONA_KEY;
-export const hasOpenChat = deps.hasOpenChat;
-export const getChatPersona = deps.getChatPersona;
-export const rememberChatPersona = deps.rememberChatPersona;
-export const restoreChatPersona = deps.restoreChatPersona;
-export const SYSTEM_KEY = deps.SYSTEM_KEY;
-export const getChatSystem = deps.getChatSystem;
-export const chatHasStarted = deps.chatHasStarted;
-export const restoreChatSystem = deps.restoreChatSystem;
-export const loadStateFromMetadata = deps.loadStateFromMetadata;
-export const saveStateToMetadata = deps.saveStateToMetadata;
-export const getHistoryEntries = deps.getHistoryEntries;
-export const undoLastChange = deps.undoLastChange;
-export const formatCompactStatus = deps.formatCompactStatus;
-export const getStatusInstructions = deps.getStatusInstructions;
-export const getStatusExample = deps.getStatusExample;
-export const applyScenePrompt = deps.applyScenePrompt;
-export const buildSceneContext = deps.buildSceneContext;
-export const allowedValues = deps.allowedValues;
-export const takeRefusedValues = deps.takeRefusedValues;
-export const takeCollectionWarnings = deps.takeCollectionWarnings;
-export const constrainToOptions = deps.constrainToOptions;
-export const capToLength = deps.capToLength;
-export const constrainToDefinition = deps.constrainToDefinition;
-export const findMatchingStatKey = deps.findMatchingStatKey;
-export const applyUpdate = deps.applyUpdate;
-export const findCardForName = deps.findCardForName;
-export const resolveCanonicalName = deps.resolveCanonicalName;
-export const CAST_PERSONA = deps.CAST_PERSONA;
-export const CAST_EXCLUDED = deps.CAST_EXCLUDED;
-export const getCastDecisions = deps.getCastDecisions;
-export const setCastDecision = deps.setCastDecision;
-export const resolvePersonaSpeaker = deps.resolvePersonaSpeaker;
-export const mayJoinScene = deps.mayJoinScene;
-export const reconcileScenePresence = deps.reconcileScenePresence;
-export const registerActiveCharacter = deps.registerActiveCharacter;
-export const removeActiveCharacter = deps.removeActiveCharacter;
-export const addItem = deps.addItem;
-export const removeItem = deps.removeItem;
-export const syncOverrideToActiveState = deps.syncOverrideToActiveState;
-export const getMergedItem = deps.getMergedItem;
-export const updateMasterItem = deps.updateMasterItem;
-export const renameMasterItem = deps.renameMasterItem;
-export const deleteMasterItem = deps.deleteMasterItem;
-export const renameCollectionId = deps.renameCollectionId;
-export const statsInSystem = deps.statsInSystem;
-export const renameStat = deps.renameStat;
-export const renameCollectionField = deps.renameCollectionField;
-export const getActiveSystem = deps.getActiveSystem;
-export const migrateToActiveSystem = deps.migrateToActiveSystem;
-export const setActiveSystem = deps.setActiveSystem;
-export const createSystem = deps.createSystem;
-export const editSystemDetails = deps.editSystemDetails;
-export const duplicateSystem = deps.duplicateSystem;
-export const saveSystemPreset = deps.saveSystemPreset;
-export const applySystemPreset = deps.applySystemPreset;
-export const deleteSystemPreset = deps.deleteSystemPreset;
-export const importSystemPreset = deps.importSystemPreset;
+export { sanitizeModelUpdate, describeNpcStatFields } from './status-stat-values.js';
+export { getCurrentPersonaKey, getCurrentPersonaName, getPlayerCard, getPlayerImageUrl, createChatPlayerSeed, activatePersona } from './status-persona-state.js';
+export { getPersonaData, rememberSwipeBase, restoreProfiles, getSwipeBase, swipeBaseRecord, getProfileBase, snapshotProfiles, recordTurnEffects, refreshTurnBase, initStatusLogic, getChatPersona, rememberChatPersona, restoreChatPersona, restoreChatSystem } from './status-chat-session.js';
+export { setSwipeBaseAligner, PERSONA_KEY, hasOpenChat, SYSTEM_KEY, getChatSystem, chatHasStarted } from './status-session-context.js';
+export { loadStateFromMetadata, saveStateToMetadata, getHistoryEntries, undoLastChange } from './status-state-storage.js';
+export { formatCompactStatus } from './status-status-summary.js';
+export { getStatusInstructions, getStatusExample, applyScenePrompt, buildSceneContext, onGenerationStarted } from './status-scene-prompt.js';
+export { allowedValues, constrainToOptions, capToLength, constrainToDefinition, findMatchingStatKey } from './status-update-constraints.js';
+export { applyUpdate } from './status-apply-update.js';
+export { findCardForName, resolveCanonicalName } from './status-character-match.js';
+export { CAST_PERSONA, CAST_EXCLUDED, getCastDecisions, setCastDecision, resolvePersonaSpeaker, mayJoinScene } from './status-cast-decisions.js';
+export { reconcileScenePresence, registerActiveCharacter, removeActiveCharacter } from './status-scene-presence.js';
+export { addItem, removeItem } from './status-collection-updates.js';
+export { syncOverrideToActiveState, getMergedItem, updateMasterItem, renameMasterItem, deleteMasterItem, renameCollectionId } from './status-collection-schema.js';
+export { statsInSystem } from './status-stat-filter.js';
+export { renameStat, renameCollectionField } from './status-stat-schema.js';
+export { getActiveSystem, migrateToActiveSystem, setActiveSystem, createSystem, editSystemDetails, duplicateSystem, saveSystemPreset, applySystemPreset, deleteSystemPreset, importSystemPreset } from './status-system-presets.js';

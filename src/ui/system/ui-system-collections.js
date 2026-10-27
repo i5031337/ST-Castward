@@ -214,8 +214,8 @@ function wireCollectionIdRename(colWrap, col, collections, onRefresh, context) {
             e.target.value = oldId;
             return;
         }
-        col.id = newId;
-        const moved = renameCollectionId(oldId, newId);
+        const moved = renameCollectionId(oldId, newId, col);
+        if (moved === null) { e.target.value = oldId; return; }
         saveSettings();
         if (moved) {
             toastr.success(`Renamed to "${newId}" and carried ${moved} item${moved === 1 ? '' : 's'} across.`, 'Castward');

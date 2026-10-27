@@ -1,10 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
-import { fieldAppliesTo } from '../src/core/system-fields.js';
-
-const source = readFileSync(new URL('../src/tracker/status-stat-schema.js', import.meta.url), 'utf8')
-    .replace(/^import .*;\n/gm, '').replace('export function bind', 'function bind');
+import { calculateSchemaOperation, installSchemaWrites } from '../src/tracker/schema-operation-calculation.js';
 
 test('shared stat rename follows assignments and preserves other template readings', () => {
     const field = { id: 'health', name: 'Health', targets: ['player', 'template:mage'] };
@@ -17,16 +13,14 @@ test('shared stat rename follows assignments and preserves other template readin
             { npcTemplateId: 'beast', stats: { Health: '9' } }] };
     const cards = [{ npcTemplateId: 'mage', statusOverrides: { Health: '5' } },
         { npcTemplateId: 'beast', statusOverrides: { Health: '12' } }];
-    const deps = { committedState: state, saveStateToMetadata() {} };
-    const bind = new Function('fieldAppliesTo', 'getSettings', 'saveSettings', 'getLibraryCharacters',
-        `${source}\nreturn bind;`)(fieldAppliesTo, () => settings, () => {}, () => cards);
-    bind(deps);
-    deps.renameStat('npcStats', 'Health', 'Vitality', field);
-    deps.renameStat('playerStats', 'Health', 'Vitality', field);
-    assert.deepEqual(state.player.stats, { Vitality: '4' });
-    assert.deepEqual(state.players.inactive.stats, { Vitality: '8' });
-    assert.deepEqual(state.characters[0].stats, { Vitality: '3' });
-    assert.deepEqual(state.characters[1].stats, { Health: '9' });
+    const plan = calculateSchemaOperation({ tracker: settings.statusTracker, system, state, cards,
+        operation: { type: 'stat', scopes: ['npcStats', 'playerStats'], oldName: 'Health', newName: 'Vitality', field } });
+    installSchemaWrites(plan.writes);
+    const next = plan.nextState;
+    assert.deepEqual(next.player.stats, { Vitality: '4' });
+    assert.deepEqual(next.players.inactive.stats, { Vitality: '8' });
+    assert.deepEqual(next.characters[0].stats, { Vitality: '3' });
+    assert.deepEqual(next.characters[1].stats, { Health: '9' });
     assert.deepEqual(cards[0].statusOverrides, { Vitality: '5' });
     assert.deepEqual(cards[1].statusOverrides, { Health: '12' });
 });

@@ -1,15 +1,13 @@
+import { bindStatusModule } from './helpers/status-module.mjs';
 import { bindCollectionUpdates } from './fixtures/collection-updates-bind.mjs';
 import { isStaticField } from '../src/core/constants-profile.js';
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { readFileSync } from 'node:fs';
 
 function bindSource(path, dependencies, deps) {
-    const source = readFileSync(new URL(path, import.meta.url), 'utf8')
-        .replace(/^import\s+[\s\S]*?\s+from\s+['"][^'"]+['"];\s*/gm, '')
-        .replace('export function bind', 'function bind');
-    new Function(...Object.keys(dependencies), `${source}\nreturn bind;`)(...Object.values(dependencies))(deps);
+    bindStatusModule(new URL(path, import.meta.url), deps, dependencies);
 }
+
 function fixture(masterItems) {
     const settings = { statusTracker: { collections: [{ id: 'moves', target: 'all', fields: [
         { name: 'move', type: 'text', isPrimary: true },
@@ -71,9 +69,9 @@ test('collection operations without tombstone checks do not load or repair track
         loadStateFromMetadata: () => { throw new Error('Unexpected state load'); } };
     bindCollectionUpdates(deps, { getSettings: () => settings });
     const actor = { name: 'Mira', collections: { moves: [{ move: 'Spark' }] } };
-    deps.applyCollectionUpdate(actor, 'missing', { add: [{ move: 'Spark' }] }, { dryRun: true });
-    deps.applyCollectionUpdate(actor, 'moves', { add: [{ move: 'Spark' }] }, { dryRun: true });
-    assert.equal(deps.takeCollectionWarnings().length, 2);
+    const missing = deps.applyCollectionUpdate(actor, 'missing', { add: [{ move: 'Spark' }] }, { dryRun: true });
+    const mismatch = deps.applyCollectionUpdate(actor, 'moves', { add: [{ move: 'Spark' }] }, { dryRun: true });
+    assert.equal(missing.warnings.length + mismatch.warnings.length, 2);
     assert.deepEqual(actor.collections.moves, [{ move: 'Spark' }]);
     deps.removeItem(actor, 'moves', 'Spark');
     assert.deepEqual(actor.collections.moves, []);

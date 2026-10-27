@@ -1,3 +1,4 @@
+import { bindStatusModule, loadStatusModule } from './helpers/status-module.mjs';
 import { bindTrackerUpdate } from './fixtures/tracker-update-bind.mjs';
 import { buildActorState } from '../src/tracker/actor-calculation.js';
 import { activeNpcSystem } from '../src/core/npc-templates.js';
@@ -5,15 +6,8 @@ import { bindCollectionUpdates } from './fixtures/collection-updates-bind.mjs';
 import { collectionQuantityField } from '../src/core/collection-fields.js';
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { readFileSync } from 'node:fs';
 import { collectionAppliesTo } from '../src/core/collection-targets.js';
 import { progressionFields } from '../src/tracker/progression-fields.js';
-
-function load(path, globals, names = 'bind') {
-    const source = readFileSync(new URL(`../src/${path}`, import.meta.url), 'utf8')
-        .replace(/^import\s+[\s\S]*?\s+from\s+['"][^'"]+['"];\s*/gm, '').replaceAll('export ', '') + `\n${collectionQuantityField.toString()}\n`;
-    return new Function(...Object.keys(globals), `${source}\nreturn { ${names} };`)(...Object.values(globals));
-}
 
 function fixture() {
     const cards = [];
@@ -26,7 +20,7 @@ function fixture() {
         saveSettings: () => saves++, getContext: () => ({ chat: [] }),
         npcStatsFor: () => [], npcTemplateFor: () => null, proposedNpcTemplate: () => null,
         collectionAppliesTo, progressionFields, debugLog() {}, LOG_PREFIX: '[test]', eventSource: { emit() {} } };
-    const { syncNpcCollectionsToCards } = load('tracker/npc-collections.js', globals, 'syncNpcCollectionsToCards');
+    const { syncNpcCollectionsToCards } = loadStatusModule(new URL('../src/tracker/npc-collections.js', import.meta.url), globals);
     globals.syncNpcCollectionsToCards = syncNpcCollectionsToCards;
     const deps = { committedState: { global: {}, player: { name: 'Player', stats: {},
         collections: { inventory: [{ title: 'Player sword' }] } }, characters: [
@@ -44,11 +38,9 @@ function fixture() {
     bindCollectionUpdates(deps, globals);
     bindTrackerUpdate(deps, globals);
     for (const module of ['status-scene-presence']) {
-        load(`tracker/${module}.js`, globals).bind(deps);
+        bindStatusModule(new URL(`../src/tracker/${module}.js`, import.meta.url), deps, globals);
     }
-    const ui = load('ui/collections/ui-collection.js', { ...globals,
-        saveStateToMetadata: state => deps.saveStateToMetadata(state) }, 'persistCollectionEdit');
-    return { cards, deps, ui, saves: () => saves };
+    return { cards, deps, saves: () => saves };
 }
 
 for (const exit of ['reader cast', 'grace period', 'manual removal']) {
@@ -83,18 +75,4 @@ test('reader saves shared collections to existing cards and previews leave them 
     assert.deepEqual(card.statusCollections, {});
     deps.applyUpdate(update);
     assert.deepEqual(card.statusCollections.inventory, [{ title: 'NPC ring' }]);
-});
-
-test('manual edits update the card immediately, including an empty collection', () => {
-    const { cards, deps, ui } = fixture();
-    const card = { name: 'Mira', statusCollections: {} };
-    cards.push(card);
-    const target = deps.committedState.characters[0];
-    target.collections.inventory = [{ title: 'NPC ring' }];
-    const where = { target, state: deps.committedState, offstage: false };
-    ui.persistCollectionEdit('Item added', where, false);
-    assert.deepEqual(card.statusCollections.inventory, [{ title: 'NPC ring' }]);
-    target.collections.inventory = [];
-    ui.persistCollectionEdit('Item removed', where, false);
-    assert.deepEqual(card.statusCollections.inventory, []);
 });

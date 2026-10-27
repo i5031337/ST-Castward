@@ -172,65 +172,53 @@ publishes no status event; readers no longer record a refused commit as applied.
 Guarded cache reuse validates metadata/state provenance without adding a normalization
 or save to cached previews.
 
-The recommendation is addressed for the full tracker update path. Lifecycle, schema
-operations, direct item-editor wrappers and the remaining registry retain broader
-coupling; this focused refactor does not claim to remove all shared mutable state.
-See [ARCHITECTURE.md](ARCHITECTURE.md#tracker-dependency-refactor). All 896 Node tests and
-`git diff --check` pass, including stale ownership, storage refusal, undo/swipe, cache
-replacement and refused-reader retry coverage. Temporary earlier comparisons matched
-64 actor cases and 576 full-update cases. The running-host pool fixture verifies preview
-application and invalid-source rejection without changing fixture data; the running-host
-UI smoke check also passes. Stored data formats and tombstone policy are unchanged; host saves remain separate.
+The focused update-path stage passed 896 Node tests and running-host preview/ownership
+fixtures. The follow-up below extends those boundaries. Stored data formats, host save
+separation and tombstone policy remain unchanged. See
+[ARCHITECTURE.md](ARCHITECTURE.md#tracker-dependency-refactor) for the current design.
 
-### Remaining architectural cleanup (optional)
+### Remaining architectural cleanup (completed 2026-10-27)
 
-The focused update-path refactor is complete. The following work would extend its
-boundaries to the remaining mutations; it is not required to finish that change.
-Take one step at a time and review each before expanding the scope.
+The optional follow-up is implemented:
 
-1. **Route direct item edits through calculated plans.** Start with
-   `src/ui/collections/ui-collection.js`, `status-collection-updates.js` and
-   `status-collection-schema.js`. Reuse collection calculation for manual edits and
-   return the related card/Item Library changes before touching live objects. Commit
-   accepted plans through ownership checks. Done when an edit rejected after a chat
-   or persona change leaves every affected store untouched. Preserve current item
-   suppression until the separate policy decision in #7.
+1. **Direct item edits use calculated plans.** The editor captures its displayed
+   chat, persona, System, card and item before debounce or confirmation delays.
+   Accepted plans install scene/card/library effects through the storage boundary;
+   rejected work leaves those stores untouched. Offstage cards remain editable
+   without an open chat. Manual corrections, undo/swipe handling and item suppression
+   retain their existing behavior.
 
-2. **Make schema/library edits explicit operations.** Refactor stat and collection
-   renames in `status-stat-schema.js` and Item Library propagation in
-   `status-collection-schema.js` to calculate changes from supplied rules, state,
-   cards and library data. Return the affected keys and references, then apply them
-   through a guarded write boundary. Done when the rename/propagation rules can be
-   tested without host storage and no partial edit is made before acceptance.
-   Preserve stable identifiers and existing export formats.
+2. **Schema/library edits are explicit operations.** Pure calculations return
+   property writes and state changes from supplied rules, state, cards, persona
+   records and Item Library data. UI definition renames belong to the same accepted
+   operation as the value migration, including all scopes of a shared stat. Global
+   operations do not require an open chat. Guards check chat/System ownership and
+   cache provenance without repairing source data; library rows retain coherent
+   references across repeated edits. Stable IDs and export formats are preserved.
 
-3. **Separate lifecycle coordination from storage.** Untangle chat/persona activation
-   in `status-chat-session.js`, player switching in `status-persona-state.js`, and
-   System selection in `status-system-presets.js`. Give one coordinator an explicit
-   sequence for selecting rules, restoring the persona, loading state and refreshing
-   prompts/views. Done when those steps no longer call back into each other through
-   the registry. Preserve System-before-persona restoration, started-chat System
-   locking, player isolation, and fresh-chat roster seeding.
+3. **Lifecycle coordination has an explicit sequence.** A coordinator restores rules,
+   seeds the roster, restores the persona, loads state and refreshes prompts/views.
+   Host persona restores are serialized, restoration-owned events do not perform
+   intermediate player saves, and obsolete continuations cannot load a newer chat.
+   System locking, player isolation and fresh-chat roster seeding are preserved.
 
-4. **Remove diagnostic queue bridges.** Pass calculation warnings and refusals
-   directly into reader/review results instead of recording and draining shared
-   queues through `recordRefusedValues`, `takeRefusedValues`,
-   `recordCollectionWarnings` and `takeCollectionWarnings`. Done when each reading
-   owns its diagnostics and late/cancelled work cannot contribute to another reading.
+4. **Diagnostics belong to each operation.** Reader previews receive warnings and
+   refusals directly through a local result object. Constraint helpers use explicit
+   callbacks. Shared diagnostic record/drain queues are removed.
 
-5. **Retire the remaining dependency registry.** After the preceding boundaries are
-   explicit, replace the remaining `bind(deps)` registrations with ordinary imports
-   for pure functions and small, named capability inputs for host adapters. Keep
-   `status-logic.js` as an export surface if callers still benefit from it. Done when
-   functions declare their actual dependencies and no provider needs late-bound
-   getters to resolve a cycle. Remove the registry-shape test once the registry is
-   gone; retain the behavioral ownership, persistence and calculation coverage.
+5. **The dependency registry is retired.** Tracker modules use ordinary named imports
+   and exports. Session context/cache, character matching and stat filtering are
+   independent dependencies, removing cycles between the former providers.
+   `status-logic.js` remains the public export surface; startup supplies named prompt
+   and generation callbacks. The registry-shape test is removed and behavioral
+   coverage retained. Broader UI/extractor cycles remain outside this cleanup.
 
-For each step, run focused tests and the full Node suite, then the relevant unsaved
-running-host fixture. Check manual correction/undo, latest-reply swipe/regeneration,
-offstage NPCs, inventories, and chat/persona/System boundaries where affected. Keep
-behavior changes, historical recovery features and further file splitting outside
-these cleanup commits.
+Verification: all 928 Node tests and JavaScript syntax/source-size checks pass, as
+does `git diff --check`. Coverage includes ownership/refusal regressions, one-step
+undo, and swipe/regeneration. Unsaved running-host tracker, item, schema and lifecycle
+fixtures pass in headless Chromium. Browser fixtures use isolated stores and mocked
+saves without model requests. This cleanup does not change suppression policy, review decisions or
+historical recovery limits.
 
 ## 7. Manual item removal silently blocks later additions — open
 

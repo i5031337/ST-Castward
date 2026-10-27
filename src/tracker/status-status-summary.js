@@ -1,10 +1,11 @@
+import { getInitialStatValue } from './stat-value-utils.js';
+import { statsInSystem } from './status-stat-filter.js';
 import { collectionQuantityField } from '../core/collection-fields.js';
 import { collectionAppliesTo } from '../core/collection-targets.js';
 import { promptText } from '../prompts/prompt-texts.js';
 import { getSettings } from '../core/settings.js';
 import { charactersFromActivatedLore } from '../lore/activated-lore.js';
 
-export function bind(deps) {
 function createInitialState() {
     const settings = getSettings().statusTracker;
     const state = {
@@ -21,13 +22,13 @@ function createInitialState() {
     
     (settings.globalStats || []).forEach(stat => {
         if (stat && stat.name) {
-            state.global[stat.name] = deps.getInitialStatValue(stat.defaultValue);
+            state.global[stat.name] = getInitialStatValue(stat.defaultValue);
         }
     });
 
     (settings.playerStats || []).forEach(stat => {
         if (stat && stat.name) {
-            state.player.stats[stat.name] = deps.getInitialStatValue(stat.defaultValue);
+            state.player.stats[stat.name] = getInitialStatValue(stat.defaultValue);
         }
     });
     
@@ -96,7 +97,7 @@ function formatCompactStatus(state, fullDetail = false, places = '') {
     // after these lines are the 'sceneBlock' text in prompt-texts.js.
     let output = '';
     const represented = { globalStats: new Set(), playerStats: new Set(), npcStats: new Set() };
-    const statParts = (stats, scope, actor) => Object.entries(deps.statsInSystem(stats, scope, actor))
+    const statParts = (stats, scope, actor) => Object.entries(statsInSystem(stats, scope, actor))
         .filter(([, val]) => val !== undefined && val !== null && val !== '')
         .map(([key, val]) => {
             represented[scope].add(key.trim().toLowerCase());
@@ -263,8 +264,4 @@ function describeNamedButUnlisted(state, representedStats) {
     return lines.join('\n');
 }
 
-Object.defineProperties(deps, {
-    createInitialState: { enumerable: true, configurable: true, get: () => createInitialState },
-    formatCompactStatus: { enumerable: true, configurable: true, get: () => formatCompactStatus },
-});
-}
+export { createInitialState, formatCompactStatus };

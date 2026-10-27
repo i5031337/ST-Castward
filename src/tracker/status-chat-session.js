@@ -1,3 +1,9 @@
+import { HISTORY_KEY, PERSONA_KEY, STATE_KEY, SWIPE_BASE_KEY, SYSTEM_KEY, chatHasStarted,
+    currentChatId, getChatSystem, getMetadata, hasOpenChat, rememberChatSystem,
+    resetUnplayedChatState, setSwipeBaseAligner, stateOrigin, sessionCache } from './status-session-context.js';
+import { getActiveSystem, migrateToActiveSystem, setActiveSystem } from './status-system-presets.js';
+import { activatePersona, getCurrentPersonaKey, getCurrentPersonaName, getPlayerCard, personaDescription, resolvePersonaAvatarAndName } from './status-persona-state.js';
+import { loadStateFromMetadata, saveStateToMetadata } from './status-state-storage.js';
 import { getThumbnailUrl } from '../../../../../../script.js';
 import { 
     eventSource, 
@@ -10,35 +16,38 @@ import { getAllCharacters } from '../characters/character-repository.js';
 import { LOG_PREFIX, debugLog } from '../core/constants.js';
 import { diffTurnValues, applyTurnValues } from './snapshots/status-turn-delta.js';
 import { restoreNpcRoster } from '../characters/system-npc-roster-runtime.js';
+import { createTrackerLifecycle } from './tracker-lifecycle.js';
 
-export function bind(deps) {
-const STATE_KEY = 'sillynpc_status_state';
-const HISTORY_KEY = 'sillynpc_status_history';
-const SWIPE_BASE_KEY = 'sillynpc_swipe_base';
-
-/** @type {StatusState | null} */
-let committedState = null;
-
-/** The cache's chat ID. CHAT_CHANGED fires after new metadata is already visible, so
- * reads must invalidate the cache by ID rather than wait for that event. */
-let committedChatId;
-
-/** @returns {string|undefined} Undefined between chats, which is a value like any other. */
-function currentChatId() {
-    return getContext()?.getCurrentChatId?.();
+let lifecycle;
+let refreshPrompts = () => {};
+function getLifecycle() {
+    return lifecycle ||= createTrackerLifecycle({
+        readSession: () => ({ chatId: currentChatId(), metadata: getMetadata(),
+            systemKey: getSettings().activeSystem }),
+        clearState: () => { sessionCache.state = null; sessionCache.chatId = undefined; },
+        restoreSystem: restoreChatSystem,
+        restoreRoster: restoreNpcRoster,
+        restorePersona: restoreChatPersona,
+        recordedPersona: getChatPersona,
+        currentPersona: () => ({ key: getCurrentPersonaKey(), name: getCurrentPersonaName() }),
+        loadState: (...args) => loadStateFromMetadata(...args),
+        selectPersona: (...args) => activatePersona(...args),
+        saveState: (...args) => saveStateToMetadata(...args),
+        rememberPersona: rememberChatPersona,
+        refresh: state => {
+            refreshPrompts();
+            eventSource.emit('sillynpc-status-updated', state);
+        },
+    });
 }
-
-/** Origin chat for a live state object. The WeakMap keeps this guard out of saved data. */
-const stateOrigin = new WeakMap();
-
 /**
  * Robustly gets persona avatar and description from ST context.
  * Uses official ST persona management structures and utility functions.
  */
 function getPersonaData() {
-    const { avatar: avatarFilename, name: officialName } = deps.resolvePersonaAvatarAndName();
+    const { avatar: avatarFilename, name: officialName } = resolvePersonaAvatarAndName();
 
-    const officialDescription = deps.personaDescription(avatarFilename);
+    const officialDescription = personaDescription(avatarFilename);
     
     // 3. Native Asset Loading
     //
@@ -65,17 +74,6 @@ function getPersonaData() {
     };
 
     return result;
-}
-
-/**
- * Returns the chat metadata object that SillyTavern persists alongside the chat.
- *
- * The context key is `chatMetadata` — there is no `window.chat_metadata`, and no
- * `context.chat_metadata`. Reading either of those returned a throwaway object
- * literal, so every state write went to garbage and nothing survived a reload.
- */
-function getMetadata() {
-    return getContext()?.chatMetadata ?? null;
 }
 
 /** One pre-turn base per chat; only the latest reply can be swiped. */
@@ -109,7 +107,7 @@ function snapshotProfiles() {
         };
     };
     for (const card of getAllCharacters()) record(card);
-    try { record(deps.getPlayerCard()); } catch { /* no persona yet */ }
+    try { record(getPlayerCard()); } catch { /* no persona yet */ }
     return out;
 }
 
@@ -142,7 +140,7 @@ function restoreProfiles(profiles) {
         }
     };
     for (const card of getAllCharacters()) put(card);
-    try { put(deps.getPlayerCard()); } catch { /* no persona yet */ }
+    try { put(getPlayerCard()); } catch { /* no persona yet */ }
 
     if (restored) {
         saveSettings();
@@ -163,22 +161,6 @@ function swipeBaseRecord() {
     return getMetadata()?.[SWIPE_BASE_KEY] ?? null;
 }
 
-/**
- * Keeps the swipe base in step with changes nobody's message made.
- *
- * Registered from index.js rather than imported, because the aligner lives in
- * status-snapshots.js - which already imports this module, and a second edge the other way
- * would be a cycle. The same shape as setReprocessCallback.
- *
- * @type {null|(() => number)}
- */
-let alignSwipeBase = null;
-
-/** @param {null|(() => number)} fn */
-function setSwipeBaseAligner(fn) {
-    alignSwipeBase = typeof fn === 'function' ? fn : null;
-}
-
 /** The profiles as they stood before that message, or null when none were recorded. */
 function getProfileBase(messageId) {
     const stored = getMetadata()?.[SWIPE_BASE_KEY];
@@ -191,7 +173,7 @@ function recordTurnEffects(messageId) {
     const base = swipeBaseRecord();
     const message = getContext()?.chat?.[Number(messageId)];
     if (!base || base.messageId !== String(messageId) || !message) return false;
-    const state = structuredClone(deps.loadStateFromMetadata());
+    const state = structuredClone(loadStateFromMetadata());
     const profiles = snapshotProfiles();
     const effectsState = base.beforeApply
         ? applyTurnValues(base.applied?.state || base.state, diffTurnValues(base.beforeApply.state, state)) : state;
@@ -215,7 +197,7 @@ function recordTurnEffects(messageId) {
 function refreshTurnBase(messageId) {
     const base = swipeBaseRecord();
     if (!base || base.messageId !== String(messageId)) return false;
-    const state = structuredClone(deps.loadStateFromMetadata());
+    const state = structuredClone(loadStateFromMetadata());
     const profiles = snapshotProfiles();
     if (base.applied) base.beforeApply = { state, profiles };
     else {
@@ -225,29 +207,18 @@ function refreshTurnBase(messageId) {
     return true;
 }
 
-
 /**
  * Initialize status tracker logic
  */
-function initStatusLogic() {
+function initStatusLogic({ refreshPrompts: refresh = () => {}, onGenerationStarted } = {}) {
+    refreshPrompts = refresh;
     debugLog('Initializing Status Tracker Logic');
     // Before anything reads configuration, so the world in use belongs to a system.
-    deps.migrateToActiveSystem();
+    migrateToActiveSystem();
     eventSource.on(event_types.CHAT_CHANGED, onChatChanged);
-    eventSource.on(event_types.GENERATION_STARTED, deps.onGenerationStarted);
+    if (onGenerationStarted) eventSource.on(event_types.GENERATION_STARTED, onGenerationStarted);
     eventSource.on(event_types.PERSONA_CHANGED, onPersonaChanged);
     eventSource.on(event_types.CHARACTER_EDITED, onCharacterEdited);
-}
-
-/** Where a chat records which persona was last used in it. */
-const PERSONA_KEY = 'sillynpc_persona';
-
-/**
- * Whether a chat is actually open. SillyTavern returns undefined between chats, which is
- * the only reliable signal - the chat array is left populated after one closes.
- */
-function hasOpenChat() {
-    return getContext()?.getCurrentChatId?.() !== undefined;
 }
 
 /** The persona this chat was last used with, or null if it has never recorded one. */
@@ -269,7 +240,7 @@ function rememberChatPersona() {
     const metadata = getMetadata();
     if (!metadata || !hasOpenChat()) return false;
 
-    const { avatar } = deps.resolvePersonaAvatarAndName();
+    const { avatar } = resolvePersonaAvatarAndName();
     // A restore also lands here, via the PERSONA_CHANGED it emits - and needs no special
     // case, because it can only ever be writing back the value it just read.
     if (!avatar || metadata[PERSONA_KEY] === avatar) return false;
@@ -292,8 +263,8 @@ function rememberChatPersona() {
  *
  * @returns {Promise<boolean>} Whether a switch actually happened.
  */
-async function restoreChatPersona() {
-    if (!hasOpenChat()) return false;
+async function restoreChatPersona(isCurrent = () => true) {
+    if (!hasOpenChat() || !isCurrent()) return false;
 
     const recorded = getChatPersona();
     if (!recorded) {
@@ -301,11 +272,12 @@ async function restoreChatPersona() {
         return false;
     }
 
-    const { avatar } = deps.resolvePersonaAvatarAndName();
+    const { avatar } = resolvePersonaAvatarAndName();
     if (recorded === avatar) return false;
 
     try {
         await setUserAvatar(recorded, { toastPersonaNameChange: false });
+        if (!isCurrent()) return false;
         debugLog(`Chat persona restored: ${recorded}`);
         return true;
     } catch (err) {
@@ -314,51 +286,6 @@ async function restoreChatPersona() {
         console.warn(LOG_PREFIX, 'Could not restore this chat\'s persona', err);
         return false;
     }
-}
-
-/** Where a chat records which system it belongs to. */
-const SYSTEM_KEY = 'sillynpc_system';
-
-/** The system this chat belongs to, or null if it has never recorded one. */
-function getChatSystem() {
-    const name = getMetadata()?.[SYSTEM_KEY];
-    return (typeof name === 'string' && name) ? name : null;
-}
-
-/** A chat can choose its System until the player has sent the first story message. */
-function chatHasStarted() {
-    return Boolean(getContext()?.chat?.some(message => message?.is_user && !message?.is_system));
-}
-
-/** Discard an unplayed chat's old default state when it chooses a different System. */
-function resetUnplayedChatState() {
-    if (chatHasStarted()) return false;
-    const metadata = getMetadata();
-    if (!metadata) return false;
-    const locations = metadata[STATE_KEY]?.locations;
-    delete metadata[STATE_KEY];
-    // Choosing rules for an unplayed chat resets stat defaults, not its places.
-    if (locations) metadata[STATE_KEY] = { global: {}, characters: [], locations: structuredClone(locations) };
-    delete metadata[HISTORY_KEY];
-    delete metadata[SWIPE_BASE_KEY];
-    committedState = null;
-    committedChatId = undefined;
-    getContext()?.saveMetadataDebounced?.();
-    return true;
-}
-
-/** Ties the open chat to the system in use. */
-function rememberChatSystem() {
-    const metadata = getMetadata();
-    if (!metadata || !hasOpenChat()) return false;
-
-    const active = deps.getActiveSystem();
-    if (!active || metadata[SYSTEM_KEY] === active) return false;
-
-    metadata[SYSTEM_KEY] = active;
-    restoreNpcRoster();
-    getContext()?.saveMetadataDebounced?.();
-    return true;
 }
 
 /** Restore the chat's recorded System, or adopt the active one on first open. */
@@ -370,7 +297,7 @@ function restoreChatSystem() {
         rememberChatSystem();
         return false;
     }
-    if (recorded === deps.getActiveSystem()) return false;
+    if (recorded === getActiveSystem()) return false;
 
     if (!getSettings().statusTracker.presets?.[recorded]) {
         // Deleted since the chat was last opened. Staying put is the safe reading: the
@@ -379,75 +306,26 @@ function restoreChatSystem() {
             `This chat belongs to a system that no longer exists: "${recorded}"`);
         return false;
     }
-    return deps.setActiveSystem(recorded);
+    return setActiveSystem(recorded);
 }
 
 async function onChatChanged() {
-    committedState = null;
-    // System first. It carries the persona records that the restore below reads from, so
-    // the other order would match a persona against the outgoing system's storage.
-    restoreChatSystem();
-    restoreNpcRoster();
-    await restoreChatPersona();
+    return getLifecycle().activateChat();
 }
 
 function onCharacterEdited(data) {
     // A redraw, nothing more. This used to pull master over the chat's player data, so
     // editing a persona's description or picture rewrote their HP - which is not a thing
     // anyone editing a description is asking for.
-    const personaName = deps.getCurrentPersonaName();
+    const personaName = getCurrentPersonaName();
     if (data && (data.name === personaName || data.name === getContext()?.name1)) {
         debugLog('Current persona edited, redrawing');
-        eventSource.emit('sillynpc-status-updated', deps.loadStateFromMetadata());
+        eventSource.emit('sillynpc-status-updated', loadStateFromMetadata());
     }
 }
 
 function onPersonaChanged() {
-    const state = deps.loadStateFromMetadata();
-    // Only writes when the active persona actually changed, so an event fired for a
-    // persona that was already active costs nothing and touches nothing.
-    if (deps.activatePersona(state, deps.getCurrentPersonaKey(), deps.getCurrentPersonaName())) {
-        deps.saveStateToMetadata(state, { label: 'Persona changed' });
-        eventSource.emit('sillynpc-status-updated', state);
-    }
-    rememberChatPersona();
-    // index.js will handle the HUD update via its own event listener
+    return getLifecycle().activatePlayer();
 }
 
-/**
- * Loads the current status from chat metadata
- */
-
-Object.defineProperties(deps, {
-    STATE_KEY: { enumerable: true, configurable: true, get: () => STATE_KEY },
-    HISTORY_KEY: { enumerable: true, configurable: true, get: () => HISTORY_KEY },
-    committedState: { enumerable: true, configurable: true, get: () => committedState, set: value => { committedState = value; } },
-    committedChatId: { enumerable: true, configurable: true, get: () => committedChatId, set: value => { committedChatId = value; } },
-    currentChatId: { enumerable: true, configurable: true, get: () => currentChatId },
-    stateOrigin: { enumerable: true, configurable: true, get: () => stateOrigin },
-    getPersonaData: { enumerable: true, configurable: true, get: () => getPersonaData },
-    getMetadata: { enumerable: true, configurable: true, get: () => getMetadata },
-    rememberSwipeBase: { enumerable: true, configurable: true, get: () => rememberSwipeBase },
-    restoreProfiles: { enumerable: true, configurable: true, get: () => restoreProfiles },
-    getSwipeBase: { enumerable: true, configurable: true, get: () => getSwipeBase },
-    swipeBaseRecord: { enumerable: true, configurable: true, get: () => swipeBaseRecord },
-    alignSwipeBase: { enumerable: true, configurable: true, get: () => alignSwipeBase, set: value => { alignSwipeBase = value; } },
-    setSwipeBaseAligner: { enumerable: true, configurable: true, get: () => setSwipeBaseAligner },
-    getProfileBase: { enumerable: true, configurable: true, get: () => getProfileBase },
-    snapshotProfiles: { enumerable: true, configurable: true, get: () => snapshotProfiles },
-    recordTurnEffects: { enumerable: true, configurable: true, get: () => recordTurnEffects },
-    refreshTurnBase: { enumerable: true, configurable: true, get: () => refreshTurnBase },
-    initStatusLogic: { enumerable: true, configurable: true, get: () => initStatusLogic },
-    PERSONA_KEY: { enumerable: true, configurable: true, get: () => PERSONA_KEY },
-    hasOpenChat: { enumerable: true, configurable: true, get: () => hasOpenChat },
-    getChatPersona: { enumerable: true, configurable: true, get: () => getChatPersona },
-    rememberChatPersona: { enumerable: true, configurable: true, get: () => rememberChatPersona },
-    restoreChatPersona: { enumerable: true, configurable: true, get: () => restoreChatPersona },
-    SYSTEM_KEY: { enumerable: true, configurable: true, get: () => SYSTEM_KEY },
-    getChatSystem: { enumerable: true, configurable: true, get: () => getChatSystem },
-    chatHasStarted: { enumerable: true, configurable: true, get: () => chatHasStarted },
-    resetUnplayedChatState: { enumerable: true, configurable: true, get: () => resetUnplayedChatState },
-    rememberChatSystem: { enumerable: true, configurable: true, get: () => rememberChatSystem },
-    restoreChatSystem: { enumerable: true, configurable: true, get: () => restoreChatSystem },
-});
-}
+export { STATE_KEY, HISTORY_KEY, currentChatId, stateOrigin, getPersonaData, getMetadata, rememberSwipeBase, restoreProfiles, getSwipeBase, swipeBaseRecord, setSwipeBaseAligner, getProfileBase, snapshotProfiles, recordTurnEffects, refreshTurnBase, initStatusLogic, PERSONA_KEY, hasOpenChat, getChatPersona, rememberChatPersona, restoreChatPersona, SYSTEM_KEY, getChatSystem, chatHasStarted, resetUnplayedChatState, rememberChatSystem, restoreChatSystem };

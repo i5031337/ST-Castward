@@ -1,3 +1,4 @@
+import { bindStatusModule } from './helpers/status-module.mjs';
 import { applyRosterStateSeed } from '../src/characters/system-roster-state.js';
 import { captureNpcRoster } from '../src/characters/system-npc-roster.js';
 import { profileFieldValue } from '../src/core/profile-fields.js';
@@ -6,7 +7,6 @@ import test from 'node:test';
 import { visibleCharacters, canAutoLinkLorebook } from '../src/characters/character-scope.js';
 import { chatNpcSources, chatNpcImagePaths } from '../src/chat/chat-npc-sources.js';
 import { collectionAppliesTo } from '../src/core/collection-targets.js';
-import { readFileSync } from 'node:fs';
 
 test('two chats can resolve the same speaker to independent local cards', () => {
     const world = [{ id: 'world', name: 'Mira' }, { id: 'other', name: 'Jon' }];
@@ -52,10 +52,7 @@ test('portrait references in closed chats remain protected', () => {
 });
 
 function bindFrom(file, names, values) {
-    const source = readFileSync(new URL(file, import.meta.url), 'utf8')
-        .replace(/^import\s+[\s\S]*?\s+from\s+['"][^'"]+['"];\s*/gm, '')
-        .replace('export function bind', 'function bind');
-    return new Function(...names, `${source}\nreturn bind;`)(...values);
+    return deps => bindStatusModule(new URL(file, import.meta.url), deps, Object.fromEntries(names.map((name, index) => [name, values[index]])));
 }
 
 const settings = {

@@ -116,8 +116,8 @@ function wireFieldRename(fRow, col, field, onRefresh, context) {
             e.target.value = oldName;
             return;
         }
-        field.name = newName;
-        const moved = renameCollectionField(col.id, oldName, newName);
+        const moved = renameCollectionField(col.id, oldName, newName, field);
+        if (moved === null) { e.target.value = oldName; return; }
         saveSettings();
         // A rename that moved nothing and one that moved forty items look the
         // same afterwards, and the difference is worth knowing.

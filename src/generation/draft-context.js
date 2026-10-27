@@ -15,7 +15,9 @@ export function createDraftContext(source, onChange = () => {}) {
     const context = {
         getSettings: () => settings, definition: () => definition, bulkBars: new Map(),
         saveSettings: () => onChange(context.capture()), updateHUD: () => {},
-        renameStat: () => ({}), renameCollectionId: () => 0, renameCollectionField: () => 0,
+        renameStat: (_scopes, _old, name, field) => { field.name = name; return {}; },
+        renameCollectionId: (_old, id, collection) => { if (collection) collection.id = id; return 0; },
+        renameCollectionField: (_collection, _old, name, field) => { if (field) field.name = name; return 0; },
         capture: () => {
             const field = ({ hint, ...rest }) => ({ ...rest, guidance: hint ?? rest.guidance ?? '' });
             const stats = { world: definition.stats.world.map(field), character: definition.stats.character.map(field) };

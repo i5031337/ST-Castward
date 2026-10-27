@@ -55,12 +55,12 @@ test('invalid quantities leave holdings intact and produce review diagnostics', 
     const { actor, apply, deps } = fixture();
     apply({ add: [{ name: 'Potion', quantity: 4 }] });
     for (const amount of [0, -1, '2', Infinity, NaN]) {
-        apply({ add: [{ name: 'Potion', quantity: amount }] });
+        const addition = apply({ add: [{ name: 'Potion', quantity: amount }] });
         assert.equal(actor.collections.items[0].quantity, 4, `invalid addition ${amount}`);
-        assert.ok(deps.takeCollectionWarnings().length > 0);
-        apply({ remove: [{ name: 'Potion', quantity: amount }] });
+        assert.ok(addition.warnings.length > 0);
+        const removal = apply({ remove: [{ name: 'Potion', quantity: amount }] });
         assert.equal(actor.collections.items[0].quantity, 4, `invalid removal ${amount}`);
-        assert.ok(deps.takeCollectionWarnings().length > 0);
+        assert.ok(removal.warnings.length > 0);
     }
 });
 
@@ -90,10 +90,10 @@ test('invalid absolute quantities leave holdings intact and produce diagnostics'
     const { actor, apply, deps } = fixture();
     apply({ add: [{ name: 'Potion', quantity: 4 }] });
     for (const quantity of [-1, '2', null, Infinity, NaN]) {
-        apply({ update: [{ name: 'Potion', quantity, condition: 'Invalid' }] });
+        const result = apply({ update: [{ name: 'Potion', quantity, condition: 'Invalid' }] });
+        assert.equal(result.warnings.length, 1);
     }
     assert.deepEqual(actor.collections.items, [{ name: 'Potion', quantity: 4, condition: '' }]);
-    assert.equal(deps.takeCollectionWarnings().length, 1);
 });
 
 test('uncounted collections retain set membership semantics', () => {

@@ -1,9 +1,11 @@
+import { bindStatusModule } from './helpers/status-module.mjs';
 import { cardForShortName } from '../src/characters/short-name-match.js';
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFileSync } from 'node:fs';
 
 function load(file, bindings, result) {
+    if (result === 'bind') return deps => bindStatusModule(new URL(`../src/${file}`, import.meta.url), deps, bindings);
     const source = readFileSync(new URL(`../src/${file}`, import.meta.url), 'utf8')
         .replace(/^import\s+[\s\S]*?\s+from\s+['"][^'"]+['"];\s*/gm, '')
         .replaceAll('export function ', 'function ');

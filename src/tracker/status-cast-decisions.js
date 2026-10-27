@@ -1,45 +1,8 @@
-import { getActiveCharacters } from '../characters/characters.js';
-import { cardForShortName } from '../characters/short-name-match.js';
+import { getPlayerImageUrl, mergeCollectionMaps, resolvePersonaAvatarAndName } from './status-persona-state.js';
+import { loadStateFromMetadata, saveStateToMetadata } from './status-state-storage.js';
+import { findCardForName, resolveCanonicalName } from './status-character-match.js';
 import { getUserAvatar } from '../../../../../personas.js';
-import { getAllCharacters } from '../characters/character-repository.js';
 import { getIgnoredSpeakerLabels, normaliseSpeakerLabel } from '../story/speaker-labels.js';
-
-export function bind(deps) {
-function findCardForName(name) {
-    if (!name) return null;
-    const lower = String(name).trim().toLowerCase();
-    const cards = getAllCharacters();
-
-    const byName = cards.find(c => (c.name || '').toLowerCase() === lower);
-    if (byName) return byName;
-
-    for (const card of cards) {
-        for (const alias of card.aliases || []) {
-            if (!alias?.pattern) continue;
-            if (alias.isRegex) {
-                try { if (new RegExp(alias.pattern, 'i').test(name)) return card; } catch { /* invalid regex */ }
-            } else if (alias.pattern.trim().toLowerCase() === lower) {
-                return card;
-            }
-        }
-    }
-    return cardForShortName(name, getActiveCharacters(), true);
-}
-
-/**
- * The name a character should be stored under.
- *
- * Aliases collapse onto the card's own name, so a character the narrator calls
- * "Instructor Kovacs" in one line and "Mr. Kovacs" in the next is one row in the cast
- * rather than two. A name with no card is its own canonical form - unknown characters
- * are tracked too, and there is nothing to collapse them onto.
- *
- * @param {string} name
- * @returns {string}
- */
-function resolveCanonicalName(name) {
-    return findCardForName(name)?.name || String(name ?? '').trim();
-}
 
 /** This name is you. You are the player, and the player is not one of the cast. */
 const CAST_PERSONA = 'persona';
@@ -63,7 +26,7 @@ const CAST_EXCLUDED = 'excluded';
  */
 function getCastDecisions() {
     try {
-        const map = deps.loadStateFromMetadata()?.castDecisions;
+        const map = loadStateFromMetadata()?.castDecisions;
         return map && typeof map === 'object' && !Array.isArray(map) ? map : {};
     } catch {
         return {};
@@ -81,7 +44,7 @@ function setCastDecision(name, reason) {
     const key = resolveCanonicalName(name).toLowerCase();
     if (!key) return false;
 
-    const state = deps.loadStateFromMetadata();
+    const state = loadStateFromMetadata();
     if (!state.castDecisions || typeof state.castDecisions !== 'object') state.castDecisions = {};
 
     if (reason === null || reason === undefined) {
@@ -96,13 +59,13 @@ function setCastDecision(name, reason) {
             .filter(c => resolveCanonicalName(c.name).toLowerCase() !== key);
     }
 
-    deps.saveStateToMetadata(state, { label: reason ? 'Cast decision' : 'Cast decision cleared' });
+    saveStateToMetadata(state, { label: reason ? 'Cast decision' : 'Cast decision cleared' });
     return true;
 }
 
 function isPlayerName(name, canonical = resolveCanonicalName(name)) {
-    const playerNames = [deps.resolvePersonaAvatarAndName()?.name,
-        deps.loadStateFromMetadata()?.player?.name];
+    const playerNames = [resolvePersonaAvatarAndName()?.name,
+        loadStateFromMetadata()?.player?.name];
     return playerNames.some(player => player && [name, canonical]
         .some(candidate => String(candidate ?? '').trim().toLowerCase() === String(player).trim().toLowerCase()));
 }
@@ -129,13 +92,13 @@ function resolvePersonaSpeaker(name) {
     if (decision === CAST_EXCLUDED) return null;
     if (decision !== CAST_PERSONA && !isPlayerName(name, canonical)) return null;
 
-    const persona = deps.resolvePersonaAvatarAndName();
+    const persona = resolvePersonaAvatarAndName();
     // The player's own portrait wins, since that is the face they made for this character.
     // The persona picture stays as the fallback here rather than the blank the sheet
     // shows: a line in the chat needs something beside it either way.
     return {
         name: persona.name,
-        imageUrl: deps.getPlayerImageUrl() || getUserAvatar(persona.avatar),
+        imageUrl: getPlayerImageUrl() || getUserAvatar(persona.avatar),
     };
 }
 
@@ -201,7 +164,7 @@ function mergeDuplicateCharacters(state) {
         const [fresh, stale] = incomingTick > existingTick ? [character, existing] : [existing, character];
 
         existing.stats = { ...stale.stats, ...fresh.stats };
-        existing.collections = deps.mergeCollectionMaps(stale.collections || {}, fresh.collections || {});
+        existing.collections = mergeCollectionMaps(stale.collections || {}, fresh.collections || {});
         existing.lastSeenTick = Math.max(existingTick, incomingTick);
         existing.name = canonical;
         changed = true;
@@ -241,15 +204,4 @@ function mergeDuplicateCharacters(state) {
  * @returns {boolean} True when the scene changed and was saved.
  */
 
-Object.defineProperties(deps, {
-    findCardForName: { enumerable: true, configurable: true, get: () => findCardForName },
-    resolveCanonicalName: { enumerable: true, configurable: true, get: () => resolveCanonicalName },
-    CAST_PERSONA: { enumerable: true, configurable: true, get: () => CAST_PERSONA },
-    CAST_EXCLUDED: { enumerable: true, configurable: true, get: () => CAST_EXCLUDED },
-    getCastDecisions: { enumerable: true, configurable: true, get: () => getCastDecisions },
-    setCastDecision: { enumerable: true, configurable: true, get: () => setCastDecision },
-    resolvePersonaSpeaker: { enumerable: true, configurable: true, get: () => resolvePersonaSpeaker },
-    mayJoinScene: { enumerable: true, configurable: true, get: () => mayJoinScene },
-    mergeDuplicateCharacters: { enumerable: true, configurable: true, get: () => mergeDuplicateCharacters },
-});
-}
+export { findCardForName, resolveCanonicalName, CAST_PERSONA, CAST_EXCLUDED, getCastDecisions, setCastDecision, resolvePersonaSpeaker, mayJoinScene, mergeDuplicateCharacters };

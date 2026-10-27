@@ -1,5 +1,6 @@
 import { bindTrackerUpdate } from './fixtures/tracker-update-bind.mjs';
-import { bind as bindConstraints } from '../src/tracker/status-update-constraints.js';
+import * as constraints from '../src/tracker/status-update-constraints.js';
+const bindConstraints = deps => Object.assign(deps, constraints);
 import { buildActorState } from '../src/tracker/actor-calculation.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -30,8 +31,7 @@ function fixture() {
     return { definition, settings };
 }
 const source = path => readFileSync(new URL(path, import.meta.url), 'utf8')
-    .replace(/^import\s+[\s\S]*?\s+from\s+['"][^'"]+['"];\s*/gm, '')
-    .replace('export function bind', 'function bind');
+    .replace(/^import\s+[\s\S]*?\s+from\s+['"][^'"]+['"];\s*/gm, '');
 
 const assignMatchingTrackerTemplate = new Function('npcTemplateFor', 'getContext',
     `${source('../src/characters/characters.js').replaceAll('export ', '')}\nreturn assignMatchingTrackerTemplate;`)(npcTemplateFor, () => null);
@@ -86,7 +86,7 @@ function applyFixture(settings) {
     const deps = { committedState: initial, hasOpenChat: () => true,
         loadStateFromMetadata: () => deps.committedState,
         getCurrentPersonaName: () => 'Player', resolveCanonicalName: name => name,
-        mayJoinScene: () => true, recordCollectionWarnings() {},
+        mayJoinScene: () => true,
         saveStateToMetadata: (state, options = {}) => {
             if (options.isCurrent && !options.isCurrent()) return false;
             options.beforeCommit?.();

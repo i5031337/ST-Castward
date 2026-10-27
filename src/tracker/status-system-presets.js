@@ -1,3 +1,4 @@
+import { chatHasStarted, getChatSystem, hasOpenChat, rememberChatSystem, resetUnplayedChatState } from './status-session-context.js';
 import { normalizeTrackerProgression } from '../core/progression-config.js';
 import { getSettings, saveSettings, defaultSettings, normaliseStatDefs } from '../core/settings.js';
 import { normaliseStatUpdatePolicies } from './stat-update-policy.js';
@@ -5,7 +6,6 @@ import { systemStatFields } from '../core/system-fields.js';
 import { debugLog } from '../core/constants.js';
 import { normalizeSystemDefinition, projectSystemTracker, SYSTEM_SCHEMA_VERSION } from '../core/system-schema.js';
 
-export function bind(deps) {
 const SYSTEM_EXCLUDED_ROOT = new Set([
     // Characters, persona records, and items are not System rules.
     'characters', 'personaData', 'master_items', 'systemNpcRosters',
@@ -201,7 +201,7 @@ function migrateToActiveSystem() {
     saveSystemPreset(name,
         existing?.metadata?.description ?? '', existing?.metadata?.author ?? 'User');
     settings.activeSystem = name;
-    deps.rememberChatSystem();
+    rememberChatSystem();
     saveSettings();
     debugLog(`Configuration adopted by system: ${name}`);
     return true;
@@ -219,14 +219,14 @@ function setActiveSystem(name) {
     if (!target || settings.activeSystem === name) return false;
     // A chat adopts its first System on open. Restoring that recorded System is allowed;
     // selecting another one here would reinterpret live values without a field mapping.
-    if (deps.chatHasStarted?.() && deps.getChatSystem?.() !== name) return false;
+    if (chatHasStarted() && getChatSystem() !== name) return false;
 
     captureActiveSystem();
     applySystemPreset(target);
     settings.activeSystem = name;
-    if (deps.hasOpenChat?.() && !deps.chatHasStarted?.()
-        && deps.getChatSystem?.() !== name) deps.resetUnplayedChatState?.();
-    deps.rememberChatSystem?.();
+    if (hasOpenChat() && !chatHasStarted()
+        && getChatSystem() !== name) resetUnplayedChatState();
+    rememberChatSystem();
     saveSettings();
     debugLog(`Active system: ${name}`);
     return true;
@@ -244,7 +244,7 @@ function createSystem(name) {
     const settings = getSettings();
     const st = settings.statusTracker;
     if (!name || systemNameTaken(name)) return false;
-    if (deps.chatHasStarted?.()) return false;
+    if (chatHasStarted()) return false;
 
     captureActiveSystem();
 
@@ -259,9 +259,9 @@ function createSystem(name) {
     st.presets[name].definition.npcTemplates = [];
     delete st.presets[name].definition.legacyNpcTemplateId;
     settings.activeSystem = name;
-    if (deps.hasOpenChat?.() && !deps.chatHasStarted?.()
-        && deps.getChatSystem?.() !== name) deps.resetUnplayedChatState?.();
-    deps.rememberChatSystem?.();
+    if (hasOpenChat() && !chatHasStarted()
+        && getChatSystem() !== name) resetUnplayedChatState();
+    rememberChatSystem();
     saveSettings();
     return true;
 }
@@ -387,27 +387,11 @@ function importSystemPreset(jsonText) {
     const requested = profile.metadata?.name || profile.name;
     let name = requested;
     for (let number = 2; systemNameTaken(name); number++) name = `${requested} (${number})`;
-    settings.statusTracker.presets[name] = deps.migratePreset(name, {
+    settings.statusTracker.presets[name] = migratePreset(name, {
         ...profile, metadata: { ...profile.metadata, name },
     });
     saveSettings();
     return settings.statusTracker.presets[name];
 }
 
-Object.defineProperties(deps, {
-    SYSTEM_EXCLUDED_ROOT: { enumerable: true, configurable: true, get: () => SYSTEM_EXCLUDED_ROOT },
-    SYSTEM_EXCLUDED_TRACKER: { enumerable: true, configurable: true, get: () => SYSTEM_EXCLUDED_TRACKER },
-    copyExcept: { enumerable: true, configurable: true, get: () => copyExcept },
-    migratePreset: { enumerable: true, configurable: true, get: () => migratePreset },
-    getActiveSystem: { enumerable: true, configurable: true, get: () => getActiveSystem },
-    migrateToActiveSystem: { enumerable: true, configurable: true, get: () => migrateToActiveSystem },
-    setActiveSystem: { enumerable: true, configurable: true, get: () => setActiveSystem },
-    createSystem: { enumerable: true, configurable: true, get: () => createSystem },
-    editSystemDetails: { enumerable: true, configurable: true, get: () => editSystemDetails },
-    duplicateSystem: { enumerable: true, configurable: true, get: () => duplicateSystem },
-    saveSystemPreset: { enumerable: true, configurable: true, get: () => saveSystemPreset },
-    applySystemPreset: { enumerable: true, configurable: true, get: () => applySystemPreset },
-    deleteSystemPreset: { enumerable: true, configurable: true, get: () => deleteSystemPreset },
-    importSystemPreset: { enumerable: true, configurable: true, get: () => importSystemPreset },
-});
-}
+export { SYSTEM_EXCLUDED_ROOT, SYSTEM_EXCLUDED_TRACKER, copyExcept, migratePreset, getActiveSystem, migrateToActiveSystem, setActiveSystem, createSystem, editSystemDetails, duplicateSystem, saveSystemPreset, applySystemPreset, deleteSystemPreset, importSystemPreset };

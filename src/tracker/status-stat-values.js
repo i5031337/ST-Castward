@@ -1,3 +1,4 @@
+import { findCardForName } from './status-character-match.js';
 import { progressionFields } from './progression-fields.js';
 import { npcStatsFor, proposedNpcTemplate } from '../core/npc-templates.js';
 import { getSettings } from '../core/settings.js';
@@ -7,7 +8,6 @@ import { allowedValues, findMatchingStatKey } from './stat-field-utils.js';
 import { configuredNumericMaximum, keepNumericMaximum, isPoolStat } from './numeric-stat-bounds.js';
 import { sameStatReading } from './stat-reading-equality.js';
 
-export function bind(deps) {
 /**
  * What a model's reply may not do to the stats, taken out before it is applied.
  *
@@ -103,12 +103,12 @@ function sanitizeModelUpdate(update, state, trackerSettings = getSettings().stat
     for (const actor of Array.isArray(update.characters) ? update.characters : []) {
         const current = (state?.characters || [])
             .find(c => String(c?.name).toLowerCase() === String(actor?.name).toLowerCase());
-        const selected = proposedNpcTemplate(current?.npcTemplateId ? current : deps.findCardForName(actor?.name), actor);
+        const selected = proposedNpcTemplate(current?.npcTemplateId ? current : findCardForName(actor?.name), actor);
         clean(actor?.stats && typeof actor.stats === 'object' ? actor.stats : actor,
             npcStatsFor({ npcTemplateId: selected?.id }, trackerSettings), current?.stats,
-            { npc: true, owner: actor.name || 'NPC', cardStats: deps.findCardForName(actor?.name)?.statusOverrides,
+            { npc: true, owner: actor.name || 'NPC', cardStats: findCardForName(actor?.name)?.statusOverrides,
                 progression: progressionFields(trackerSettings, { actor: { npcTemplateId: selected?.id
-                    || current?.npcTemplateId || deps.findCardForName(actor?.name)?.npcTemplateId || actor?.npcTemplateId } }) });
+                    || current?.npcTemplateId || findCardForName(actor?.name)?.npcTemplateId || actor?.npcTemplateId } }) });
     }
     return update;
 }
@@ -132,8 +132,4 @@ function describeNpcStatFields(trackerSettings) {
         .join('\n');
 }
 
-Object.defineProperties(deps, {
-    sanitizeModelUpdate: { enumerable: true, configurable: true, get: () => sanitizeModelUpdate },
-    describeNpcStatFields: { enumerable: true, configurable: true, get: () => describeNpcStatFields },
-});
-}
+export { sanitizeModelUpdate, describeNpcStatFields };

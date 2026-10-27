@@ -1,23 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { readFileSync } from 'node:fs';
+import { bindStatusModule } from './helpers/status-module.mjs';
 import { captureTrackerOwner, trackerOwnerIsCurrent, commitTrackerUpdate } from '../src/tracker/tracker-update-commit.js';
-
-const storageUrl = new URL('../src/tracker/status-state-storage.js', import.meta.url);
-let storageSource = readFileSync(storageUrl, 'utf8');
-const pureImports = {}, hostNames = [];
-for (const match of storageSource.matchAll(/^import\s+\{([^}]+)\}\s+from\s+['"]([^'"]+)['"];\s*/gm)) {
-    const host = /(?:core\/settings|st-context|\/events|system-npc-roster)\.js$/.test(match[2]);
-    const module = host ? null : await import(new URL(match[2], storageUrl));
-    for (const binding of match[1].split(',')) {
-        const [original, alias] = binding.trim().split(/\s+as\s+/);
-        if (host) hostNames.push(alias || original);
-        else pureImports[alias || original] = module[original];
-    }
-}
-storageSource = storageSource.replace(/^import\s+[\s\S]*?\s+from\s+['"][^'"]+['"];\s*/gm, '')
-    .replace('export function bind', 'function bind');
-const loadStorage = new Function(...Object.keys(pureImports), ...hostNames, `${storageSource}\nreturn bind;`);
 
 function fixture() {
     const original = { global: {}, player: { name: 'Alex', stats: { HP: '5' }, collections: {} }, characters: [] };
@@ -46,7 +30,7 @@ function fixture() {
             calls.roster.push({ card: structuredClone(card), library: structuredClone(settings.master_items) });
             return false;
         }, saveSettings: () => { calls.settings++; } };
-    loadStorage(...Object.values(pureImports), ...hostNames.map(name => host[name]))(deps);
+    bindStatusModule(new URL('../src/tracker/status-state-storage.js', import.meta.url), deps, host);
     const calculated = { nextState: structuredClone(original),
         cardChanges: [{ cardIndex: 0, fields: { statusOverrides: { HP: '8' } } }],
         libraryChanges: [{ collectionId: 'items', itemName: 'Key', fields: { name: 'Key' } }] };
@@ -202,4 +186,36 @@ test('message-owned commits keep the turn base separate from manual undo', () =>
     assert.equal(h.environment.metadata.history, undefined);
     assert.equal(h.calls.align, 0);
     assert.deepEqual(h.calls.emitted, [accepted]);
+});
+
+test('raw state peeks never repair data or reuse a cache after its metadata source changes', () => {
+    const h = fixture();
+    h.original.recently_deleted = {};
+    const before = structuredClone(h.original);
+    assert.equal(h.deps.peekStateFromMetadata(), h.original);
+    assert.equal(h.deps.loadStateFromMetadata({ preferCache: true }), h.original);
+    delete h.environment.metadata.state;
+    assert.equal(h.deps.peekStateFromMetadata(), null);
+    h.environment.metadata = {};
+    assert.equal(h.deps.peekStateFromMetadata(), null);
+    h.environment.metadata.state = { global: { Time: 'morning' } };
+    assert.equal(h.deps.peekStateFromMetadata(), h.environment.metadata.state);
+    h.environment.chatId = undefined;
+    assert.equal(h.deps.peekStateFromMetadata(), null);
+    assert.deepEqual(h.original, before);
+    assert.equal(h.calls.metadata, 0);
+    assert.equal(h.calls.settings, 0);
+    assert.deepEqual(h.calls.roster, []);
+    assert.deepEqual(h.calls.emitted, []);
+});
+
+test('raw state peeks accept a proven initial cache before its first save', () => {
+    const h = fixture();
+    h.environment.metadata = {};
+    assert.equal(h.deps.peekStateFromMetadata(), null);
+    assert.equal(h.deps.loadStateFromMetadata({ preferCache: true }), h.original);
+    assert.equal(h.deps.peekStateFromMetadata(), h.original);
+    h.environment.metadata = {};
+    assert.equal(h.deps.peekStateFromMetadata(), null);
+    assert.equal(h.calls.metadata, 0);
 });

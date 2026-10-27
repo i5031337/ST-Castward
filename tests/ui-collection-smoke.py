@@ -11,13 +11,12 @@ with browser_session() as browser:
         script.textContent = `
             const root = ${JSON.stringify(new URL('.', entry.src).href)};
             const { buildProfileSection } = await import(root + 'src/ui/characters/ui-profile-sections.js');
-            const { bind } = await import(root + 'src/tracker/status-collection-updates.js');
+            const { collectionEditorFixture } = await import(root + 'tests/fixtures/ui-collection-editor.js');
             const { buildCollectionRewardsEditor } = await import(root + 'src/ui/system/ui-collection-rewards.js');
             const { getSettings } = await import(root + 'src/core/settings.js');
             const source = await (await fetch(root + 'src/ui/collections/ui-collection.js')).text();
             const manageSource = await (await fetch(root + 'src/ui/manage/ui-manage.js')).text();
             const npcSource = await (await fetch(root + 'src/ui/manage/ui-manage-collections.js')).text();
-            const collectionStoreSource = await (await fetch(root + 'src/tracker/npc-collections.js')).text();
             const strip = text => text.replace(/^import\\s+[\\s\\S]*?\\s+from\\s+['"][^'"]+['"];\\s*/gm, '')
                 .replaceAll('export function ', 'function ');
             const col = { id: 'smoke', name: 'Inventory', targets: ['player', 'npc'], fields: [
@@ -28,31 +27,24 @@ with browser_session() as browser:
             const settings = { statusTracker: { collections: [col] } };
             const state = { player: { name: 'Smoke Player', stats: {}, collections: {} },
                 characters: [{ name: 'Smoke NPC', collections: {} }], recently_deleted: {} };
-            const deps = { loadStateFromMetadata: () => state, constrainToDefinition: (field, value) => value };
-            bind(deps);
-            let writes = 0, confirmations = 0;
+            let confirmations = 0;
             const sceneCard = { name: 'Smoke NPC', statusCollections: {} };
-            const syncCollections = new Function('getAllCharacters', 'saveSettings',
-                strip(collectionStoreSource) + '; return syncNpcCollectionsToCards;')(
-                    () => [sceneCard], () => writes++);
+            const fixtureCards = [sceneCard];
+            const fixture = await collectionEditorFixture(root, { settings, state, cards: fixtureCards });
             let statusHandler = () => {};
-            const events = { emit(type, ...args) {
-                if (type === 'sillynpc-status-updated') statusHandler(...args);
-            } };
+            fixture.onStatus((...args) => statusHandler(...args));
             const html = value => String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('"', '&quot;');
             const popup = { show: { confirm: async () => { confirmations++; return true; } } };
             const api = new Function('constrainNumericStat', 'choiceOptionsHtml', 'isChoiceField',
-                'getSettings', 'saveSettings', 'isStaticField', 'loadStateFromMetadata', 'saveStateToMetadata',
-                'addItem', 'removeItem', 'updateMasterItem', 'renameMasterItem', 'eventSource', 'escapeHtml', 'Popup', 'syncNpcCollectionsToCards',
+                'getSettings', 'loadStateFromMetadata', 'createCollectionEditor', 'escapeHtml', 'Popup',
                 strip(source) + '; return { renderCollectionUI, attachCollectionListeners };')(
-                    (field, value) => value, () => '', () => false, () => settings, () => writes++,
-                    () => false, () => state, () => writes++, deps.addItem, deps.removeItem,
-                    () => {}, () => {}, events, html, popup, syncCollections);
+                    (field, value) => value, () => '', () => false, () => settings, () => state,
+                    fixture.createCollectionEditor, html, popup);
             const renderNpc = new Function('buildProfileSection', 'collectionAppliesTo', 'Popup', 'getSettings', 'saveSettings',
                 'getAllCategories', 'createCategory', 'escapeHtml', 'loadStateFromMetadata',
                 'renderCollectionUI', 'attachCollectionListeners',
                 strip(npcSource) + '; return renderCollectionsSection;')(
-                    buildProfileSection, () => true, popup, () => settings, () => writes++, () => [], () => {}, html,
+                    buildProfileSection, () => true, popup, () => settings, () => {}, () => [], () => {}, html,
                     () => state, api.renderCollectionUI, api.attachCollectionListeners);
             const host = document.createElement('div');
             host.className = 'sillynpc-manage'; document.body.append(host);
@@ -112,10 +104,14 @@ with browser_session() as browser:
                   result.rewardsDisabled = options.hidden && !rewardCollection.levelUpRewards.enabled && rewardSaves > 0;
                 } finally { rewardHost.remove(); }
                 actual.collections = [col];
-                for (const actor of [state.player, state.characters[0], { name: 'Offstage', collections: {} }]) {
+                const offstage = { name: 'Offstage', collections: {} };
+                const offstageCard = { name: 'Offstage', statusCollections: offstage.collections };
+                fixtureCards.push(offstageCard);
+                for (const actor of [state.player, state.characters[0], offstage]) {
                     let section;
                     const draw = () => {
                         // Replace the section as the player sheet does when it refreshes.
+                        if (actor === offstage) actor.collections = offstageCard.statusCollections;
                         section = document.createElement('div'); host.replaceChildren(section);
                         section.innerHTML = api.renderCollectionUI('smoke', actor, settings.statusTracker);
                         api.attachCollectionListeners(section, actor, draw);
@@ -177,6 +173,7 @@ with browser_session() as browser:
                 statusHandler = () => {};
                 host.style.height = ''; host.style.overflow = '';
                 const card = { name: 'Stored NPC', statusCollections: { smoke: [{ title: 'Card Sword' }] } };
+                fixtureCards.push(card);
                 result.sceneCardPersistence = JSON.stringify(sceneCard.statusCollections)
                     === JSON.stringify(state.characters[0].collections);
                 const departed = state.characters.pop();
@@ -196,7 +193,7 @@ with browser_session() as browser:
                     && !edit.includes('sillynpc-edit-toggle') && !profile.includes('drop-item')
                     && !profile.includes('sillynpc-add-item');
                 result.deletionConfirmationsOnly = confirmations === 3;
-                result.persistence = writes > 0;
+                result.persistence = fixture.writes() > 0;
             } catch (error) { result.error = String(error); }
             finally { actual.collections = savedCollections; host.remove(); }
             document.documentElement.setAttribute('data-collection-smoke', JSON.stringify(result));

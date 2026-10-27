@@ -168,73 +168,57 @@ is no automatic elapsed-time regeneration.
 
 ## Tracker dependency refactor
 
-The first stage removes the parser from the runtime provider registry. Inline parsing
-and stat-fragment grouping are ordinary exports. Basic stat arithmetic, defaults,
-and meter predicates live in `stat-value-utils.js`; allowed-value lists and stat-name
-matching live in `stat-field-utils.js`. These modules can load without SillyTavern.
-Constraints import their helpers directly, and model sanitization imports field helpers,
-removing the stat-values/constraints cycle. Stat synonyms no longer belong to chat session
-state. `status-logic.js` preserves the public API and supplies independent helpers to the
-remaining providers while their callers are migrated. Diagnostics remain isolated per
-constraints binding. Fourteen bound providers remain for lifecycle, schema and other
-existing APIs; full tracker updates use the calculation and commit path below.
+`status-logic.js` is a public export surface. Tracker modules import the functions
+and state they use directly; there is no provider registry or late-bound dependency
+lookup. Arithmetic, validation, actor seeding, collection calculations and schema
+plans can run without SillyTavern. Character matching and stat filtering are separate
+from mutation adapters so storage does not depend on the operations that call it.
 
-Collection updates now delegate to `collection-calculation.js`. The calculation takes
-captured actor collections, explicit player/NPC scope, projected tracker rules, the active
-System, committed tombstones and Item Library data. It returns new collections,
-tombstones, proposed library additions, warnings and refused values without changing
-inputs or reading host state. Field validation in `stat-field-calculation.js` returns
-its diagnostics as data; the existing constraint/collection wrappers forward them to
-the reader's queues while callers are migrated. The collection wrapper applies accepted
-results and saves planned library changes once per operation; the broader update still
-owns chat saves. Removal/update/clear-only and rejected operations do not load or repair
-chat state just to calculate collection changes.
-
-Ordinary arrays remain additions, explicit replacements retain their meaning, and direct
-manual add/remove retain their existing tombstone behavior. Checks still use committed
-tombstones while the full update ages a cloned map. Repeated new names in a committed
-replacement inherit the first row's newly registered static library fields; previews
-continue using only the existing library. This preview/application difference is preserved
-for now. The calculation's preview flag controls that policy and manual tombstone clearing;
-it never enables writes to external stores.
-
-Actor seeding and stat readings now use `actor-calculation.js`. Presence captures its
-System/cards and calls the pure builder; the apply/presence registry cycle and unused
-internal actor callbacks are removed. Progression accepts an explicit System so these
-calculations never consult the global template settings provider.
-
-`tracker-update-calculation.js` calculates world, player and NPC changes from captured
+`tracker-update-calculation.js` calculates world, player and NPC changes from supplied
 state, rules, System, cards, Item Library, actor admission decisions, player identity,
-policies and timestamp. It returns next state, card/library plans, local diagnostics,
-and separate offstage comparisons. Its state never includes comparison-only NPCs.
-The public `applyUpdate` preview adapter still appends those detached actors and their
-nonenumerable pre-assignment baselines for the existing diff/review consumers.
+policies and timestamp. It returns next state, card/library plans and local diagnostics.
+Offstage comparison actors remain separate from calculated scene state; the preview
+adapter adds detached comparison sheets for existing diff/review consumers.
 
-The host wrapper captures canonical names and admission decisions through existing
-speaker/cast policy. `tracker-update-commit.js` then validates chat ID, metadata identity,
-persona key, active/bound System, source-state identity and readings, and rules/System
-identity and readings. Reader, inline and review callers provide `messageId`, adding
-reply object, text and swipe checks. Manual edits have no invented reply source.
-Asynchronous request freshness remains the caller's responsibility; calculation and
-commit run synchronously rather than retaining plans across an await.
+`tracker-update-commit.js` validates chat ID, metadata identity, persona, active/bound
+System, source state and rules before accepting related effects. Reader, inline and
+review callers also supply the source reply identity, text and swipe. Storage repeats
+validation immediately before installing card/library effects, history and state.
+Rejected updates publish no status event or applied reader rows. Settings and metadata
+remain separate host saves, without a cross-store durable atomicity guarantee.
 
-Storage repeats ownership validation after its existing origin guards and before any
-related card/library, history or metadata write. An internal synchronous callback installs
-accepted card/library plans before roster capture and swipe alignment. Storage returns
-an explicit success/failure; settings saves and the status event follow acceptance only.
-Rejected reader and inline commits stop before recording applied rows or completed
-reports. Existing manual undo and message-owned turn-base behavior are preserved.
+Manual item editors use `collection-editor.js` and `collection-editor-calculation.js`.
+An editor retains the chat, persona, System and card it displayed, plus the rendered
+item contents, so delayed input and confirmation cannot silently target a different
+owner or row. Accepted plans install scene, card and library changes through the
+storage boundary; offstage cards can be edited without an open chat. Manual changes
+remain authoritative and preserve one-step undo and latest-reply swipe alignment.
 
-Cached states record their metadata and stored-state provenance in a private WeakMap.
-Replacement or removal invalidates the cache even when the chat ID stays the same.
-Update previews and commits request guarded cache reuse, avoiding an extra normalization
-or save of an already-loaded source. Normal loads retain their existing repair behavior.
+Schema and Item Library operations calculate explicit writes in
+`schema-operation-calculation.js`. The host adapter captures rules, state, persona
+records, cards and library data and checks them again before installation. The schema
+name itself belongs to the same plan as its stored-value migration. Shared stat fields
+move all applicable scopes together. Tracker undo retains renamed keys rather than
+reversing a schema rename, matching the existing behavior. Global edits do not require
+a chat or normalize retained chat metadata merely to calculate a rename. Stable field IDs and exports are
+unchanged.
 
-This completes the focused full-update calculation/commit refactor. Model-input
-sanitization, review policy, presence reconciliation, lifecycle/schema operations and
-the remaining provider registry are separate boundaries. Direct item-editor operations
-retain their existing wrappers. Settings and metadata remain separate host saves,
-without a cross-store atomicity guarantee. Tombstone policy is unchanged.
+`tracker-lifecycle.js` coordinates chat activation in order: restore the System, seed
+its roster, restore the persona, load state, and refresh prompts/views. Persona events
+owned by restoration are coordinated with that activation; obsolete asynchronous
+continuations cannot load or refresh a newer chat. Started chats retain their System
+lock, and player records remain isolated by persona. The entry point supplies named
+prompt/generation callbacks; storage has no lifecycle callback dependency.
+
+Transient cache and provenance live in `status-session-context.js`. Cached reads
+validate chat/metadata/state provenance before reuse. The explicit swipe-alignment
+hook connects storage to snapshot maintenance without a dependency cycle.
+
+Calculation diagnostics belong to their caller. Reader previews supply a local
+`diagnostics` object; constraints return diagnostics or invoke explicit callbacks.
+There are no shared record/drain queues. Item suppression and its existing expiry,
+preview/library policies, model-input sanitization, review decisions and historical
+recovery limits are unchanged by this cleanup.
 
 ## Verification
 

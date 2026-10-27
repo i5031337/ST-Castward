@@ -7,6 +7,7 @@ import { render, itemId, libraryBulk } from './ui-item-library.js';
 
 export function buildItemRow({ root, search, master, colDef, fields, primary, key }) {
     const data = master[colDef.id][key] || {};
+    const owner = { library: master, definition: colDef, collectionId: colDef.id };
 
     const card = document.createElement('div');
     card.className = 'sillynpc-item-card';
@@ -24,8 +25,10 @@ export function buildItemRow({ root, search, master, colDef, fields, primary, ke
     nameInput.addEventListener('change', () => {
         const newName = nameInput.value.trim();
         if (!newName || newName.toLowerCase() === key) return;
-        const updated = { ...data, [primary]: newName };
-        renameMasterItem(colDef.id, key, newName, updated);
+        const current = master[colDef.id]?.[key];
+        if (!current) return;
+        const updated = { ...current, [primary]: newName };
+        renameMasterItem(colDef.id, key, newName, updated, { ...owner, item: current, itemKey: key });
         render(root, search.value);
     });
 
@@ -36,9 +39,10 @@ export function buildItemRow({ root, search, master, colDef, fields, primary, ke
     del.innerHTML = '<i class="fa-solid fa-trash"></i>';
     del.title = 'Forget this entry';
     del.addEventListener('click', async () => {
+        const expected = { ...owner, item: master[colDef.id]?.[key], itemKey: key };
         const ok = await Popup.show.confirm('Forget entry?', `"${data[primary] ?? key}" will no longer be remembered.`);
         if (!ok) return;
-        deleteMasterItem(colDef.id, key);
+        deleteMasterItem(colDef.id, key, expected);
         render(root, search.value);
     });
 
@@ -75,8 +79,10 @@ export function buildItemRow({ root, search, master, colDef, fields, primary, ke
         }
         input.value = data[field.name] ?? '';
         input.addEventListener('change', () => {
-            const merged = { ...master[colDef.id][key], [primary]: nameInput.value.trim(), [field.name]: input.value };
-            updateMasterItem(colDef.id, nameInput.value.trim() || key, merged);
+            const current = master[colDef.id]?.[key];
+            if (!current) return;
+            const merged = { ...current, [primary]: nameInput.value.trim(), [field.name]: input.value };
+            updateMasterItem(colDef.id, nameInput.value.trim() || key, merged, { ...owner, item: current, itemKey: key });
         });
 
         wrap.appendChild(input);

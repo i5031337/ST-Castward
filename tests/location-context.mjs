@@ -1,3 +1,4 @@
+import { bindStatusModule } from './helpers/status-module.mjs';
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFileSync } from 'node:fs';
@@ -113,12 +114,12 @@ test('scene and inline narrator prompts wire place recall to live player message
         describeNpcStatFields: () => '',
     };
     const settings = { collections: [], npcTemplates: [] };
-    new Function('getSettings', 'getContext', 'buildLocationSceneContext', 'recentLocationMessages',
-        'describeStatDefinitions', 'promptText', 'applyMacros', 'DEFAULT_INLINE_RULES', 'progressionFields',
-        sourceWithoutImports('../src/tracker/status-scene-prompt.js') + '\nreturn bind;')(
-        () => ({ statusTracker: settings }), () => ({ chat: [{ is_user: true, mes: 'Old Ruins' }] }),
-        buildLocationSceneContext, recentLocationMessages, () => '', (_id, values) => `Inline instructions.\n${values.status}`,
-        text => text, '', () => ({ enabled: false }))(deps);
+    bindStatusModule(new URL('../src/tracker/status-scene-prompt.js', import.meta.url), deps, {
+        getSettings: () => ({ statusTracker: settings }), getContext: () => ({ chat: [{ is_user: true, mes: 'Old Ruins' }] }),
+        buildLocationSceneContext, recentLocationMessages, describeStatDefinitions: () => '',
+        promptText: (_id, values) => `Inline instructions.\n${values.status}`,
+        applyMacros: text => text, DEFAULT_INLINE_RULES: '', progressionFields: () => ({ enabled: false }),
+    });
     for (const context of [deps.buildSceneContext(), deps.getStatusInstructions()]) {
         assert.match(context, /Old Ruins/);
         assert.ok(!context.includes('Unmentioned Cave'));
