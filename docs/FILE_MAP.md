@@ -91,6 +91,7 @@ This map covers tracked runtime files, tests and support files. Source files and
 | `tests/ui-collection-smoke.py` | Collection rendering and reward editor controls, validation, and narrow layouts. |
 | `tests/status-apply-update.mjs` | Tracker update, dry-run, and no-chat behavior tests. |
 | `tests/tracker-update-calculation.mjs` | Immutable full update plans, explicit System, offstage separation and progression policies. |
+| `tests/tracker-update-commit.mjs` | Ownership and storage rejection, accepted effect ordering, undo/swipe, and cache provenance checks. |
 | `tests/fixtures/tracker-update-bind.mjs` | Load the update host wrapper with production calculation imports and isolated host stores. |
 | `tests/settings-migration.mjs` | Settings import repair and version-gated HUD migration tests. |
 | `tests/field-assignments.mjs` | Shared field assignment overlap and conflict rules. |
@@ -200,7 +201,7 @@ This map covers tracked runtime files, tests and support files. Source files and
 | `src/tracker/status-stat-schema.js` | Stat definition lookup and schema helpers. |
 | `src/tracker/status-persona-state.js` | Reusable persona identity/profile and chat-local player stats, collections, and memories. |
 | `src/tracker/status-chat-session.js` | Chat persona/system session lifecycle. |
-| `src/tracker/status-state-storage.js` | Load and save status metadata, including one-step undo. |
+| `src/tracker/status-state-storage.js` | Validate cached-state provenance, accept guarded commits, and retain metadata history/undo. |
 | `src/tracker/status-status-summary.js` | Format status summaries. |
 | `src/tracker/status-scene-prompt.js` | Build scene context and status instructions. |
 | `src/tracker/status-update-parser.js` | Ordinary exports for parsing inline updates and grouping stat fragments. |
@@ -208,7 +209,8 @@ This map covers tracked runtime files, tests and support files. Source files and
 | `src/tracker/status-update-constraints.js` | Adapt field validation to existing tracker APIs and diagnostic queues. |
 | `src/tracker/actor-calculation.js` | Pure NPC initialization and stat readings with explicit System and local diagnostics. |
 | `src/tracker/tracker-update-calculation.js` | Pure full update calculation returning state, card/library plans and separate offstage comparisons. |
-| `src/tracker/status-apply-update.js` | Capture host inputs, adapt previews and apply calculated update plans through existing saves/events. |
+| `src/tracker/status-apply-update.js` | Capture host inputs and ownership, adapt previews, and submit calculated plans to the commit boundary. |
+| `src/tracker/tracker-update-commit.js` | Validate captured ownership and commit related effects only after storage acceptance. |
 | `src/tracker/status-cast-decisions.js` | Record player, excluded, and character cast decisions. |
 | `src/tracker/status-scene-presence.js` | Reconcile scene presence and active characters using pure actor initialization. |
 | `src/tracker/collection-calculation.js` | Calculate collections, tombstones, and proposed Item Library additions from explicit inputs. |

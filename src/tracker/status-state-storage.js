@@ -7,9 +7,23 @@ import { applyRosterStateSeed } from '../characters/system-roster-state.js';
 import { LOG_PREFIX, debugLog } from '../core/constants.js';
 
 export function bind(deps) {
-function loadStateFromMetadata() {
+const stateMetadata = new WeakMap();
+function loadStateFromMetadata({ preferCache = false } = {}) {
     // Belongs to a chat that is no longer open, whatever the event order was.
-    if (deps.committedState && deps.committedChatId !== deps.currentChatId()) deps.committedState = null;
+    const currentMetadata = deps.getMetadata();
+    const cachedSource = deps.committedState && stateMetadata.get(deps.committedState);
+    if (deps.committedState && (deps.committedChatId !== deps.currentChatId()
+        || cachedSource && (cachedSource.metadata !== currentMetadata
+            || cachedSource.storedState !== currentMetadata?.[deps.STATE_KEY])
+        || currentMetadata?.[deps.STATE_KEY] && currentMetadata[deps.STATE_KEY] !== deps.committedState)) {
+        deps.committedState = null;
+    }
+
+    // Update calculations may reuse the cache, but never skip ownership checks.
+    if (preferCache && deps.committedState) {
+        stateMetadata.set(deps.committedState, { metadata: currentMetadata, storedState: currentMetadata?.[deps.STATE_KEY] });
+        return deps.committedState;
+    }
 
     let stateToReturn = deps.committedState;
     let stateChanged = false;
@@ -46,7 +60,8 @@ function loadStateFromMetadata() {
         deps.stateOrigin.set(stateToReturn, deps.committedChatId);
     }
 
-    if (applyRosterStateSeed(stateToReturn, deps.getMetadata())) stateChanged = true;
+    stateMetadata.set(stateToReturn, { metadata: currentMetadata, storedState: currentMetadata?.[deps.STATE_KEY] });
+    if (applyRosterStateSeed(stateToReturn, currentMetadata)) stateChanged = true;
 
     // Fill declared stats and repair casing; retain undeclared values for archived history.
     const settings = getSettings().statusTracker;
@@ -173,9 +188,9 @@ function loadStateFromMetadata() {
 
 /** Commit chat state, saving the outgoing state as an undo point unless disabled. */
 function saveStateToMetadata(state, options = {}) {
-    const { recordHistory = true, label = 'Change', partOfMessage = false } = options;
+    const { recordHistory = true, label = 'Change', partOfMessage = false, isCurrent, beforeCommit } = options;
     const metadata = deps.getMetadata();
-    if (!metadata) return;
+    if (!metadata) return false;
 
     // Between chats, SillyTavern leaves the last chat's metadata object in place - a read
     // there hands back whichever story was open before, and a write lands in an object
@@ -183,7 +198,7 @@ function saveStateToMetadata(state, options = {}) {
     // asked for, so the write is refused where it can still be said out loud.
     if (!deps.hasOpenChat()) {
         console.warn(LOG_PREFIX, 'Refused to write tracker state with no chat open.');
-        return;
+        return false;
     }
 
     // A state read from one chat must never be written into another. SillyTavern swaps
@@ -196,9 +211,14 @@ function saveStateToMetadata(state, options = {}) {
     if (origin !== undefined && origin !== here) {
         console.error(LOG_PREFIX,
             `Refused to write state from chat "${origin}" into "${here}".`);
-        return;
+        return false;
     }
+    // The callback only installs in-memory card/library plans; it cannot save or emit.
+    // Recheck after all host getters, immediately before the first accepted effect.
+    if (isCurrent && !isCurrent()) return false;
+    beforeCommit?.();
     deps.stateOrigin.set(state, here);
+    stateMetadata.set(state, { metadata, storedState: state });
 
     // The very first change in a chat has no committed predecessor in metadata yet -
     // the initial state exists only in the in-memory cache. Fall back to it so that
@@ -240,6 +260,7 @@ function saveStateToMetadata(state, options = {}) {
     }
 
     getContext()?.saveMetadataDebounced?.();
+    return true;
 }
 
 /**

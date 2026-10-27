@@ -134,13 +134,13 @@ and `src/core/usage.js`.
 Ten management sections encompass rules, profiles, places, lorebooks, speech, images,
 and presentation. Users must distinguish Fill, tracker reading, memory reading, lore
 synchronization, and carryover. These boundaries have implementation reasons but can
-make basic setup and correction difficult to learn.
+make basic setup and correction difficult to learn. Retry tracker button should be on the tracker display, not the raw output display.
 
 Recommendation: prioritize a clear first-session workflow and visible automation
 status over more customization. Source inspection: `manage.html` and
 `src/ui/manage/ui-manage.js`; this is not a completed usability study.
 
-## 6. File size limits do not remove architectural coupling — update calculation extracted; commit boundary open
+## 6. File size limits do not remove architectural coupling — tracker update path addressed; broader coupling remains
 
 At review time, `src/` contained 322 JavaScript modules and approximately 39,730 lines.
 The tracker binds 15 providers into a shared runtime dependency registry. Understanding
@@ -163,13 +163,24 @@ preserves the current review format. Existing wrappers still apply writes and fo
 diagnostics to queues. Actor admission, model-input sanitization and review policy remain
 separate host orchestration.
 
-The commit boundary, lifecycle coupling and remaining registry are still open, as described
-in [ARCHITECTURE.md](ARCHITECTURE.md#tracker-dependency-refactor). All 885 Node tests and
-`git diff --check` pass. The running-host pool fixture verifies real preview application,
-NPC initialization, pool maxima and established-level protection without saving fixtures.
-The running-host UI smoke check also passes. Temporary baseline comparisons matched 64 actor cases and 576 full-update cases,
-including state, cards, Item Library, offstage baselines and diagnostic ordering. Settings
-saves are batched across the full accepted update; stored data formats are unchanged.
+Full tracker updates now pass through an explicit ownership-checked commit boundary.
+It checks chat/metadata, persona, active/bound System, source state and rules, plus
+explicit source reply identity/text/swipe for reader, inline and review updates. Storage
+revalidates immediately before installing related effects, preserving roster capture,
+one-step undo and swipe alignment. Rejection changes no card/library/history/state and
+publishes no status event; readers no longer record a refused commit as applied.
+Guarded cache reuse validates metadata/state provenance without adding a normalization
+or save to cached previews.
+
+The recommendation is addressed for the full tracker update path. Lifecycle, schema
+operations, direct item-editor wrappers and the remaining registry retain broader
+coupling; this focused refactor does not claim to remove all shared mutable state.
+See [ARCHITECTURE.md](ARCHITECTURE.md#tracker-dependency-refactor). All 894 Node tests and
+`git diff --check` pass, including stale ownership, storage refusal, undo/swipe, cache
+replacement and refused-reader retry coverage. Temporary earlier comparisons matched
+64 actor cases and 576 full-update cases. The running-host pool fixture verifies preview
+application and invalid-source rejection without changing fixture data; the running-host
+UI smoke check also passes. Stored data formats and tombstone policy are unchanged; host saves remain separate.
 
 ## Evidence and limits
 

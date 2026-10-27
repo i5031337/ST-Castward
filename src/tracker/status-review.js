@@ -255,7 +255,7 @@ export function resolvePendingChanges(messageId, accepted, dismissed = [], { dis
     const rows = validated.rows;
     const ordinary = rows.filter(row => !row.grant);
     const before = loadStateFromMetadata();
-    const applyOptions = { label: 'Reviewed change', admitCharacters: true, partOfMessage: true,
+    const applyOptions = { messageId, label: 'Reviewed change', admitCharacters: true, partOfMessage: true,
         allowReplace: true, progressionResolved: true, verbatim: true };
     const preview = ordinary.length ? applyUpdate(buildUpdateFromChanges(ordinary, before, trackerSettings, cards),
         { ...applyOptions, dryRun: true }) : before;

@@ -84,9 +84,14 @@ function applyFixture(settings) {
     const initial = { global: {}, player: { stats: {} }, characters: [{ id: card.id, name: card.name, stats: {}, collections: {} }] };
     const saves = [];
     const deps = { committedState: initial, hasOpenChat: () => true,
+        loadStateFromMetadata: () => deps.committedState,
         getCurrentPersonaName: () => 'Player', resolveCanonicalName: name => name,
         mayJoinScene: () => true, recordCollectionWarnings() {},
-        saveStateToMetadata: state => { saves.push(state); deps.committedState = state; } };
+        saveStateToMetadata: (state, options = {}) => {
+            if (options.isCurrent && !options.isCurrent()) return false;
+            options.beforeCommit?.();
+            saves.push(state); deps.committedState = state; return true;
+        } };
     bindConstraints(deps);
     bindTrackerUpdate(deps, { getSettings: () => settings, getAllCharacters: () => [card] });
     return { deps, card, initial, saves };

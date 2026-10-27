@@ -58,6 +58,11 @@ with browser_session() as browser:
           const preview = applyUpdate(initial, { dryRun: true, admitCharacters: true });
           result.initialApplied = preview.characters[0]?.stats.HP === '5/5' && preview.characters[0]?.stats.Level === '1'
             && preview.characters[1]?.stats.HP === '8/8' && preview.characters[1]?.stats.Level === '3';
+          const beforeRejected = [JSON.stringify(live), JSON.stringify(settings)];
+          result.invalidSourceRejected = applyUpdate({ player: { stats: { HP: '1' } } },
+            { messageId: Number.MAX_SAFE_INTEGER }) === null;
+          result.rejectedSourceLeavesData = JSON.stringify(live) === beforeRejected[0]
+            && JSON.stringify(settings) === beforeRejected[1];
           const later = { characters: [{ name: 'Pool fixture Flarit', stats: { HP: '4/10', Level: 2 } }] };
           sanitizeModelUpdate(later, preview, tracker);
           result.establishedProtected = later.characters[0].stats.HP === '4/5' && later.characters[0].stats.Level === undefined;

@@ -67,14 +67,15 @@ export function queueInlineReading(update, messageId, mesEl, fingerprint) {
         }
         refreshTurnBase(messageId);
         const before = loadStateFromMetadata();
-        const preview = applyUpdate(parsed, { dryRun: true, admitCharacters: true, warnings });
+        const preview = applyUpdate(parsed, { dryRun: true, admitCharacters: true, warnings, messageId });
+        if (!preview) return;
         const changes = computeStateDiff(before, preview, tracker).filter(row => !isItemDecided(row));
         const notes = attachReasons(changes, parsed.why);
         const { auto, pending } = partitionChanges(changes, tracker);
         pending.push(...grants.rows.filter(row => !isItemDecided(row)));
         prepareGrantReview(auto, pending, grants.transitions);
-        if (auto.length) applyUpdate(buildUpdateFromChanges(auto, before, tracker, getAllCharacters()),
-            { partOfMessage: true, progressionResolved: true, admitCharacters: true });
+        if (auto.length && !applyUpdate(buildUpdateFromChanges(auto, before, tracker, getAllCharacters()),
+            { partOfMessage: true, progressionResolved: true, admitCharacters: true, messageId })) return;
         recordAppliedChanges(messageId, auto);
         grants.reading.sourceText = message.mes;
         saveLevelReading(message, grants.reading);

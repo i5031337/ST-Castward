@@ -60,7 +60,7 @@ const sourceFiles = ['src/core/builtin-systems.js', 'src/core/settings-tracker-d
     'src/tracker/status-update-parser.js', 'src/tracker/stat-value-utils.js',
     'src/tracker/stat-field-utils.js', 'src/tracker/stat-field-calculation.js',
     'src/tracker/collection-calculation.js', 'src/tracker/actor-calculation.js',
-    'src/tracker/tracker-update-calculation.js',
+    'src/tracker/tracker-update-calculation.js', 'src/tracker/tracker-update-commit.js',
     'src/tracker/status-apply-update.js', 'src/tracker/stat-reading-equality.js',
     'src/tracker/progression.js', 'src/tracker/numeric-stat-bounds.js',
     'tests/eval-gemma-tracker.js', 'tests/fixtures/gemma-request-batches.mjs', 'tests/fixtures/gemma-reader-request.mjs',

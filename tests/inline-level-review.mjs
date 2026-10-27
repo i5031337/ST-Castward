@@ -4,11 +4,11 @@ import { readFileSync } from 'node:fs';
 
 const source = readFileSync(new URL('../src/tracker/extractor/status-inline-grants.js', import.meta.url), 'utf8')
     .replace(/^import [\s\S]*?;\n/gm, '').replaceAll('export ', '');
-function harness() {
+function harness({ rejectPhase } = {}) {
     const message = { mes: 'A victory', swipe_id: 0 };
     const context = { chat: [message], chatMetadata: {} };
     const state = { player: { stats: { XP: '9/10', Level: '1' } } };
-    const calls = { applied: [], pending: [], selections: 0, records: [], replacements: 0, resets: 0 };
+    const calls = { attempts: [], applied: [], pending: [], selections: 0, records: [], replacements: 0, resets: 0 };
     let duringSelection = () => {};
     const deps = {
         getContext: () => context, getSettings: () => ({ enabled: calls.enabled !== false, statusTracker: { enabled: true, extractionMode: calls.mode || 'inline' } }),
@@ -17,7 +17,12 @@ function harness() {
         sanitizeModelUpdate: update => update, normalizeModelReadings: update => update,
         normalizeCollectionUpdates: () => [], rememberSwipeBase: () => {}, refreshTurnBase: () => {},
         trackerMessageIndex: chat => chat.length - 1,
-        applyUpdate: (update, options) => { if (!options.dryRun) calls.applied.push({ update, options }); return state; },
+        applyUpdate: (update, options) => {
+            calls.attempts.push(options);
+            if (rejectPhase === (options.dryRun ? 'preview' : 'commit')) return null;
+            if (!options.dryRun) calls.applied.push({ update, options });
+            return state;
+        },
         computeStateDiff: () => [{ scope: 'player', label: 'XP', kind: 'stat', after: '0' }],
         partitionChanges: changes => ({ auto: changes, pending: [] }),
         buildUpdateFromChanges: rows => ({ rows }), attachReasons: () => [], isItemDecided: () => false,
@@ -104,4 +109,21 @@ test('disabled extension neither queues inline XP nor commits a pending reading'
     await settle();
     assert.equal(h.calls.applied.length, 0);
     assert.equal(h.message.reading, undefined);
+});
+
+
+test('rejected inline previews and commits do not record application or completed reports', async () => {
+    for (const rejectPhase of ['preview', 'commit']) {
+        const h = harness({ rejectPhase });
+        assert.equal(h.queue(), true);
+        await settle();
+        assert.equal(h.calls.applied.length, 0);
+        assert.deepEqual(h.calls.records, []);
+        assert.deepEqual(h.calls.pending, []);
+        assert.equal(h.message.reading, undefined);
+        assert.equal(h.message.report, undefined);
+        assert.equal(h.message.extra?.sillynpc_inline_reading, undefined);
+        assert.equal(h.calls.attempts.length, rejectPhase === 'preview' ? 1 : 2);
+        assert.ok(h.calls.attempts.every(options => options.messageId === 0));
+    }
 });

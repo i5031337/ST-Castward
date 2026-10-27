@@ -35,7 +35,11 @@ function harness({ state, cards = [], settings, openChat = true }) {
         getSettings: () => ({ statusTracker: settings }), getAllCharacters: () => cards,
         getContext: () => context, debugLog() {}, saveSettings() {}, LOG_PREFIX: '[test]', eventSource: { emit() {} } };
     const deps = { ...statValues, groupIncomingStats, loadStateFromMetadata: () => live,
-        saveStateToMetadata: state => { live = state; }, hasOpenChat: () => openChat,
+        saveStateToMetadata: (state, options = {}) => {
+            if (options.isCurrent && !options.isCurrent()) return false;
+            options.beforeCommit?.();
+            live = state; deps.committedState = state; return true;
+        }, hasOpenChat: () => openChat,
         resolveCanonicalName: name => name, mayJoinScene: () => true, getCurrentPersonaName: () => live.player?.name || 'Player' };
     bindConstraints(deps);
     bindCollectionUpdates(deps, globals);

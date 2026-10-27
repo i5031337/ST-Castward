@@ -172,8 +172,8 @@ Constraints import their helpers directly, and model sanitization imports field 
 removing the stat-values/constraints cycle. Stat synonyms no longer belong to chat session
 state. `status-logic.js` preserves the public API and supplies independent helpers to the
 remaining providers while their callers are migrated. Diagnostics remain isolated per
-constraints binding. Fourteen bound providers remain; writes and lifecycle behavior
-still use the existing orchestration.
+constraints binding. Fourteen bound providers remain for lifecycle, schema and other
+existing APIs; full tracker updates use the calculation and commit path below.
 
 Collection updates now delegate to `collection-calculation.js`. The calculation takes
 captured actor collections, explicit player/NPC scope, projected tracker rules, the active
@@ -207,16 +207,30 @@ The public `applyUpdate` preview adapter still appends those detached actors and
 nonenumerable pre-assignment baselines for the existing diff/review consumers.
 
 The host wrapper captures canonical names and admission decisions through existing
-speaker/cast policy, applies accepted plans, batches settings saves, saves metadata and
-emits the existing status event. It preserves the missing-chat guards and existing
-storage checks. Model-input sanitization, review decisions and presence reconciliation
-remain separate orchestration steps; the calculator does not replace their policies.
+speaker/cast policy. `tracker-update-commit.js` then validates chat ID, metadata identity,
+persona key, active/bound System, source-state identity and readings, and rules/System
+identity and readings. Reader, inline and review callers provide `messageId`, adding
+reply object, text and swipe checks. Manual edits have no invented reply source.
+Asynchronous request freshness remains the caller's responsibility; calculation and
+commit run synchronously rather than retaining plans across an await.
 
-Next, introduce a commit boundary that validates chat, persona, System and source
-ownership before all related writes. Undo/swipe bookkeeping and host save ordering still
-need explicit ownership there. Settings and metadata remain separate host saves, without
-a cross-store atomicity guarantee. Lifecycle, schema edits and the remaining provider
-registry are later work. Keep tombstone policy changes separate from this refactor.
+Storage repeats ownership validation after its existing origin guards and before any
+related card/library, history or metadata write. An internal synchronous callback installs
+accepted card/library plans before roster capture and swipe alignment. Storage returns
+an explicit success/failure; settings saves and the status event follow acceptance only.
+Rejected reader and inline commits stop before recording applied rows or completed
+reports. Existing manual undo and message-owned turn-base behavior are preserved.
+
+Cached states record their metadata and stored-state provenance in a private WeakMap.
+Replacement or removal invalidates the cache even when the chat ID stays the same.
+Update previews and commits request guarded cache reuse, avoiding an extra normalization
+or save of an already-loaded source. Normal loads retain their existing repair behavior.
+
+This completes the focused full-update calculation/commit refactor. Model-input
+sanitization, review policy, presence reconciliation, lifecycle/schema operations and
+the remaining provider registry are separate boundaries. Direct item-editor operations
+retain their existing wrappers. Settings and metadata remain separate host saves,
+without a cross-store atomicity guarantee. Tombstone policy is unchanged.
 
 ## Verification
 

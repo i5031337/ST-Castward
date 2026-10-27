@@ -33,7 +33,11 @@ function fixture() {
         { name: 'Mira', stats: {}, collections: {} },
     ] }, hasOpenChat: () => true, getCurrentPersonaName: () => 'Player',
     loadStateFromMetadata() { return this.committedState; },
-    saveStateToMetadata(state) { this.committedState = state; },
+    saveStateToMetadata(state, options = {}) {
+        if (options.isCurrent && !options.isCurrent()) return false;
+        options.beforeCommit?.();
+        this.committedState = state; return true;
+    },
     resolveCanonicalName: name => name, mayJoinScene: () => true,
     mergeDuplicateCharacters: () => false, groupIncomingStats: () => new Map(),
     getMergedItem: (_id, item) => item, constrainToDefinition: (_field, value) => value };

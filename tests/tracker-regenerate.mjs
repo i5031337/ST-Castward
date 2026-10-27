@@ -49,6 +49,8 @@ function harness(mode = 'extract') {
     let enabled = true;
     let previewWarnings = [];
     let collectionWarnings = [];
+    let rejectedPhase;
+    const application = { attempts: [], records: 0, readingSaves: 0 };
     let prompted;
     const deps = {
         getContext: () => context, swipeBaseRecord: () => base,
@@ -70,6 +72,8 @@ function harness(mode = 'extract') {
         refreshTurnBase: () => { base.beforeApply = { state: structuredClone(live), profiles: {} }; },
         sanitizeModelUpdate: () => {}, reconcileScenePresence: () => {},
         applyUpdate: (parsed, options) => {
+            application.attempts.push(options);
+            if (rejectedPhase === (options?.dryRun ? 'preview' : 'commit')) return null;
             if (options?.dryRun) collectionWarnings.push(...previewWarnings);
             const result = structuredClone(live);
             Object.assign(result.player.stats, parsed.player?.stats || {});
@@ -82,6 +86,7 @@ function harness(mode = 'extract') {
         buildUpdateFromChanges: () => ({}), attachReasons: () => [],
         setPendingChanges: (id, rows) => { pending = rows; }, isItemDecided: () => false,
         recordAppliedChanges: (id, rows) => {
+            application.records++;
             message.extra.sillynpc_applied = (message.extra.sillynpc_applied || []).concat(rows);
             base.applied = { state: applyTurnValues(base.state, diffTurnValues(base.beforeApply.state, live)), profiles: {} };
         },
@@ -91,7 +96,7 @@ function harness(mode = 'extract') {
         requestExtraction: async () => { await onRequest(); return structuredClone(response); },
         coerceToUpdate: raw => raw, normalizeModelReadings,
         prepareLevelReading: async () => ({ rows: [], failures: [], transitions: [], reading: { personaId: 'hero' } }),
-        saveLevelReading: () => {}, retryLevelReading: async () => ({ applied: false }),
+        saveLevelReading: () => { application.readingSaves++; }, retryLevelReading: async () => ({ applied: false }),
         validateReviewedTransitions: () => ({ invalid: new Set() }),
         prepareGrantReview: () => {}, LEVEL_READING_KEY: 'sillynpc_level_reading',
         getCurrentPersonaKey: () => 'hero', getCurrentPersonaName: () => 'Hero',
@@ -106,7 +111,8 @@ function harness(mode = 'extract') {
         cancellation, live: () => live, pending: () => pending, prompted: () => prompted, message, context, base,
         setEnabled: value => { enabled = value; },
         setResponse: value => { response = value; }, onRequest: fn => { onRequest = fn; },
-        setWarnings: value => { previewWarnings = value; } };
+        setWarnings: value => { previewWarnings = value; },
+        rejectUpdate: phase => { rejectedPhase = phase; }, application };
 }
 test('overlapping automatic turns read in order using the preceding applied state', async () => {
     const h = harness();
@@ -257,4 +263,27 @@ test('Stop preserves the previous reading and permits a clean retry', async () =
     h.onRequest(() => {});
     assert.equal((await h.run()).applied, true);
     assert.equal(h.message.report.status, 'done');
+});
+
+
+test('rejected tracker previews and commits do not record an applied reading and allow retry', async () => {
+    for (const phase of ['preview', 'commit']) {
+        const h = harness();
+        const previous = structuredClone(h.live());
+        h.rejectUpdate(phase);
+        const result = await h.run({});
+        assert.equal(result.applied, false);
+        assert.equal(result.reason, 'reply changed while reading');
+        assert.deepEqual(h.live(), previous);
+        assert.deepEqual(h.message.extra.sillynpc_applied, [{ old: true }]);
+        assert.deepEqual(h.pending(), [{ old: true }]);
+        assert.equal(h.application.records, 0);
+        assert.equal(h.application.readingSaves, 0);
+        assert.notEqual(h.message.report.status, 'done');
+        assert.equal(h.application.attempts.length, phase === 'preview' ? 1 : 2);
+        assert.ok(h.application.attempts.every(options => options.messageId === 0));
+        h.rejectUpdate(null);
+        assert.equal((await h.run({})).applied, true);
+        assert.equal(h.application.records, 1);
+    }
 });

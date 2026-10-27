@@ -215,19 +215,17 @@ async function performExtraction(messageText, messageId, options, signal) {
         // removals and implausible jumps can be held back for a look rather than
         // becoming fact.
         const currentState = loadStateFromMetadata();
-        /* Anything refused before this run belongs to an older one; the dry run below sees
-           this whole reply, so what it turns down is this message's. */
+        // Isolate this reply's preview diagnostics.
         takeRefusedValues();
         takeCollectionWarnings();
-        const wouldBe = applyUpdate(parsed, { dryRun: true, admitCharacters: true, warnings });
+        const wouldBe = applyUpdate(parsed, { dryRun: true, admitCharacters: true, warnings, messageId });
+        if (!wouldBe) return staleResult();
         warnings.push(...takeCollectionWarnings());
         const refused = takeRefusedValues().map(({ field, wanted, allowed, kept }) =>
             `${field}: "${wanted}" is not one of ${allowed.join(', ')} - kept "${kept}"`);
         if (refused.length) debugLog('Values refused by their allowed lists', refused);
         const proposed = computeStateDiff(currentState, wouldBe, trackerSettings);
-        // Standing decisions are applied before the split, not after. Filtering only the
-        // pending half would let a protected item be deleted outright by anyone whose
-        // "Ask Before Applying" is set loosely enough for removals to apply on their own.
+        // Standing item decisions constrain both automatic and reviewed changes.
         const changes = proposed.filter(change => !isItemDecided(change));
         const blocked = proposed.length - changes.length;
 
@@ -253,17 +251,15 @@ async function performExtraction(messageText, messageId, options, signal) {
 
         // Rebuild surviving rows when review or standing decisions filter the update.
         if (pending.length === 0 && blocked === 0) {
-            applyUpdate(parsed, { partOfMessage: true, admitCharacters: true });
+            if (!applyUpdate(parsed, { partOfMessage: true, admitCharacters: true, messageId })) return staleResult();
         } else if (auto.length > 0) {
             // Apply the uncontroversial part now so the tracker stays current while the
             // rest waits.
-            applyUpdate(buildUpdateFromChanges(auto, currentState, trackerSettings),
-                { partOfMessage: true, progressionResolved: true, admitCharacters: true });
+            if (!applyUpdate(buildUpdateFromChanges(auto, currentState, trackerSettings),
+                { partOfMessage: true, progressionResolved: true, admitCharacters: true, messageId })) return staleResult();
         }
 
-        // Written even when nothing changed, so a quiet message is distinguishable from
-        // a message older than the record. Costs no prompt tokens: extra is not read
-        // back into the context.
+        // Record quiet readings too, distinguishing them from unread replies.
         const applied = pending.length === 0 ? changes : auto;
         recordAppliedChanges(messageId, applied);
         const placeResult = automaticPlaces.length

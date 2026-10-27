@@ -21,12 +21,21 @@ function fixture({ openChat = true } = {}) {
             { id: 'mira', name: 'Mira', stats: { HP: '4' }, collections: { items: [{ name: 'ring' }] } },
             { name: 'Jon', stats: { HP: '3' }, collections: {} },
         ], recently_deleted: { items: { lost: 1, retained: 2 } } };
+    const metadata = { state: initial };
     const calls = { saved: [], emitted: [], settings: 0, collectionWarnings: [] };
-    const deps = { committedState: initial, hasOpenChat: () => openChat,
+    const deps = { committedState: initial, committedChatId: 'test-chat',
+        STATE_KEY: 'state', SYSTEM_KEY: 'system', getMetadata: () => metadata,
+        currentChatId: () => 'test-chat', getCurrentPersonaKey: () => 'Alex.png',
+        hasOpenChat: () => openChat,
         loadStateFromMetadata: () => initial, getCurrentPersonaName: () => 'Alex',
         resolveCanonicalName: name => name, mayJoinScene: () => true,
         recordCollectionWarnings: values => calls.collectionWarnings.push(...values),
-        saveStateToMetadata: (...args) => calls.saved.push(args) };
+        saveStateToMetadata: (state, options) => {
+            if (options.isCurrent && !options.isCurrent()) return false;
+            options.beforeCommit?.();
+            calls.saved.push([state, options]);
+            return true;
+        } };
     bindConstraints(deps);
     bindTrackerUpdate(deps, { getSettings: () => settings, getAllCharacters: () => [card],
         saveSettings: () => calls.settings++, eventSource: { emit: (...args) => calls.emitted.push(args) } });
