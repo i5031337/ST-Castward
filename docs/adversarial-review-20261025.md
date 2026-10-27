@@ -143,7 +143,7 @@ status over more customization. Source inspection: `manage.html` and
 ## 6. File size limits do not remove architectural coupling — tracker update path addressed; broader coupling remains
 
 At review time, `src/` contained 322 JavaScript modules and approximately 39,730 lines.
-The tracker binds 15 providers into a shared runtime dependency registry. Understanding
+The tracker then bound 15 providers into a shared runtime dependency registry. Understanding
 a state change still requires following mutable state across providers, host events,
 snapshots, and UI refreshes.
 
@@ -175,12 +175,87 @@ or save to cached previews.
 The recommendation is addressed for the full tracker update path. Lifecycle, schema
 operations, direct item-editor wrappers and the remaining registry retain broader
 coupling; this focused refactor does not claim to remove all shared mutable state.
-See [ARCHITECTURE.md](ARCHITECTURE.md#tracker-dependency-refactor). All 894 Node tests and
+See [ARCHITECTURE.md](ARCHITECTURE.md#tracker-dependency-refactor). All 896 Node tests and
 `git diff --check` pass, including stale ownership, storage refusal, undo/swipe, cache
 replacement and refused-reader retry coverage. Temporary earlier comparisons matched
 64 actor cases and 576 full-update cases. The running-host pool fixture verifies preview
 application and invalid-source rejection without changing fixture data; the running-host
 UI smoke check also passes. Stored data formats and tombstone policy are unchanged; host saves remain separate.
+
+### Remaining architectural cleanup (optional)
+
+The focused update-path refactor is complete. The following work would extend its
+boundaries to the remaining mutations; it is not required to finish that change.
+Take one step at a time and review each before expanding the scope.
+
+1. **Route direct item edits through calculated plans.** Start with
+   `src/ui/collections/ui-collection.js`, `status-collection-updates.js` and
+   `status-collection-schema.js`. Reuse collection calculation for manual edits and
+   return the related card/Item Library changes before touching live objects. Commit
+   accepted plans through ownership checks. Done when an edit rejected after a chat
+   or persona change leaves every affected store untouched. Preserve current item
+   suppression until the separate policy decision in #7.
+
+2. **Make schema/library edits explicit operations.** Refactor stat and collection
+   renames in `status-stat-schema.js` and Item Library propagation in
+   `status-collection-schema.js` to calculate changes from supplied rules, state,
+   cards and library data. Return the affected keys and references, then apply them
+   through a guarded write boundary. Done when the rename/propagation rules can be
+   tested without host storage and no partial edit is made before acceptance.
+   Preserve stable identifiers and existing export formats.
+
+3. **Separate lifecycle coordination from storage.** Untangle chat/persona activation
+   in `status-chat-session.js`, player switching in `status-persona-state.js`, and
+   System selection in `status-system-presets.js`. Give one coordinator an explicit
+   sequence for selecting rules, restoring the persona, loading state and refreshing
+   prompts/views. Done when those steps no longer call back into each other through
+   the registry. Preserve System-before-persona restoration, started-chat System
+   locking, player isolation, and fresh-chat roster seeding.
+
+4. **Remove diagnostic queue bridges.** Pass calculation warnings and refusals
+   directly into reader/review results instead of recording and draining shared
+   queues through `recordRefusedValues`, `takeRefusedValues`,
+   `recordCollectionWarnings` and `takeCollectionWarnings`. Done when each reading
+   owns its diagnostics and late/cancelled work cannot contribute to another reading.
+
+5. **Retire the remaining dependency registry.** After the preceding boundaries are
+   explicit, replace the remaining `bind(deps)` registrations with ordinary imports
+   for pure functions and small, named capability inputs for host adapters. Keep
+   `status-logic.js` as an export surface if callers still benefit from it. Done when
+   functions declare their actual dependencies and no provider needs late-bound
+   getters to resolve a cycle. Remove the registry-shape test once the registry is
+   gone; retain the behavioral ownership, persistence and calculation coverage.
+
+For each step, run focused tests and the full Node suite, then the relevant unsaved
+running-host fixture. Check manual correction/undo, latest-reply swipe/regeneration,
+offstage NPCs, inventories, and chat/persona/System boundaries where affected. Keep
+behavior changes, historical recovery features and further file splitting outside
+these cleanup commits.
+
+## 7. Manual item removal silently blocks later additions — open
+
+Manual item removal creates a temporary `recently_deleted` marker (a tombstone).
+Automatic additions and replacement lists skip matching items while it remains.
+The counter starts at three and ages with committed tracker updates, rather than
+elapsed time or necessarily three chat messages. Explicitly adding the item back
+clears the marker. Matching uses the collection ID and case-insensitive item identifier,
+without an owner: removing a player's Sword can also block an automatic addition of
+a Sword to an NPC in the same collection.
+
+This behavior is inherited from upstream's initial commit `490349e` and is also
+present in version 0.6.0 (`5698f91`). Its apparent purpose is to prevent the reader
+from restoring manually deleted items from recent story context, but it can also
+suppress legitimate reacquisition or transfers. The user was unaware of the behavior
+and questioned whether it should remain. This is a source-inspection finding and
+an open product decision, not a reproduced campaign failure.
+
+Revisit whether to remove the suppression or make it explicit and owner-specific,
+and whether any expiry should follow story turns rather than tracker operations.
+Keep this decision separate from the dependency refactor; no behavior change is
+authorized by recording this concern.
+
+Sources: `src/tracker/status-collection-updates.js` and the tombstone-aging logic in
+`src/tracker/status-apply-update.js`.
 
 ## Evidence and limits
 
