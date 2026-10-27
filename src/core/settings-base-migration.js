@@ -22,7 +22,8 @@ export function normaliseBaseSettings(settings) {
     }
 
     for (const key of ['dialogueFormatPrompt', 'narratorRulesPrompt', 'generationPrompt',
-        'imgGenPrompt', 'imgGenNegativePrompt', 'imgGenContextMessages', 'promptTexts']) delete settings[key];
+        'imgGenPrompt', 'imgGenNegativePrompt', 'imgGenContextMessages', 'promptTexts',
+        'banListEnabled', 'banList', 'banScanDepth']) delete settings[key];
     for (const key of ['extractionPrompt', 'systemRules']) delete settings.statusTracker[key];
     // Old exports may contain the removed direct Gemini backend settings.
     for (const key of ['imageBackend', 'geminiImageModel', 'imageProfileId', 'imgGenReferencePreamble']) {

@@ -1,3 +1,5 @@
+import { defaultSettings } from '../src/core/settings-defaults.js';
+import { PORTRAIT_SHAPES, DEFAULT_PORTRAIT_SHAPE } from '../src/core/constants-base.js';
 import { normalizeNpcRosters } from '../src/characters/system-npc-roster.js';
 import { normalizeThemeOverrides } from '../src/core/theme-customization.js';
 import { normalizeTrackerProgression } from '../src/core/progression-config.js';
@@ -152,4 +154,28 @@ test('progression migration assigns IDs and retains saved narrative bonuses with
     settings.statusTracker.playerStats.push({ name: 'Level Bonus', defaultValue: 'Saved narrative' });
     normalize(settings);
     assert.equal(settings.statusTracker.playerStats.at(-1).defaultValue, 'Saved narrative');
+});
+
+
+test('old writing preferences retire without changing speaker exclusions or character data', () => {
+    const source = readFileSync(new URL('../src/core/settings-base-migration.js', import.meta.url), 'utf8')
+        .replace(/^import .*;\n/gm, '').replaceAll('export function ', 'function ');
+    const normalize = new Function('PORTRAIT_SHAPES', 'DEFAULT_PORTRAIT_SHAPE',
+        'defaultSettings', 'resolveImageFolder', 'saveSettings',
+        `${source}\nreturn normaliseBaseSettings;`)(PORTRAIT_SHAPES, DEFAULT_PORTRAIT_SHAPE,
+        defaultSettings, value => value, () => assert.fail('Unexpected save'));
+    const settings = {
+        banListEnabled: true, banList: ['stock phrase'], banScanDepth: 25,
+        speakerIgnoreList: 'Narration\nInventory',
+        characters: [{ name: 'Mira', profile: { history: 'Saved history' } }],
+    };
+    const characters = structuredClone(settings.characters);
+    normalize(settings);
+    normalize(settings);
+    for (const key of ['banListEnabled', 'banList', 'banScanDepth']) {
+        assert.equal(Object.hasOwn(settings, key), false);
+    }
+    assert.equal(settings.speakerIgnoreList, 'Narration\nInventory');
+    assert.deepEqual(settings.characters, characters);
+    assert.equal(settings.dialogueFormatEnabled, true);
 });

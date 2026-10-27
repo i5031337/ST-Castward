@@ -49,42 +49,6 @@ export const otherPromptTexts = [
     },
 
     {
-        id: 'banInstruction', group: 'Banned phrases', label: 'Phrases to avoid',
-        where: 'Put into the story prompt.',
-        when: 'Every message, when the ban list is on and sent as an instruction rather than to the sampler.',
-        placeholders: { phrases: 'Your banned phrases, one per line.' },
-        text: lines('### PHRASES TO AVOID',
-            'Do not use these words or phrases, or close variations of them:',
-            '{{phrases}}'),
-    },
-    {
-        id: 'banScanSystem', group: 'Banned phrases', label: 'Scan: system prompt',
-        where: 'The system prompt of the scan for repeated phrases.',
-        when: 'When you press Scan in the ban list.',
-        placeholders: {},
-        text: lines('Find phrases repeated in the roleplaying chat log and labels mistaken for speakers.',
-            '- "phrases" are wordings the narration leans on: stock descriptions, filler beats,',
-            '  and turns of phrase that appear again and again. Quote them exactly as written,',
-            '  short enough to be a phrase rather than a sentence.',
-            '- Do not list ordinary words, names, or anything specific to this story. Banning',
-            '  those would stop the model writing about its own setting.',
-            '- "notPeople" are labels written as if somebody were speaking - a word followed by a',
-            '  colon - that are not a character: action labels, stat names, section headings.',
-            '- Only phrases that appear at least three times in the log. At most 15.',
-            'Reply with only a JSON object: { "phrases": ["..."], "notPeople": ["..."] }. Both lists may be empty.'),
-    },
-    {
-        id: 'banScanRequest', group: 'Banned phrases', label: 'Scan: request',
-        where: 'The request of the scan for repeated phrases.',
-        when: 'When you press Scan in the ban list.',
-        placeholders: { log: 'The recent narration.' },
-        text: lines('### CHAT LOG', '{{log}}', '',
-            '### TASK',
-            'List the phrases this narration leans on, and any labels it writes as speakers '
-                + 'that are not characters.'),
-    },
-
-    {
         id: 'scanSystem', group: 'Scanning the story', label: 'Belongings: system prompt',
         where: 'The system prompt of the scan that reads the story for what everybody holds and knows.',
         when: 'When you run the history scan.',

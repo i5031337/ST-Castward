@@ -5,18 +5,14 @@ import { USAGE_KINDS, averageFor, resetUsage } from '../../core/usage.js';
 import { countTokens } from '../../core/tokens.js';
 import { estimateTokens } from '../../tracker/status-history.js';
 import { promptText } from '../../prompts/prompt-texts.js';
-import { getContext } from '../../../../../../st-context.js';
 import { SYSTEM_PROMPT, IMAGE_PROMPT } from '../../core/constants.js';
 import { Popup } from '../../../../../../popup.js';
 
 /** The text a generator sends every time, whatever the message. */
 function fixedPromptFor(kindId) {
-    const settings = getSettings();
-    const tracker = settings.statusTracker;
     if (kindId === 'extraction') return SYSTEM_PROMPT;
     if (kindId === 'scan') return promptText('scanSystem');
     if (kindId === 'fill') return promptText('profileSystem');
-    if (kindId === 'banscan') return promptText('banScanSystem');
     if (kindId === 'lore') return DEFAULT_LORE_PROMPT;
     if (kindId === 'image') {
         const template = IMAGE_PROMPT;
@@ -33,24 +29,8 @@ function replyBudgetFor(kindId) {
     if (kindId === 'extraction') return Number(tracker.extractionMaxTokens) || 1200;
     if (kindId === 'scan') return Number(tracker.scanMaxTokens) || 3000;
     if (kindId === 'fill') return Number(tracker.extractionMaxTokens) || 1200;
-    if (kindId === 'banscan') return Number(tracker.extractionMaxTokens) || 1200;
     if (kindId === 'lore') return Number(settings.loreMaxTokens) || 1200;
     return 0;
-}
-
-/**
- * How much narration a ban scan would send if it ran now.
- *
- * The same slice scanForBanCandidates takes: only what the model wrote, only the last
- * banScanDepth of those. Zero with no chat open, which reads correctly on the card -
- * there is nothing to scan.
- */
-function banScanChars() {
-    const chat = getContext()?.chat || [];
-    const depth = Number(getSettings().banScanDepth) || 50;
-    const written = chat.filter(m => !m?.is_user && String(m?.mes ?? '').trim());
-    const recent = depth > 0 ? written.slice(-depth) : written;
-    return recent.reduce((sum, m) => sum + String(m.mes).length, 0);
 }
 
 /**
@@ -74,14 +54,6 @@ export async function ceilingFor(kindId) {
         // transcript is different every time.
         const perPass = Number(getSettings().statusTracker.scanCharBudget) || 30000;
         parts.push({ label: 'transcript per pass', tokens: estimateTokens(perPass) });
-    }
-
-    if (kindId === 'banscan') {
-        // Unlike the history scan there is no character budget to read the size off:
-        // it takes a count of messages, whatever length they happen to be. So this is
-        // measured from the chat that is open - what a scan started now would send,
-        // rather than a number invented for the card.
-        parts.push({ label: 'narration read', tokens: estimateTokens(banScanChars()) });
     }
 
     const budget = replyBudgetFor(kindId);

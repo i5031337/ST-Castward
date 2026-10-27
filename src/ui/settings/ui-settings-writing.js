@@ -2,7 +2,6 @@ import { getSettings } from '../../core/settings.js';
 import { promptListAvailable } from '../../prompts/prompt-slot.js';
 import { applyDialogueFormatPrompt } from '../../prompts/dialogue-format.js';
 import { buildSettingToggle, buildSettingTextArea, buildSettingNumber } from '../shared/ui-shared.js';
-import { renderBanList } from '../shared/ui-banlist.js';
 import { npcCreationService } from '../../npc/npc-tool.js';
 
 export function renderWritingRulesView(view, onReprocessMessages) {
@@ -14,12 +13,12 @@ export function renderWritingRulesView(view, onReprocessMessages) {
 
     const title = document.createElement('h3');
     title.className = 'sillynpc-section-title';
-    title.textContent = 'What The Model Is Asked To Write';
+    title.textContent = 'Dialogue And Speaker Recognition';
     view.appendChild(title);
 
     const intro = document.createElement('p');
     intro.className = 'notes sillynpc-tab-intro';
-    intro.textContent = 'Ask for consistent dialogue, avoid repeated phrases, and choose how speakers are recognized.';
+    intro.textContent = 'Set up NPC creation, dialogue formatting, and speaker recognition.';
     view.appendChild(intro);
 
     view.append(buildSettingToggle({
@@ -79,46 +78,15 @@ export function renderWritingRulesView(view, onReprocessMessages) {
         }));
     }
 
-    const banHeading = document.createElement('h4');
-    banHeading.className = 'sillynpc-subsection-title';
-    banHeading.textContent = 'Ban List';
-    view.append(banHeading);
-
-    view.append(buildSettingToggle({
-        key: 'banListEnabled',
-        label: 'Stop The Model Repeating Itself',
-        help: 'Phrases you have banned are sent to the sampler where your backend takes '
-            + 'them, which means the model cannot write them - not that it is asked not '
-            + 'to. On an API that has no such thing they are asked for in the prompt '
-            + 'instead, and the panel says which of the two you are getting.',
-        onChange: rerender,
-    }));
-    if (getSettings().banListEnabled) {
-        const banPanel = document.createElement('div');
-        view.append(banPanel);
-        renderBanList(banPanel);
-
-        view.append(buildSettingNumber({
-            key: 'banScanDepth',
-            advanced: true,
-            label: 'Scan Depth',
-            suffix: 'replies',
-            help: 'How many of the model\'s own replies the scan reads. Your own messages '
-                + 'are skipped - your habits are not what this is for. 0 reads the whole '
-                + 'chat, which costs more and finds older habits.',
-        }));
-    }
-
     const readingHeading = document.createElement('h3');
     readingHeading.className = 'sillynpc-section-title';
     readingHeading.style.marginTop = '24px';
-    readingHeading.textContent = 'How Its Writing Is Read';
+    readingHeading.textContent = 'Speaker Recognition';
     view.append(readingHeading);
 
     const readingNote = document.createElement('p');
     readingNote.className = 'notes sillynpc-tab-intro';
-    readingNote.textContent = 'The other side of the same question: which of the words in a '
-        + 'reply are somebody speaking.';
+    readingNote.textContent = 'Choose which labels and names are recognized as speakers.';
     view.append(readingNote);
 
     view.append(buildSettingTextArea({

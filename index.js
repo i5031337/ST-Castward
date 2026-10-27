@@ -45,7 +45,6 @@ import { setDebugLogging } from './src/core/constants.js';
 import { describeChatConnection } from './src/core/utils.js';
 import { applyDialogueFormatPrompt } from './src/prompts/dialogue-format.js';
 import { placeWritingPrompt } from './src/prompts/prompt-slot.js';
-import { applyBanList } from './src/prompts/banlist.js';
 import { initPlaceBackgrounds } from './src/locations/location-background.js';
 import { initGenerationActivity } from './src/ui/tracker/ui-generation-activity.js';
 
@@ -138,7 +137,6 @@ jQuery(async () => {
                 // Clear an old prompt-list copy of the retired duplicate rule.
                 placeWritingPrompt('sillynpc-narrator-rules', '');
                 applyDialogueFormatPrompt();
-                applyBanList();
             } catch (err) {
                 debugLog('Could not set what is injected into the story prompt', err);
             }

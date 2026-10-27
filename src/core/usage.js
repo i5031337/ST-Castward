@@ -26,9 +26,6 @@ export const USAGE_KINDS = [
       note: 'An occasional separate pass proposing durable NPC memories for review.' },
     { id: 'fill', label: 'Character Fill', sends: 'text',
       note: 'One per manually regenerated profile field. Lore and portraits have separate counters.' },
-    { id: 'banscan', label: 'Ban List Scan', sends: 'text',
-      note: 'One per scan, from the Ban List tab. It reads recent narration, so it costs '
-          + 'about what a short scan does.' },
     { id: 'image', label: 'Portrait Generation', sends: 'image',
       note: 'The reply is a picture, so only what was sent is counted.' },
 ];

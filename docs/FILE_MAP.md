@@ -47,6 +47,7 @@ This map covers tracked runtime files, tests and support files. Source files and
 | `docs/AUDIT_FOLLOWUP.md` | Historical cleanup decisions and focused verification guidance. |
 | `docs/tts-expressions-audit.md` | Speech and expression audit findings and fix status. |
 | `docs/code-cleanup-audit.md` | Completed obsolete and redundant code cleanup, verification, shared reply gate, and removed image-tag integration. |
+| `docs/feature-trimming-review.md` | Inherited feature cut/trim candidates, tradeoffs, and measured historical world-state note footprint. |
 | `docs/test-audit.csv` | Test audit decisions, rationale, and replacement coverage references. |
 | `docs/tracker-prompt-draft.txt` | Archived tracker prompt draft from before the absolute-reading contract. |
 | `docs/REWRITE_HOST_SMOKE.md` | Dated user-reported host results and remaining manual checks. |
@@ -278,7 +279,6 @@ This map covers tracked runtime files, tests and support files. Source files and
 | `tests/prompt-slot-rebrand.mjs` | Rename the former default dialogue prompt without changing custom names, placement, order, or toggles. |
 | `src/prompts/macros.js` | Expand extension template macros. |
 | `src/prompts/dialogue-format.js` | Dialogue formatting instructions. |
-| `src/prompts/banlist.js` | Banned phrase rules and scan prompts. |
 
 ## Characters and story
 
@@ -344,7 +344,6 @@ This map covers tracked runtime files, tests and support files. Source files and
 | `src/ui/manage/ui-manage.js` | Management popup and tab routing, including the Player view. |
 | `src/ui/api/ui-api-lore.js` | Lore generation dialog workflow. |
 | `src/ui/api/ui-api-image.js` | Portrait generation dialog workflow. |
-| `src/ui/shared/ui-banlist.js` | Banlist editor. |
 | `src/ui/shared/ui-bulk-select.js` | Shared bulk selection controls. |
 | `src/ui/characters/ui-cast-panel.js` | Cast membership panel. |
 | `src/ui/tracker/ui-change-review.js` | Review proposed model changes. |
@@ -373,7 +372,7 @@ This map covers tracked runtime files, tests and support files. Source files and
 | `src/ui/settings/ui-settings-details.js` | Group less-used settings in disclosures. |
 | `src/ui/settings/ui-settings-search.js` | Search settings and jump to results. |
 | `src/ui/settings/ui-settings-appearance.js` | Appearance settings. |
-| `src/ui/settings/ui-settings-writing.js` | Writing rule settings. |
+| `src/ui/settings/ui-settings-writing.js` | NPC creation, dialogue formatting, and speaker recognition settings. |
 | `src/ui/settings/ui-settings-advanced.js` | Advanced settings. |
 | `src/ui/settings/ui-settings-defaults.js` | Fallback portrait pool and tag management, with stranger portrait retention and reset. |
 | `src/ui/settings/ui-settings-generation.js` | Profile generation and active System memory settings, and the separate Images view. |

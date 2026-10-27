@@ -31,11 +31,6 @@ export const defaultSettings = {
     dialogueFormatDepth: 0,
     /** Expose formatting in the host prompt list instead of injecting it at dialogueFormatDepth. */
     dialogueFormatInPromptList: false,
-    /** System-specific phrases to block at the sampler where supported. */
-    banListEnabled: false,
-    banList: [],
-    /** How far back the scan reads when it goes looking for them. */
-    banScanDepth: 50,
     /** Colour a speaker who has no card, from their name. */
     autoColorUnknownSpeakers: true,
     /** Draw a missing portrait after empty-card Fill or reader-generated NPC profiles. */

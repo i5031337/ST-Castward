@@ -6,7 +6,6 @@ import { triggerReprocess } from '../chat/reprocess.js';
 import { resetExtractionState } from '../tracker/extractor/status-extractor.js';
 import { applyScenePrompt } from '../tracker/status-logic.js';
 import { applyDialogueFormatPrompt } from '../prompts/dialogue-format.js';
-import { applyBanList } from '../prompts/banlist.js';
 import { restorePlayerDialogueSetting } from './entry-generation-names.js';
 import { updateHUD } from '../ui/hud/ui-hud.js';
 import { refreshReadButton } from '../ui/tracker/ui-read-button.js';
@@ -32,7 +31,6 @@ export function refreshExtensionEnabled() {
     applyScenePrompt();
     if (getSettings().enabled) syncPlaceBackground(undefined, undefined, true);
     applyDialogueFormatPrompt();
-    applyBanList();
     updateHUD();
     refreshReadButton();
     refreshScanButton();
