@@ -1,6 +1,21 @@
 import { progressionFields } from './progression-fields.js';
 import { isPoolStat } from './numeric-stat-bounds.js';
 
+/** Held readings and their meanings, without reader permissions or initialization defaults. */
+export function describeKnownStatReadings(values, definitions) {
+    const entries = Object.entries(values || {});
+    const lines = [];
+    for (const stat of definitions || []) {
+        if (!stat?.name || stat.retired) continue;
+        const entry = entries.find(([name]) => name.toLowerCase() === stat.name.toLowerCase());
+        if (!entry || !String(entry[1] ?? '').trim()) continue;
+        const value = String(entry[1]).replace(/\s+/g, ' ').trim();
+        const purpose = String(stat.purpose ?? '').replace(/\s+/g, ' ').trim();
+        lines.push(`${stat.name}: ${value}${purpose ? `, ${purpose}` : ''}`);
+    }
+    return lines.join('\n');
+}
+
 /** Shared editable field meanings for the reader and inline tracker. */
 export function describeStatDefinitions(settings) {
     return describeReaderStats(settings);

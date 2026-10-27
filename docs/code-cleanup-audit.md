@@ -1,6 +1,6 @@
 # Obsolete and redundant code audit
 
-Audit date: 2026-10-26. The item-name cleanup that could delete valid saved data is fixed. The remaining findings identify unused APIs, duplicated work, and tests that preserve superseded implementations. All source modules are reachable from `index.js`; these findings concern code within modules.
+Audit date: 2026-10-26. The item-name cleanup that could delete valid saved data is fixed. Duplicate profile context in field generation is also fixed. The remaining findings identify unused APIs, duplicated work, and tests that preserve superseded implementations. All source modules are reachable from `index.js`; these findings concern code within modules.
 
 ## Item deletion fixed
 
@@ -8,11 +8,16 @@ Audit date: 2026-10-26. The item-name cleanup that could delete valid saved data
 
 An isolated execution of the migration changed library keys `New Item`, `New Item 2`, and `Sword` to `New Item` and `Sword`, discarding the second row's saved data. Both name-based purges are removed. Item names alone do not identify obsolete data.
 
+## Duplicate Fill context fixed
+
+[character-fill.js](../src/characters/character-fill.js) supplied existing profile fields through both `known` and `describeTrackedFacts`. Field generation now uses `describeTrackerState` for stats and collections, while `known` supplies profile prose with the requested fields excluded. Lore generation retains profile-inclusive `describeTrackedFacts`. Known readings now include the applicable System purpose on the same line (`Name: value, purpose`); blank readings add no stat section. The built-in lore prompt also omits empty facts, setting references, and existing-entry sections.
+
+The regression uses production formatters and prompt assembly to verify one copy of existing profile context, exclusion of the old value being regenerated, and retained stat and item details. It also verifies that lore facts still include profile and tracker data. The test failed with two copies before the fix; all 16 focused profile, lore, and Fill tests pass afterward.
+
 ## Open cleanup work
 
 | Finding | Evidence and action |
 | --- | --- |
-| Duplicate profile context in Fill | [character-fill.js](../src/characters/character-fill.js) supplies existing profile fields as `known` and through `describeTrackedFacts`; [api-lore-facts.js](../src/api/api-lore-facts.js) prepends those same fields. Production prompt assembly confirmed duplication. Consolidate field-generation context while retaining profile-inclusive facts for lore generation. |
 | Superseded ordering helpers | `moveInList` in [utils-media.js](../src/core/utils-media.js) has no callers. `moveCollectionField` in [collection-fields.js](../src/core/collection-fields.js) and `moveProfileField` in [ui-system-profile-operations.js](../src/ui/system/ui-system-profile-operations.js) have only test callers. Editors now use [ui-reorder.js](../src/ui/shared/ui-reorder.js). Remove the old helpers and their test-only assertions; retain identifier-pinning and current reorder coverage. |
 | Retired profile permissions | `anyProfileFieldUnlocked` in [constants-profile.js](../src/core/constants-profile.js) has no production callers. [settings-migration.js](../src/core/settings-migration.js) still initializes `aiProfileFields`, which has no other active consumer. Remove the helper, initialization, and stale lore-format fixture injection together. Existing unread saved keys need no destructive migration. |
 | Duplicate persistence cleanup | `normaliseNpcPersistence` in [stat-persistence.js](../src/tracker/stat-persistence.js) deletes `persistence` and `persistenceReview`, already deleted by [normaliseStatUpdatePolicies](../src/tracker/stat-update-policy.js) immediately before every production call. Remove the duplicate pass and imports while retaining canonical migration of carryover and retired properties. |

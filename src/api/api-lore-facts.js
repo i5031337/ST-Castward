@@ -7,6 +7,7 @@ import { applyMacros, modernisePlaceholders } from '../prompts/macros.js';
 import { getSettings } from '../core/settings.js';
 import { loadStateFromMetadata } from '../tracker/status-logic.js';
 import { imageItemsFromCollections } from './api-image-items.js';
+import { describeKnownStatReadings } from '../tracker/stat-prompt-definitions.js';
 
 export { createLoreEntry } from '../lore/lore-entries.js';
 
@@ -32,8 +33,10 @@ export function liveFactsFor(char) {
 
     if (char?.isPlayer) {
         const tracker = getSettings().statusTracker;
-        const names = new Set((tracker.playerStats || []).map(stat => stat.name.toLowerCase()));
+        const statDefinitions = (tracker.playerStats || []).filter(stat => !stat.retired);
+        const names = new Set(statDefinitions.map(stat => stat.name.toLowerCase()));
         return {
+            statDefinitions,
             stats: Object.fromEntries(Object.entries(state?.player?.stats || char.stats || {})
                 .filter(([name]) => names.has(name.toLowerCase()))),
             collections: Object.fromEntries(Object.entries(state?.player?.collections || char.collections || {})
@@ -43,10 +46,13 @@ export function liveFactsFor(char) {
 
     const wanted = String(char?.name ?? '').toLowerCase();
     const actor = (state?.characters || []).find(c => String(c.name).toLowerCase() === wanted) || null;
+    const statDefinitions = npcStatsFor(actor?.npcTemplateId ? actor : char, getSettings().statusTracker)
+        .filter(stat => !stat.retired);
+    const names = new Set(statDefinitions.map(stat => stat.name.toLowerCase()));
     return {
+        statDefinitions,
         stats: Object.fromEntries(Object.entries(actor?.stats || char?.statusOverrides || {})
-            .filter(([name]) => npcStatsFor(actor?.npcTemplateId ? actor : char, getSettings().statusTracker)
-                .some(stat => stat.name.toLowerCase() === name.toLowerCase()))),
+            .filter(([name]) => names.has(name.toLowerCase()))),
         collections: Object.fromEntries(Object.entries(actor?.collections || char?.statusCollections || {})
             .filter(([id]) => collectionAppliesTo(getSettings().statusTracker.collections?.find(col => col.id === id),
                 'npc', actor?.npcTemplateId ? actor : char))),
@@ -55,19 +61,17 @@ export function liveFactsFor(char) {
 
 export function describeTrackedFacts(char, except = null) {
     if (!char?.name) return '';
+    return [describeProfile(char, except), describeTrackerState(char)].filter(Boolean).join('\n');
+}
 
-    const { stats, collections } = liveFactsFor(char);
+/** Stats and collections without profile prose, for requests that supply it separately. */
+export function describeTrackerState(char) {
+    if (!char?.name) return '';
+    const { stats, collections, statDefinitions } = liveFactsFor(char);
     const lines = [];
 
-    // Apply regeneration exclusions to this copy of the profile too.
-    const profile = describeProfile(char, except);
-    if (profile) lines.push(profile);
-
-    const statLine = Object.entries(stats)
-        .filter(([, value]) => String(value ?? '').trim() !== '')
-        .map(([name, value]) => `${name}: ${value}`)
-        .join(', ');
-    if (statLine) lines.push(statLine);
+    const statReadings = describeKnownStatReadings(stats, statDefinitions);
+    if (statReadings) lines.push(`Known stats:\n${statReadings}`);
 
     for (const [colId, items] of Object.entries(collections)) {
         const named = (items || [])

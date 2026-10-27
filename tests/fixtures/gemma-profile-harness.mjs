@@ -4,7 +4,7 @@ import { createBuiltinSystem } from '../../src/core/builtin-systems.js';
 import { defaultTrackerSettings } from '../../src/core/settings-tracker-defaults.js';
 import { setProfileSettingsProvider, profileFieldsForCard, profileFieldValue } from '../../src/core/profile-fields.js';
 import { hintFor } from '../../src/core/constants-profile.js';
-import { promptText } from '../../src/prompts/prompt-texts.js';
+import { promptText, fillPromptText } from '../../src/prompts/prompt-texts.js';
 import { DEFAULT_LORE_PROMPT } from '../../src/prompts/default-prompt-texts.js';
 import { parseLoreReply } from '../../src/lore/lore-reply.js';
 import { parseGeneratedProfileFields, parseLoreContent, mergeLoreValues } from '../../src/lore/lore-format.js';
@@ -39,7 +39,7 @@ export function profileHarness(scenario) {
         'export function describeProfile', 'export function liveFactsFor'),
     { fieldsForCard: profileFieldsForCard, profileFieldValue }, 'describeProfile');
     const profileDependencies = { promptText, getPersonaData: () => ({ name: 'Alex' }),
-        describeProfile, describeTrackedFacts: () => scenario.facts || '',
+        describeProfile, describeTrackerState: () => scenario.facts || '',
         hintFor, fillTemplate, fieldsForCard: profileFieldsForCard, profileFieldValue };
     const buildProfilePrompt = functionFrom(body('../../src/characters/character-fill.js',
         'export function buildProfilePrompt', 'export async function fillProfile'),
@@ -64,7 +64,7 @@ export function profileHarness(scenario) {
         loadWorldInfo: async () => ({ entries: {} }), chat: [],
         buildLoreExcerpt: () => ({ text: scenario.story || '', used: 1, available: 1, trimmed: false }),
         retrieveWorldFacts: async () => '', DEFAULT_LORE_PROMPT, mergeLoreValues,
-        profileFieldsForCard, hintFor, fillTemplate, namesFor: char => [char.name],
+        profileFieldsForCard, hintFor, fillTemplate, fillPromptText, namesFor: char => [char.name],
         describeTrackedFacts: () => scenario.facts || '', getPersonaData: () => null,
         requestLore: async prompt => { capturedLorePrompt = prompt; return loreResponse; },
         parseLoreReply, utils, parseLoreContent, parseGeneratedProfileFields,

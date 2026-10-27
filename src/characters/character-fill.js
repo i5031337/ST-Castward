@@ -5,7 +5,7 @@ import { getSettings, saveSettings } from '../core/settings.js';
 import { hintFor } from '../core/constants.js';
 import { profileFieldValue, profileFieldsForCard as fieldsForCard } from '../core/profile-fields.js';
 import { requestExtraction, coerceToUpdate } from '../tracker/extractor/status-extractor.js';
-import { describeTrackedFacts, describeProfile, buildLoreExcerpt } from '../api/api.js';
+import { describeTrackerState, describeProfile, buildLoreExcerpt } from '../api/api.js';
 import { tryAutoSyncLorebook } from '../lore/lorebook.js';
 import { charactersMentionedIn } from '../story/mentions.js';
 import { getPersonaData } from '../tracker/status-logic.js';
@@ -110,7 +110,7 @@ export function buildProfilePrompt(char, wanted, sources) {
         values[sources.story ? 'loreBeside' : 'lore'] = sources.lore;
     }
 
-    values.facts = describeTrackedFacts(char, rewriting);
+    values.facts = describeTrackerState(char);
     values.fields = wanted.map(field => `- ${field.id}: `
         + fillTemplate(hintFor(field), { name: char.name }))
         .join('\n');

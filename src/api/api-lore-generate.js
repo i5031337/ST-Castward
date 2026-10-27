@@ -1,5 +1,5 @@
 import { startGenerationTask, awaitGenerationRequest } from '../core/generation-cancellation.js';
-import { promptText } from '../prompts/prompt-texts.js';
+import { promptText, fillPromptText } from '../prompts/prompt-texts.js';
 import { chat, extractMessageFromData } from '../../../../../../script.js';
 import { getContext } from '../../../../../st-context.js';
 import { loadWorldInfo, saveWorldInfo } from '../../../../../world-info.js';
@@ -212,17 +212,18 @@ async function buildLoreContent(char, world, uid, options) {
        rewritten to {{tag}} first rather than replaced separately, so a [NAME] that happens
        to be inside the chat excerpt or the existing entry is left alone - it is somebody's
        text, not a placeholder. */
-    let prompt = fillTemplate(template, {
+    const values = {
         name: char.name,
-        lore: existingLore || '(No existing lore yet)',
+        lore: existingLore,
         context: recentMessages,
-        world: worldFacts || '(Nothing found in the Data Bank)',
-        facts: (givenFacts !== undefined ? String(givenFacts ?? '').trim() : describeTrackedFacts(char))
-            || '(Nothing tracked yet)',
+        world: worldFacts,
+        facts: givenFacts !== undefined ? String(givenFacts ?? '').trim() : describeTrackedFacts(char),
         aliases: namesFor(char).slice(1).join(', ') || '(none)',
         profileFields,
         profileTemplate,
-    });
+    };
+    // Built-in sections depend on available sources; custom templates retain host macros.
+    let prompt = options.template ? fillTemplate(template, values) : fillPromptText(template, values);
 
     // A template written before [WORLD] existed - which is most of them, including any you
     // have customised - would otherwise leave the setting doing nothing at all. Appended

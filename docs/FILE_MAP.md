@@ -164,7 +164,7 @@ This map covers tracked runtime files, tests and support files. Source files and
 | `src/core/hash.js` | Stable hashes and palette indexes. |
 | `src/api/api.js` | Lore generation and image upload, generation, adoption, and cleanup. |
 | `src/api/api-connection-profile.js` | Request-local Additional Parameters from the Custom connection profile's completion preset; included YAML takes precedence over standard parameters. |
-| `src/api/api-lore-facts.js` | Assemble lore and tracked fact context. |
+| `src/api/api-lore-facts.js` | Format profile context, known stats with actor-scoped purposes, collections, and combined lore facts. |
 | `src/api/api-lore-generate.js` | Generate and save lore content. |
 | `src/api/api-image-items.js` | Select collection items for portrait prompts. |
 | `src/api/api-image-files.js` | Image storage, listing, adoption, and cleanup. |
@@ -183,7 +183,7 @@ This map covers tracked runtime files, tests and support files. Source files and
 | `tests/manual-level-ups.mjs`, `tests/ui-manual-level-ups.py` | Explicit level-up lifecycle, generic pool growth, persistence, context guards, and live card review checks. |
 | `src/tracker/numeric-stat-bounds.js` | Enforce numeric minimums and pool ceilings. |
 | `src/tracker/collection-prompt-definitions.js` | Shared readable collection definitions for the Tracker and NPC generator, with initialization defaults when needed. |
-| `src/tracker/stat-prompt-definitions.js` | Format stat purposes and rules for reader and inline prompts. |
+| `src/tracker/stat-prompt-definitions.js` | Format reader/inline stat rules and known stat readings with System purposes for profile and lore prompts. |
 | `src/tracker/stat-persistence.js` | Rules for NPC stat persistence. |
 | `src/tracker/stat-update-policy.js` | Reader locking and migration of retired stat policies. |
 | `src/tracker/status-history.js` | Raw status block preservation and chat overhead measurement. |
@@ -556,7 +556,7 @@ paths have regression tests under `tests/`.
 | File | Responsibility |
 | --- | --- |
 | `tests/activated-lore-prompt.mjs`, `tests/lore-format.mjs`, `tests/lorebook-target.mjs` | Activated-lore freshness, structured profile/lore round trips, partial Fill output, and safe chat lorebook selection. |
-| `tests/auto-npc-profiles.mjs`, `tests/player-profile-prompt.mjs`, `tests/lore-cancellation.mjs` | Opt-in profile and portrait generation, manual-edit precedence, persona description context, and cancellation without late saves or usage. |
+| `tests/auto-npc-profiles.mjs`, `tests/player-profile-prompt.mjs`, `tests/lore-cancellation.mjs` | Opt-in profile and portrait generation, manual-edit precedence, persona descriptions, nonduplicated field-generation context, and cancellation without late saves or usage. |
 | `tests/connection-profile.mjs`, `tests/ui-connection-profile.py` | Request-local Custom connection preset parameters, macro substitution, and precedence without changing saved presets. |
 | `tests/collection-fields.mjs`, `tests/collection-reading.mjs`, `tests/ui-collection-fields.py` | Pinned typed identifiers, optional ranges, defaults, typed prompt examples, preview diagnostics, and live field controls. |
 | `tests/npc-collection-persistence.mjs`, `tests/npc-change-counts.mjs` | Persist NPC holdings across scene exits and manual edits; count actual changes rather than repeated or offstage records. |
@@ -566,7 +566,7 @@ paths have regression tests under `tests/`.
 | `tests/extraction-report.mjs` | Reply-owned reader reports, review counts, change categories, XP awards, and stale-result rejection. |
 | `tests/model-absolute-readings.mjs`, `tests/gemma-absolute-contract.mjs`, `tests/ui-absolute-contract.py` | Absolute stat readings, earned-only XP guards, custom fields, progression thresholds, retained pool maxima, and reader/inline contracts. |
 | `tests/stat-echo-warnings.mjs`, `tests/stat-reading-equality.mjs` | Quiet unchanged stat and managed-Level echoes, numeric equivalence, and explicit pool maximum changes. |
-| `tests/stat-prompt-definitions.mjs`, `tests/offstage-progression-prompt.mjs`, `tests/reader-initialization-prompt.mjs` | Editable versus initialization-only fields, offstage references, XP guidance, pools, configured bounds, and typed collection examples. |
+| `tests/stat-prompt-definitions.mjs`, `tests/offstage-progression-prompt.mjs`, `tests/reader-initialization-prompt.mjs` | Editable versus initialization-only fields, known-reading meanings, offstage references, XP guidance, pools, configured bounds, and typed collection examples. |
 | `tests/reader-user-evidence.mjs`, `tests/ui-reader-evidence.py` | Fresh player actions, accounted history, continuation boundaries, and evidence with zero historical context. |
 | `tests/review-stats.mjs`, `tests/scene-stat-meanings.mjs` | Reviewed pool halves, offstage saves, refused writes, one-time XP advancement, and scope-specific scene stat purposes. |
 | `tests/reply-preservation.mjs`, `tests/presence-regenerate.mjs`, `tests/tracker-swipe.mjs` | Preserve saved prose, reverse rendered-speaker effects on regeneration, and restore or invalidate swipe-specific state. |

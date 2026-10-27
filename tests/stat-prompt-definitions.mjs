@@ -1,6 +1,25 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { describeStatDefinitions, describeReaderStats } from '../src/tracker/stat-prompt-definitions.js';
+import { describeStatDefinitions, describeReaderStats, describeKnownStatReadings } from '../src/tracker/stat-prompt-definitions.js';
+
+test('known stat context pairs held readings with purposes without unknown fields or defaults', () => {
+    const definitions = [
+        { name: 'HP', type: 'number', defaultValue: '5/5', maxStatValue: '99', min: '0', purpose: 'Physical condition' },
+        { name: 'Trust', type: 'number', min: '0', maxStatValue: '100', purpose: 'Confidence in the player' },
+        { name: 'Level', type: 'number', locked: true, purpose: 'Earned character level' },
+        { name: 'Mood', type: 'text', options: ['Calm', 'Wary'], guidance: 'Use the lasting mood' },
+        { name: 'Unknown', type: 'number', defaultValue: '42', purpose: 'Unknown definition marker' },
+        { name: 'Retired', type: 'number', retired: true },
+    ];
+    const text = describeKnownStatReadings({ hp: '2/8', Trust: 0, Level: '3', Mood: 'Wary', Retired: '7', Unassigned: '9' }, definitions);
+    assert.deepEqual(text.split('\n'), [
+        'HP: 2/8, Physical condition',
+        'Trust: 0, Confidence in the player',
+        'Level: 3, Earned character level',
+        'Mood: Wary',
+    ]);
+    assert.equal(describeKnownStatReadings({ HP: '', Trust: null, Level: '  ', Mood: undefined }, definitions), '');
+});
 
 test('reader and inline definitions describe editable fields without growth mechanics', () => {
     const settings = {

@@ -6,15 +6,21 @@ Omit fields with no supported value. A statement that a detail is unknown or und
 
 Keep established named fields unless the story clearly changes them. Omit fields with no supported value. Use third person. Tags are lorebook activation keys: use only the character's names and nicknames used in the story, never ordinary words or titles.
 
+{{#facts}}
 Established facts - treat these as true and do not contradict them:
 {{facts}}
 
+{{/facts}}
+{{#world}}
 Setting reference:
 {{world}}
 
+{{/world}}
+{{#lore}}
 Existing entry:
 {{lore}}
 
+{{/lore}}
 Recent story:
 {{context}}
 
