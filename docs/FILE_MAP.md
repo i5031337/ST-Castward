@@ -9,6 +9,9 @@ This map covers tracked runtime files, tests and support files. Source files and
 | Directory | Responsibility |
 | --- | --- |
 | `src/entry/` | SillyTavern event and avatar handlers. |
+| `src/entry/entry-new-chat-system.js` | Creation-only System offers, automatic reuse, and guarded selection. |
+| `src/ui/system/ui-new-chat-system.js` | New-chat saved/starter System chooser with descriptions and reuse control. |
+| `tests/new-chat-system.mjs` | System selection, reuse, cancellation, and stale-chat/first-turn boundaries. |
 | `src/core/` | Constants, settings, System schemas, active profile fields, memories, migrations, and shared utilities. |
 | `src/api/` | Lore and image generation and file operations. |
 | `src/generation/` | Staged System generation, canonical schema fragments, validation, requests, and isolated drafts. |

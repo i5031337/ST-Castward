@@ -77,7 +77,7 @@ A System defines what Castward tracks for your adventure. Start with one of the 
 | **Dating Sim** | Relationships that develop through affection, trust, and comfort. |
 | **Creature Trainer** | Trainers and creatures with teams, moves, and their own progression. A stronger reader model helps with this more involved System. |
 
-Fantasy Adventure is selected on a fresh install. To try another starter, open **System → Manager** and choose **Start from template** before your first player message. You'll get an editable copy to make your own.
+Fantasy Adventure is selected on a fresh install. When you start a new chat, Castward offers your saved Systems and the included starters before your first player message. Choosing a starter gives you an editable copy. Tick automatic reuse to keep using your choice in future chats; turn it off in **System → Manager** to choose again. Existing chats keep their System.
 
 Stats have written descriptions that help the reader judge what changed in the story. You can edit those descriptions along with the rules.
 

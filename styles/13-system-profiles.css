@@ -175,3 +175,41 @@
     min-height: 0;
 }
 .popup-content > div:has(.sillynpc-system-manager) { flex: 1; min-height: 0; }
+
+.sillynpc-manage.sillynpc-new-chat-system {
+    height: auto;
+    padding: var(--sillynpc-space-lg);
+    gap: var(--sillynpc-space-md);
+    border-radius: var(--sillynpc-radius-md);
+    text-align: left;
+    overflow-wrap: anywhere;
+}
+.sillynpc-new-chat-system > p,
+.sillynpc-new-chat-system > .sillynpc-section-title {
+    margin: 0;
+}
+.sillynpc-new-chat-system > .notes {
+    color: var(--sillynpc-fg-secondary);
+    font-size: var(--sillynpc-text-md);
+    line-height: var(--sillynpc-line-height);
+}
+.sillynpc-new-chat-system select {
+    width: 100%;
+    min-width: 0;
+}
+.sillynpc-new-chat-system .checkbox_label {
+    align-items: flex-start;
+    gap: var(--sillynpc-space-sm);
+    margin: 0;
+}
+.popup:has(.sillynpc-new-chat-system) {
+    background: var(--sillynpc-bg-primary);
+    border-color: var(--sillynpc-border);
+    border-radius: var(--sillynpc-radius-md);
+}
+.popup:has(.sillynpc-new-chat-system) .popup-controls .menu_button {
+    font-family: var(--sillynpc-font-family);
+    color: var(--sillynpc-fg-primary);
+    background: var(--sillynpc-bg-secondary);
+    border-color: var(--sillynpc-border);
+}

@@ -129,7 +129,7 @@ Sources:
 `src/ui/tracker/ui-tracker-display-reading.js`, `src/ui/tracker/ui-generation-activity.js`,
 and `src/core/usage.js`.
 
-## 5. Related settings and recovery actions need better discovery — Profiles and refresh implemented; chooser planned
+## 5. Related settings and recovery actions need better discovery — implemented
 
 The original claim of a large conceptual burden was too broad. Fantasy Adventure
 and automatic tracking are ready on a fresh install, other starter Systems provide
@@ -155,11 +155,14 @@ Agreed plan:
    Search finds the moved controls and opens the appropriate disclosure. General image
    settings and expression generation remain under Images. Existing setting keys and
    System definitions are unchanged.
-2. **New-chat System chooser — planned.** When the extension is enabled, offer the
-   starter and saved Systems once per new chat, before the first player message.
-   Show short starter descriptions, preselect the current System, and offer automatic
-   reuse of that choice for future chats. Existing chats do not prompt. Reuse saved
-   Systems directly; choosing a starter creates an editable copy.
+2. **New-chat System chooser — implemented.** When the extension is enabled, host
+   chat-creation events offer starter and saved Systems once, before the first player
+   message. The chooser shows short descriptions, preselects the current System, and
+   offers automatic reuse for future chats. Existing chats do not prompt. Saved
+   Systems are reused directly; a starter creates an editable copy, and automatic
+   reuse selects that copy thereafter. System Manager lets users turn reuse off.
+   The preference belongs to the user, outside captured System rules. Pending choices
+   cannot apply after chat, System, enabled-state, or first-player-message changes.
 3. **Tracker refresh action — implemented.** A refresh icon beside the in-chat tracker
    controls replaces the button inside the output dropdown, independent of raw-output
    visibility. Its tooltip and accessible label distinguish retrying a failed reading
@@ -184,6 +187,21 @@ running-host Chromium fixture confirmed placement beside the tracker controls,
 visibility with raw output hidden, accessible retry/reward labels, removal of the
 old dropdown action, disable/re-enable behavior and fit in a 360px container.
 No model requests or fixture saves were made.
+
+Chooser verification: all 945 Node tests pass, including selection, cancellation,
+automatic reuse, missing saved choices, and stale chat/first-turn boundaries. A running
+headless Chromium check used the production chooser and offer coordinator with isolated
+settings, mocked saves and activation. It confirmed preselection, saved/starter groups,
+changing descriptions, one starter copy across reuse, and no overflow at 390px. It
+made no model requests or chat/settings saves. This checks UI behavior and mocked
+coordination, not a full live new-chat campaign.
+
+Appearance follow-up: the chooser now uses the shared Castward theme root and popup
+helper, including customized colors, fonts, and menu text scale. Spacing and descriptions
+use theme tokens. Running Chromium checks cover all nine appearances at 1280px and
+390px, matching dropdown text colors, popup backgrounds, and absence of overflow;
+custom colors/font and 1.25 text scale also pass. Screenshots were visually inspected
+for Parchment on desktop and Rosewater on mobile. These checks use unsaved UI fixtures.
 
 ## 6. File size limits do not remove architectural coupling — tracker update path addressed; broader coupling remains
 

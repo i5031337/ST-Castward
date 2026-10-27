@@ -260,11 +260,15 @@ test('starter import resets System-owned settings and activates without changing
         assert.deepEqual(settings.personaData, before.personaData);
 
         settings.statusTracker.extractionMode = 'inline';
+        settings.newChatSystem = imported.metadata.name;
         deps.chatHasStarted = () => false;
         deps.hasOpenChat = () => false;
         assert.equal(deps.setActiveSystem(imported.metadata.name), true);
         assert.equal(settings.statusTracker.extractionMode, shippedDefaults.statusTracker.extractionMode);
         assert.equal(settings.activeSystem, imported.metadata.name);
+        assert.equal(settings.newChatSystem, imported.metadata.name);
+        deps.saveSystemPreset(imported.metadata.name);
+        assert.equal(settings.statusTracker.presets[imported.metadata.name].config.newChatSystem, undefined);
         assert.equal(settings.statusTracker.npcTemplates.find(template => template.id === 'creature')
             .progression.enabled, true);
         assert.deepEqual(settings.characters, before.characters);
