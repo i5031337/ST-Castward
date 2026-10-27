@@ -1,9 +1,15 @@
-# Adversarial review: 2026-10-25
+# Adversarial review: 2026-10-25 — closed 2026-10-27
 
 This review examines trust, recovery, operational complexity, and maintenance.
 Product judgments below are distinguished from reproduced behavior. No live model
 quality evaluation was performed for the original review; the subsequent comparison
 for item #2 is linked below.
+
+All findings are closed through fixes, feature removal, or accepted limitations.
+Closure retains automatic application as the default, the documented recovery
+limits, and broader UI/extractor coupling outside the completed tracker refactor.
+A campaign correction-burden trial has not been performed; closure accepts that
+evidence limit and makes no claim that the default review policy is optimal.
 
 ## 1. Overlapping readings lose turns — queue implemented
 
@@ -28,7 +34,7 @@ Implementation: `src/tracker/extractor/status-extractor-queue.js` and
 `status-extractor-run.js`. Regression coverage: `tests/extraction-queue.mjs` and
 `tests/tracker-regenerate.mjs`.
 
-## 2. Aggregate accuracy overstates complete-turn reliability — reporting addressed; campaign validation open
+## 2. Aggregate accuracy overstates complete-turn reliability — reporting fixed; campaign evidence limit accepted
 
 The original README's 96.4% headline counted individual checks without showing that
 44/60 replies passed every check and inferred numeric changes passed 76/96 checks.
@@ -62,12 +68,13 @@ has improved enough to support the stated minimum-model target with corrections.
 Further definition tuning is not required to address that reporting concern.
 
 The original recommendation also asked for default-review evaluation against actual
-campaign correction burden. That part remains open: review still defaults to
-automatic application, and these reused independent scenes do not measure errors
-accumulating across turns, correction effort, or the effects of accepting proposals.
-A fresh multi-turn trial recording missed updates, corrections and review effort
-would address that follow-up. The current evidence supports clear limits and a
-review option; it does not establish the best default review policy.
+campaign correction burden. Decision at closure: retain automatic application as
+the default and accept the limits of the existing evaluation. These reused
+independent scenes do not measure errors accumulating across turns, correction
+effort, or the effects of accepting proposals. A fresh multi-turn trial could inform
+a future default-policy decision, but is not a remaining requirement of this review.
+The current evidence supports clear limits and a review option; it does not establish
+the best default review policy.
 
 Sources: the linked final evaluation,
 `src/core/settings-tracker-defaults.js`, and the reader's normalization/request modules.
@@ -203,7 +210,7 @@ use theme tokens. Running Chromium checks cover all nine appearances at 1280px a
 custom colors/font and 1.25 text scale also pass. Screenshots were visually inspected
 for Parchment on desktop and Rosewater on mobile. These checks use unsaved UI fixtures.
 
-## 6. File size limits do not remove architectural coupling — tracker update path addressed; broader coupling remains
+## 6. File size limits do not remove architectural coupling — tracker refactor complete; broader coupling accepted
 
 At review time, `src/` contained 322 JavaScript modules and approximately 39,730 lines.
 The tracker then bound 15 providers into a shared runtime dependency registry. Understanding
@@ -215,16 +222,18 @@ further file splitting alone will not address the coupling. Source:
 `src/tracker/status-logic.js`.
 
 The cleanup removed dead tracker APIs and redundant persistence work. The first
-architectural stage now removes the parser's provider binding and makes stat arithmetic,
-field choices and name matching explicit imports. This breaks the stat-values/constraints
-cycle and removes stat synonyms from session state. Fourteen bound providers remain.
+architectural stage removed the parser's provider binding and made stat arithmetic,
+field choices and name matching explicit imports. This broke the stat-values/constraints
+cycle and removed stat synonyms from session state. Fourteen bound providers remained
+at that stage.
 Collection and full tracker updates now calculate from explicit captured data and return
 state/card/library plans with local diagnostics. Actor initialization/stat calculation
 also takes an explicit System, breaking the apply/presence registry cycle. Offstage
 comparison actors are separate from calculated scene state; the public preview adapter
-preserves the current review format. Existing wrappers still apply writes and forward
-diagnostics to queues. Actor admission, model-input sanitization and review policy remain
-separate host orchestration.
+preserves the current review format. At that stage, wrappers still applied writes and
+forwarded diagnostics to queues; the follow-up below removed the shared diagnostic
+queues. Actor admission, model-input sanitization and review policy remain separate
+host orchestration.
 
 Full tracker updates now pass through an explicit ownership-checked commit boundary.
 It checks chat/metadata, persona, active/bound System, source state and rules, plus
@@ -237,7 +246,8 @@ or save to cached previews.
 
 The focused update-path stage passed 896 Node tests and running-host preview/ownership
 fixtures. The follow-up below extends those boundaries. Stored data formats, host save
-separation and tombstone policy remain unchanged. See
+separation and tombstone policy were unchanged at that stage; item #7 subsequently
+removed tombstones. See
 [ARCHITECTURE.md](ARCHITECTURE.md#tracker-dependency-refactor) for the current design.
 
 ### Remaining architectural cleanup (completed 2026-10-27)
@@ -248,8 +258,8 @@ The optional follow-up is implemented:
    chat, persona, System, card and item before debounce or confirmation delays.
    Accepted plans install scene/card/library effects through the storage boundary;
    rejected work leaves those stores untouched. Offstage cards remain editable
-   without an open chat. Manual corrections, undo/swipe handling and item suppression
-   retain their existing behavior.
+   without an open chat. Manual corrections and undo/swipe handling retain their
+   existing behavior. Item suppression was subsequently removed under item #7.
 
 2. **Schema/library edits are explicit operations.** Pure calculations return
    property writes and state changes from supplied rules, state, cards, persona
@@ -280,8 +290,9 @@ Verification: all 928 Node tests and JavaScript syntax/source-size checks pass, 
 does `git diff --check`. Coverage includes ownership/refusal regressions, one-step
 undo, and swipe/regeneration. Unsaved running-host tracker, item, schema and lifecycle
 fixtures pass in headless Chromium. Browser fixtures use isolated stores and mocked
-saves without model requests. This cleanup does not change suppression policy, review decisions or
-historical recovery limits.
+saves without model requests. The refactor preserved review decisions and historical
+recovery limits. Broader UI/extractor cycles remain an accepted maintenance limitation
+outside this review’s completed tracker refactor.
 
 ## 7. Manual item removal silently blocks later additions — resolved by removal
 
@@ -308,11 +319,14 @@ fixture verified collection edits, delayed-edit/confirmation guards, removal and
 addition, plus removal of the suppression section while explicit review decisions
 remain visible. No model requests or fixture saves were made.
 
-A separate audit finding remains: replacement lists containing repeated item names
-can preview different static fields from the accepted result, because pure
-calculations still treat their working Item Library differently during previews.
-For two Sword rows with descriptions A/B, the preview retains A/B while acceptance
-uses A/A. This is unrelated to suppression and remains a focused follow-up.
+The follow-up preview inconsistency is also fixed: replacement calculations now
+update their temporary working Item Library for both previews and acceptance,
+including across actors in one reading. For two new Sword rows with descriptions
+“Iron blade” and “Steel blade”, both preview and acceptance use “Iron blade” for
+both rows when description is static. Holder-specific fields remain independent.
+The saved library, cards and tracker state remain untouched during previews.
+Regression tests cover repeated names within a list and across player/NPC lists.
+All 958 Node tests, changed runtime syntax checks and `git diff --check` pass.
 
 ## Follow-up review: 2026-10-27
 

@@ -72,12 +72,12 @@ export function calculateTrackerUpdate({ state, tracker, system = null, cards = 
         for (const [id, reading] of Object.entries(collections)) {
             const calculated = calculateCollectionUpdate({ actor, collectionId: id, update: reading,
                 tracker, system, scope,
-                itemLibrary: library, allowReplace, preview });
+                itemLibrary: library, allowReplace });
             if (calculated.collections !== undefined) actor.collections = calculated.collections;
             result.collectionWarnings.push(...calculated.warnings);
             result.refusedValues.push(...calculated.refusedValues);
             result.libraryChanges.push(...calculated.libraryChanges);
-            if (!preview) for (const change of calculated.libraryChanges) {
+            for (const change of calculated.libraryChanges) {
                 library[change.collectionId] ||= {};
                 library[change.collectionId][String(change.itemName).toLowerCase()] = structuredClone(change.fields);
             }

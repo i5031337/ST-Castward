@@ -103,3 +103,22 @@ test('field refusals belong to the returned calculation and cannot leak into ano
     assert.deepEqual(accepted.warnings, []);
     assert.equal(refused.refusedValues.length, 1);
 });
+
+test('replacement previews reuse the first new item’s static fields without changing the library', () => {
+    const input = fixture({ actor: { name: 'Player', collections: {} }, update: { replace: [
+        { title: 'Sword', qty: 1, condition: 'New' },
+        { title: 'sword', qty: 2, condition: 'Used' },
+    ] } });
+    input.tracker.collections[0].fields[2].isStatic = true;
+    freeze(input);
+    const preview = calculateCollectionUpdate({ ...input, preview: true });
+    const accepted = calculateCollectionUpdate(input);
+    assert.deepEqual(preview, accepted);
+    assert.deepEqual(preview.collections.inventory, [
+        { title: 'Sword', qty: 1, condition: 'New' },
+        { title: 'Sword', qty: 2, condition: 'New' },
+    ]);
+    assert.equal(preview.libraryChanges.length, 1);
+    assert.deepEqual(input.itemLibrary, {});
+    assert.deepEqual(input.actor.collections, {});
+});

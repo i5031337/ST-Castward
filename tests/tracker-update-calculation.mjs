@@ -100,3 +100,25 @@ test('earned, manual and resolved readings retain distinct progression policies'
     assert.equal(resolved.nextState.player.stats.Experience, '30/100');
     assert.equal(resolved.nextState.player.stats.Rank, '3');
 });
+
+test('preview and acceptance share newly planned static fields across actors without writing stores', () => {
+    const input = freeze(fixture({ update: {
+        player: { collections: { items: { replace: [{ name: 'Sword', description: 'Iron blade', quantity: 1 }] } } },
+        characters: [{ name: 'Mira', collections: { items: { replace: [
+            { name: 'sword', description: 'Steel blade', quantity: 2 },
+        ] } } }],
+    } }));
+    const preview = calculateTrackerUpdate({ ...input, policy: { preview: true } });
+    const accepted = calculateTrackerUpdate(input);
+    assert.deepEqual(preview.nextState, accepted.nextState);
+    assert.deepEqual(preview.libraryChanges, accepted.libraryChanges);
+    assert.equal(preview.libraryChanges.length, 1);
+    assert.equal(preview.nextState.player.collections.items[0].description, 'Iron blade');
+    assert.deepEqual(preview.nextState.characters[0].collections.items, [
+        { name: 'Sword', description: 'Iron blade', quantity: 2 },
+    ]);
+    assert.deepEqual(input.itemLibrary, {});
+    assert.deepEqual(input.cards[0].statusCollections.items, []);
+    assert.deepEqual(input.state.player.collections.items, []);
+    assert.deepEqual(input.state.characters[0].collections.items, []);
+});

@@ -5,11 +5,10 @@ import { calculateFieldValue } from './stat-field-calculation.js';
 
 /** Calculate collection changes from captured data; never read or write live stores.
  * operation is update, add, or remove; direct add/remove retain manual-editor semantics.
- * preview preserves the existing replacement policy: newly proposed library entries do
- * not supply defaults to later duplicate rows until a real update is applied.
+ * Newly planned library entries supply defaults to later rows within the calculation.
  */
 export function calculateCollectionUpdate({ actor, collectionId, update, tracker, system = null, scope,
-    itemLibrary = {}, allowReplace = false, preview = false,
+    itemLibrary = {}, allowReplace = false,
     operation = 'update' }) {
     const result = { collections: structuredClone(actor.collections),
         libraryChanges: [], warnings: [], refusedValues: [] };
@@ -119,10 +118,8 @@ export function calculateCollectionUpdate({ actor, collectionId, update, tracker
                     if (isStaticField(field) && item[field.name] !== undefined) fields[field.name] = item[field.name];
                 }
                 result.libraryChanges.push({ collectionId, itemName: libraryName, fields: structuredClone(fields) });
-                if (!preview) {
-                    library[collectionId] ||= {};
-                    library[collectionId][lower] = fields;
-                }
+                library[collectionId] ||= {};
+                library[collectionId][lower] = fields;
             }
             result.collections[collectionId].push(normalize(merged));
         }
