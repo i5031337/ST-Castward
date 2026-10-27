@@ -21,9 +21,10 @@ function refreshStopButton() {
     }
 }
 
-/** Share the host Stop button without changing the host's generation state. */
-export function startGenerationTask({ signal: parentSignal, activity } = {}) {
+/** Share host Stop; persona-bound tasks opt into aborting on actual identity changes. */
+export function startGenerationTask({ signal: parentSignal, activity, getPersonaKey } = {}) {
     parentSignal?.throwIfAborted();
+    const persona = getPersonaKey?.();
     const controller = new AbortController();
     const signal = parentSignal ? AbortSignal.any([parentSignal, controller.signal]) : controller.signal;
     const task = { signal };
@@ -32,10 +33,12 @@ export function startGenerationTask({ signal: parentSignal, activity } = {}) {
         controller.abort();
         refreshStopButton();
     };
+    const personaChanged = () => { if (getPersonaKey() !== persona) stop(); };
     signal.addEventListener('abort', refreshStopButton);
     tasks.add(task);
     eventSource.on(event_types.GENERATION_STOPPED, stop);
     eventSource.on(event_types.CHAT_CHANGED, stop);
+    if (getPersonaKey) eventSource.on(event_types.PERSONA_CHANGED, personaChanged);
     if (!observer) {
         const button = document.getElementById('mes_stop');
         if (button) {
@@ -53,6 +56,7 @@ export function startGenerationTask({ signal: parentSignal, activity } = {}) {
             signal.removeEventListener('abort', refreshStopButton);
             eventSource.removeListener(event_types.GENERATION_STOPPED, stop);
             eventSource.removeListener(event_types.CHAT_CHANGED, stop);
+            if (getPersonaKey) eventSource.removeListener(event_types.PERSONA_CHANGED, personaChanged);
             refreshStopButton();
             if (!tasks.size) { observer?.disconnect(); observer = null; revealed = false; }
         },

@@ -101,7 +101,11 @@ Separate reader requests run in arrival order. Overlapping turns wait rather tha
 being skipped, and each prompt uses the state available when its reading starts.
 Duplicate requests for the same reply and options share a result. Waiting work is
 discarded if its chat, persona, System, message identity, text, or swipe changes.
-Stop and chat changes cancel waiting work as well as the active reading; message
+Stop, chat changes and actual persona switches abort waiting work as well as the active
+reading. Persona-bound stat, place, level-reward and history-scan requests pass the abort
+signal to the backend; identical-persona events do not cancel them. Unrelated profile and
+System generation tasks retain their existing cancellation policies. Backends that ignore
+cancellation may continue generating, but their replies are discarded. Message
 invalidation cancels waiting entries from the affected index onward. Pending review
 rows remain proposals and are not included as accepted state in the next reading.
 

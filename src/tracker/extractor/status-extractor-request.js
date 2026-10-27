@@ -1,5 +1,5 @@
 import { startGenerationTask, awaitGenerationRequest } from '../../core/generation-cancellation.js';
-import { extractMessageFromData } from '../../../../../../../script.js';
+import { extractMessageFromData, user_avatar } from '../../../../../../../script.js';
 import { getContext } from '../../../../../../st-context.js';
 import { applyMacros } from '../../prompts/macros.js';
 import { LOG_PREFIX, debugLog, SYSTEM_PROMPT } from '../../core/constants.js';
@@ -32,7 +32,9 @@ export async function requestExtraction(userPrompt, schema, trackerSettings, sys
     const activity = usageKind === 'extraction' ? { kind: 'tracker', label: 'Reading stats…' }
         : usageKind === 'location' ? { kind: 'location', label: 'Updating places…' }
         : usageKind === 'fill' ? { kind: 'profile', label: `Filling ${activityName || 'character'}’s profile…` } : null;
-    const task = startGenerationTask({ activity });
+    const personaBound = ['extraction', 'location', 'scan'].includes(usageKind);
+    const task = startGenerationTask({ activity, getPersonaKey: personaBound
+        ? () => getContext()?.user_avatar || user_avatar || 'default_user.png' : undefined });
     try {
         return await performExtraction(userPrompt, schema, trackerSettings, systemPrompt, usageKind, task.signal);
     } finally { task.finish(); }

@@ -16,7 +16,7 @@ export function createExtractionQueue({ getContext, getSettings, getCurrentPerso
         const existing = [active, ...waiting].find(entry => entry && !entry.task.signal.aborted && same(entry));
         if (existing) return existing.promise;
 
-        const task = startGenerationTask();
+        const task = startGenerationTask({ getPersonaKey: getCurrentPersonaKey });
         let resolve, reject;
         const promise = new Promise((done, fail) => { resolve = done; reject = fail; });
         const entry = { messageText, messageId: Number(messageId), options: { ...options }, scope,

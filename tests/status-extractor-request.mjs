@@ -13,10 +13,10 @@ function build(context) {
     profileContext(context);
     const events = [], usage = [];
     const cancellation = readerCancellationHarness();
-    const request = new Function('getContext', 'applyMacros', 'LOG_PREFIX', 'debugLog', 'SYSTEM_PROMPT',
+    const request = new Function('user_avatar', 'getContext', 'applyMacros', 'LOG_PREFIX', 'debugLog', 'SYSTEM_PROMPT',
         'describeConnection', 'extractJSON', 'safeJsonParse', 'recordUsage', 'extractMessageFromData', 'toastr', 'console', 'customProfilePayload', 'startGenerationTask', 'awaitGenerationRequest', 'readerSchemaForConnection',
         `${source}\nreturn requestExtraction;`)(
-        () => context, value => value, '[Castward]', () => {}, 'System', () => 'Connection',
+        'default_user.png', () => context, value => value, '[Castward]', () => {}, 'System', () => 'Connection',
         value => value, JSON.parse, (...args) => usage.push(args), raw => raw.choices[0].message.content,
         { warning: (...args) => events.push(['warning', ...args]) }, { warn: () => {} }, customProfilePayload, cancellation.startGenerationTask, cancellation.awaitGenerationRequest, readerSchemaForConnection);
     return { request, events, usage, cancellation };
@@ -242,3 +242,35 @@ for (const [usageKind, kind] of [
         assert.deepEqual(getGenerationActivities(), []);
     });
 }
+
+
+test('persona switches abort reader HTTP signals but leave unrelated profile requests running', async () => {
+    for (const usageKind of ['extraction', 'location', 'scan', 'fill']) {
+        let signal, finish;
+        const context = { user_avatar: 'first.png', ConnectionManagerRequestService: {
+            sendRequest: (...args) => {
+                signal = args[3].signal;
+                return new Promise(resolve => { finish = resolve; });
+            },
+        } };
+        const h = build(context);
+        const pending = h.request('Prompt', schema, { extractionProfileId: 'reader', extractionFallbackToMain: true },
+            null, { usageKind });
+        h.cancellation.emit('persona');
+        assert.equal(signal.aborted, false);
+        context.user_avatar = 'second.png';
+        h.cancellation.emit('persona');
+        if (usageKind !== 'fill') {
+            assert.equal(signal.aborted, true);
+            await assert.rejects(pending, { name: 'AbortError' });
+            assert.equal(h.usage.length, 0);
+            assert.deepEqual(h.events, []);
+            finish({ content: '{}' });
+        } else {
+            assert.equal(signal.aborted, false);
+            finish({ content: '{}' });
+            await pending;
+        }
+        assert.equal(h.cancellation.listeners(), 0);
+    }
+});

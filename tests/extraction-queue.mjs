@@ -14,7 +14,7 @@ function fixture() {
     const queue = createExtractionQueue({ getContext: () => context, getSettings: () => settings,
         getCurrentPersonaKey: () => persona, startGenerationTask: cancellation.startGenerationTask,
         extract: async (text, id, options, signal) => {
-            calls.push({ text, id });
+            calls.push({ text, id, signal });
             if (id === 0) await gate;
             return { applied: !signal.aborted, reason: signal.aborted ? 'cancelled' : undefined };
         } });
@@ -104,4 +104,21 @@ test('a rejected reading does not strand the next queued request', async () => {
     await failed;
     assert.equal((await next).applied, true);
     assert.equal(cancellation.listeners(), 0);
+});
+
+
+test('persona switch aborts active and queued readings without affecting a fresh persona request', async () => {
+    const f = fixture();
+    const first = f.submit(0), second = f.submit(1);
+    f.cancellation.emit('persona');
+    assert.equal(f.calls[0].signal.aborted, false);
+    f.setPersona('other');
+    f.cancellation.emit('persona');
+    assert.equal(f.calls[0].signal.aborted, true);
+    assert.equal((await second).reason, 'cancelled');
+    f.release();
+    assert.equal((await first).reason, 'cancelled');
+    assert.equal((await f.submit(1)).applied, true);
+    assert.deepEqual(f.calls.map(call => call.id), [0, 1]);
+    assert.equal(f.cancellation.listeners(), 0);
 });

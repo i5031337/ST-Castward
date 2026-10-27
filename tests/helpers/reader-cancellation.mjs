@@ -13,7 +13,7 @@ export function readerCancellationHarness() {
     };
     const api = new Function('startActivity', 'eventSource', 'event_types', 'isGenerating', 'document', 'MutationObserver',
         `${source}\nreturn { startGenerationTask, awaitGenerationRequest };`)(startActivity, eventSource,
-        { GENERATION_STOPPED: 'stop', CHAT_CHANGED: 'chat' }, () => generating,
+        { GENERATION_STOPPED: 'stop', CHAT_CHANGED: 'chat', PERSONA_CHANGED: 'persona' }, () => generating,
         { getElementById: () => button }, class {
             constructor(callback) { observe = callback; }
             observe() {}
