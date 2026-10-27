@@ -140,7 +140,7 @@ Recommendation: prioritize a clear first-session workflow and visible automation
 status over more customization. Source inspection: `manage.html` and
 `src/ui/manage/ui-manage.js`; this is not a completed usability study.
 
-## 6. File size limits do not remove architectural coupling — open
+## 6. File size limits do not remove architectural coupling — utility extraction started; state transitions open
 
 At review time, `src/` contained 322 JavaScript modules and approximately 39,730 lines.
 The tracker binds 15 providers into a shared runtime dependency registry. Understanding
@@ -150,6 +150,15 @@ snapshots, and UI refreshes.
 Recommendation: refactor toward explicit state transitions and narrower dependencies;
 further file splitting alone will not address the coupling. Source:
 `src/tracker/status-logic.js`.
+
+The cleanup removed dead tracker APIs and redundant persistence work. The first
+architectural stage now removes the parser's provider binding and makes stat arithmetic,
+field choices and name matching explicit imports. This breaks the stat-values/constraints
+cycle and removes stat synonyms from session state. Fourteen bound providers remain.
+The next collection/actor calculation and commit boundaries are described in
+[ARCHITECTURE.md](ARCHITECTURE.md#tracker-dependency-refactor). Shared mutable state,
+write side effects and lifecycle coupling remain open; utility extraction alone does
+not close this finding.
 
 ## Evidence and limits
 

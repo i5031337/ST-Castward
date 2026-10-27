@@ -1,3 +1,5 @@
+import * as statValueUtils from '../../src/tracker/stat-value-utils.js';
+import { groupIncomingStats } from '../../src/tracker/status-update-parser.js';
 import { readFileSync } from 'node:fs';
 import { createBuiltinSystem } from '../../src/core/builtin-systems.js';
 import { projectSystemTracker } from '../../src/core/system-schema.js';
@@ -65,11 +67,11 @@ export async function harness(systemId, state, { chat = [] } = {}) {
     const prompt = await load('../../src/tracker/extractor/status-extractor-prompt.js');
     const schema = await load('../../src/tracker/extractor/status-extractor-schema.js');
     const statValues = await load('../../src/tracker/status-stat-values.js');
-    const deps = { STAT_SYNONYMS: constants.STAT_SYNONYMS || {}, findCardForName: () => null, allowedValues: def => def.options || [],
+    const deps = { ...statValueUtils, findCardForName: () => null, allowedValues: def => def.options || [],
         findMatchingStatKey: (values, name) => Object.keys(values).find(key => key.toLowerCase() === name.toLowerCase()) };
     statValues.bind(deps);
     (await load('../../src/tracker/status-update-constraints.js')).bind(deps);
-    (await load('../../src/tracker/status-update-parser.js')).bind(deps);
+    deps.groupIncomingStats = groupIncomingStats;
     Object.assign(deps, { committedState: {}, getCurrentPersonaName: () => 'Alex', getMergedItem: (_id, item) => item });
     (await load('../../src/tracker/status-collection-updates.js')).bind(deps);
     Object.assign(deps, {

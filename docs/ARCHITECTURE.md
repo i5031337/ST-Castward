@@ -162,6 +162,34 @@ and phrase scans. Cancellation never triggers fallback. Selecting Main API direc
 still works with fallback disabled. Time is an ordinary editable world field; there
 is no automatic elapsed-time regeneration.
 
+## Tracker dependency refactor
+
+The first stage removes the parser from the runtime provider registry. Inline parsing
+and stat-fragment grouping are ordinary exports. Basic stat arithmetic, defaults,
+and meter predicates live in `stat-value-utils.js`; allowed-value lists and stat-name
+matching live in `stat-field-utils.js`. These modules can load without SillyTavern.
+Constraints import their helpers directly, and model sanitization imports field helpers,
+removing the stat-values/constraints cycle. Stat synonyms no longer belong to chat session
+state. `status-logic.js` preserves the public API and supplies independent helpers to the
+remaining providers while their callers are migrated. Diagnostics remain isolated per
+constraints binding. Fourteen bound providers remain; writes and lifecycle behavior
+still use the existing orchestration.
+
+The next stage should extract collection calculation before actor and full-update
+calculation. Inputs must include the active System as well as projected tracker rules:
+NPC template and progression helpers otherwise fall back to a global settings provider.
+Collection tombstone checks currently use committed state while the update ages a cloned
+copy; preserve that timing unless a separate behavior change is reviewed.
+
+The planned calculation returns next state, proposed card/library changes, local warnings,
+and separate offstage comparisons. Current previews append detached offstage NPCs for
+diffing without actually admitting them to the scene; those comparison actors must not
+leak into committed presence. A later commit boundary will validate chat, persona,
+System and source ownership before related writes, maintain existing undo/swipe behavior,
+request saves, and emit the existing status event. Settings and metadata remain separate
+host saves, without a cross-store atomicity guarantee. These calculation and commit
+boundaries are planned, not implemented by the utility extraction.
+
 ## Verification
 
 Run `node --test tests/*.mjs` for state, schema,

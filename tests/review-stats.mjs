@@ -1,3 +1,6 @@
+import * as statValues from '../src/tracker/stat-value-utils.js';
+import * as statFields from '../src/tracker/stat-field-utils.js';
+import { groupIncomingStats } from '../src/tracker/status-update-parser.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -23,14 +26,14 @@ function harness({ state, cards = [], settings, openChat = true }) {
     const message = { swipe_id: 0, extra: { sillynpc_applied: [], sillynpc_level_reading: {},
         sillynpc_reader_report: { swipe: 0, status: 'done', summary: '0 applied · 0 awaiting review' } } };
     const context = { chat: [message] };
-    const globals = { ...numeric, npcStatsFor, npcTemplateFor, proposedNpcTemplate, progressionFields, progressXp, sameStatReading,
+    const globals = { ...numeric, ...statValues, ...statFields, npcStatsFor, npcTemplateFor, proposedNpcTemplate, progressionFields, progressXp, sameStatReading,
         splitValue, ceilingFromValue: value => { const max = splitValue(value).max; return max && Number.isFinite(Number(max)) ? Number(max) : null; },
         getSettings: () => ({ statusTracker: settings }), getAllCharacters: () => cards,
         getContext: () => context, debugLog() {}, saveSettings() {}, LOG_PREFIX: '[test]', eventSource: { emit() {} } };
-    const deps = { STAT_SYNONYMS: {}, loadStateFromMetadata: () => live,
+    const deps = { ...statValues, groupIncomingStats, loadStateFromMetadata: () => live,
         saveStateToMetadata: state => { live = state; }, hasOpenChat: () => openChat,
         resolveCanonicalName: name => name, mayJoinScene: () => true, applyCollectionUpdate() {} };
-    for (const path of ['status-stat-values', 'status-update-constraints', 'status-update-parser', 'status-apply-update', 'status-scene-presence']) {
+    for (const path of ['status-stat-values', 'status-update-constraints', 'status-apply-update', 'status-scene-presence']) {
         load(`tracker/${path}.js`, 'bind', globals).bind(deps);
     }
     const { buildUpdateFromChanges } = load('tracker/status-diff-review.js', 'buildUpdateFromChanges', {

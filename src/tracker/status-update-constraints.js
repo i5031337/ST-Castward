@@ -1,17 +1,11 @@
 import { debugLog } from '../core/constants.js';
-import { splitValue } from '../core/utils.js';
+import { splitValue } from '../core/utils-format.js';
+import { mergeStatValue, clampToCeiling } from './stat-value-utils.js';
+import { allowedValues, findMatchingStatKey } from './stat-field-utils.js';
 import { constrainNumericStat } from './numeric-stat-bounds.js';
 import { sameStatReading } from './stat-reading-equality.js';
 
 export function bind(deps) {
-/** The values a field is allowed to hold, or an empty list when it allows anything. */
-function allowedValues(def) {
-    if (def?.type === 'number' || def?.type === 'bar') return [];
-    return (def?.options || [])
-        .map(value => String(value ?? '').trim())
-        .filter(Boolean);
-}
-
 /**
  * Holds a field to the values it is allowed to have.
  *
@@ -150,7 +144,7 @@ function constrainToDefinition(def, incoming, existing, onWarning = () => {}) {
 function combineStatValue(existingValue, group, statDef, options = {}) {
     let value = existingValue;
     if (group.whole !== undefined) {
-        value = deps.mergeStatValue(value, group.whole, options);
+        value = mergeStatValue(value, group.whole, options);
     }
     if (group.current === undefined && group.max === undefined) return value;
 
@@ -168,53 +162,8 @@ function combineStatValue(existingValue, group, statDef, options = {}) {
     // should be something you agreed to rather than something that happened.
     if (group.max !== undefined) max = String(group.max).trim();
 
-    return max ? deps.clampToCeiling(`${current}/${max}`) : current;
+    return max ? clampToCeiling(`${current}/${max}`) : current;
 }
-
-/**
- * Finds the most likely existing key for a given stat name, handling synonyms.
- */
-function findMatchingStatKey(existingStats, searchKey) {
-    const keys = Object.keys(existingStats);
-    const searchLower = searchKey.toLowerCase();
-    
-    // 1. Exact match
-    const exact = keys.find(k => k.toLowerCase() === searchLower);
-    if (exact) return exact;
-    
-    // 2. Synonym match
-    for (const [canonical, synonyms] of Object.entries(deps.STAT_SYNONYMS)) {
-        if (searchLower === canonical || synonyms.includes(searchLower)) {
-            // Check if any of our existing keys are in this synonym group
-            const match = keys.find(k => {
-                const kLower = k.toLowerCase();
-                return kLower === canonical || synonyms.includes(kLower);
-            });
-            if (match) return match;
-        }
-    }
-    
-    // 3. Fuzzy prefix match (e.g. "hp_current" matches "hp")
-    const prefixMatch = keys.find(k => {
-        const kLower = k.toLowerCase();
-        return searchLower.startsWith(kLower) || kLower.startsWith(searchLower);
-    });
-    if (prefixMatch) return prefixMatch;
-
-    return null;
-}
-
-/**
- * Merges an update into the current state.
- *
- * @param {object} update
- * @param {{ dryRun?: boolean, label?: string, verbatim?: boolean, progressionResolved?: boolean }} [options]
- *   dryRun returns the resulting state without saving, syncing or emitting, so callers
- *   can diff what an update *would* do before letting it happen.
- *   verbatim says the values are whole values rather than readings of part of one, which
- *   is what a person typing into a field submits - see mergeStatValue.
- * @returns {StatusState} The resulting state.
- */
 
 Object.defineProperties(deps, {
     allowedValues: { enumerable: true, configurable: true, get: () => allowedValues },

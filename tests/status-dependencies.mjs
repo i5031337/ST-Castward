@@ -1,10 +1,15 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFileSync, readdirSync } from 'node:fs';
+import * as statValues from '../src/tracker/stat-value-utils.js';
+import { groupIncomingStats } from '../src/tracker/status-update-parser.js';
 
 test('status providers uniquely supply every shared dependency', () => {
     const directory = new URL('../src/tracker/', import.meta.url);
-    const providers = new Map();
+    const publicApi = readFileSync(new URL('status-logic.js', directory), 'utf8');
+    const initializer = publicApi.match(/const deps = (\{[^;]+\});/)[1];
+    const independent = new Function(...Object.keys(statValues), 'groupIncomingStats', `return ${initializer};`)(...Object.values(statValues), groupIncomingStats);
+    const providers = new Map(Object.keys(independent).map(key => [key, 'independent helpers']));
     const used = new Set();
     const modules = [];
     for (const name of readdirSync(directory).filter(name => /^status-.*\.js$/.test(name))) {
@@ -20,8 +25,7 @@ test('status providers uniquely supply every shared dependency', () => {
         }
     }
     assert.deepEqual([...used].filter(key => !providers.has(key)), []);
-    const publicApi = readFileSync(new URL('status-logic.js', directory), 'utf8');
-    const registered = [...publicApi.matchAll(/from '\.\/(status-[^']+\.js)'/g)]
+    const registered = [...publicApi.matchAll(/import \{ bind as \w+ \} from '\.\/(status-[^']+\.js)'/g)]
         .map(match => match[1]);
     assert.deepEqual(registered.sort(), modules.sort());
     for (const match of publicApi.matchAll(/export const (\w+) = deps\.(\w+);/g)) {

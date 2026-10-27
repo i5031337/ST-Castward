@@ -102,7 +102,9 @@ This map covers tracked runtime files, tests and support files. Source files and
 | `tests/profile-memories.mjs` | Profile memory list normalization and capacity behavior. |
 | `tests/profile-memories-ui.mjs`, `tests/npc-memories.mjs` | Player/NPC memory display and persistence behavior. |
 | `tests/turn-delta.mjs` | Current turn change reversal and rebase behavior. |
-| `tests/status-dependencies.mjs` | Shared status dependency provider contract test. |
+| `tests/status-dependencies.mjs` | Shared status dependency provider contract test, including independently imported helpers. |
+| `tests/status-update-parser.mjs` | Inline update extraction and grouped stat fragments through ordinary imports. |
+| `tests/stat-utilities.mjs` | Stat name precedence, allowed values, and constraint diagnostic isolation. |
 | `tests/ui-chat-boundaries.mjs` | Chat-switch confirmation guards and bulk deletion selection snapshots. |
 | `tests/world-character-export.mjs` | Inactive System export rules and reusable/chat NPC inclusion. |
 | `tests/ui-maintenance.mjs` | Lore generation and character editor routing tests. |
@@ -188,14 +190,16 @@ This map covers tracked runtime files, tests and support files. Source files and
 | `src/tracker/stat-update-policy.js` | Reader locking and migration of retired stat policies. |
 | `src/tracker/status-history.js` | Raw status block preservation and chat overhead measurement. |
 | `src/tracker/status-logic.js` | Player and NPC state, model updates, cast, items, and Systems. |
-| `src/tracker/status-stat-values.js` | Stat value merging and model update sanitization. |
+| `src/tracker/stat-value-utils.js` | Host-independent stat merging, pool ceilings, defaults, and meter predicates. |
+| `src/tracker/stat-field-utils.js` | Allowed-value lists and stat-name/synonym matching. |
+| `src/tracker/status-stat-values.js` | Model update sanitization and NPC field descriptions. |
 | `src/tracker/status-stat-schema.js` | Stat definition lookup and schema helpers. |
 | `src/tracker/status-persona-state.js` | Reusable persona identity/profile and chat-local player stats, collections, and memories. |
 | `src/tracker/status-chat-session.js` | Chat persona/system session lifecycle. |
 | `src/tracker/status-state-storage.js` | Load and save status metadata, including one-step undo. |
 | `src/tracker/status-status-summary.js` | Format status summaries. |
 | `src/tracker/status-scene-prompt.js` | Build scene context and status instructions. |
-| `src/tracker/status-update-parser.js` | Parse model status update text. |
+| `src/tracker/status-update-parser.js` | Ordinary exports for parsing inline updates and grouping stat fragments. |
 | `src/tracker/status-update-constraints.js` | Validate update values against configured fields. |
 | `src/tracker/status-apply-update.js` | Apply accepted model updates to state. |
 | `src/tracker/status-cast-decisions.js` | Record player, excluded, and character cast decisions. |
@@ -479,8 +483,9 @@ cancellation, source invalidation, and use of the preceding applied state.
 `docs/adversarial-review-20261025.md` records the current critique and follow-up status.
 
 `src/tracker/status-logic.js` binds the state providers by name, then freezes the shared
-registry. `tests/status-dependencies.mjs` checks that each dependency has one
-provider. The registry still resolves cross-module calls at runtime, so changes to
+registry. Parser and stat helpers use ordinary imports; only the helpers still needed
+by bound providers are seeded into the registry. `tests/status-dependencies.mjs` checks
+that each shared dependency has one provider. The registry still resolves cross-module calls at runtime, so changes to
 initialization and shared state need care. `normalizeSettings` sequences focused
 migration passes, `generateLoreEntry` separates dialog construction from its async
 actions, and `renderEditor` routes among smaller view builders. Their key behavior

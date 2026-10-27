@@ -1,3 +1,6 @@
+import * as statValues from '../src/tracker/stat-value-utils.js';
+import * as statFields from '../src/tracker/stat-field-utils.js';
+import { groupIncomingStats } from '../src/tracker/status-update-parser.js';
 import { progressionFields } from '../src/tracker/progression-fields.js';
 import { npcStatsFor, npcTemplateFor, proposedNpcTemplate } from '../src/core/npc-templates.js';
 import assert from 'node:assert/strict';
@@ -248,9 +251,9 @@ test('preview warnings cover unknown and refused stats across actors without mut
             .replace(/^import .*;\n/gm, '').replace('export function bind', 'function bind');
         new Function(...Object.keys(globals), `${source}\nreturn bind;`)(...Object.values(globals))(deps);
     };
-    deps.STAT_SYNONYMS = {};
-    load('../src/tracker/status-update-parser.js', { debugLog: () => {} });
+    deps.groupIncomingStats = groupIncomingStats;
     load('../src/tracker/status-update-constraints.js', {
+        ...statValues, ...statFields,
         sameStatReading,
         debugLog: () => {}, constrainNumericStat: (_def, value) => value,
         splitValue: value => { const [current, max] = String(value).split('/'); return { current, max }; },

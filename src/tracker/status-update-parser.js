@@ -1,8 +1,7 @@
 import { debugLog } from '../core/constants.js';
-import { extractJSON, safeJsonParse } from '../core/utils.js';
+import { extractJSON, safeJsonParse } from '../core/utils-format.js';
 
-export function bind(deps) {
-function parseMessageForUpdates(text) {
+export function parseMessageForUpdates(text) {
     if (!text) return { cleanedText: text, update: null, matchLength: 0 };
 
     // More lenient tag matching
@@ -166,7 +165,7 @@ const STAT_PART_SUFFIXES = {
  * @param {string} key
  * @returns {{ base: string, part: 'current'|'max'|null }}
  */
-function splitStatKeyPart(key) {
+export function splitStatKeyPart(key) {
     const lower = String(key).toLowerCase();
     for (const [part, suffixes] of Object.entries(STAT_PART_SUFFIXES)) {
         for (const suffix of suffixes) {
@@ -191,7 +190,7 @@ function splitStatKeyPart(key) {
  * @param {(key: string) => boolean} shouldSkip Keys to ignore entirely.
  * @returns {Map<string, { whole?: any, current?: any, max?: any }>}
  */
-function groupIncomingStats(sourceStats, resolveBase, isExactStat, shouldSkip, onUnknown = () => {}) {
+export function groupIncomingStats(sourceStats, resolveBase, isExactStat, shouldSkip, onUnknown = () => {}) {
     const groups = new Map();
 
     for (const updKey of Object.keys(sourceStats)) {
@@ -226,20 +225,4 @@ function groupIncomingStats(sourceStats, resolveBase, isExactStat, shouldSkip, o
     }
 
     return groups;
-}
-
-/**
- * Folds a grouped update into a stat's existing value.
- *
- * @param {any} existingValue
- * @param {{ whole?: any, current?: any, max?: any }} group
- * @param {object} statDef
- * @returns {any}
- */
-
-Object.defineProperties(deps, {
-    parseMessageForUpdates: { enumerable: true, configurable: true, get: () => parseMessageForUpdates },
-    splitStatKeyPart: { enumerable: true, configurable: true, get: () => splitStatKeyPart },
-    groupIncomingStats: { enumerable: true, configurable: true, get: () => groupIncomingStats },
-});
 }

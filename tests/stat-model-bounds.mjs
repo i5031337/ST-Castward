@@ -1,6 +1,6 @@
+import { bind as bindConstraints } from '../src/tracker/status-update-constraints.js';
 import assert from 'node:assert/strict';
 import test, { describe } from 'node:test';
-import { readFileSync } from 'node:fs';
 import { constrainNumericStat, keepNumericMaximum } from '../src/tracker/numeric-stat-bounds.js';
 import { normalizeModelReadings } from '../src/tracker/extractor/status-extractor-readings.js';
 import { sameStatReading } from '../src/tracker/stat-reading-equality.js';
@@ -211,10 +211,8 @@ test('a live numeric pool maximum takes precedence over Starts max', () => {
 });
 
 describe('stat rejection warnings', () => {
-    const source = readFileSync(new URL('../src/tracker/status-update-constraints.js', import.meta.url), 'utf8')
-        .replace(/^import .*;\n/gm, '').replace('export function bind', 'function bind');
     const deps = {};
-    new Function('debugLog', 'constrainNumericStat', 'sameStatReading', `${source}\nreturn bind;`)(() => {}, constrainNumericStat, sameStatReading)(deps);
+    bindConstraints(deps);
 
     test('definition refusals and adjustments explain the reason and retained value', () => {
         for (const [def, incoming, existing, expected, reason] of [

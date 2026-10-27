@@ -31,17 +31,6 @@ function currentChatId() {
 /** Origin chat for a live state object. The WeakMap keeps this guard out of saved data. */
 const stateOrigin = new WeakMap();
 
-// Common RPG stat synonyms to handle different AI output styles
-const STAT_SYNONYMS = {
-    // NOTE: deliberately no *_max / *_current entries here. Those address one half of
-    // a "cur/max" value and are handled by splitStatKeyPart(); listing them as synonyms
-    // made hp_max and hp_current both write the whole HP stat, so whichever the model
-    // emitted last silently destroyed the other.
-    'hp': ['health', 'hitpoints', 'life'],
-    'energy': ['mana', 'mp', 'essence', 'power', 'stamina'],
-    'condition': ['status', 'state', 'conditions', 'status_effects', 'effect']
-};
-
 /**
  * Robustly gets persona avatar and description from ST context.
  * Uses official ST persona management structures and utility functions.
@@ -436,7 +425,6 @@ Object.defineProperties(deps, {
     committedChatId: { enumerable: true, configurable: true, get: () => committedChatId, set: value => { committedChatId = value; } },
     currentChatId: { enumerable: true, configurable: true, get: () => currentChatId },
     stateOrigin: { enumerable: true, configurable: true, get: () => stateOrigin },
-    STAT_SYNONYMS: { enumerable: true, configurable: true, get: () => STAT_SYNONYMS },
     getPersonaData: { enumerable: true, configurable: true, get: () => getPersonaData },
     getMetadata: { enumerable: true, configurable: true, get: () => getMetadata },
     rememberSwipeBase: { enumerable: true, configurable: true, get: () => rememberSwipeBase },

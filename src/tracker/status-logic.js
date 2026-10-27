@@ -5,7 +5,8 @@ import { bind as bind_chat_session } from './status-chat-session.js';
 import { bind as bind_state_storage } from './status-state-storage.js';
 import { bind as bind_status_summary } from './status-status-summary.js';
 import { bind as bind_scene_prompt } from './status-scene-prompt.js';
-import { bind as bind_update_parser } from './status-update-parser.js';
+import { groupIncomingStats } from './status-update-parser.js';
+import { mergeStatValue, clampToCeiling, getInitialStatValue } from './stat-value-utils.js';
 import { bind as bind_update_constraints } from './status-update-constraints.js';
 import { bind as bind_apply_update } from './status-apply-update.js';
 import { bind as bind_cast_decisions } from './status-cast-decisions.js';
@@ -17,7 +18,7 @@ import { bind as bind_system_presets } from './status-system-presets.js';
 
 // Bind every provider before callers use the shared API. Each provider registers
 // named getters, so cross-module calls resolve after initialization completes.
-const deps = {};
+const deps = { mergeStatValue, clampToCeiling, getInitialStatValue, groupIncomingStats };
 for (const bind of [
     bind_stat_values,
     bind_persona_state,
@@ -25,7 +26,6 @@ for (const bind of [
     bind_state_storage,
     bind_status_summary,
     bind_scene_prompt,
-    bind_update_parser,
     bind_update_constraints,
     bind_apply_update,
     bind_cast_decisions,
@@ -37,16 +37,12 @@ for (const bind of [
 ]) bind(deps);
 Object.freeze(deps);
 
-export const mergeStatValue = deps.mergeStatValue;
-export const resolveMaxValue = deps.resolveMaxValue;
+export { mergeStatValue, resolveMaxValue, promptCeiling, isNumericStat, meterHasCeiling,
+    drawsMeter, clampToCeiling, getInitialStatValue } from './stat-value-utils.js';
+export { parseMessageForUpdates, splitStatKeyPart } from './status-update-parser.js';
+
 export const sanitizeModelUpdate = deps.sanitizeModelUpdate;
-export const promptCeiling = deps.promptCeiling;
-export const isNumericStat = deps.isNumericStat;
 export const describeNpcStatFields = deps.describeNpcStatFields;
-export const meterHasCeiling = deps.meterHasCeiling;
-export const drawsMeter = deps.drawsMeter;
-export const clampToCeiling = deps.clampToCeiling;
-export const getInitialStatValue = deps.getInitialStatValue;
 export const getCurrentPersonaKey = deps.getCurrentPersonaKey;
 export const getCurrentPersonaName = deps.getCurrentPersonaName;
 export const getPlayerCard = deps.getPlayerCard;
@@ -82,8 +78,6 @@ export const getStatusInstructions = deps.getStatusInstructions;
 export const getStatusExample = deps.getStatusExample;
 export const applyScenePrompt = deps.applyScenePrompt;
 export const buildSceneContext = deps.buildSceneContext;
-export const parseMessageForUpdates = deps.parseMessageForUpdates;
-export const splitStatKeyPart = deps.splitStatKeyPart;
 export const allowedValues = deps.allowedValues;
 export const takeRefusedValues = deps.takeRefusedValues;
 export const takeCollectionWarnings = deps.takeCollectionWarnings;
