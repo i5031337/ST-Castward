@@ -389,18 +389,22 @@ so it verifies only preservation of unrelated edits.
 
 Decision: pause manual edits during the reader instead of adding conflict resolution.
 A shared transient lock disables inline stats, player/NPC sheet stats and collections,
-review actions, scene add/remove controls, and undo. A notice explains when editing
+manual level-ups and reward retries, review actions, scene add/remove controls, and undo. A notice explains when editing
 will be available. Save handlers also refuse edits while locked. Focused edits settle
 before prompt state is captured; open sheets and collection editors refresh afterward.
 Delayed collection edits and deletion confirmations from before a reading are refused
-even after it finishes. Reader success, failure and cancellation release the lock;
+even after it finishes. Manual level-up preparation and reward retries also reject
+results if a reading started during their request; the service guards triggers and
+reward decisions as well as the buttons. Reader success, failure and cancellation release the lock;
 an obsolete reading cannot unlock a newer one. This addresses manual editing races,
 not arbitrary programmatic writes to tracker state.
 
-Verification: all 953 Node tests pass, including reader lifecycle, cancellation,
-overlapping lock ownership, undo and delayed item edit checks. An unsaved running-host
+Verification: all 956 Node tests pass, including reader lifecycle, cancellation,
+overlapping lock ownership, undo, delayed item edits and manual level-up overlap checks. An unsaved running-host
 Chromium fixture verifies inline and player/NPC sheet controls, choice fields, collection
-editing, review actions, editors opened mid-reading, restored values and cancellation.
+editing, manual level-up/retry controls, review actions, editors opened mid-reading,
+restored values and cancellation. Finishing level-up actions cannot re-enable buttons
+while the reader still holds the lock, and level caps remain enforced afterward.
 It uses isolated stores and mocked saves without model requests. Changed JavaScript
 syntax/source-size checks and `git diff --check` also pass.
 

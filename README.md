@@ -61,7 +61,7 @@ Keep building on a familiar world: NPCs, places, and NPC memories can each carry
 
 Character profiles connect to SillyTavern's lorebooks, helping the narrator remember who people are when they appear in the story.
 
-The tracker beneath the latest reply keeps the current state in view. Let the reader apply changes automatically or review them first. You can also edit values on the character sheets. Stat and collection editing, change review, and undo pause while the reader is running.
+The tracker beneath the latest reply keeps the current state in view. Let the reader apply changes automatically or review them first. You can also edit values on the character sheets. Stat and collection editing, manual level-ups, change review, and undo pause while the reader is running.
 
 A floating HUD keeps your player's stats on screen while you scroll. Drag it where you like and click the portrait to open your sheet. Find its settings under **Appearance → Floating HUD**.
 

@@ -4,6 +4,7 @@ import { constrainNumericStat } from './numeric-stat-bounds.js';
 import { progressXp } from './progression.js';
 import { selectLevelGrants, collectLevelTransitions } from './extractor/status-level-grants.js';
 import { selectReviewRows, materializeGrantRows, remainingGrantRows } from './level-grant-review.js';
+import { isTrackerEditLocked, trackerEditRevision } from './tracker-edit-lock.js';
 
 export const MANUAL_LEVEL_UPS_KEY = 'sillynpc_manual_level_ups';
 const same = (a, b) => String(a ?? '').toLowerCase() === String(b ?? '').toLowerCase();
@@ -71,10 +72,12 @@ export function createManualLevelUpService(deps) {
         requestExtraction: deps.requestExtraction, random: deps.random });
     const manualRows = rows => rows.map(row => ({ ...row, grant: { ...row.grant, manual: true } }));
     async function trigger(cardId) {
+        if (isTrackerEditLocked()) throw new Error('Wait for the tracker reading to finish before triggering a level-up.');
         if (busy.has(cardId)) throw new Error('A level-up is already running for this NPC.');
         const starting = info(cardId);
         if (!starting.enabled) throw new Error(starting.reason);
         const saved = origin();
+        const editRevision = trackerEditRevision();
         busy.add(cardId);
         try {
             const record = { id: `manual:${deps.newId()}`, systemId: saved.systemId, personaId: saved.personaId,
@@ -85,6 +88,9 @@ export function createManualLevelUpService(deps) {
                 cache: {}, decidedGrantIds: [] };
             const context = selectionContext(record, starting.cards);
             const grants = await selectLevelGrants(record.parsed, record.state, starting.tracker, record.text, record.leadUp, context);
+            if (isTrackerEditLocked() || trackerEditRevision() !== editRevision) {
+                throw new Error('A tracker reading started while preparing the level-up. Try again when it finishes.');
+            }
             const current = info(cardId);
             if (!fresh(saved) || !current.enabled || !same(current.actor.name, starting.actor.name)
                 || current.actor.id !== starting.actor.id
@@ -115,6 +121,7 @@ export function createManualLevelUpService(deps) {
         } finally { busy.delete(cardId); }
     }
     function resolve(cardId, id, accepted, { discardAll = false } = {}) {
+        if (isTrackerEditLocked()) return { applied: 0 };
         const record = records(cardId).find(record => record.id === id);
         if (!record || !deps.getSettings().enabled) return { applied: 0 };
         const selection = selectReviewRows(record.pending, accepted, record.applied);
@@ -134,13 +141,16 @@ export function createManualLevelUpService(deps) {
         return { applied: recorded.length, remaining: remaining.length };
     }
     async function retry(cardId, id) {
+        if (isTrackerEditLocked()) return false;
         const record = records(cardId).find(record => record.id === id);
         if (!record?.failures.length || busy.has(cardId) || !deps.getSettings().enabled) return false;
         const saved = origin(); busy.add(cardId);
+        const editRevision = trackerEditRevision();
         try {
             const grants = await selectLevelGrants(record.parsed, record.state, deps.getSettings().statusTracker, record.text, record.leadUp,
                 { ...selectionContext(record, deps.getCards()), allowNewPointBudgets: false });
-            if (!fresh(saved) || !records(cardId).includes(record)) return false;
+            if (isTrackerEditLocked() || trackerEditRevision() !== editRevision
+                || !fresh(saved) || !records(cardId).includes(record)) return false;
             const known = new Set([...record.pending.map(row => row.grant.id), ...record.decidedGrantIds]);
             record.pending.push(...manualRows(grants.rows.filter(row => !known.has(row.grant.id))));
             record.cache = grants.cache; record.failures = grants.failures;

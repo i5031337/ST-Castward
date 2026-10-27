@@ -7,6 +7,7 @@ const host = document.createElement('div');
 host.className = 'sillynpc';
 document.body.appendChild(host);
 let release;
+const savedToastr = globalThis.toastr;
 
 async function compile(path, names, overrides) {
     const source = await (await fetch(root + path)).text();
@@ -119,10 +120,53 @@ try {
     collection.querySelector('input').value = 'Spear';
     collection.querySelector('input').dispatchEvent(new Event('change'));
     result.editAfterReading = actor.collections.items[0].name === 'Spear' && fixture.writes() > 0;
+
+    const { buildManualLevelUpSection } = await import(root + 'src/ui/characters/ui-manual-level-up.js');
+    globalThis.toastr = { success: () => {}, warning: () => {} };
+    let triggers = 0, retries = 0, busy = false, enabled = true, finishTrigger;
+    const reward = { id: 'fixture-reward', oldLevel: 1, newLevel: 2, pending: [], failures: [{}] };
+    const service = { info: () => ({ enabled }), isBusy: () => busy, records: () => [reward],
+        trigger: async () => {
+            triggers++; busy = true;
+            await new Promise(resolve => { finishTrigger = resolve; });
+            busy = false;
+            return reward;
+        },
+        retry: async () => { retries++; },
+    };
+    const levelUp = buildManualLevelUpSection({ id: 'fixture-npc', name: 'Fixture' }, { service });
+    host.appendChild(levelUp);
+    const levelButton = levelUp.querySelector('.sillynpc-trigger-level-up');
+    const retryButton = levelUp.querySelector('.sillynpc-manual-level-up-retry');
+    release = lock.lockTrackerEdits();
+    const lateLevelUp = buildManualLevelUpSection({ id: 'fixture-npc', name: 'Fixture' }, { service });
+    host.appendChild(lateLevelUp);
+    result.levelUpControlsLocked = levelButton.disabled && retryButton.disabled
+        && [...lateLevelUp.querySelectorAll('button')].every(button => button.disabled);
+    levelButton.dispatchEvent(new Event('click')); retryButton.dispatchEvent(new Event('click'));
+    await new Promise(resolve => setTimeout(resolve, 0));
+    result.levelUpHandlersRefuse = triggers === 0 && retries === 0;
+    release(); release = null;
+    result.levelUpControlsResumed = !levelButton.disabled && !retryButton.disabled;
+    lateLevelUp.remove();
+    levelButton.click();
+    release = lock.lockTrackerEdits();
+    finishTrigger();
+    await new Promise(resolve => setTimeout(resolve, 0));
+    result.finishingLevelUpKeepsLock = triggers === 1 && levelButton.disabled && retryButton.disabled;
+    release(); release = null;
+    result.completedLevelUpResumes = !levelButton.disabled && !retryButton.disabled;
+    retryButton.click();
+    await new Promise(resolve => setTimeout(resolve, 0));
+    result.retryAfterReading = retries === 1 && !retryButton.disabled;
+    release = lock.lockTrackerEdits(); enabled = false;
+    release(); release = null;
+    result.levelCapStaysDisabled = levelButton.disabled;
 } catch (error) {
     result.error = String(error.stack || error);
 } finally {
     host.remove();
     release?.();
+    globalThis.toastr = savedToastr;
     document.documentElement.setAttribute('data-tracker-edit-lock', JSON.stringify(result));
 }

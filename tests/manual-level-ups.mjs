@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createManualLevelUpService, MANUAL_LEVEL_UPS_KEY } from '../src/tracker/manual-level-up-logic.js';
 import { progressXp } from '../src/tracker/progression.js';
+import { lockTrackerEdits } from '../src/tracker/tracker-edit-lock.js';
 
 const diffSource = readFileSync(new URL('../src/tracker/status-diff-review.js', import.meta.url), 'utf8');
 const splitValue = value => { const [current, max = ''] = String(value ?? '').split('/'); return { current, max }; };
@@ -180,4 +181,84 @@ test('pending manual rewards are scoped to the chat system and persona', async (
     h.setPersona('persona-b'); assert.equal(h.service.records(h.card.id).length, 0);
     h.setPersona('persona-a'); h.settings.activeSystem = 'other'; assert.equal(h.service.records(h.card.id).length, 0);
     h.settings.activeSystem = 'magic'; assert.equal(h.service.records(h.card.id).length, 1);
+});
+
+test('reader lock blocks manual triggers, reward decisions and retries without changing stored records', async () => {
+    const h = harness({ guided: true });
+    let requests = 0;
+    h.setRequest(async () => { requests++; throw new Error('offline'); });
+    const record = await h.service.trigger(h.card.id);
+    const before = structuredClone({ state: h.state, card: h.card, metadata: h.context.chatMetadata });
+    const writes = h.writes.length, saves = h.saves.length;
+    const release = lockTrackerEdits();
+    try {
+        await assert.rejects(h.service.trigger(h.card.id));
+        assert.deepEqual(h.service.resolve(h.card.id, record.id, record.pending), { applied: 0 });
+        assert.deepEqual(h.service.resolve(h.card.id, record.id, [], { discardAll: true }), { applied: 0 });
+        assert.equal(await h.service.retry(h.card.id, record.id), false);
+        assert.deepEqual({ state: h.state, card: h.card, metadata: h.context.chatMetadata }, before);
+        assert.equal(h.writes.length, writes); assert.equal(h.saves.length, saves);
+        assert.equal(requests, 1, 'Blocked actions do not request rewards');
+    } finally { release(); }
+    h.service.resolve(h.card.id, record.id, record.pending);
+    assert.equal(h.card.statusOverrides.Mana, '9/13');
+    h.setRequest(async prompt => ({ choices: Object.fromEntries(JSON.parse(prompt).tasks.map(task =>
+        [task.id, { entry: { Name: 'Flash' } }])) }));
+    assert.equal(await h.service.retry(h.card.id, record.id), true);
+    h.service.resolve(h.card.id, record.id, record.pending);
+    assert.deepEqual(h.card.statusCollections.spells, [{ Name: 'Flash' }]);
+    h.tracker.collections = [];
+    await h.service.trigger(h.card.id);
+    assert.equal(h.card.statusOverrides.Rank, '3');
+});
+
+test('a reading invalidates in-flight manual level-up preparation even when it finishes before reward selection', async () => {
+    for (const finishReadingFirst of [false, true]) {
+        const h = harness({ guided: true });
+        let finish;
+        h.setRequest(() => new Promise(resolve => { finish = resolve; }));
+        const before = structuredClone({ state: h.state, card: h.card, metadata: h.context.chatMetadata });
+        const action = h.service.trigger(h.card.id);
+        const release = lockTrackerEdits();
+        try {
+            if (finishReadingFirst) release();
+            finish({ choices: {} });
+            await assert.rejects(action);
+            assert.deepEqual({ state: h.state, card: h.card, metadata: h.context.chatMetadata }, before);
+            assert.equal(h.writes.length, 0); assert.equal(h.saves.length, 0);
+            assert.equal(h.service.isBusy(h.card.id), false);
+        } finally { release(); }
+        h.tracker.collections = [];
+        await h.service.trigger(h.card.id);
+        assert.equal(h.card.statusOverrides.Rank, '2');
+    }
+});
+
+test('a reading invalidates in-flight manual reward retries without replacing pending rewards or failure records', async () => {
+    for (const finishReadingFirst of [false, true]) {
+        const h = harness({ guided: true });
+        h.setRequest(async () => { throw new Error('offline'); });
+        const record = await h.service.trigger(h.card.id);
+        const before = structuredClone({ state: h.state, card: h.card, metadata: h.context.chatMetadata });
+        const writes = h.writes.length, saves = h.saves.length;
+        let finish;
+        h.setRequest(prompt => new Promise(resolve => {
+            finish = () => resolve({ choices: Object.fromEntries(JSON.parse(prompt).tasks.map(task =>
+                [task.id, { entry: { Name: 'Flash' } }])) });
+        }));
+        const retry = h.service.retry(h.card.id, record.id);
+        const release = lockTrackerEdits();
+        try {
+            if (finishReadingFirst) release();
+            finish();
+            assert.equal(await retry, false);
+            assert.deepEqual({ state: h.state, card: h.card, metadata: h.context.chatMetadata }, before);
+            assert.equal(h.writes.length, writes); assert.equal(h.saves.length, saves);
+            assert.equal(h.service.isBusy(h.card.id), false);
+        } finally { release(); }
+        h.setRequest(async prompt => ({ choices: Object.fromEntries(JSON.parse(prompt).tasks.map(task =>
+            [task.id, { entry: { Name: 'Flash' } }])) }));
+        assert.equal(await h.service.retry(h.card.id, record.id), true);
+        assert.equal(record.failures.length, 0);
+    }
 });
