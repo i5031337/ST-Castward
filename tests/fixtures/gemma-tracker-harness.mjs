@@ -77,7 +77,7 @@ export async function harness(systemId, state, { chat = [] } = {}) {
         mayJoinScene: () => true,
         buildCharacterState: name => ({ name, npcTemplateId: 'character',
             stats: Object.fromEntries(templates.npcStatsFor({ npcTemplateId: 'character' }, settings)
-                .map(def => [def.name, deps.getInitialStatValue(def.defaultValue, def.maxStatValue, def)])),
+                .map(def => [def.name, deps.getInitialStatValue(def.defaultValue)])),
             collections: {} }),
         updateCardOffstage: () => null,
         loadStateFromMetadata: () => deps.committedState,

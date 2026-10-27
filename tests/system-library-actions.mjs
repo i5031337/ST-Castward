@@ -18,7 +18,7 @@ function library() {
     const inputs = {
         getSettings: () => settings,
         saveSettings: () => { saves++; captureNpcRoster(settings, context); },
-        defaultSettings, normaliseStatDefs: noop, normaliseNpcPersistence: noop,
+        defaultSettings, normaliseStatDefs: noop,
         normaliseStatUpdatePolicies: noop, normalizeTrackerProgression: noop,
         normalizeSystemDefinition, projectSystemTracker, SYSTEM_SCHEMA_VERSION, systemStatFields, debugLog: noop,
     };

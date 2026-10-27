@@ -342,38 +342,6 @@ export function describeSaveDestination(configured) {
 }
 
 /**
- * Moves one entry of a list up or down, in place.
- *
- * The order of a list in System Builder is the order everything downstream shows: the
- * tracker renders fields in it, the character page lists overrides in it, the extraction
- * schema and prompt name them in it. So moving the entry is the whole of reordering -
- * there is nothing else to keep in step.
- *
- * One rule rather than a swap written out at each control: collections had a pair of
- * buttons with the swap inline, and adding the same pair to stat rows and to collection
- * fields would have made four copies of it to keep right.
- *
- * @param {Array} list Mutated in place.
- * @param {number} index
- * @param {number} delta -1 for up, 1 for down.
- * @returns {boolean} False when the move would fall off either end, so a caller can leave
- *   its control disabled rather than offering a press that does nothing.
- */
-export function moveInList(list, index, delta) {
-    if (!Array.isArray(list)) return false;
-    const from = Number(index);
-    const to = from + Number(delta);
-    if (!Number.isInteger(from) || !Number.isInteger(to)) return false;
-    if (from < 0 || from >= list.length || to < 0 || to >= list.length) return false;
-    // Swapping an entry with itself is not a move, and saying it was would have the
-    // caller save the settings and redraw the whole editor for nothing.
-    if (from === to) return false;
-
-    [list[from], list[to]] = [list[to], list[from]];
-    return true;
-}
-
-/**
  * Hands the browser a file to save.
  *
  * One copy, where there were three - the manage popup's export, the system exporter and the

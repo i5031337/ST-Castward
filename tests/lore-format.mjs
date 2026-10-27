@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFileSync } from 'node:fs';
 import { isReaderStat } from '../src/tracker/stat-update-policy.js';
-import { PROFILE_FIELDS, NPC_LORE_FIELDS, anyProfileFieldUnlocked } from '../src/core/constants-profile.js';
+import { PROFILE_FIELDS, NPC_LORE_FIELDS } from '../src/core/constants-profile.js';
 import { formatLoreContent, parseLoreContent, parseGeneratedProfileFields, mergeLoreValues } from '../src/lore/lore-format.js';
 import { loreReplyWasTruncated, parseLoreReply } from '../src/lore/lore-reply.js';
 import { resolveProfileFields, resolveProfileFieldsFromSystem, setProfileSettingsProvider, profileStrings, profileFieldValue } from '../src/core/profile-fields.js';
@@ -247,12 +247,12 @@ test('tracker schema excludes lore fields and retains tracked stats', () => {
     const source = readFileSync(new URL('../src/tracker/extractor/status-extractor-schema.js', import.meta.url), 'utf8')
         .replace(/^import .*;\n/gm, '')
         .replaceAll('export function ', 'function ');
-    const npc = { name: 'Mira', aiProfileFields: ['appearance'] };
-    const player = { name: 'Hero', isPlayer: true, aiProfileFields: ['appearance'] };
+    const npc = { name: 'Mira' };
+    const player = { name: 'Hero', isPlayer: true };
     const build = new Function('npcTemplates', 'getAllCharacters', 'getPlayerCard', 'resolveProfileFields',
-        'anyProfileFieldUnlocked', 'isReaderStat', 'progressionFields', 'npcStatsFor',
+        'isReaderStat', 'progressionFields', 'npcStatsFor',
         `${source}\nreturn buildExtractionSchema;`)(
-        npcTemplates, () => [npc], () => player, resolveProfileFields, anyProfileFieldUnlocked,
+        npcTemplates, () => [npc], () => player, resolveProfileFields,
         isReaderStat, progressionFields, npcStatsFor,
     );
     const schema = build({ globalStats: [], playerStats: [], npcStats: [], collections: [] });

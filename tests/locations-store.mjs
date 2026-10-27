@@ -1,10 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readLocationStore, currentLocationPath, editLocation, deleteLocation, setCurrentLocation, setLocationsEnabled } from '../src/locations/location-store.js';
+import { readLocationStore, currentLocationTrail, editLocation, deleteLocation, setCurrentLocation } from '../src/locations/location-store.js';
 
 const add = (state, name, id, rest = {}) => editLocation(state, { name, ...rest }, { makeId: () => id });
 
-test('place records are opt-in, chat-local and independent of the input state', () => {
+test('place records stay chat-local and independent of the input state', () => {
     const source = { player: { name: 'Traveler' } };
     assert.deepEqual(readLocationStore(source), { enabled: false, currentId: '', records: {} });
     const state = add(source, 'The Lantern', 'tavern', { aliases: ['Lantern', ' lantern ', 'The Lantern'] });
@@ -13,7 +13,6 @@ test('place records are opt-in, chat-local and independent of the input state', 
     const copy = readLocationStore(state);
     copy.records.tavern.aliases.push('Inn');
     assert.deepEqual(state.locations.records.tavern.aliases, ['Lantern']);
-    assert.equal(setLocationsEnabled(state, true).locations.enabled, true);
     assert.equal(state.locations.enabled, false);
 });
 
@@ -41,16 +40,16 @@ test('containment cannot cycle; deletion detaches children and clears current pl
     assert.throws(() => setCurrentLocation(deleted, 'town'), /does not exist/);
 });
 
-test('current place path follows chat-owned parents and respects the System switch', () => {
+test('current place trail follows chat-owned parents and respects the resolved enabled flag', () => {
     let state = add({}, 'City', 'city');
     state = add(state, 'Inn', 'inn', { parentId: 'city' });
     state = add(state, 'Room', 'room', { parentId: 'inn' });
     state = setCurrentLocation(state, 'room');
-    assert.deepEqual(currentLocationPath(state), []);
-    state = setLocationsEnabled(state, true);
-    assert.deepEqual(currentLocationPath(state), ['City', 'Inn', 'Room']);
-    assert.deepEqual(currentLocationPath(setCurrentLocation(state, 'city')), ['City']);
-    assert.deepEqual(currentLocationPath(setCurrentLocation(state, '')), []);
+    assert.deepEqual(currentLocationTrail(state), []);
+    state.locations.enabled = true;
+    assert.deepEqual(currentLocationTrail(state), ['city', 'inn', 'room'].map(id => state.locations.records[id]));
+    assert.deepEqual(currentLocationTrail(setCurrentLocation(state, 'city')), [state.locations.records.city]);
+    assert.deepEqual(currentLocationTrail(setCurrentLocation(state, '')), []);
 });
 
 test('reading damaged stores repairs dangling and cyclic containment without mutating persistence', () => {

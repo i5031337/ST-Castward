@@ -1,15 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createExpressionEngine, lastNpcLines, selectSprite } from '../src/expressions/expression-engine.js';
+import { createExpressionEngine, selectSprite } from '../src/expressions/expression-engine.js';
 import { wireExpressionEvents } from '../src/expressions/expression-events.js';
 import { EventEmitter } from 'node:events';
 
 const line = (npcId, lineIndex = 0) => ({ npcId, lineIndex, text: `Speech ${lineIndex}`, revision: 'chat/swipe/source' });
 const job = (npcId, index = 0) => ({ line: line(npcId, index), config: { api: 0 } });
-test('only the last dialogue line per NPC is classified, in message order', () => {
-    const records = [line('a'), line('b', 1), line(null, 2), line('a', 3), { ...line('p', 4), isPersona: true }];
-    assert.deepEqual(lastNpcLines(records), [records[1], records[3]]);
-});
 test('packs map labels and sparse fallbacks with stable variants independent of listing order', () => {
     const sprites = [{ label: 'joy', path: '/b' }, { label: 'joy', path: '/a' }, { label: 'neutral', path: '/n' }];
     assert.equal(selectSprite(sprites, 'missing', 'neutral', 'id'), '/n');

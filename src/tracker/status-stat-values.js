@@ -54,22 +54,6 @@ function resolveMaxValue(statDef) {
 }
 
 /**
- * Fields held out of ordinary turn updates, by scope.
- *
- * @returns {{ world: string[], player: string[], characters: string[] }}
- */
-function lockedStats(trackerSettings = getSettings().statusTracker) {
-    const names = (list) => (list || []).filter(stat => stat?.locked && stat.name).map(stat => stat.name);
-    return {
-        world: names(trackerSettings.globalStats),
-        player: names(trackerSettings.playerStats),
-        characters: (trackerSettings.npcStats || [])
-            .filter(stat => stat?.name && stat.locked)
-            .map(stat => stat.name),
-    };
-}
-
-/**
  * What a model's reply may not do to the stats, taken out before it is applied.
  *
  * Only for replies from a model - the tracker's reader and the inline block. Your own edits
@@ -185,31 +169,6 @@ function promptCeiling(statDef, storedValue) {
     return String(splitValue(storedValue).max).trim();
 }
 
-/**
- * The cast's highest ceiling for a stat, returned as the value that carries it.
- *
- * undefined when nobody holds the stat at all. A plain value also lets promptCeiling
- * fall back to the configured maximum.
- *
- * @param {object[]} characters
- * @param {string} name
- */
-function highestCeiling(characters, name) {
-    let best;
-    let bestNum = -Infinity;
-    for (const char of characters || []) {
-        const value = char?.stats?.[name];
-        if (value === undefined || value === null || String(value).trim() === '') continue;
-        const ceiling = ceilingFromValue(value);
-        if (ceiling === null) {
-            if (best === undefined) best = value;
-            continue;
-        }
-        if (ceiling > bestNum) { bestNum = ceiling; best = value; }
-    }
-    return best;
-}
-
 /** Numeric fields also accept the saved 'bar' type before normalization. */
 function isNumericStat(statDef) {
     const type = statDef?.type;
@@ -296,22 +255,15 @@ function clampToCeiling(value) {
     return `${max}/${max}`;
 }
 
-function getInitialStatValue(defaultValue, maxStatValue, statDef = null) {
-    let value = defaultValue || '';
-    return value;
+function getInitialStatValue(defaultValue) {
+    return defaultValue || '';
 }
-
-/**
- * Gets the name of the currently selected user persona.
- */
 
 Object.defineProperties(deps, {
     mergeStatValue: { enumerable: true, configurable: true, get: () => mergeStatValue },
     resolveMaxValue: { enumerable: true, configurable: true, get: () => resolveMaxValue },
-    lockedStats: { enumerable: true, configurable: true, get: () => lockedStats },
     sanitizeModelUpdate: { enumerable: true, configurable: true, get: () => sanitizeModelUpdate },
     promptCeiling: { enumerable: true, configurable: true, get: () => promptCeiling },
-    highestCeiling: { enumerable: true, configurable: true, get: () => highestCeiling },
     isNumericStat: { enumerable: true, configurable: true, get: () => isNumericStat },
     describeNpcStatFields: { enumerable: true, configurable: true, get: () => describeNpcStatFields },
     meterHasCeiling: { enumerable: true, configurable: true, get: () => meterHasCeiling },

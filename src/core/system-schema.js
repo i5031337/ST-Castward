@@ -233,12 +233,6 @@ export function normalizeSystemDefinition(source, { id, name } = {}) {
     };
 }
 
-/** Resolve a field by immutable ID; labels are presentation only. */
-export function getSystemField(system, scope, kind, fieldId) {
-    const fields = kind === 'profile' ? systemProfileFields(system, scope) : systemStatFields(system, scope);
-    return list(fields).find(field => field.id === fieldId) || null;
-}
-
 /** Runtime projections retain actor-specific consumers without duplicating saved catalogs. */
 export function projectSystemTracker(system) {
     const stat = fields => fields.map(field => ({ ...field, hint: field.guidance }));

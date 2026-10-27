@@ -3,7 +3,7 @@ import { isStaticField } from '../src/core/constants-profile.js';
 import { collectionAppliesTo } from '../src/core/collection-targets.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { collectionQuantityField, ensureCollectionIdentifier, moveCollectionField, deleteCollectionField } from '../src/core/collection-fields.js';
+import { collectionQuantityField, ensureCollectionIdentifier, deleteCollectionField } from '../src/core/collection-fields.js';
 import { normalizeSystemDefinition } from '../src/core/system-schema.js';
 
 const normalize = fields => normalizeSystemDefinition({ schemaVersion: 1,
@@ -53,14 +53,10 @@ test('identifiers are always static, including imported personal identifiers of 
     assert.equal(isStaticField({ type: 'text', isStatic: true }), true);
 });
 
-test('reorder and delete operations cannot replace the identifier, even after every other field is removed', () => {
+test('deletion cannot replace the identifier, even after every other field is removed', () => {
     const col = normalize([{ name: 'name', isPrimary: true }, { name: 'pp' }, { name: 'description' }]);
     const identifier = col.fields[0];
-    assert.equal(moveCollectionField(col, 0, 1), false);
-    assert.equal(moveCollectionField(col, 1, -1), false);
     assert.equal(deleteCollectionField(col, 0), false);
-    assert.equal(moveCollectionField(col, 2, -1), true);
-    assert.deepEqual(col.fields.map(field => field.name), ['name', 'description', 'pp']);
     assert.equal(deleteCollectionField(col, 2), true);
     assert.equal(deleteCollectionField(col, 1), true);
     assert.equal(deleteCollectionField(col, 0), false);

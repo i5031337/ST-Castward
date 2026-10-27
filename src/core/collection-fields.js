@@ -27,14 +27,6 @@ export function ensureCollectionIdentifier(collection) {
     return changed;
 }
 
-/** The identifier stays in place when arranging the remaining fields. */
-export function moveCollectionField(collection, index, delta) {
-    const next = index + delta;
-    if (index < 1 || index >= collection.fields.length || next < 1 || next >= collection.fields.length) return false;
-    [collection.fields[index], collection.fields[next]] = [collection.fields[next], collection.fields[index]];
-    return true;
-}
-
 export function deleteCollectionField(collection, index) {
     if (index < 1 || index >= collection.fields.length) return false;
     collection.fields.splice(index, 1);

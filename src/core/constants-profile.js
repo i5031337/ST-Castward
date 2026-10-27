@@ -52,8 +52,3 @@ export function hintFor(field) {
 export function isStaticField(field) {
     return !!field?.isPrimary || (field?.isStatic !== false && field?.type !== 'number');
 }
-
-export function anyProfileFieldUnlocked(characters) {
-    return (characters || []).some(char => Array.isArray(char?.aiProfileFields)
-        && char.aiProfileFields.length > 0);
-}

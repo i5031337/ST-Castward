@@ -250,8 +250,7 @@
    The box takes the width it is given rather than capping itself: the popup's
    width is a setting, and a page that ignored it would leave the space somebody
    chose to have sitting empty. */
-.sillynpc-cv-block,
-.sillynpc-cv-lore {
+.sillynpc-cv-block {
     display: flex;
     flex-direction: column;
     gap: 5px;
@@ -315,15 +314,6 @@
 .sillynpc-cv-empty {
     max-width: 60ch;
     margin: 0 auto;
-}
-
-.sillynpc-cv-lore-text {
-    line-height: 1.55;
-    white-space: pre-wrap;
-    color: var(--sillynpc-fg-primary);
-    padding: var(--sillynpc-space-md);
-    background: var(--sillynpc-bg-secondary);
-    border-radius: var(--sillynpc-radius-sm);
 }
 
 /* Below this the two-column layouts stop being a layout: shrinking a column further makes

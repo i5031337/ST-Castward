@@ -1,13 +1,3 @@
-/** Retire the old transfer setting after carryover has been migrated. */
-export function normaliseNpcPersistence(definitions) {
-    if (!Array.isArray(definitions)) return;
-    for (const stat of definitions) {
-        if (!stat || typeof stat !== 'object') continue;
-        delete stat.persistence;
-        delete stat.persistenceReview;
-    }
-}
-
 /** Carryover is independent of reader locking and level growth. */
 export function carriesNpcStat(stat) {
     return stat?.carryOver === true;

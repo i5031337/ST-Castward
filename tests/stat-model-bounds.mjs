@@ -28,11 +28,14 @@ test('ordinary model updates keep existing and starting maxima across actors', (
     assert.equal(update.characters[1].HP, '3/10');
 });
 
-test('a fixed rating range starts as a plain rating', () => {
+test('stat initialization preserves saved defaults without inventing a pool ceiling', () => {
     const deps = {};
     bind(deps);
-    assert.equal(deps.getInitialStatValue('1', '5', { locked: true }), '1');
-    assert.equal(deps.getInitialStatValue('1', '5', {}), '1');
+    assert.equal(deps.getInitialStatValue('1'), '1');
+    assert.equal(deps.getInitialStatValue('2/5'), '2/5');
+    assert.equal(deps.getInitialStatValue(undefined), '');
+    assert.equal(deps.getInitialStatValue(0), '');
+    assert.equal(deps.getInitialStatValue('0'), '0');
 });
 
 test('inline updates cannot author level-derived locked growth', () => {

@@ -6,7 +6,7 @@ import test from 'node:test';
 import { readFileSync } from 'node:fs';
 import { chatNpcSources, CHAT_NPCS_KEY } from '../src/chat/chat-npc-sources.js';
 import { npcTemplateFor } from '../src/core/npc-templates.js';
-import { splitNpcStats, normaliseNpcPersistence } from '../src/tracker/stat-persistence.js';
+import { splitNpcStats } from '../src/tracker/stat-persistence.js';
 import { normaliseStatUpdatePolicies } from '../src/tracker/stat-update-policy.js';
 import { profileStrings } from '../src/core/profile-fields.js';
 import { normalizeNpcPresentation } from '../src/core/npc-presentation.js';
@@ -45,11 +45,11 @@ test('inactive System exports shared cards, its saved roster and chat NPCs using
     const exportWorldCharacters = new Function('getSettings', 'getWorldCharacters',
         'getChatCharacters', 'getContext', 'listChatHeaders', 'chatNpcSources', 'CHAT_NPCS_KEY',
         'serialiseCharacter', 'TRANSFER_FORMAT', 'TRANSFER_VERSION', 'captureCharacterMedia',
-        'normaliseStatUpdatePolicies', 'normaliseNpcPersistence', 'npcRoster',
+        'normaliseStatUpdatePolicies', 'npcRoster',
         `${exportSource}\nreturn exportWorldCharacters;`)(
         () => settings, () => cards, () => [], () => ({}), async () => headers,
         chatNpcSources, CHAT_NPCS_KEY, serialiseCharacter, 'sillynpc-characters', 3, async (char, record) => record,
-        normaliseStatUpdatePolicies, normaliseNpcPersistence, npcRoster);
+        normaliseStatUpdatePolicies, npcRoster);
 
     const payload = await exportWorldCharacters('Inactive');
     assert.deepEqual(payload.characters.map(card => card.name), ['Mira', 'Jon', 'Tess']);

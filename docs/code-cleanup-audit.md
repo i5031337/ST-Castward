@@ -1,6 +1,6 @@
 # Obsolete and redundant code audit
 
-Audit date: 2026-10-26. The item-name cleanup that could delete valid saved data is fixed. Duplicate profile context in field generation is also fixed. The remaining findings identify unused APIs, duplicated work, and tests that preserve superseded implementations. All source modules are reachable from `index.js`; these findings concern code within modules.
+Audit date: 2026-10-26. All confirmed cleanup findings below are resolved. The item-name purge no longer deletes valid saved data, Fill context avoids duplicate profile prose and empty sections, and unused helpers and redundant passes are removed. All source modules remain reachable from `index.js`; the cleanup concerns code within modules.
 
 ## Item deletion fixed
 
@@ -14,18 +14,18 @@ An isolated execution of the migration changed library keys `New Item`, `New Ite
 
 The regression uses production formatters and prompt assembly to verify one copy of existing profile context, exclusion of the old value being regenerated, and retained stat and item details. It also verifies that lore facts still include profile and tracker data. The test failed with two copies before the fix; all 16 focused profile, lore, and Fill tests pass afterward.
 
-## Open cleanup work
+## Completed cleanup
 
-| Finding | Evidence and action |
+| Finding | Resolution |
 | --- | --- |
-| Superseded ordering helpers | `moveInList` in [utils-media.js](../src/core/utils-media.js) has no callers. `moveCollectionField` in [collection-fields.js](../src/core/collection-fields.js) and `moveProfileField` in [ui-system-profile-operations.js](../src/ui/system/ui-system-profile-operations.js) have only test callers. Editors now use [ui-reorder.js](../src/ui/shared/ui-reorder.js). Remove the old helpers and their test-only assertions; retain identifier-pinning and current reorder coverage. |
-| Retired profile permissions | `anyProfileFieldUnlocked` in [constants-profile.js](../src/core/constants-profile.js) has no production callers. [settings-migration.js](../src/core/settings-migration.js) still initializes `aiProfileFields`, which has no other active consumer. Remove the helper, initialization, and stale lore-format fixture injection together. Existing unread saved keys need no destructive migration. |
-| Duplicate persistence cleanup | `normaliseNpcPersistence` in [stat-persistence.js](../src/tracker/stat-persistence.js) deletes `persistence` and `persistenceReview`, already deleted by [normaliseStatUpdatePolicies](../src/tracker/stat-update-policy.js) immediately before every production call. Remove the duplicate pass and imports while retaining canonical migration of carryover and retired properties. |
-| Obsolete expression selector and accessor | `lastNpcLines` in [expression-engine.js](../src/expressions/expression-engine.js) is called only by a test claiming that only the last dialogue line is classified. [npc-expressions.js](../src/expressions/npc-expressions.js) processes every NPC dialogue line. Remove that helper and stale test. The engine's `cached()` accessor also has no callers; retain its internal cache. The file-map description is corrected with this audit. |
-| Dead tracker API surface | `lockedStats` and `highestCeiling` in [status-stat-values.js](../src/tracker/status-stat-values.js) have no callers beyond their own registrations and [status-logic.js](../src/tracker/status-logic.js) facade exports. Remove the helpers, registrations, and exports together. |
-| Ignored stat-initializer arguments | `getInitialStatValue` in [status-stat-values.js](../src/tracker/status-stat-values.js) only returns `defaultValue \|\| ''`, ignoring its maximum and definition arguments. Callers still pass both, and [status-scene-presence.js](../src/tracker/status-scene-presence.js) computes a maximum solely for an ignored argument. Simplify the signature and callers; align [npc-templates tests](../tests/npc-templates.mjs), whose mocks still construct pool values. Preserve current falsy-default semantics unless changing them deliberately. |
-| Test-only convenience APIs | `currentLocationPath` and `setLocationsEnabled` in [location-store.js](../src/locations/location-store.js) have only test callers. Runtime uses `currentLocationTrail` and System-owned enablement. `getSystemField` in [system-schema.js](../src/core/system-schema.js) is also test-only. Remove these APIs and test production boundaries instead. |
-| Orphan character lore styling | `.sillynpc-cv-lore` and `.sillynpc-cv-lore-text` in [11-character-sheets.css](../styles/11-character-sheets.css) have no DOM producers. Current profiles use `.sillynpc-cv-block` and `.sillynpc-cv-value`. Remove the old selectors while retaining shared live rules. |
+| Superseded ordering helpers | Removed `moveInList` from [utils-media.js](../src/core/utils-media.js), `moveCollectionField` from [collection-fields.js](../src/core/collection-fields.js), and `moveProfileField` from [ui-system-profile-operations.js](../src/ui/system/ui-system-profile-operations.js), along with test-only assertions. Current ordering uses [ui-reorder.js](../src/ui/shared/ui-reorder.js); identifier-pinning and deletion coverage remain. |
+| Retired profile permissions | Removed `anyProfileFieldUnlocked` from [constants-profile.js](../src/core/constants-profile.js), `aiProfileFields` initialization from [settings-migration.js](../src/core/settings-migration.js), and stale lore-format fixture injection. Existing unread saved keys remain untouched. |
+| Duplicate persistence cleanup | Removed `normaliseNpcPersistence` from [stat-persistence.js](../src/tracker/stat-persistence.js), its imports, calls, and fixture wiring. [normaliseStatUpdatePolicies](../src/tracker/stat-update-policy.js) still migrates carryover and removes the retired properties. |
+| Obsolete expression selector and accessor | Removed test-only `lastNpcLines`, its misleading last-line-only test, and the unused `cached()` accessor from [expression-engine.js](../src/expressions/expression-engine.js). Runtime per-line classification and the internal cache remain covered. |
+| Dead tracker API surface | Removed `lockedStats` and `highestCeiling` from [status-stat-values.js](../src/tracker/status-stat-values.js), their dependency registrations, and [status-logic.js](../src/tracker/status-logic.js) exports. |
+| Ignored stat-initializer arguments | Simplified `getInitialStatValue` and its callers to one argument. Removed the unused maximum calculation in [status-scene-presence.js](../src/tracker/status-scene-presence.js). [NPC template tests](../tests/npc-templates.mjs) now preserve plain defaults rather than inventing pool denominators; falsy-default behavior remains unchanged. |
+| Test-only convenience APIs | Removed `currentLocationPath` and `setLocationsEnabled` from [location-store.js](../src/locations/location-store.js), and `getSystemField` from [system-schema.js](../src/core/system-schema.js). Tests use current trails, catalog lookups, and explicit fixtures. Storage coverage still verifies System-owned enablement and map preservation. |
+| Orphan character lore styling | Removed `.sillynpc-cv-lore` and `.sillynpc-cv-lore-text` from [11-character-sheets.css](../styles/11-character-sheets.css), preserving the shared `.sillynpc-cv-block` rules used by current profiles. |
 
 ## Optional consolidation and retained boundaries
 
@@ -33,8 +33,8 @@ The regression uses production formatters and prompt assembly to verify one copy
 
 The image-tag registration subsystem has no callers in this checkout, but [image-tags.js](../src/characters/image-tags.js) describes an external integration hook. Confirm that integration policy before removing it. Snapshot/swipe compatibility, persisted emotion defaults, voice-binding fallbacks, and old System/settings conversion paths still serve saved data and are outside the confirmed removal list.
 
-## Verification baseline
+## Verification
 
-The audit traced callers and tests and used isolated production-function reproductions for the item purge and duplicated Fill context. The focused baseline passed 36 tests across settings migration, collection fields, profile fields, NPC expressions, and stat persistence. Some passing tests exercise obsolete helpers, so their success does not establish current runtime coverage for those helpers.
+The audit traced callers and used isolated production-function reproductions for the item purge and duplicated Fill context. Regression tests failed before those fixes and pass afterward. Coverage retains saved item metadata, old and current settings normalization, player inventories with custom identifiers, profile context, known stat purposes, and omission of empty prompt sections.
 
-The fix adds regressions in [settings-migration.mjs](../tests/settings-migration.mjs) and [chat-character-ownership.mjs](../tests/chat-character-ownership.mjs). Both failed before the change by losing `New Item 2` or `new item 12`; all 15 tests in those files pass after the fix. Coverage includes repeated normalization of old and current settings, library metadata, player holdings with default and custom identifiers, cached reads, and serialized save/reload.
+After the remaining cleanup, `node --test tests/*.mjs` passes all 868 tests and `git diff --check` passes. The read-only running-host check `python3 tests/ui-smoke.py` also passes, covering startup, tracker reports, profile editors, review controls, and System Builder rendering. The browser check required execution outside the sandbox so the Firefox driver could start.

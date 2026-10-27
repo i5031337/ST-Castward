@@ -23,17 +23,6 @@ export function renameProfileField(field, label) {
     return true;
 }
 
-export function moveProfileField(fields, id, direction) {
-    const active = fields.filter(field => !field.retired);
-    const index = active.findIndex(field => field.id === id);
-    const neighbor = active[index + direction];
-    if (index < 0 || !neighbor) return false;
-    const first = fields.indexOf(active[index]);
-    const second = fields.indexOf(neighbor);
-    [fields[first], fields[second]] = [fields[second], fields[first]];
-    return true;
-}
-
 export function retireProfileField(field, retired = true) {
     field.retired = retired;
 }

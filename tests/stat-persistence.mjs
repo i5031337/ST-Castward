@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { normaliseNpcPersistence, splitNpcStats, initialiseNpcStats } from '../src/tracker/stat-persistence.js';
+import { splitNpcStats, initialiseNpcStats } from '../src/tracker/stat-persistence.js';
 import { normaliseStatUpdatePolicies, isReaderStat } from '../src/tracker/stat-update-policy.js';
 import { progressionStatEligible } from '../src/core/progression-config.js';
 import { prepareGrantReview } from '../src/tracker/level-grant-review.js';
@@ -18,7 +18,6 @@ test('legacy transfer settings migrate to carryover flags', () => {
     const definitions = [{ name: 'HP', persistence: 'variable' },
         { name: 'Wisdom', persistence: 'innate', persistenceReview: true }];
     normaliseStatUpdatePolicies({ npcStats: definitions });
-    normaliseNpcPersistence(definitions);
     assert.equal(definitions[0].carryOver, false);
     assert.equal(definitions[1].carryOver, true);
     assert.equal(definitions[0].persistence, undefined);
@@ -45,7 +44,6 @@ test('legacy NPC policy remains editable after migration', () => {
     const innate = { name: 'Wisdom', persistence: 'innate' };
     const variable = { name: 'HP', persistence: 'variable' };
     normaliseStatUpdatePolicies({ npcStats: [innate, variable], playerStats: [] });
-    normaliseNpcPersistence([innate, variable]);
     assert.equal(innate.locked, true);
     assert.equal(isReaderStat(innate), false);
     assert.equal(isReaderStat(variable), true);

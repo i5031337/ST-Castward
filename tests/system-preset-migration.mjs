@@ -24,10 +24,10 @@ function loadBind(file, names, values) {
 }
 const bindPresets = loadBind('status-system-presets.js', [
     'getSettings', 'saveSettings', 'defaultSettings', 'normaliseStatDefs',
-    'normaliseNpcPersistence', 'normaliseStatUpdatePolicies', 'normalizeSystemDefinition',
+    'normaliseStatUpdatePolicies', 'normalizeSystemDefinition',
     'debugLog', 'normalizeTrackerProgression', 'projectSystemTracker', 'SYSTEM_SCHEMA_VERSION', 'systemStatFields',
 ], [() => settings, () => { saves++; }, { statusTracker: {}, characters: [], personaData: {}, master_items: {} },
-    () => {}, () => {}, () => {}, normalizeSystemDefinition, () => {}, normalizeTrackerProgression, projectSystemTracker, SYSTEM_SCHEMA_VERSION, systemStatFields]);
+    () => {}, () => {}, normalizeSystemDefinition, () => {}, normalizeTrackerProgression, projectSystemTracker, SYSTEM_SCHEMA_VERSION, systemStatFields]);
 bindPresets(deps);
 
 test('a fresh install adopts an editable Fantasy Adventure System', () => {

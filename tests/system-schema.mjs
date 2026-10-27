@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { normalizeSystemDefinition, getSystemField, projectSystemTracker, SYSTEM_SCHEMA_VERSION } from '../src/core/system-schema.js';
+import { normalizeSystemDefinition, projectSystemTracker, SYSTEM_SCHEMA_VERSION } from '../src/core/system-schema.js';
 import { systemStatFields, systemProfileFields, templateStatIds } from '../src/core/system-fields.js';
 
 test('legacy preset migration keeps only reusable schema and stable generated IDs', () => {
@@ -47,11 +47,11 @@ test('System definitions retain collection image prompt choices', () => {
 
 test('player and NPC profiles differ and label edits preserve field IDs', () => {
     const system = normalizeSystemDefinition({});
-    assert.equal(getSystemField(system, 'player', 'profile', 'role'), null);
-    assert.equal(getSystemField(system, 'npc', 'profile', 'role').label, 'Role');
+    assert.equal(systemProfileFields(system, 'player').some(field => field.id === 'role'), false);
+    assert.equal(systemProfileFields(system, 'npc').find(field => field.id === 'role').label, 'Role');
     assert.ok(systemProfileFields(system, 'npc').every(field => !Object.hasOwn(field, 'policy')));
     systemProfileFields(system, 'npc').find(field => field.id === 'role').label = 'Occupation';
-    assert.equal(getSystemField(normalizeSystemDefinition(system), 'npc', 'profile', 'role').label, 'Occupation');
+    assert.equal(systemProfileFields(normalizeSystemDefinition(system), 'npc').find(field => field.id === 'role').label, 'Occupation');
 });
 
 test('modern definitions bound memory limits and retain configured fields', () => {

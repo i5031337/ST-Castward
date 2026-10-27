@@ -39,10 +39,8 @@ Object.freeze(deps);
 
 export const mergeStatValue = deps.mergeStatValue;
 export const resolveMaxValue = deps.resolveMaxValue;
-export const lockedStats = deps.lockedStats;
 export const sanitizeModelUpdate = deps.sanitizeModelUpdate;
 export const promptCeiling = deps.promptCeiling;
-export const highestCeiling = deps.highestCeiling;
 export const isNumericStat = deps.isNumericStat;
 export const describeNpcStatFields = deps.describeNpcStatFields;
 export const meterHasCeiling = deps.meterHasCeiling;

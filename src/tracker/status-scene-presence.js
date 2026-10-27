@@ -134,7 +134,7 @@ function updateCardOffstage(card, updChar, state, settings,
     if (selected) actor.npcTemplateId = selected.id;
     const statDefs = npcStatsFor(actor, settings);
     for (const stat of statDefs) if (actor.stats[stat.name] === undefined) {
-        actor.stats[stat.name] = deps.getInitialStatValue(stat.defaultValue, stat.maxStatValue, stat);
+        actor.stats[stat.name] = deps.getInitialStatValue(stat.defaultValue);
     }
 
     const collectionIdsForStats = new Set((settings.collections || []).map(c => c.id.toLowerCase()));
@@ -186,7 +186,7 @@ function buildCharacterState(charName, state, trackerSettings) {
         let value = stat.defaultValue || '';
         const override = matchedChar?.statusOverrides?.[stat.name];
         if (override !== undefined && String(override).trim() !== '') value = override;
-        charData.stats[stat.name] = deps.getInitialStatValue(value, deps.resolveMaxValue(stat), stat);
+        charData.stats[stat.name] = deps.getInitialStatValue(value);
     });
 
     // Restore the collections held on the card while this NPC was offstage.

@@ -4,7 +4,7 @@ import test from 'node:test';
 import { readFileSync } from 'node:fs';
 import { profileFieldValue } from '../src/core/profile-fields.js';
 import { normalizeSystemDefinition, projectSystemTracker } from '../src/core/system-schema.js';
-import { addProfileField, renameProfileField, moveProfileField, retireProfileField } from '../src/ui/system/ui-system-profile-operations.js';
+import { addProfileField, renameProfileField, retireProfileField } from '../src/ui/system/ui-system-profile-operations.js';
 
 class Element {
     constructor(tag) {
@@ -66,9 +66,6 @@ test('profile edits retain immutable IDs and retired definitions', () => {
     assert.equal(second.id, 'secret-ties-2');
     assert.equal(renameProfileField(first, 'Alliances'), true);
     assert.equal(first.id, 'secret-ties');
-    const before = fields.findIndex(field => field.id === first.id);
-    assert.equal(moveProfileField(fields, first.id, -1), true);
-    assert.equal(fields.findIndex(field => field.id === first.id), before - 1);
     retireProfileField(first);
     const normalized = normalizeSystemDefinition({ schemaVersion: 2, profiles: fields });
     assert.deepEqual(normalized.profiles.find(field => field.id === first.id), first);

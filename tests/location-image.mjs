@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { backgroundImageUrl, editLocation, readLocationStore, setCurrentLocation, setLocationsEnabled } from '../src/locations/location-store.js';
+import { backgroundImageUrl, editLocation, readLocationStore, setCurrentLocation } from '../src/locations/location-store.js';
 
 const source = readFileSync(new URL('../src/locations/location-image.js', import.meta.url), 'utf8')
     .replace(/^import\s+[\s\S]*?\s+from\s+['"][^'"]+['"];\s*/gm, '')
@@ -13,7 +13,8 @@ const api = new Function('backgroundImageUrl', 'editLocation', 'readLocationStor
 function fixture() {
     let state = editLocation({}, { name: 'Blue Inn', description: 'Copper lamps and an open hearth.' },
         { makeId: () => 'inn' });
-    state = setLocationsEnabled(setCurrentLocation(state, 'inn'), true);
+    state = setCurrentLocation(state, 'inn');
+    state.locations.enabled = true;
     const metadata = { sillynpc_status_state: state };
     let metadataSaves = 0;
     let context = { chatMetadata: metadata, getCurrentChatId: () => 'chat-a',

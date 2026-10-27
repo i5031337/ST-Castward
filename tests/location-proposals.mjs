@@ -1,9 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { editLocation, setLocationsEnabled, setCurrentLocation } from '../src/locations/location-store.js';
+import { editLocation, setCurrentLocation } from '../src/locations/location-store.js';
 import { buildLocationProposals, applyLocationReview } from '../src/locations/location-proposals.js';
 
-const enabled = () => setLocationsEnabled({}, true);
+const enabled = () => ({ locations: { enabled: true, currentId: '', records: {} } });
 const options = () => { let id = 0; return { provenance: { messageId: 3, hash: 'original' },
     makeId: () => `p${++id}` }; };
 const discovery = { places: [
@@ -236,7 +236,8 @@ test('reader place proposals are bounded and never truncate a replacement descri
 test('disabling places preserves pending selections without applying them', () => {
     const state = enabled();
     const { rows } = buildLocationProposals(state, discovery, options());
-    const result = applyLocationReview(setLocationsEnabled(state, false), rows, rows);
+    state.locations.enabled = false;
+    const result = applyLocationReview(state, rows, rows);
     assert.equal(result.appliedRows.length, 0);
     assert.equal(result.remainingRows.length, 3);
     assert.ok(result.warnings.some(warning => /disabled/.test(warning)));

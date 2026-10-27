@@ -91,7 +91,7 @@ function applyFixture(settings) {
         findMatchingStatKey: (stats, name) => Object.keys(stats).find(key => key.toLowerCase() === name.toLowerCase()),
         combineStatValue: (existing, group) => group.whole,
         constrainToDefinition: (def, value) => String(value),
-        getInitialStatValue: (value, max) => max ? `${value}/${max}` : value,
+        getInitialStatValue: value => value || '',
         saveStateToMetadata: state => { saves.push(state); deps.committedState = state; },
     };
     new Function('npcStatsFor', 'proposedNpcTemplate', 'eventSource', 'getSettings',
@@ -175,15 +175,14 @@ test('a new uncertain assignment is reviewable, but an existing unassigned NPC i
     const update = buildUpdateFromChanges([{ ...pending[0], after: 'pokemon' }], initial, settings.statusTracker);
     const state = deps.applyUpdate(update);
     assert.equal(state.characters[0].npcTemplateId, 'pokemon');
-    assert.deepEqual(state.characters[0].stats, { HP: '10/10', Friendship: '0' });
+    assert.deepEqual(state.characters[0].stats, { HP: '10', Friendship: '0' });
     setProfileSettingsProvider(() => null);
 });
 
 test('an NPC without a card keeps its template when it returns to the scene', () => {
     const { settings } = fixture();
     const deps = {
-        getInitialStatValue: (value, max) => max ? `${value}/${max}` : value,
-        resolveMaxValue: stat => stat.maxStatValue,
+        getInitialStatValue: value => value || '',
     };
     new Function('npcStatsFor', 'npcTemplateFor', 'proposedNpcTemplate', 'getAllCharacters',
         `${source('../src/tracker/status-scene-presence.js')}\nreturn bind;`)(

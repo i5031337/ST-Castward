@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { readLocationStore, editLocation, setCurrentLocation, setLocationsEnabled, backgroundImageUrl } from '../src/locations/location-store.js';
+import { readLocationStore, editLocation, setCurrentLocation, backgroundImageUrl } from '../src/locations/location-store.js';
 
 const source = readFileSync(new URL('../src/locations/location-background.js', import.meta.url), 'utf8')
     .replace(/^import\s+[\s\S]*?\s+from\s+['"][^'"]+['"];\s*/gm, '')
@@ -10,7 +10,8 @@ const sync = new Function('readLocationStore', 'backgroundImageUrl', `${source}\
 
 test('a confirmed place applies its linked background to this chat once', () => {
     let state = editLocation({}, { name: 'Tavern', backgroundImage: 'url("user/images/tavern.png")' }, { makeId: () => 'tavern' });
-    state = setLocationsEnabled(setCurrentLocation(state, 'tavern'), true);
+    state = setCurrentLocation(state, 'tavern');
+    state.locations.enabled = true;
     const metadata = { sillynpc_status_state: state };
     let saves = 0;
     const context = { chatMetadata: metadata, getCurrentChatId: () => 'chat-a', saveMetadataDebounced: () => saves++ };
@@ -38,13 +39,14 @@ test('background links stay within an open, enabled chat', () => {
     assert.equal(sync(context, background), false);
     context.getCurrentChatId = () => 'chat-b';
     assert.equal(sync(context, background), false);
-    metadata.sillynpc_status_state = setLocationsEnabled(state, true);
+    state.locations.enabled = true;
     assert.equal(sync(context, background), true);
 });
 
 test('a cached Place restores background metadata and display after another writer changes them', () => {
     let state = editLocation({}, { name: 'Inn', backgroundImage: 'url("user/images/inn.png")' }, { makeId: () => 'inn' });
-    state = setLocationsEnabled(setCurrentLocation(state, 'inn'), true);
+    state = setCurrentLocation(state, 'inn');
+    state.locations.enabled = true;
     const metadata = { sillynpc_status_state: state };
     let saves = 0;
     const context = { chatMetadata: metadata, getCurrentChatId: () => 'chat-restore', saveMetadataDebounced: () => saves++ };

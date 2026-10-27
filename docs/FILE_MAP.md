@@ -43,7 +43,7 @@ This map covers tracked runtime files, tests and support files. Source files and
 | `docs/ARCHITECTURE.md` | Current storage ownership, reader behavior, review, and verification boundaries. |
 | `docs/AUDIT_FOLLOWUP.md` | Historical cleanup decisions and focused verification guidance. |
 | `docs/tts-expressions-audit.md` | Speech and expression audit findings and fix status. |
-| `docs/code-cleanup-audit.md` | Confirmed obsolete and redundant code findings, item-deletion fix status, and cleanup boundaries. |
+| `docs/code-cleanup-audit.md` | Completed obsolete and redundant code cleanup, verification, and optional consolidation boundaries. |
 | `docs/test-audit.csv` | Test audit decisions, rationale, and replacement coverage references. |
 | `docs/tracker-prompt-draft.txt` | Archived tracker prompt draft from before the absolute-reading contract. |
 | `docs/REWRITE_HOST_SMOKE.md` | Dated user-reported host results and remaining manual checks. |
@@ -365,7 +365,7 @@ This map covers tracked runtime files, tests and support files. Source files and
 | `tests/npc-templates.mjs` | Template normalization, assignment, validation, review, and scene return tests. |
 | `src/ui/system/ui-system-builder.js` | Public entry point for system schema editor. |
 | `src/ui/system/ui-system-profiles.js` | Player and NPC profile field controls in System Builder. |
-| `src/ui/system/ui-system-profile-operations.js` | Pure add, rename, order, retire, and restore operations for profile fields. |
+| `src/ui/system/ui-system-profile-operations.js` | Pure add, rename, retire, and restore operations for profile fields. |
 | `src/ui/system/ui-system-collections.js` | Collection schema editor, including NPC template targets. |
 | `src/ui/system/ui-collection-rewards.js` | Collapsed Level-up rewards controls with field-driven schedules and guided selection settings. |
 | `src/ui/system/ui-system-progression.js` | Player and NPC template XP/Level selection, points per level, random/manual assignment, and eligible stats. |

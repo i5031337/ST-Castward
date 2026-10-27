@@ -17,7 +17,7 @@ const source = readFileSync(new URL('../src/core/settings-migration.js', import.
     .replace(/^import\s+[\s\S]*?\s+from\s+['"][^'"]+['"];\s*/gm, '')
     .replaceAll('export function ', 'function ');
 const loadMigration = new Function('debugLog', 'SPEAKER_PALETTE', 'NPC_LORE_FIELDS',
-    'paletteIndexFor', 'normaliseNpcPersistence', 'defaultSettings', 'saveSettings',
+    'paletteIndexFor', 'defaultSettings', 'saveSettings',
     'migratePresetsAndStores', 'normaliseBaseSettings', 'normaliseStatUpdatePolicies',
     'normalizeHudLayoutId', 'ensureCollectionIdentifier', 'ensureCollectionQuantity', 'normalizeTrackerProgression', 'normalizeCharacterPresentation', 'normalizeTtsSettings', 'normalizeThemeOverrides', 'normalizeNpcRosters',
     `${source}\nreturn normalizeSettings;`);
@@ -31,7 +31,7 @@ function migration(migrateStores = (settings, version) => { settings.version = v
         },
     };
     const normalize = loadMigration(() => {}, ['#111111', '#222222'],
-        NPC_LORE_FIELDS, () => 0, () => {}, defaults,
+        NPC_LORE_FIELDS, () => 0, defaults,
         () => saves.push('saved'),
         migrateStores,
         () => {}, normaliseStatUpdatePolicies, normalizeHudLayoutId, ensureCollectionIdentifier, ensureCollectionQuantity, normalizeTrackerProgression,

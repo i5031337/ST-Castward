@@ -59,10 +59,6 @@ export function currentLocationTrail(state) {
     return path;
 }
 
-export function currentLocationPath(state) {
-    return currentLocationTrail(state).map(place => place.name);
-}
-
 export function createLocationId() {
     return `place-${globalThis.crypto?.randomUUID?.() || `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`}`;
 }
@@ -129,8 +125,4 @@ export function setCurrentLocation(state, id = '') {
     if (id && !Object.hasOwn(store.records, id)) throw new Error('The current place does not exist.');
     store.currentId = id;
     return { ...state, locations: store };
-}
-
-export function setLocationsEnabled(state, enabled) {
-    return { ...state, locations: { ...readLocationStore(state), enabled: enabled === true } };
 }

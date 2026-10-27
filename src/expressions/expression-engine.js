@@ -1,11 +1,5 @@
 import { fnv1a } from '../core/hash.js';
 
-export function lastNpcLines(records) {
-    const lines = new Map();
-    for (const line of records) if (line.npcId && !line.isPersona) lines.set(line.npcId, line);
-    return [...lines.values()].sort((a, b) => a.lineIndex - b.lineIndex);
-}
-
 export function selectSprite(sprites, label, fallback, identity) {
     for (const candidate of [label, fallback]) {
         const files = sprites.filter(sprite => sprite.label === candidate).map(sprite => sprite.path).sort();
@@ -23,7 +17,6 @@ export function createExpressionEngine({ classify, isCurrent, apply, limit = 128
             epoch++; controller.abort(); controller = new AbortController();
             cache.clear(); pending.clear(); queue = Promise.resolve();
         },
-        cached(key) { return cache.get(key); },
         enqueue(job) {
             const vocabulary = [...new Set(job.labels || (job.sprites || []).map(sprite => sprite.label))].sort();
             const key = JSON.stringify([job.line.revision, job.line.npcId, job.line.lineIndex, job.line.text,

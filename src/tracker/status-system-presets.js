@@ -1,6 +1,5 @@
 import { normalizeTrackerProgression } from '../core/progression-config.js';
 import { getSettings, saveSettings, defaultSettings, normaliseStatDefs } from '../core/settings.js';
-import { normaliseNpcPersistence } from './stat-persistence.js';
 import { normaliseStatUpdatePolicies } from './stat-update-policy.js';
 import { systemStatFields } from '../core/system-fields.js';
 import { debugLog } from '../core/constants.js';
@@ -348,7 +347,6 @@ function applySystemPreset(profile) {
         normaliseStatDefs(st[listName]);
     }
     normaliseStatUpdatePolicies(st);
-    normaliseNpcPersistence(st.npcStats);
     normalizeTrackerProgression(st, profile.definition);
     for (const stat of st.npcStats || []) {
         if (!stat.id) stat.id = systemStatFields(profile.definition, 'npc').find(field => field.name === stat.name)?.id;

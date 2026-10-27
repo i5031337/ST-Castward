@@ -3,7 +3,6 @@ import { normalizeTrackerProgression } from './progression-config.js';
 import { ensureCollectionIdentifier, ensureCollectionQuantity } from './collection-fields.js';
 import { debugLog, SPEAKER_PALETTE, NPC_LORE_FIELDS, normalizeHudLayoutId } from './constants.js';
 import { paletteIndexFor } from './hash.js';
-import { normaliseNpcPersistence } from '../tracker/stat-persistence.js';
 import { normaliseStatUpdatePolicies } from '../tracker/stat-update-policy.js';
 import { defaultSettings } from './settings-defaults.js';
 import { saveSettings } from './settings.js';
@@ -91,9 +90,6 @@ function normalizeCharactersAndCategories(settings) {
         for (const field of NPC_LORE_FIELDS) {
             if (typeof char.profile[field.id] !== 'string') char.profile[field.id] = '';
         }
-        // Which profile fields Fill is allowed to write. Absent means none, which is the
-        // default, so nothing existing needs migrating - only the shape is repaired.
-        if (!Array.isArray(char.aiProfileFields)) char.aiProfileFields = [];
     }
 
     // The register, seeded from whoever is already carrying a category name. An existing
@@ -229,7 +225,6 @@ function normalizeTrackerSchema(settings) {
             normaliseStatDefs(settings.statusTracker[listName]);
         }
         normaliseStatUpdatePolicies(settings.statusTracker);
-        normaliseNpcPersistence(settings.statusTracker.npcStats);
 
         // The same field a stat has had all along, on a collection. A stat could say how it
         // should be written and a collection could not say what it holds - so "pictures"

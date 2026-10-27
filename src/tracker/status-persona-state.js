@@ -199,7 +199,7 @@ function createChatPlayerSeed() {
     const stats = {};
     const collections = {};
     for (const stat of trackerSettings.playerStats || []) {
-        if (stat?.name) stats[stat.name] = deps.getInitialStatValue(stat.defaultValue, stat.maxStatValue, stat);
+        if (stat?.name) stats[stat.name] = deps.getInitialStatValue(stat.defaultValue);
     }
     for (const col of trackerSettings.collections || []) {
         if (col?.id && collectionAppliesTo(col, 'player')) collections[col.id] = [];

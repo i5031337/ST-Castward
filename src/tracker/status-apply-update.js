@@ -235,7 +235,7 @@ export function bind(deps) {
         const actorSettings = { ...settings, npcStats: npcStatsFor(charData, settings) };
         if (assigned) for (const stat of actorSettings.npcStats) {
             if (charData.stats[stat.name] === undefined) {
-                charData.stats[stat.name] = deps.getInitialStatValue(stat.defaultValue, stat.maxStatValue, stat);
+                charData.stats[stat.name] = deps.getInitialStatValue(stat.defaultValue);
             }
         }
         const actorKeys = new Set(actorSettings.npcStats.map(stat => stat.name.toLowerCase()));
