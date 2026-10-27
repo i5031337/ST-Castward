@@ -194,18 +194,29 @@ continue using only the existing library. This preview/application difference is
 for now. The calculation's preview flag controls that policy and manual tombstone clearing;
 it never enables writes to external stores.
 
-Next, extract actor and full-update calculation. Their captured inputs must also include
-the active System: NPC template and progression helpers otherwise fall back to a global
-settings provider. Keep tombstone policy changes separate from this refactor.
+Actor seeding and stat readings now use `actor-calculation.js`. Presence captures its
+System/cards and calls the pure builder; the apply/presence registry cycle and unused
+internal actor callbacks are removed. Progression accepts an explicit System so these
+calculations never consult the global template settings provider.
 
-The planned calculation returns next state, proposed card/library changes, local warnings,
-and separate offstage comparisons. Current previews append detached offstage NPCs for
-diffing without actually admitting them to the scene; those comparison actors must not
-leak into committed presence. A later commit boundary will validate chat, persona,
-System and source ownership before related writes, maintain existing undo/swipe behavior,
-request saves, and emit the existing status event. Settings and metadata remain separate
-host saves, without a cross-store atomicity guarantee. The full-update calculation and commit
-boundaries remain planned; the collection calculation is implemented.
+`tracker-update-calculation.js` calculates world, player and NPC changes from captured
+state, rules, System, cards, Item Library, actor admission decisions, player identity,
+policies and timestamp. It returns next state, card/library plans, local diagnostics,
+and separate offstage comparisons. Its state never includes comparison-only NPCs.
+The public `applyUpdate` preview adapter still appends those detached actors and their
+nonenumerable pre-assignment baselines for the existing diff/review consumers.
+
+The host wrapper captures canonical names and admission decisions through existing
+speaker/cast policy, applies accepted plans, batches settings saves, saves metadata and
+emits the existing status event. It preserves the missing-chat guards and existing
+storage checks. Model-input sanitization, review decisions and presence reconciliation
+remain separate orchestration steps; the calculator does not replace their policies.
+
+Next, introduce a commit boundary that validates chat, persona, System and source
+ownership before all related writes. Undo/swipe bookkeeping and host save ordering still
+need explicit ownership there. Settings and metadata remain separate host saves, without
+a cross-store atomicity guarantee. Lifecycle, schema edits and the remaining provider
+registry are later work. Keep tombstone policy changes separate from this refactor.
 
 ## Verification
 

@@ -128,3 +128,29 @@ export function getInitialStatValue(defaultValue) {
     return defaultValue || '';
 }
 
+
+/** Combine a whole reading and current/maximum fragments without changing stored data. */
+export function combineStatValue(existingValue, group, statDef, options = {}) {
+    let value = existingValue;
+    if (group.whole !== undefined) {
+        value = mergeStatValue(value, group.whole, options);
+    }
+    if (group.current === undefined && group.max === undefined) return value;
+
+    const parts = splitValue(value);
+    let current = parts.current;
+    /* The value's own denominator, and nothing else. The configured maximum used to stand
+       in for it, which meant a stat that had been given a ceiling in play could never lose
+       one: clear the "/120" and the setting handed it straight back. The setting seeds the
+       first value and says nothing after that. */
+    let max = parts.max || '';
+
+    if (group.current !== undefined) current = String(group.current).trim();
+    // A raised ceiling is a change like any other, so it is visible in the diff and can be
+    // held for review rather than being forbidden outright - growth is legitimate, and it
+    // should be something you agreed to rather than something that happened.
+    if (group.max !== undefined) max = String(group.max).trim();
+
+    return max ? clampToCeiling(`${current}/${max}`) : current;
+}
+

@@ -9,6 +9,9 @@ import { calculateCollectionUpdate } from './collection-calculation.js';
 export function bind(deps) {
     // The existing reader drains preview diagnostics around its disposable update.
     const warnings = [];
+    function recordCollectionWarnings(values) {
+        warnings.push(...values);
+    }
     function takeCollectionWarnings() {
         return [...new Set(warnings.splice(0))];
     }
@@ -77,6 +80,7 @@ export function bind(deps) {
     }
 
     Object.defineProperties(deps, {
+        recordCollectionWarnings: { enumerable: true, configurable: true, get: () => recordCollectionWarnings },
         takeCollectionWarnings: { enumerable: true, configurable: true, get: () => takeCollectionWarnings },
         applyCollectionUpdate: { enumerable: true, configurable: true, get: () => applyCollectionUpdate },
         addItem: { enumerable: true, configurable: true, get: () => addItem },

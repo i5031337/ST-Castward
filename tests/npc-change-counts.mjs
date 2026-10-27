@@ -1,7 +1,8 @@
+import { calculateTrackerUpdate } from '../src/tracker/tracker-update-calculation.js';
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFileSync } from 'node:fs';
-import { npcTemplateFor, proposedNpcTemplate, npcStatsFor } from '../src/core/npc-templates.js';
+import { npcTemplateFor } from '../src/core/npc-templates.js';
 
 const source = path => readFileSync(new URL(path, import.meta.url), 'utf8')
     .replace(/^import\s+[\s\S]*?\s+from\s+['"][^'"]+['"];\s*/gm, '')
@@ -12,7 +13,7 @@ const system = { npcTemplates: [{ id: 'scout', name: 'Scout', statIds: ['hp', 'm
 const templateFor = actor => npcTemplateFor(actor, system);
 const tracker = { npcStats: [{ id: 'hp', name: 'HP', defaultValue: '10' },
     { id: 'mood', name: 'Mood', defaultValue: 'Calm' }], collections: [{ id: 'items',
-    fields: [{ name: 'name', isPrimary: true }, { name: 'quantity' }] }] };
+    targets: ['npc'], fields: [{ name: 'name', type: 'text', isPrimary: true }, { name: 'quantity', type: 'number' }] }] };
 const compute = new Function('activeNpcSystem', 'npcTemplateFor', 'splitValue',
     `${source('../src/tracker/status-diff-compare.js')}\nreturn computeStateDiff;`)(() => system, templateFor, splitValue);
 const sheet = () => ({ name: 'Mira', npcTemplateId: 'scout', stats: { HP: '8/10', Mood: 'Calm' },
@@ -22,23 +23,17 @@ function offstagePreview(update) {
     const saved = sheet();
     const card = { name: saved.name, npcTemplateId: saved.npcTemplateId,
         statusOverrides: saved.stats, statusCollections: saved.collections };
-    let saves = 0;
-    const deps = {
-        getInitialStatValue: value => value, resolveMaxValue: () => '',
-        applyCharacterStats: (actor, proposal) => Object.assign(actor.stats, proposal.stats),
-        applyCollectionUpdate: (actor, id, items) => { actor.collections[id] = structuredClone(items); },
-    };
-    new Function('npcStatsFor', 'npcTemplateFor', 'proposedNpcTemplate', 'getAllCharacters',
-        'saveSettings', 'debugLog', `${source('../src/tracker/status-scene-presence.js')}\nreturn bind;`)(
-        actor => npcStatsFor(actor, tracker, system), templateFor,
-        (actor, proposal) => proposedNpcTemplate(actor, proposal, system), () => [card],
-        () => saves++, () => {})(deps);
-    const state = { characters: [] };
-    const actor = deps.updateCardOffstage(card, update, state, tracker, { dryRun: true });
-    assert.equal(saves, 0);
+    const state = { global: {}, player: { name: 'Player', stats: {}, collections: {} }, characters: [] };
+    const result = calculateTrackerUpdate({ state, tracker: { globalStats: [], playerStats: [], ...tracker },
+        system, cards: [card], update: { characters: [update] },
+        actorDecisions: [{ name: update.name, canonicalName: card.name, allowed: true }],
+        playerIdentity: { name: 'Player' }, policy: { preview: true, admitCharacters: true }, timestamp: 1 });
+    assert.deepEqual(result.nextState.characters, []);
     assert.deepEqual(card.statusOverrides, saved.stats);
     assert.deepEqual(card.statusCollections, saved.collections);
     assert.deepEqual(state.characters, []);
+    const { actor, before } = result.offstageComparisons[0];
+    Object.defineProperty(actor, 'comparisonBase', { value: before });
     assert.equal(JSON.stringify(actor).includes('comparisonBase'), false);
     return actor;
 }
@@ -51,7 +46,7 @@ test('going offstage and restating a saved NPC produce no tracker changes', () =
 
 test('offstage comparisons count only actual stat and item field changes', () => {
     const preview = offstagePreview({ name: 'Mira', stats: { HP: '7/10' },
-        collections: { items: [{ name: 'Potion', quantity: 1 }] } });
+        collections: { items: { replace: [{ name: 'Potion', quantity: 1 }] } } });
     const changes = compute({ characters: [] }, { characters: [preview] }, tracker);
     assert.deepEqual(changes.map(row => [row.kind, row.label, row.before, row.after]), [
         ['stat', 'HP', '8', '7'], ['item-change', 'Potion · quantity', '2', '1'],

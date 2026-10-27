@@ -1,5 +1,6 @@
-import { progressionFields } from '../src/tracker/progression-fields.js';
-import { progressXp } from '../src/tracker/progression.js';
+import { bindTrackerUpdate } from './fixtures/tracker-update-bind.mjs';
+import { bind as bindConstraints } from '../src/tracker/status-update-constraints.js';
+import { buildActorState } from '../src/tracker/actor-calculation.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -82,23 +83,12 @@ function applyFixture(settings) {
     const card = { id: 'mira', name: 'Mira', statusOverrides: {} };
     const initial = { global: {}, player: { stats: {} }, characters: [{ id: card.id, name: card.name, stats: {}, collections: {} }] };
     const saves = [];
-    const deps = {
-        committedState: initial, hasOpenChat: () => true,
-        resolveCanonicalName: name => name, mayJoinScene: () => true,
-        groupIncomingStats: (stats, match) => new Map(Object.entries(stats).flatMap(([key, value]) => {
-            const name = match(key); return name ? [[name, { whole: value }]] : [];
-        })),
-        findMatchingStatKey: (stats, name) => Object.keys(stats).find(key => key.toLowerCase() === name.toLowerCase()),
-        combineStatValue: (existing, group) => group.whole,
-        constrainToDefinition: (def, value) => String(value),
-        getInitialStatValue: value => value || '',
-        saveStateToMetadata: state => { saves.push(state); deps.committedState = state; },
-    };
-    new Function('npcStatsFor', 'proposedNpcTemplate', 'eventSource', 'getSettings',
-        'saveSettings', 'getAllCharacters', 'debugLog', 'progressionFields', 'progressXp',
-        `${source('../src/tracker/status-apply-update.js')}\nreturn bind;`)(
-        npcStatsFor, proposedNpcTemplate, { emit() {} }, () => settings, () => {},
-        () => [card], () => {}, progressionFields, progressXp)(deps);
+    const deps = { committedState: initial, hasOpenChat: () => true,
+        getCurrentPersonaName: () => 'Player', resolveCanonicalName: name => name,
+        mayJoinScene: () => true, recordCollectionWarnings() {},
+        saveStateToMetadata: state => { saves.push(state); deps.committedState = state; } };
+    bindConstraints(deps);
+    bindTrackerUpdate(deps, { getSettings: () => settings, getAllCharacters: () => [card] });
     return { deps, card, initial, saves };
 }
 
@@ -181,13 +171,8 @@ test('a new uncertain assignment is reviewable, but an existing unassigned NPC i
 
 test('an NPC without a card keeps its template when it returns to the scene', () => {
     const { settings } = fixture();
-    const deps = {
-        getInitialStatValue: value => value || '',
-    };
-    new Function('npcStatsFor', 'npcTemplateFor', 'proposedNpcTemplate', 'getAllCharacters',
-        `${source('../src/tracker/status-scene-presence.js')}\nreturn bind;`)(
-        npcStatsFor, npcTemplateFor, proposedNpcTemplate, () => [])(deps);
-    const actor = deps.buildCharacterState('Pikachu', { npcTemplateAssignments: { pikachu: 'pokemon' } }, settings.statusTracker);
+    const actor = buildActorState({ name: 'Pikachu', state: { npcTemplateAssignments: { pikachu: 'pokemon' } },
+        tracker: settings.statusTracker, system: activeNpcSystem(settings), cards: [] });
     assert.equal(actor.npcTemplateId, 'pokemon');
     assert.deepEqual(Object.keys(actor.stats), ['HP', 'Friendship']);
     setProfileSettingsProvider(() => null);

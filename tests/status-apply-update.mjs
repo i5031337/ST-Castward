@@ -1,80 +1,35 @@
 import { bind as bindConstraints } from '../src/tracker/status-update-constraints.js';
-import { groupIncomingStats } from '../src/tracker/status-update-parser.js';
-import { progressionFields } from '../src/tracker/progression-fields.js';
-import { npcStatsFor, npcTemplateFor, proposedNpcTemplate } from '../src/core/npc-templates.js';
+import { bindTrackerUpdate } from './fixtures/tracker-update-bind.mjs';
+import { buildActorState } from '../src/tracker/actor-calculation.js';
+import { activeNpcSystem } from '../src/core/npc-templates.js';
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFileSync } from 'node:fs';
-import { progressXp } from '../src/tracker/progression.js';
-
-// This module's SillyTavern imports require a browser. Inject those boundaries
-// while exercising its real bind(deps) implementation in Node.
-const source = readFileSync(new URL('../src/tracker/status-apply-update.js', import.meta.url), 'utf8')
-    .replace(/^import\s+[\s\S]*?\s+from\s+['"][^'"]+['"];\s*/gm, '')
-    .replace('export function bind', 'function bind');
-const loadBind = new Function('npcStatsFor', 'npcTemplateFor', 'proposedNpcTemplate', 'eventSource', 'getSettings', 'saveSettings',
-    'getAllCharacters', 'LOG_PREFIX', 'debugLog', 'progressXp', 'progressionFields',
-    `${source}\nreturn bind;`);
 
 function fixture({ openChat = true } = {}) {
-    const card = { name: 'Mira', aliases: [], statusOverrides: {}, statusCollections: {} };
-    const settings = {
-        statusTracker: {
-            globalStats: [{ name: 'Scene' }],
-            playerStats: [{ name: 'HP' }],
-            npcStats: [{ name: 'HP', persistence: 'variable' }],
-            collections: [{ id: 'items' }],
-        },
-    };
-    const initial = {
-        global: { Scene: 'old' },
-        player: { stats: { HP: '5' }, collections: { items: ['sword'] } },
+    const card = { id: 'mira', name: 'Mira', aliases: [], statusOverrides: {}, statusCollections: {} };
+    const settings = { statusTracker: {
+        globalStats: [{ name: 'Scene', type: 'text' }], playerStats: [{ name: 'HP', type: 'text' }],
+        npcStats: [{ name: 'HP', type: 'text' }],
+        collections: [{ id: 'items', targets: ['player', 'npc'], fields: [
+            { name: 'name', type: 'text', isPrimary: true },
+        ] }],
+    } };
+    const initial = { global: { Scene: 'old' },
+        player: { name: 'Alex', stats: { HP: '5' }, collections: { items: [{ name: 'sword' }] } },
         characters: [
-            { name: 'Mira', stats: { HP: '4' }, collections: { items: ['ring'] } },
+            { id: 'mira', name: 'Mira', stats: { HP: '4' }, collections: { items: [{ name: 'ring' }] } },
             { name: 'Jon', stats: { HP: '3' }, collections: {} },
-        ],
-        recently_deleted: { items: { lost: 1, retained: 2 } },
-    };
-    const calls = { saved: [], emitted: [], settings: 0, collections: [] };
-    const bind = loadBind(
-        npcStatsFor, npcTemplateFor, proposedNpcTemplate,
-        { emit: (...args) => calls.emitted.push(args) },
-        () => settings,
-        () => { calls.settings++; },
-        () => [card],
-        '[test]',
-        () => {},
-        progressXp, progressionFields,
-    );
-    const deps = {
-        committedState: initial,
-        hasOpenChat: () => openChat,
-        loadStateFromMetadata: () => initial,
-        mergeStatValue: (_old, value) => value,
-        constrainToDefinition: (_def, value) => value,
-        findMatchingStatKey: (stats, name) =>
-            Object.keys(stats).find(key => key.toLowerCase() === name.toLowerCase()),
-        groupIncomingStats: (stats, resolve, valid, skip) => {
-            const groups = new Map();
-            for (const [name, value] of Object.entries(stats)) {
-                if (skip(name)) continue;
-                const key = resolve(name);
-                if (key && valid(key)) groups.set(key, { whole: value });
-            }
-            return groups;
-        },
-        combineStatValue: (_old, group) => group.whole,
-        applyCollectionUpdate: (owner, id, value, options) => {
-            calls.collections.push({ name: owner.name, id, options });
-            owner.collections[id] = value;
-        },
-        resolveCanonicalName: name => name,
-        mayJoinScene: () => true,
-        buildCharacterState: name => ({ name, stats: { HP: '' }, collections: {} }),
-        updateCardOffstage: () => null,
-        saveStateToMetadata: (...args) => calls.saved.push(args),
-    };
-    bind(deps);
+        ], recently_deleted: { items: { lost: 1, retained: 2 } } };
+    const calls = { saved: [], emitted: [], settings: 0, collectionWarnings: [] };
+    const deps = { committedState: initial, hasOpenChat: () => openChat,
+        loadStateFromMetadata: () => initial, getCurrentPersonaName: () => 'Alex',
+        resolveCanonicalName: name => name, mayJoinScene: () => true,
+        recordCollectionWarnings: values => calls.collectionWarnings.push(...values),
+        saveStateToMetadata: (...args) => calls.saved.push(args) };
+    bindConstraints(deps);
+    bindTrackerUpdate(deps, { getSettings: () => settings, getAllCharacters: () => [card],
+        saveSettings: () => calls.settings++, eventSource: { emit: (...args) => calls.emitted.push(args) } });
     return { deps, card, calls, initial, settings };
 }
 
@@ -82,17 +37,17 @@ test('committed update changes state and card, then saves once', () => {
     const { deps, card, calls, initial } = fixture();
     const state = deps.applyUpdate({
         global: { scene: 'new' },
-        player: { stats: { hp: '7' }, items: ['book'] },
-        characters: [{ name: 'Mira', stats: { hp: '8' }, items: ['key'] }],
+        player: { stats: { hp: '7' }, items: { replace: [{ name: 'book' }] } },
+        characters: [{ name: 'Mira', stats: { hp: '8' }, items: { replace: [{ name: 'key' }] } }],
     });
     assert.equal(state.global.Scene, 'new');
     assert.equal(state.player.stats.HP, '7');
-    assert.deepEqual(state.player.collections.items, ['book']);
+    assert.deepEqual(state.player.collections.items, [{ name: 'book' }]);
     assert.deepEqual(state.characters.map(char => char.name), ['Mira', 'Jon']);
     assert.equal(state.characters[0].stats.HP, '8');
-    assert.deepEqual(state.characters[0].collections.items, ['key']);
+    assert.deepEqual(state.characters[0].collections.items, [{ name: 'key' }]);
     assert.equal(card.statusOverrides.HP, '8');
-    assert.deepEqual(card.statusCollections.items, ['key']);
+    assert.deepEqual(card.statusCollections.items, [{ name: 'key' }]);
     assert.deepEqual(state.recently_deleted, { items: { retained: 1 } });
     assert.equal(initial.global.Scene, 'old');
     assert.equal(calls.settings, 1);
@@ -103,10 +58,10 @@ test('committed update changes state and card, then saves once', () => {
 test('dry run previews character changes without mutating card or committing', () => {
     const { deps, card, calls } = fixture({ openChat: false });
     const state = deps.applyUpdate({
-        characters: [{ name: 'Mira', stats: { HP: '9' }, collections: { items: ['map'] } }],
+        characters: [{ name: 'Mira', stats: { HP: '9' }, collections: { items: { replace: [{ name: 'map' }] } } }],
     }, { dryRun: true });
     assert.equal(state.characters[0].stats.HP, '9');
-    assert.deepEqual(state.characters[0].collections.items, ['map']);
+    assert.deepEqual(state.characters[0].collections.items, [{ name: 'map' }]);
     assert.deepEqual(card.statusOverrides, {});
     assert.deepEqual(card.statusCollections, {});
     assert.equal(calls.settings, 0);
@@ -149,7 +104,7 @@ test('reader-reported NPC survives speaker redraw without speaking', () => {
     const source = readFileSync(new URL('../src/tracker/status-scene-presence.js', import.meta.url), 'utf8')
         .replace(/^import\s+[\s\S]*?\s+from\s+['"][^'"]+['"];\s*/gm, '')
         .replace('export function bind', 'function bind');
-    const bindPresence = new Function('npcStatsFor', 'npcTemplateFor', 'proposedNpcTemplate', 'eventSource', 'getSettings', 'getAllCharacters', 'debugLog', 'getContext', 'syncNpcCollectionsToCards',
+    const bindPresence = new Function('activeNpcSystem', 'buildActorState', 'eventSource', 'getSettings', 'getAllCharacters', 'debugLog', 'getContext', 'syncNpcCollectionsToCards',
         `${source}\nreturn bind;`);
     const settings = { statusTracker: {
         npcStats: [{ name: 'HP', defaultValue: '' }],
@@ -165,7 +120,7 @@ test('reader-reported NPC survives speaker redraw without speaking', () => {
         resolveMaxValue: () => '',
         saveStateToMetadata(state) { saved.push(structuredClone(state)); this.committedState = state; },
     };
-    bindPresence(npcStatsFor, npcTemplateFor, proposedNpcTemplate, { emit() {} }, () => settings, () => [], () => {}, () => ({ chat: [] }), () => {})(deps);
+    bindPresence(activeNpcSystem, buildActorState, { emit() {} }, () => settings, () => [], () => {}, () => ({ chat: [] }), () => {})(deps);
 
     deps.reconcileScenePresence(['Other'], '4');
     deps.reconcileScenePresence(['Mira', 'Rejected'], '4', { authoritative: true });
@@ -221,31 +176,30 @@ test('configured player and enabled NPC fields roll over identically without mut
     assert.equal(card.statusOverrides.Rank, '5');
     assert.equal(initial.characters[0].stats.Rank, '3');
     const manual = deps.applyUpdate(update, { dryRun: true, verbatim: true });
-    assert.equal(manual.player.stats.Experience, '310/100');
+    assert.equal(manual.player.stats.Experience, '100/100');
     assert.equal(manual.player.stats.Rank, '2');
     const initialization = deps.applyUpdate(update, { dryRun: true, progressionResolved: true });
-    assert.equal(initialization.characters[0].stats.Experience, '200/100');
+    assert.equal(initialization.characters[0].stats.Experience, '100/100');
     assert.equal(initialization.characters[0].stats.Rank, '3');
     settings.statusTracker.npcTemplates[0].progression.enabled = false;
     const disabled = deps.applyUpdate(update, { dryRun: true });
-    assert.equal(disabled.characters[0].stats.Experience, '200/100');
+    assert.equal(disabled.characters[0].stats.Experience, '100/100');
     assert.equal(disabled.characters[0].stats.Rank, '3');
 });
 
-test('dry-run collection writes carry preview options for both player and NPC', () => {
-    const { deps, calls } = fixture();
-    deps.applyUpdate({ player: { collections: { items: { replace: [{ name: 'Key' }] } } },
+test('dry-run collection replacements affect both actors without creating library stores', () => {
+    const { deps, calls, settings } = fixture();
+    const result = deps.applyUpdate({ player: { collections: { items: { replace: [{ name: 'Key' }] } } },
         characters: [{ name: 'Mira', collections: { items: { replace: [{ name: 'Move' }] } } }] }, { dryRun: true });
-    assert.equal(calls.collections.length, 2);
-    assert.ok(calls.collections.every(call => call.options.dryRun === true));
+    assert.deepEqual(result.player.collections.items, [{ name: 'Key' }]);
+    assert.deepEqual(result.characters[0].collections.items, [{ name: 'Move' }]);
+    assert.equal(settings.master_items, undefined);
     assert.equal(calls.settings, 0);
     assert.equal(calls.saved.length, 0);
 });
 
 test('preview warnings cover unknown and refused stats across actors without mutating state', () => {
     const { deps, initial, settings, card, calls } = fixture();
-    deps.groupIncomingStats = groupIncomingStats;
-    bindConstraints(deps);
     settings.statusTracker.globalStats[0].options = ['old'];
     settings.statusTracker.playerStats[0].options = ['5'];
     settings.statusTracker.npcStats[0].options = ['4'];

@@ -1,3 +1,5 @@
+import { buildActorState } from '../src/tracker/actor-calculation.js';
+import { activeNpcSystem } from '../src/core/npc-templates.js';
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFileSync } from 'node:fs';
@@ -15,6 +17,7 @@ function fixture() {
     let state = { global: {}, player: { stats: { HP: '100' } }, characters: [],
         presence: { tick: 0, messageId: null, seen: [] } };
     const deps = {
+        buildActorState, activeNpcSystem,
         getContext: () => context, getAllCharacters: () => [],
         getSettings: () => ({ statusTracker: { npcStats: [] } }),
         saveSettings() {}, debugLog() {}, eventSource: { emit() {} },

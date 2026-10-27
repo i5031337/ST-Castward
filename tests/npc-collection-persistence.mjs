@@ -1,3 +1,6 @@
+import { bindTrackerUpdate } from './fixtures/tracker-update-bind.mjs';
+import { buildActorState } from '../src/tracker/actor-calculation.js';
+import { activeNpcSystem } from '../src/core/npc-templates.js';
 import { bindCollectionUpdates } from './fixtures/collection-updates-bind.mjs';
 import { collectionQuantityField } from '../src/core/collection-fields.js';
 import assert from 'node:assert/strict';
@@ -19,7 +22,7 @@ function fixture() {
         { id: 'inventory', targets: ['player', 'npc'], fields: [{ name: 'title', isPrimary: true }] },
         { id: 'skills', targets: ['npc'], fields: [{ name: 'title', isPrimary: true }] },
     ] } };
-    const globals = { getSettings: () => settings, getAllCharacters: () => cards,
+    const globals = { buildActorState, activeNpcSystem, getSettings: () => settings, getAllCharacters: () => cards,
         saveSettings: () => saves++, getContext: () => ({ chat: [] }),
         npcStatsFor: () => [], npcTemplateFor: () => null, proposedNpcTemplate: () => null,
         collectionAppliesTo, progressionFields, debugLog() {}, LOG_PREFIX: '[test]', eventSource: { emit() {} } };
@@ -35,7 +38,8 @@ function fixture() {
     mergeDuplicateCharacters: () => false, groupIncomingStats: () => new Map(),
     getMergedItem: (_id, item) => item, constrainToDefinition: (_field, value) => value };
     bindCollectionUpdates(deps, globals);
-    for (const module of ['status-scene-presence', 'status-apply-update']) {
+    bindTrackerUpdate(deps, globals);
+    for (const module of ['status-scene-presence']) {
         load(`tracker/${module}.js`, globals).bind(deps);
     }
     const ui = load('ui/collections/ui-collection.js', { ...globals,

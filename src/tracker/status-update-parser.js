@@ -214,7 +214,6 @@ export function groupIncomingStats(sourceStats, resolveBase, isExactStat, should
 
         if (!actualKey) {
             onUnknown(updKey);
-            debugLog('Ignoring stat key that matches no configured stat:', updKey);
             continue;
         }
 

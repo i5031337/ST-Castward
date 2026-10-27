@@ -77,11 +77,6 @@ export async function harness(systemId, state, { chat = [] } = {}) {
     Object.assign(deps, {
         resolveCanonicalName: name => name,
         mayJoinScene: () => true,
-        buildCharacterState: name => ({ name, npcTemplateId: 'character',
-            stats: Object.fromEntries(templates.npcStatsFor({ npcTemplateId: 'character' }, settings)
-                .map(def => [def.name, deps.getInitialStatValue(def.defaultValue)])),
-            collections: {} }),
-        updateCardOffstage: () => null,
         loadStateFromMetadata: () => deps.committedState,
         hasOpenChat: () => true,
         saveStateToMetadata() {},

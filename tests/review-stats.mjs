@@ -1,3 +1,6 @@
+import { bindTrackerUpdate } from './fixtures/tracker-update-bind.mjs';
+import { bindCollectionUpdates } from './fixtures/collection-updates-bind.mjs';
+import { buildActorState } from '../src/tracker/actor-calculation.js';
 import { bind as bindConstraints } from '../src/tracker/status-update-constraints.js';
 import * as statValues from '../src/tracker/stat-value-utils.js';
 import * as statFields from '../src/tracker/stat-field-utils.js';
@@ -27,15 +30,17 @@ function harness({ state, cards = [], settings, openChat = true }) {
     const message = { swipe_id: 0, extra: { sillynpc_applied: [], sillynpc_level_reading: {},
         sillynpc_reader_report: { swipe: 0, status: 'done', summary: '0 applied · 0 awaiting review' } } };
     const context = { chat: [message] };
-    const globals = { ...numeric, ...statValues, ...statFields, npcStatsFor, npcTemplateFor, proposedNpcTemplate, progressionFields, progressXp, sameStatReading,
+    const globals = { buildActorState, activeNpcSystem, ...numeric, ...statValues, ...statFields, npcStatsFor, npcTemplateFor, proposedNpcTemplate, progressionFields, progressXp, sameStatReading,
         splitValue, ceilingFromValue: value => { const max = splitValue(value).max; return max && Number.isFinite(Number(max)) ? Number(max) : null; },
         getSettings: () => ({ statusTracker: settings }), getAllCharacters: () => cards,
         getContext: () => context, debugLog() {}, saveSettings() {}, LOG_PREFIX: '[test]', eventSource: { emit() {} } };
     const deps = { ...statValues, groupIncomingStats, loadStateFromMetadata: () => live,
         saveStateToMetadata: state => { live = state; }, hasOpenChat: () => openChat,
-        resolveCanonicalName: name => name, mayJoinScene: () => true, applyCollectionUpdate() {} };
+        resolveCanonicalName: name => name, mayJoinScene: () => true, getCurrentPersonaName: () => live.player?.name || 'Player' };
     bindConstraints(deps);
-    for (const path of ['status-stat-values', 'status-apply-update', 'status-scene-presence']) {
+    bindCollectionUpdates(deps, globals);
+    bindTrackerUpdate(deps, globals);
+    for (const path of ['status-stat-values', 'status-scene-presence']) {
         load(`tracker/${path}.js`, 'bind', globals).bind(deps);
     }
     const { buildUpdateFromChanges } = load('tracker/status-diff-review.js', 'buildUpdateFromChanges', {

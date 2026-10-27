@@ -90,6 +90,8 @@ This map covers tracked runtime files, tests and support files. Source files and
 | `tests/ui-settings-navigation.py` | Settings sections, search, accessibility labels, and narrow navigation. |
 | `tests/ui-collection-smoke.py` | Collection rendering and reward editor controls, validation, and narrow layouts. |
 | `tests/status-apply-update.mjs` | Tracker update, dry-run, and no-chat behavior tests. |
+| `tests/tracker-update-calculation.mjs` | Immutable full update plans, explicit System, offstage separation and progression policies. |
+| `tests/fixtures/tracker-update-bind.mjs` | Load the update host wrapper with production calculation imports and isolated host stores. |
 | `tests/settings-migration.mjs` | Settings import repair and version-gated HUD migration tests. |
 | `tests/field-assignments.mjs` | Shared field assignment overlap and conflict rules. |
 | `tests/shared-stat-renames.mjs` | Assignment-scoped stat renames and inactive persona readings. |
@@ -204,9 +206,11 @@ This map covers tracked runtime files, tests and support files. Source files and
 | `src/tracker/status-update-parser.js` | Ordinary exports for parsing inline updates and grouping stat fragments. |
 | `src/tracker/stat-field-calculation.js` | Pure field validation returning values, warnings, and refusals. |
 | `src/tracker/status-update-constraints.js` | Adapt field validation to existing tracker APIs and diagnostic queues. |
-| `src/tracker/status-apply-update.js` | Apply accepted model updates to state. |
+| `src/tracker/actor-calculation.js` | Pure NPC initialization and stat readings with explicit System and local diagnostics. |
+| `src/tracker/tracker-update-calculation.js` | Pure full update calculation returning state, card/library plans and separate offstage comparisons. |
+| `src/tracker/status-apply-update.js` | Capture host inputs, adapt previews and apply calculated update plans through existing saves/events. |
 | `src/tracker/status-cast-decisions.js` | Record player, excluded, and character cast decisions. |
-| `src/tracker/status-scene-presence.js` | Reconcile scene presence and active characters. |
+| `src/tracker/status-scene-presence.js` | Reconcile scene presence and active characters using pure actor initialization. |
 | `src/tracker/collection-calculation.js` | Calculate collections, tombstones, and proposed Item Library additions from explicit inputs. |
 | `src/tracker/status-collection-updates.js` | Capture live collection inputs and apply calculated results through existing tracker APIs. |
 | `src/tracker/npc-collections.js` | Copy current NPC collections onto character cards so belongings survive scene departure. |

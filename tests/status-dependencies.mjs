@@ -2,13 +2,12 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFileSync, readdirSync } from 'node:fs';
 import * as statValues from '../src/tracker/stat-value-utils.js';
-import { groupIncomingStats } from '../src/tracker/status-update-parser.js';
 
 test('status providers uniquely supply every shared dependency', () => {
     const directory = new URL('../src/tracker/', import.meta.url);
     const publicApi = readFileSync(new URL('status-logic.js', directory), 'utf8');
     const initializer = publicApi.match(/const deps = (\{[^;]+\});/)[1];
-    const independent = new Function(...Object.keys(statValues), 'groupIncomingStats', `return ${initializer};`)(...Object.values(statValues), groupIncomingStats);
+    const independent = new Function(...Object.keys(statValues), `return ${initializer};`)(...Object.values(statValues));
     const providers = new Map(Object.keys(independent).map(key => [key, 'independent helpers']));
     const used = new Set();
     const modules = [];

@@ -1,7 +1,8 @@
-import { npcStatsFor, npcTemplateFor, proposedNpcTemplate } from '../core/npc-templates.js';
+import { activeNpcSystem } from '../core/npc-templates.js';
+import { buildActorState } from './actor-calculation.js';
 import { eventSource } from '../../../../../events.js';
 import { getContext } from '../../../../../st-context.js';
-import { getSettings, saveSettings } from '../core/settings.js';
+import { getSettings } from '../core/settings.js';
 import { getAllCharacters } from '../characters/character-repository.js';
 import { debugLog } from '../core/constants.js';
 import { syncNpcCollectionsToCards } from './npc-collections.js';
@@ -122,78 +123,10 @@ function reconcileScenePresence(names, messageId, options = {}) {
     return true;
 }
 
-/** Update an offstage card without changing scene presence; dry runs return a detached actor. */
-function updateCardOffstage(card, updChar, state, settings,
-    { dryRun = false, allowReplace = false, progressionResolved = false, verbatim = false, warnings } = {}) {
-    // A detached actor: built the same way the cast builds one, so it starts from what
-    // the card already knows rather than from nothing.
-    const actor = buildCharacterState(card.name, state, settings);
-    // The preview admits this detached sheet only for comparison, not as a new NPC.
-    if (dryRun) Object.defineProperty(actor, 'comparisonBase', { value: structuredClone(actor) });
-    const selected = proposedNpcTemplate(card, updChar);
-    if (selected) actor.npcTemplateId = selected.id;
-    const statDefs = npcStatsFor(actor, settings);
-    for (const stat of statDefs) if (actor.stats[stat.name] === undefined) {
-        actor.stats[stat.name] = deps.getInitialStatValue(stat.defaultValue);
-    }
-
-    const collectionIdsForStats = new Set((settings.collections || []).map(c => c.id.toLowerCase()));
-    deps.applyCharacterStats(actor, updChar, null, { ...settings, npcStats: statDefs },
-        new Set(statDefs.map(stat => stat.name.toLowerCase())), collectionIdsForStats,
-        { dryRun: true, progressionResolved, verbatim, warnings, skipProgression: selected?.id !== card.npcTemplateId });
-
-    const collectionIds = new Set((settings.collections || []).map(c => c.id.toLowerCase()));
-    const collectionsToProcess = { ...(updChar.collections || {}) };
-    for (const key of Object.keys(updChar)) {
-        const lower = key.toLowerCase();
-        if (collectionIds.has(lower) && lower !== 'stats' && lower !== 'collections' && lower !== 'name') {
-            collectionsToProcess[key] = updChar[key];
-        }
-    }
-    for (const colId of Object.keys(collectionsToProcess)) {
-        deps.applyCollectionUpdate(actor, colId, collectionsToProcess[colId], { allowReplace, dryRun });
-    }
-
-    if (dryRun) return actor;
-
-    if (selected) {
-        card.npcTemplateId = selected.id;
-        state.npcTemplateAssignments ||= {};
-        state.npcTemplateAssignments[card.id || card.name.toLowerCase()] = selected.id;
-    }
-    card.statusOverrides = { ...(card.statusOverrides || {}), ...actor.stats };
-    if (Object.keys(collectionsToProcess).length) {
-        card.statusCollections = structuredClone(actor.collections || {});
-    }
-    saveSettings();
-    debugLog(`Updated ${card.name} on their card without adding them to the scene`);
-    return actor;
-}
-
-/**
- * Builds a fresh character state seeded from the NPC schema and any card overrides.
- * Shared by presence reconciliation and registerActiveCharacter.
- */
+/** Seed presence from the captured card catalog and the active System. */
 function buildCharacterState(charName, state, trackerSettings) {
-    const charData = { name: charName, npcTemplateId: '', stats: {}, collections: {} };
-    const matchedChar = getAllCharacters()
-        .find(c => (c.name || '').toLowerCase() === charName.toLowerCase());
-    if (matchedChar?.id) charData.id = matchedChar.id;
-    const remembered = state.npcTemplateAssignments?.[matchedChar?.id || charName.toLowerCase()];
-    const selected = npcTemplateFor(remembered ? { npcTemplateId: remembered } : matchedChar);
-    if (selected) charData.npcTemplateId = selected.id;
-    npcStatsFor(charData, trackerSettings).forEach(stat => {
-        let value = stat.defaultValue || '';
-        const override = matchedChar?.statusOverrides?.[stat.name];
-        if (override !== undefined && String(override).trim() !== '') value = override;
-        charData.stats[stat.name] = deps.getInitialStatValue(value);
-    });
-
-    // Restore the collections held on the card while this NPC was offstage.
-    if (matchedChar?.statusCollections) {
-        charData.collections = structuredClone(matchedChar.statusCollections);
-    }
-    return charData;
+    return buildActorState({ name: charName, state, tracker: trackerSettings,
+        system: activeNpcSystem(getSettings()) ?? null, cards: getAllCharacters() });
 }
 
 /**
@@ -261,8 +194,6 @@ function removeActiveCharacter(charName) {
 
 Object.defineProperties(deps, {
     reconcileScenePresence: { enumerable: true, configurable: true, get: () => reconcileScenePresence },
-    updateCardOffstage: { enumerable: true, configurable: true, get: () => updateCardOffstage },
-    buildCharacterState: { enumerable: true, configurable: true, get: () => buildCharacterState },
     registerActiveCharacter: { enumerable: true, configurable: true, get: () => registerActiveCharacter },
     removeActiveCharacter: { enumerable: true, configurable: true, get: () => removeActiveCharacter },
 });

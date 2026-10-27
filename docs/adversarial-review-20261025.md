@@ -140,7 +140,7 @@ Recommendation: prioritize a clear first-session workflow and visible automation
 status over more customization. Source inspection: `manage.html` and
 `src/ui/manage/ui-manage.js`; this is not a completed usability study.
 
-## 6. File size limits do not remove architectural coupling — collection calculation extracted; commit boundary open
+## 6. File size limits do not remove architectural coupling — update calculation extracted; commit boundary open
 
 At review time, `src/` contained 322 JavaScript modules and approximately 39,730 lines.
 The tracker binds 15 providers into a shared runtime dependency registry. Understanding
@@ -155,17 +155,21 @@ The cleanup removed dead tracker APIs and redundant persistence work. The first
 architectural stage now removes the parser's provider binding and makes stat arithmetic,
 field choices and name matching explicit imports. This breaks the stat-values/constraints
 cycle and removes stat synonyms from session state. Fourteen bound providers remain.
-Collection updates now calculate from explicit actor/rule/System/library/tombstone
-inputs and return proposed effects without writing stores. Field validation likewise
-returns diagnostics rather than writing shared queues; existing wrappers retain those
-queues for current callers. The actor/full-update calculation and commit boundaries
-remain next, as described in
-[ARCHITECTURE.md](ARCHITECTURE.md#tracker-dependency-refactor). Shared mutable state,
-write side effects and lifecycle coupling remain open; these extractions do not
-close this finding. All 881 Node tests, `git diff --check`, the running-host smoke check,
-and the unsaved collection quantity UI fixture pass. A temporary 112-case comparison
-with the utility checkpoint found matching collection, library, tombstone and diagnostic
-results; library saves are now batched per operation.
+Collection and full tracker updates now calculate from explicit captured data and return
+state/card/library plans with local diagnostics. Actor initialization/stat calculation
+also takes an explicit System, breaking the apply/presence registry cycle. Offstage
+comparison actors are separate from calculated scene state; the public preview adapter
+preserves the current review format. Existing wrappers still apply writes and forward
+diagnostics to queues. Actor admission, model-input sanitization and review policy remain
+separate host orchestration.
+
+The commit boundary, lifecycle coupling and remaining registry are still open, as described
+in [ARCHITECTURE.md](ARCHITECTURE.md#tracker-dependency-refactor). All 885 Node tests and
+`git diff --check` pass. The running-host pool fixture verifies real preview application,
+NPC initialization, pool maxima and established-level protection without saving fixtures.
+The running-host UI smoke check also passes. Temporary baseline comparisons matched 64 actor cases and 576 full-update cases,
+including state, cards, Item Library, offstage baselines and diagnostic ordering. Settings
+saves are batched across the full accepted update; stored data formats are unchanged.
 
 ## Evidence and limits
 

@@ -5,8 +5,7 @@ import { bind as bind_chat_session } from './status-chat-session.js';
 import { bind as bind_state_storage } from './status-state-storage.js';
 import { bind as bind_status_summary } from './status-status-summary.js';
 import { bind as bind_scene_prompt } from './status-scene-prompt.js';
-import { groupIncomingStats } from './status-update-parser.js';
-import { mergeStatValue, clampToCeiling, getInitialStatValue } from './stat-value-utils.js';
+import { clampToCeiling, getInitialStatValue } from './stat-value-utils.js';
 import { bind as bind_update_constraints } from './status-update-constraints.js';
 import { bind as bind_apply_update } from './status-apply-update.js';
 import { bind as bind_cast_decisions } from './status-cast-decisions.js';
@@ -18,7 +17,7 @@ import { bind as bind_system_presets } from './status-system-presets.js';
 
 // Bind every provider before callers use the shared API. Each provider registers
 // named getters, so cross-module calls resolve after initialization completes.
-const deps = { mergeStatValue, clampToCeiling, getInitialStatValue, groupIncomingStats };
+const deps = { clampToCeiling, getInitialStatValue };
 for (const bind of [
     bind_stat_values,
     bind_persona_state,

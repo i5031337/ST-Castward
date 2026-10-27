@@ -2,9 +2,9 @@ import { resolveProgressionConfig, progressionFieldId } from '../core/progressio
 import { npcTemplateFor } from '../core/npc-templates.js';
 
 /** Resolve configured IDs to the same live definitions used by actor sheets. */
-export function progressionFields(settings, { isPlayer = false, actor } = {}) {
+export function progressionFields(settings, { isPlayer = false, actor, system } = {}) {
     const config = resolveProgressionConfig(settings, { isPlayer,
-        templateId: actor?.npcTemplateId, template: isPlayer ? undefined : npcTemplateFor(actor) });
+        templateId: actor?.npcTemplateId, template: isPlayer ? undefined : npcTemplateFor(actor, system) });
     const definitions = isPlayer ? settings?.playerStats || [] : settings?.npcStats || [];
     const nameOf = id => definitions.find(stat => progressionFieldId(stat) === id)?.name;
     return { ...config, xpName: nameOf(config.xpFieldId), levelName: nameOf(config.levelFieldId) };
