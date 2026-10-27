@@ -72,8 +72,6 @@ export const defaultSettings = {
     debugLogging: false,
     /** Reply token budget for lore generation. */
     loreMaxTokens: 2048,
-    // Usage is global so switching Systems does not reset spending.
-    usage: {},
     /** Composition instructions placed before the character's image description. Empty disables. */
     imgGenPromptPrefix: 'Solo, portrait',
     /** Folder name under user/images/ for generated portraits. */

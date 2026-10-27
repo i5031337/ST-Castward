@@ -157,7 +157,7 @@ test('progression migration assigns IDs and retains saved narrative bonuses with
 });
 
 
-test('old writing preferences retire without changing speaker exclusions or character data', () => {
+test('retired writing and usage settings leave speaker exclusions and character data intact', () => {
     const source = readFileSync(new URL('../src/core/settings-base-migration.js', import.meta.url), 'utf8')
         .replace(/^import .*;\n/gm, '').replaceAll('export function ', 'function ');
     const normalize = new Function('PORTRAIT_SHAPES', 'DEFAULT_PORTRAIT_SHAPE',
@@ -166,13 +166,14 @@ test('old writing preferences retire without changing speaker exclusions or char
         defaultSettings, value => value, () => assert.fail('Unexpected save'));
     const settings = {
         banListEnabled: true, banList: ['stock phrase'], banScanDepth: 25,
+        usage: { extraction: { runs: 7, promptTokens: 900 } },
         speakerIgnoreList: 'Narration\nInventory',
         characters: [{ name: 'Mira', profile: { history: 'Saved history' } }],
     };
     const characters = structuredClone(settings.characters);
     normalize(settings);
     normalize(settings);
-    for (const key of ['banListEnabled', 'banList', 'banScanDepth']) {
+    for (const key of ['banListEnabled', 'banList', 'banScanDepth', 'usage']) {
         assert.equal(Object.hasOwn(settings, key), false);
     }
     assert.equal(settings.speakerIgnoreList, 'Narration\nInventory');

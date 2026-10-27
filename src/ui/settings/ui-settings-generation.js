@@ -1,3 +1,5 @@
+import { profileBasePrompts } from '../../prompts/profile-base-prompt.js';
+import { buildReaderTokenReadout } from '../shared/ui-reader-tokens.js';
 import { buildSettingSelect, buildSettingToggle, buildSettingNumber } from '../shared/ui-shared.js';
 import { world_names } from '../../../../../../world-info.js';
 import { buildConnectionProfilePicker } from './ui-connection-profiles.js';
@@ -47,6 +49,8 @@ export function renderProfileSettingsView(view, openProfileFields) {
             + 'main API. Enable the Connection Manager extension to choose another model.',
     }));
     view.append(buildLastLoreConnectionNote());
+    view.append(buildReaderTokenReadout(view, () => profileBasePrompts(getSettings()),
+        'Full profile requests; NPC estimates vary by template. Single-field rewrites use shorter instructions.'));
     view.append(buildSettingSelect({
         key: 'contextMessages',
         label: 'Chat To Read',

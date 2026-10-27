@@ -5,7 +5,6 @@ import { debugLog, PORTRAIT_SHAPES, DEFAULT_PORTRAIT_SHAPE } from '../core/const
 import { applyMacros } from '../prompts/macros.js';
 import { getSettings, resolveImagePrompt } from '../core/settings.js';
 import { DEFAULT_IMAGE_NEGATIVE_PROMPT } from '../core/settings-defaults.js';
-import { recordUsage } from '../core/usage.js';
 import { fillImagePrompt, describeCarriedItems } from './api-lore-facts.js';
 import { characterImageDescription } from './api-image-description.js';
 import { persistGeneratedImage } from './api-image-files.js';
@@ -92,6 +91,5 @@ export async function generateImage(fullPrompt, { owner = null, shape = resolveP
         throw new Error('Image Generation did not return an image. Check its settings and the error shown by SillyTavern.');
     }
     if (imageUrl.startsWith('data:')) imageUrl = await persistGeneratedImage(imageUrl, owner);
-    recordUsage('image', { prompt: `${fullPrompt} ${negative}` });
     return imageUrl;
 }

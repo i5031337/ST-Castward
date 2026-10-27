@@ -52,11 +52,11 @@ test('landscape generation uses the host image command without portrait prompt c
         .replaceAll('export function ', 'function ').replaceAll('export async function ', 'async function ');
     let request;
     const context = { getCurrentChatId: () => 'chat-a', chatMetadata: {} };
-    const generate = new Function('startActivity', 'applyMacros', 'SlashCommandParser', 'recordUsage',
+    const generate = new Function('startActivity', 'applyMacros', 'SlashCommandParser',
         'debugLog', 'persistGeneratedImage', 'DEFAULT_IMAGE_NEGATIVE_PROMPT', 'getContext',
         `${source}\nreturn generateImage;`)(startActivity, value => value, { commands: { imagine: { callback: async (args, prompt) => {
         request = { args, prompt }; return 'user/images/place.png';
-    } } } }, () => {}, () => {}, async value => value, 'portrait negatives', () => context);
+    } } } }, () => {}, async value => value, 'portrait negatives', () => context);
     const path = await generate('Stone bridge at dusk', {
         shape: { pixels: { width: 1280, height: 720 } }, negativePrompt: 'people, text',
         gallery: false, extend: false, edit: false,

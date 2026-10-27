@@ -25,7 +25,6 @@ test('staged generation assembles canonical System with template progression and
     assert.equal(calls[0].stage, 'plan');
     assert.ok(calls.findIndex(c => c.stage === 'rewards.techniques') > calls.findIndex(c => c.stage === 'stats.character'));
     assert.equal(result.usage.requests, calls.length);
-    assert.ok(result.usage.promptChars > 0 && result.usage.replyChars > 0);
     assert.deepEqual(finalizeDefinition(result.definition).definition, result.definition);
 });
 

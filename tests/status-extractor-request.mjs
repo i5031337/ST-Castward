@@ -11,15 +11,15 @@ const source = (await readFile(new URL('../src/tracker/extractor/status-extracto
     .replace(/^import .*;$/gm, '').replace(/export (async )?function/g, '$1function');
 function build(context) {
     profileContext(context);
-    const events = [], usage = [];
+    const events = [];
     const cancellation = readerCancellationHarness();
     const request = new Function('user_avatar', 'getContext', 'applyMacros', 'LOG_PREFIX', 'debugLog', 'SYSTEM_PROMPT',
-        'describeConnection', 'extractJSON', 'safeJsonParse', 'recordUsage', 'extractMessageFromData', 'toastr', 'console', 'customProfilePayload', 'startGenerationTask', 'awaitGenerationRequest', 'readerSchemaForConnection',
+        'describeConnection', 'extractJSON', 'safeJsonParse', 'extractMessageFromData', 'toastr', 'console', 'customProfilePayload', 'startGenerationTask', 'awaitGenerationRequest', 'readerSchemaForConnection',
         `${source}\nreturn requestExtraction;`)(
         'default_user.png', () => context, value => value, '[Castward]', () => {}, 'System', () => 'Connection',
-        value => value, JSON.parse, (...args) => usage.push(args), raw => raw.choices[0].message.content,
+        value => value, JSON.parse, raw => raw.choices[0].message.content,
         { warning: (...args) => events.push(['warning', ...args]) }, { warn: () => {} }, customProfilePayload, cancellation.startGenerationTask, cancellation.awaitGenerationRequest, readerSchemaForConnection);
-    return { request, events, usage, cancellation };
+    return { request, events, cancellation };
 }
 const schema = { type: 'object' };
 const namedSchema = { name: 'castward_reader', value: schema, strict: true };
@@ -42,16 +42,15 @@ test('extraction forwards assigned preset YAML alongside reader temperature and 
 
 test('main API without a selected profile does not warn', async () => {
     let calls = 0;
-    const { request, events, usage } = build({ generateRawData: async () => { calls++; return rawReply; } });
+    const { request, events } = build({ generateRawData: async () => { calls++; return rawReply; } });
     assert.equal(await request('Prompt', schema, { extractionFallbackToMain: false }), '{"player":{}}');
     assert.equal(calls, 1);
     assert.deepEqual(events, []);
-    assert.equal(usage.length, 1);
 });
 
 test('successful selected connection preserves its configuration without warning or fallback', async () => {
     let received;
-    const { request, events, usage } = build({
+    const { request, events } = build({
         ConnectionManagerRequestService: { sendRequest: async (...args) => { received = args; return { content: { player: {} } }; } },
         generateRawData: () => assert.fail('Successful selected requests must not fall back'),
     });
@@ -63,40 +62,36 @@ test('successful selected connection preserves its configuration without warning
     assert.deepEqual({ ...received[3], signal: undefined }, { extractData: true, includePreset: false, signal: undefined });
     assert.deepEqual(received[4], { json_schema: namedSchema, temperature: 0.2 });
     assert.deepEqual(events, []);
-    assert.equal(usage.length, 1);
 });
 
 test('selected reader failure warns before retrying through the main API', async () => {
     const failure = new Error('Connection unavailable');
     const context = { ConnectionManagerRequestService: { sendRequest: async () => { throw failure; } } };
-    const { request, events, usage } = build(context);
+    const { request, events } = build(context);
     context.generateRawData = async () => { events.push(['main']); return rawReply; };
     assert.equal(await request('Prompt', schema, { extractionProfileId: 'reader', extractionFallbackToMain: true }), '{"player":{}}');
     assert.equal(events.length, 2);
     assert.equal(events[0][0], 'warning');
     assert.deepEqual(events[1], ['main']);
-    assert.equal(usage.length, 1);
 });
 
-test('disabled manager warns and preserves scan usage on fallback', async () => {
+test('disabled manager warns before scan fallback', async () => {
     const context = {};
-    const { request, events, usage } = build(context);
+    const { request, events } = build(context);
     context.generateRawData = async () => { events.push(['main']); return { player: {} }; };
     assert.deepEqual(await request('Prompt', schema, { extractionProfileId: 'scan', extractionUseSchema: true, extractionFallbackToMain: true },
         'Scan system', { usageKind: 'scan' }), { player: {} });
     assert.equal(events[0][0], 'warning');
     assert.deepEqual(events[1], ['main']);
-    assert.equal(usage[0][0], 'scan');
 });
 
 test('a failing main API still propagates its error after the fallback warning', async () => {
-    const { request, events, usage } = build({
+    const { request, events } = build({
         ConnectionManagerRequestService: { sendRequest: async () => { throw new Error('Profile failed'); } },
         generateRawData: async () => { throw new Error('Main API failed'); },
     });
     await assert.rejects(request('Prompt', schema, { extractionProfileId: 'reader', extractionFallbackToMain: true }), /Main API failed/);
     assert.equal(events.length, 1);
-    assert.equal(usage.length, 0);
 });
 
 for (const enabled of [false, true]) {
@@ -141,10 +136,10 @@ for (const profileId of ['', 'reader']) {
 }
 
 for (const profile of [false, true]) {
-    test(`Stop cancels ${profile ? 'profile' : 'main API'} request without fallback or late usage`, async () => {
+    test(`Stop cancels ${profile ? 'profile' : 'main API'} request without fallback or late results`, async () => {
         let complete, signal, calls = 0;
         const pending = new Promise(resolve => { complete = resolve; });
-        const { request, events, usage, cancellation } = build({
+        const { request, events, cancellation } = build({
             ConnectionManagerRequestService: { sendRequest: (...args) => { signal = args[3].signal; return pending; } },
             generateRawData: () => { calls++; return pending; },
         });
@@ -157,7 +152,6 @@ for (const profile of [false, true]) {
         await new Promise(resolve => setImmediate(resolve));
         assert.equal(calls, profile ? 0 : 1);
         assert.deepEqual(events, []);
-        assert.deepEqual(usage, []);
         assert.equal(cancellation.listeners(), 0);
         assert.equal(cancellation.button.style.display, 'none');
     });
@@ -197,12 +191,11 @@ for (const fallback of [false, undefined]) {
                     sendRequest: async () => { throw failure; },
                 } }),
             };
-            const { request, events, usage, cancellation } = build(context);
+            const { request, events, cancellation } = build(context);
             await assert.rejects(request('Prompt', schema, {
                 extractionProfileId: 'reader', extractionFallbackToMain: fallback,
             }, 'System'), missingManager ? { name: 'TypeError' } : failure);
             assert.deepEqual(events, []);
-            assert.deepEqual(usage, []);
             assert.equal(cancellation.listeners(), 0);
             assert.equal(cancellation.button.style.display, 'none');
         });
@@ -210,7 +203,7 @@ for (const fallback of [false, undefined]) {
 }
 
 test('an AbortError never falls back even when retry is enabled', async () => {
-    const { request, events, usage } = build({
+    const { request, events } = build({
         ConnectionManagerRequestService: { sendRequest: async () => {
             throw new DOMException('Cancelled', 'AbortError');
         } },
@@ -220,7 +213,6 @@ test('an AbortError never falls back even when retry is enabled', async () => {
         extractionProfileId: 'reader', extractionFallbackToMain: true,
     }), { name: 'AbortError' });
     assert.deepEqual(events, []);
-    assert.deepEqual(usage, []);
 });
 
 
@@ -263,7 +255,6 @@ test('persona switches abort reader HTTP signals but leave unrelated profile req
         if (usageKind !== 'fill') {
             assert.equal(signal.aborted, true);
             await assert.rejects(pending, { name: 'AbortError' });
-            assert.equal(h.usage.length, 0);
             assert.deepEqual(h.events, []);
             finish({ content: '{}' });
         } else {

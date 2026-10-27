@@ -73,69 +73,6 @@
     min-width: max-content;
 }
 
-/* ─── Prompt cost and usage ─────────────────────────────────────────────── */
-
-/* The token count under a prompt box. Aligned right, so a column of them can be compared
-   down the page without reading each label, and set in the accent colour because it is a
-   measurement of the box above rather than more advice about it. */
-.sillynpc-token-count {
-    align-self: flex-end;
-    color: var(--sillynpc-accent);
-    font-variant-numeric: tabular-nums;
-    opacity: 0.85;
-}
-
-/* An estimate is a different claim from a count. Italic rather than a warning colour:
-   it is still the right order of magnitude, just not from the tokenizer. */
-.sillynpc-token-count.is-estimate {
-    font-style: italic;
-    color: var(--sillynpc-fg-secondary);
-}
-
-.sillynpc-stat-cards {
-    display: flex;
-    flex-direction: column;
-    gap: var(--sillynpc-space-md);
-    margin: var(--sillynpc-space-md) 0;
-}
-
-.sillynpc-stat-card {
-    display: flex;
-    flex-direction: column;
-    gap: var(--sillynpc-space-xs);
-    padding: 14px var(--sillynpc-space-lg);
-    background: var(--sillynpc-bg-secondary);
-    border: 1px solid var(--sillynpc-border);
-    border-radius: var(--sillynpc-radius-md);
-}
-
-.sillynpc-stat-title {
-    margin: 0;
-    color: var(--sillynpc-fg-primary);
-    font-size: calc(var(--sillynpc-font-size-base) * var(--sillynpc-font-scale, 1));
-}
-
-/* Label left, number right. The numbers line up in a column whatever the label is, which
-   is what makes two generators comparable at a glance. */
-.sillynpc-stat-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: var(--sillynpc-space-md);
-    padding-top: var(--sillynpc-space-xs);
-    border-top: 1px solid color-mix(in srgb, var(--sillynpc-border) 50%, transparent);
-}
-
-.sillynpc-stat-name {
-    color: var(--sillynpc-fg-secondary);
-}
-
-.sillynpc-stat-value {
-    color: var(--sillynpc-fg-primary);
-    font-variant-numeric: tabular-nums;
-    text-align: right;
-}
-
 /* A colour the model wrote into the reply. It sits inside the speech block and so beats
    the colour the block sets, which meant Character Coloring Logic quietly stopped applying
    to any line a persona prompt had told the model to colour. Neutralised only while the

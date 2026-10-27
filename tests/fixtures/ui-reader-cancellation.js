@@ -1,4 +1,4 @@
-// Reversible mocked LLM requests; cancelled replies never reach usage accounting.
+// Reversible mocked LLM requests; cancelled replies never reach their consumers.
 const root = new URL('../../', import.meta.url).href;
 const { requestExtraction } = await import(root + 'src/tracker/extractor/status-extractor-request.js');
 const { requestLore } = await import(root + 'src/api/api-lore-generate.js');

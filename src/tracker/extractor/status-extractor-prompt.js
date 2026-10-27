@@ -4,7 +4,7 @@ import { collectionAppliesTo } from '../../core/collection-targets.js';
 import { describeNpcTemplates, npcTemplates, npcStatsFor } from '../../core/npc-templates.js';
 import { promptText } from '../../prompts/prompt-texts.js';
 import { getContext } from '../../../../../../st-context.js';
-import { debugLog } from '../../core/constants.js';
+import { debugLog, SYSTEM_PROMPT } from '../../core/constants.js';
 import { describeReaderStats } from '../stat-prompt-definitions.js';
 import { strangerValues } from './status-extractor-schema.js';
 import { describeCollections, buildDeltaExample, describeCurrentState, describeLimits } from './status-extractor-prompt-state.js';
@@ -114,6 +114,34 @@ function readerEvidence(leadUp) {
     };
 }
 
+/** Instructions derived from the active System, independent of story and held readings. */
+function readerDefinitionValues(trackerSettings) {
+    return {
+        limits: describeLimits(trackerSettings),
+        npcFields: describeReaderStats(trackerSettings, { initializeNpc: true }),
+        xpProgression: progressionFields(trackerSettings, { isPlayer: true }).enabled
+            || (trackerSettings.npcTemplates || []).some(template => template.progression?.enabled) ? 'on' : '',
+        collections: describeCollections(trackerSettings),
+        collectionExample: buildDeltaExample(trackerSettings),
+        reasons: trackerSettings.extractionReasons === false ? '' : 'on',
+    };
+}
+
+/** Fixed prompt text; live state, scene-specific rules, and evidence are excluded. */
+export function buildReaderBasePrompt(trackerSettings) {
+    return SYSTEM_PROMPT + '\n' + promptText('reader', {
+        ...readerDefinitionValues(trackerSettings),
+        notes: describeNpcTemplates(),
+        playerName: '', state: '', offstage: '', locationReminder: '',
+        poolRecovery: '', injuryConsequence: '',
+        ...strangerValues([]),
+        earlier: '', userTurn: '', message: '',
+        minimalReply: buildMinimalExample({}, trackerSettings),
+        changedReply: buildChangedExample({}, trackerSettings),
+        newNpcReply: buildNewNpcExample(trackerSettings),
+    });
+}
+
 /** Builds the reader request from state, the fresh exchange and older context. */
 function readerValues(state, messageText, trackerSettings, leadUp = [], { strangers = [] } = {}) {
     const evidence = readerEvidence(leadUp);
@@ -122,10 +150,7 @@ function readerValues(state, messageText, trackerSettings, leadUp = [], { strang
         playerName: getCurrentPersonaName(),
         state: describeCurrentState(state, trackerSettings) || '(empty)',
         offstage: describeAbsentButNamed(state, exchangeText, trackerSettings),
-        limits: describeLimits(trackerSettings, state),
-        npcFields: describeReaderStats(trackerSettings, { initializeNpc: true }),
-        xpProgression: progressionFields(trackerSettings, { isPlayer: true }).enabled
-            || (trackerSettings.npcTemplates || []).some(template => template.progression?.enabled) ? 'on' : '',
+        ...readerDefinitionValues(trackerSettings),
         // Whatever else has asked to be told to the reader - see registerExtractionNotes.
         notes: [describeNpcTemplates(), describeExtractionNotes(state, messageText),
             state?.locations?.enabled ? buildLocationReaderNotes(state, messageText, leadUp) : ''].filter(Boolean).join('\n'),
@@ -134,14 +159,11 @@ function readerValues(state, messageText, trackerSettings, leadUp = [], { strang
         poolRecovery: describePoolRecovery(state, trackerSettings),
         injuryConsequence: describeInjuryConsequence(state, trackerSettings),
         ...strangerValues(strangers),
-        collections: describeCollections(trackerSettings),
-        collectionExample: buildDeltaExample(trackerSettings),
         minimalReply: buildMinimalExample(state, trackerSettings),
         changedReply: buildChangedExample(state, trackerSettings),
         newNpcReply: buildNewNpcExample(trackerSettings, state?.locations?.enabled),
         ...evidence,
         message: messageText,
-        reasons: trackerSettings.extractionReasons === false ? '' : 'on',
     };
 }
 

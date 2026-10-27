@@ -60,3 +60,15 @@
     white-space: pre-line;
     overflow-wrap: anywhere;
 }
+
+.sillynpc-reader-tokens {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 12px;
+}
+
+.sillynpc-reader-tokens .sillynpc-token-count {
+    color: var(--sillynpc-accent);
+    font-variant-numeric: tabular-nums;
+}

@@ -16,11 +16,13 @@ The removed implementation lived in `src/prompts/banlist.js` and `src/ui/shared/
 
 ### Token statistics and estimated request ceilings
 
-**Recommendation: cut the statistics page and automatic usage accounting.** Counts, averages, and request-ceiling estimates are peripheral. The inherited ceiling calculations have not kept pace with newer generation paths: several usage kinds have no corresponding instruction/budget calculation, and ordinary extraction estimates omit variable context. The Fill budget calculation also reads the tracker reply budget. These estimates require ongoing maintenance to remain useful.
+**Removed 2026-10-27.** The statistics page, cumulative usage counters, automatic request/reply token accounting, estimated request ceilings, and System-generation token totals have been removed. Request limits for System generation remain.
 
-The loss is aggregate usage visibility. Token readouts beside prompt editors can remain; removing the statistics page does not require removing shared token helpers used elsewhere.
+Profiles and Tracker now show approximate base-instruction tokens for the active System. These use the same instruction templates and field-definition builders as generation, estimated locally at four characters per token. Profiles shows Player and NPC counts, with a range when NPC templates select different fields. It represents a full profile/lore request; single-field rewrites use a shorter prompt. Tracker includes configured stats, collections, progression rules, NPC template guidance, and state-independent examples.
 
-Sources: [ui-stats.js](../src/ui/shared/ui-stats.js), [usage.js](../src/core/usage.js), [tokens.js](../src/core/tokens.js).
+These are instruction estimates, not request totals: they exclude story, held readings, existing profiles, retrieved lore, scene-dependent reminders, replies, and connection/provider overhead (including transported response schemas). Reopening a reader tab picks up changed System definitions; reader settings refresh the displayed estimate in place. No tokenizer/model requests or usage history are needed. The separate lore-context excerpt estimate remains. Places and the NPC creation tool have no token readouts for now.
+
+The removed modules were `src/ui/shared/ui-stats.js` and `src/core/usage.js`. The unused prompt-editor token option was also removed. [tokens.js](../src/core/tokens.js) now provides only the local approximation used by [reader readouts](../src/ui/shared/ui-reader-tokens.js).
 
 ### Faces for Strangers portrait pool
 

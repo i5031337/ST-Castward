@@ -9,10 +9,9 @@ const body = source.slice(source.indexOf('export async function requestLore'),
 
 for (const profile of [false, true]) {
     for (const event of ['stop', 'chat']) {
-        test(`${event} cancels ${profile ? 'profile' : 'main API'} lore without fallback or late usage`, async () => {
+        test(`${event} cancels ${profile ? 'profile' : 'main API'} lore without fallback or late results`, async () => {
             const cancellation = readerCancellationHarness();
             let finish, calls = 0, signal;
-            const usage = [];
             const pending = new Promise(resolve => { finish = resolve; });
             const deps = {
                 ...cancellation,
@@ -25,7 +24,7 @@ for (const profile of [false, true]) {
                 getSettings: () => ({ loreProfileId: profile ? 'selected' : '' }),
                 debugLog() {}, describeConnection: () => 'Fixture', promptText: () => 'System',
                 customProfilePayload: () => ({}), extractMessageFromData: () => 'Late reply',
-                recordUsage: (...args) => usage.push(args), loreReplyWasTruncated: () => false,
+                loreReplyWasTruncated: () => false,
                 LOG_PREFIX: 'test',
             };
             const request = new Function(...Object.keys(deps), `let lastLoreConnection; ${body}\nreturn requestLore;`)(...Object.values(deps));
@@ -37,7 +36,6 @@ for (const profile of [false, true]) {
             finish({ content: 'Late reply' });
             await new Promise(resolve => setImmediate(resolve));
             assert.equal(calls, 1);
-            assert.deepEqual(usage, []);
             assert.equal(cancellation.listeners(), 0);
             assert.equal(cancellation.button.style.display, 'none');
         });

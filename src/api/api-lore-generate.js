@@ -7,12 +7,11 @@ import { LOG_PREFIX, debugLog } from '../core/constants.js';
 import { fillTemplate } from '../prompts/macros.js';
 import { getSettings, saveSettings } from '../core/settings.js';
 import { DEFAULT_LORE_PROMPT } from '../prompts/default-prompt-texts.js';
-import { recordUsage } from '../core/usage.js';
 import { customProfilePayload } from './api-connection-profile.js';
 import { syncEntryIdentity, mergeKeywords, namesFor } from '../lore/lorebook.js';
 import { escapeRegExp, describeConnection } from '../core/utils.js';
 import { describeTrackedFacts, retrieveWorldFacts } from './api-lore-facts.js';
-import { hintFor } from '../core/constants-profile.js';
+import { loreProfileValues } from '../prompts/profile-prompt-fields.js';
 import { profileFieldsForCard } from '../core/profile-fields.js';
 import { formatLoreContent, parseLoreContent, parseGeneratedProfileFields, mergeLoreValues } from '../lore/lore-format.js';
 import { loreReplyWasTruncated, parseLoreReply } from '../lore/lore-reply.js';
@@ -127,7 +126,6 @@ async function performLoreRequest(prompt, signal) {
             };
             const api = context.ConnectionManagerRequestService.validateProfile(profile).selected;
             const text = extractMessageFromData(result, api) || '';
-            recordUsage('lore', { prompt: promptText('loreSystem') + prompt, reply: text });
             return { text, truncated: loreReplyWasTruncated(result) };
         } catch (err) {
             if (signal.aborted || err?.name === 'AbortError') throw signal.reason || err;
@@ -150,9 +148,6 @@ async function performLoreRequest(prompt, signal) {
     // generateRawData returns the provider's response object. Its text can live in
     // choices, results, or a content block array, depending on the main API.
     const text = extractMessageFromData(raw) || '';
-    // Not awaited on purpose: counting asks the tokenizer, and a counter is not worth
-    // making anyone wait for, nor worth failing a generation over.
-    recordUsage('lore', { prompt: promptText('loreSystem') + prompt, reply: text });
     return { text, truncated: loreReplyWasTruncated(raw) };
 }
 
@@ -200,14 +195,6 @@ async function buildLoreContent(char, world, uid, options) {
     const established = char.isPlayer ? (char.profile || {})
         : (mergeLoreValues(existingLore, char.profile) || char.profile || {});
     const fields = profileFieldsForCard(char);
-    const profileFields = fields.map(field =>
-        `- ${field.label}: ${hintFor(field)}${established[field.id]
-            ? ` (established: ${String(established[field.id]).trim()})` : ''}`).join('\n');
-    const profileTemplate = fields.map(field => {
-        const guidance = hintFor(field).trim() || 'Brief supported value.';
-        const known = String(established[field.id] ?? '').replace(/\s+/g, ' ').trim();
-        return `  ${field.label}: <${guidance}${known ? ` Established: ${known}` : ''}>`;
-    }).join('\n');
     /* Both spellings and SillyTavern's own macros, in one pass. The old [TAG] form is
        rewritten to {{tag}} first rather than replaced separately, so a [NAME] that happens
        to be inside the chat excerpt or the existing entry is left alone - it is somebody's
@@ -219,8 +206,7 @@ async function buildLoreContent(char, world, uid, options) {
         world: worldFacts,
         facts: givenFacts !== undefined ? String(givenFacts ?? '').trim() : describeTrackedFacts(char),
         aliases: namesFor(char).slice(1).join(', ') || '(none)',
-        profileFields,
-        profileTemplate,
+        ...loreProfileValues(fields, established),
     };
     // Built-in sections depend on available sources; custom templates retain host macros.
     let prompt = options.template ? fillTemplate(template, values) : fillPromptText(template, values);

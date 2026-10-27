@@ -1,3 +1,6 @@
+import { getSettings } from '../../core/settings.js';
+import { buildReaderBasePrompt } from '../../tracker/extractor/status-extractor-prompt.js';
+import { buildReaderTokenReadout } from '../shared/ui-reader-tokens.js';
 import { buildSettingToggle, buildSettingSlider, buildSettingSelect, buildSettingNumber } from '../shared/ui-shared.js';
 import { buildPlacementPicker, buildHistoryNoteFields } from './ui-tracker-history.js';
 import { buildConnectionProfilePicker } from '../settings/ui-connection-profiles.js';
@@ -97,6 +100,9 @@ export function renderTrackerDisplayAndReading({ container, settings, onApply, o
 
     if (settings.extractionMode === 'extract' || settings.extractionMode === 'manual') {
         container.appendChild(buildConnectionProfilePicker(onApply));
+        container.append(buildReaderTokenReadout(container, () => ({
+            Tracker: [buildReaderBasePrompt(getSettings().statusTracker)],
+        })));
         container.append(buildSettingToggle({
             key: 'statusTracker.extractionFallbackToMain',
             label: 'Fall Back To Main API',

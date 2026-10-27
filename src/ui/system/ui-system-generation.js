@@ -120,7 +120,7 @@ export function buildSystemGeneration(onSaved = () => {}, { requestFactory, save
             if (!name.value.trim()) name.value = draft.name;
             context = createDraftContext(draft, changed => { draft = changed; displaySummary(); updateSave(); });
             displaySummary();
-            status.textContent = `Draft ready. ${result.usage.requests} requests; approximately ${Math.round((result.usage.promptChars + result.usage.replyChars) / 4).toLocaleString()} tokens across all steps. Review before saving.`;
+            status.textContent = `Draft ready. ${result.usage.requests} requests. Review before saving.`;
             generate.textContent = 'Regenerate';
         } catch (error) {
             if (closed) return;

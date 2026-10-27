@@ -17,7 +17,6 @@ export async function checkLocations(root) {
         import(root + 'src/locations/location-reader.js'),
         import(root + 'src/locations/location-reading.js'),
         import(root + 'src/prompts/prompt-texts.js'),
-        import(root + 'src/core/usage.js'),
     ]);
     check('realModuleStartup', actual.every(Boolean));
     const hostMetadata = JSON.stringify(SillyTavern.getContext().chatMetadata);
@@ -240,7 +239,6 @@ export async function checkLocations(root) {
         check('locationReaderPromptLoaded', actual[7].buildLocationPrompt({ state: opening,
             playerName: 'Alex', messageText: 'Alex enters Moonlit Wharf.' }).includes('Moonlit Wharf')
             && actual[9].promptText('locationReaderSystem').includes('JSON place update'));
-        check('locationUsageCounter', actual[10].USAGE_KINDS.some(kind => kind.id === 'location'));
         const reportHost = document.createElement('div');
         reportHost.innerHTML = '<div class="mes_text">Temporary reader report fixture</div>';
         host.appendChild(reportHost);

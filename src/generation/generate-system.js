@@ -28,7 +28,7 @@ export class SystemGenerationRun {
         this.request = request; this.onProgress = onProgress;
         this.plan = null; this.definition = null; this.stages = []; this.accepted = new Set();
         this.assumptions = new Map(); this.failed = null; this.errors = [];
-        this.usage = { requests: 0, promptChars: 0, replyChars: 0 }; this.running = false; this.complete = false;
+        this.usage = { requests: 0 }; this.running = false; this.complete = false;
     }
     progress(stage, repair = false) {
         this.onProgress({ stage: stage.label, index: this.accepted.size + 1,
@@ -72,13 +72,12 @@ export class SystemGenerationRun {
                 ...(attempt ? { repair: { errors, failedResponse } } : {}) };
             const systemPrompt = (stage.id === 'plan' ? PLANNING_INSTRUCTIONS : GENERATION_INSTRUCTIONS + '\n' + stageInstructions(stage)) + '\nResponse schema:\n' + JSON.stringify(schema);
             const userPrompt = JSON.stringify(body);
-            this.usage.requests++; this.usage.promptChars += systemPrompt.length + userPrompt.length;
+            this.usage.requests++;
             let raw;
             try {
                 raw = await interruptible(Promise.resolve().then(() => this.request({ systemPrompt, userPrompt, schema,
                     stage: stage.id, maxTokens: stage.id === 'plan' ? 4000 : Math.min(7000, Math.max(2400, (stage.expected?.length || 1) * 350 + (stage.owners?.length || 0) * 450 + 1200)), signal })), signal);
                 if (signal?.aborted) throw abortError();
-                this.usage.replyChars += typeof raw === 'string' ? raw.length : JSON.stringify(raw).length;
                 const response = parseResponse(raw);
                 errors = validateShape(response, schema);
                 if (!errors.length) {

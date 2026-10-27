@@ -164,7 +164,7 @@ This map covers tracked runtime files, tests and support files. Source files and
 | `src/generation/catalog-rules.js` | Joint stat/progression response contracts, validation, and atomic application for each catalog. |
 | `src/generation/stage-request.js` | Section-specific context and instructions, with schemas restricted to allocated IDs and object counts. |
 | `src/generation/generate-system.js` | Sequential generation, bounded repair, retry, cancellation, progress, and assembly. |
-| `src/generation/request.js` | Captured reader connection adapter and usage reporting without connection fallback. |
+| `src/generation/request.js` | Captured reader connection adapter without connection fallback. |
 | `src/generation/draft-context.js` | Isolated Builder projection, draft capture, and local rename callbacks. |
 | `src/core/system-fields.js` | Resolve shared stat and profile catalogs for player, NPC, and template assignments. |
 | `src/core/system-schema.js` | Versioned shared System catalogs, target assignments, and bounded legacy preset normalization. |
@@ -184,8 +184,11 @@ This map covers tracked runtime files, tests and support files. Source files and
 | `src/api/api-image-files.js` | Image storage, listing, adoption, and cleanup. |
 | `src/api/api-image-generate.js` | Portrait prompt assembly and SillyTavern Image Generation `/imagine` call. |
 | `src/api/api-image-description.js` | Select configured profile fields for portrait prompts, with a constrained free-form lore fallback. |
-| `src/core/usage.js` | Model usage accounting. |
-| `src/core/tokens.js` | Token budget readout. |
+| `tests/reader-base-tokens.mjs` | System-dependent reader instruction estimates and exclusion of live state. |
+| `src/core/tokens.js` | Local approximation for reader base-instruction tokens. |
+| `src/ui/shared/ui-reader-tokens.js` | Profile and tracker base-instruction readouts; no usage accounting. |
+| `src/prompts/profile-base-prompt.js` | System-dependent profile instruction baselines for player and NPC templates. |
+| `src/prompts/profile-prompt-fields.js` | Shared profile field guidance for generation and instruction estimates. |
 | `src/tracker/progression.js` | XP transitions and bounded stat growth, including multiple crossed levels. |
 | `src/tracker/level-stat-points.js` | Numeric point capacity, allocation with replacement, and manual spending validation. |
 | `src/ui/tracker/ui-point-allocation.js` | Random allocation summaries and manual controls for pending point budgets. |
@@ -382,7 +385,6 @@ This map covers tracked runtime files, tests and support files. Source files and
 | `src/ui/settings/ui-settings-generation-storage.js` | Portrait folder, image discovery, and orphan cleanup controls. |
 | `src/ui/shared/ui-shared.js` | Shared UI facade and choice helpers. |
 | `src/ui/shared/ui-choice.js` | Shared choice field controls. |
-| `src/ui/shared/ui-stats.js` | Model usage totals and per-request token budget estimates. |
 | `src/ui/system/ui-npc-templates.js` | Edit reusable NPC templates and shared field selections. |
 | `src/ui/characters/ui-npc-template.js` | Choose or correct a character’s NPC template. |
 | `tests/image-prompt.mjs` | Portrait prompt preview/editing, selected profile fields, and image collection inputs. |
@@ -582,7 +584,7 @@ paths have regression tests under `tests/`.
 | File | Responsibility |
 | --- | --- |
 | `tests/activated-lore-prompt.mjs`, `tests/lore-format.mjs`, `tests/lorebook-target.mjs` | Activated-lore freshness, structured profile/lore round trips, partial Fill output, and safe chat lorebook selection. |
-| `tests/auto-npc-profiles.mjs`, `tests/player-profile-prompt.mjs`, `tests/lore-cancellation.mjs` | Opt-in profile and portrait generation, manual-edit precedence, persona descriptions, nonduplicated field-generation context, and cancellation without late saves or usage. |
+| `tests/auto-npc-profiles.mjs`, `tests/player-profile-prompt.mjs`, `tests/lore-cancellation.mjs` | Opt-in profile and portrait generation, manual-edit precedence, persona descriptions, nonduplicated field-generation context, and cancellation without late saves. |
 | `tests/connection-profile.mjs`, `tests/ui-connection-profile.py` | Request-local Custom connection preset parameters, macro substitution, and precedence without changing saved presets. |
 | `tests/collection-fields.mjs`, `tests/collection-reading.mjs`, `tests/ui-collection-fields.py` | Pinned typed identifiers, optional ranges, defaults, typed prompt examples, preview diagnostics, and live field controls. |
 | `tests/npc-collection-persistence.mjs`, `tests/npc-change-counts.mjs` | Persist NPC holdings across scene exits and manual edits; count actual changes rather than repeated or offstage records. |

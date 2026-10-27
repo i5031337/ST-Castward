@@ -1,6 +1,5 @@
 import { getSettings, saveSettings, defaultSettings } from '../../core/settings.js';
 import { Popup } from '../../../../../../popup.js';
-import { buildTokenReadout } from '../../core/tokens.js';
 import { appendSettingHelp } from './ui-setting-help.js';
 
 function getNestedValue(obj, path) {
@@ -67,15 +66,9 @@ function storeOf(options) {
  *   A customised template silently keeps working while the recommended one moves on -
  *   the [FACTS] placeholder was added to the lore default and never reached anyone who
  *   had edited theirs, with nothing in the panel to say so.
- * @param {boolean} [options.showTokens] Adds a live token count under the box. What a
- *   prompt costs is decided when you write it, so it belongs where you write it - not
- *   discovered later from a bill. Counts the template as typed; the placeholders are
- *   filled at send time and cost whatever they are filled with.
- * @param {string} [options.emptyNote] Shown instead of a count when the box is empty,
- *   for the settings where empty means something other than "send nothing".
  */
 export function buildSettingTextArea(options) {
-    const { key, label, help, onChange, recommended, showTokens = false, emptyNote = '', builtIn } = options;
+    const { key, label, help, onChange, recommended, builtIn } = options;
     const { read, write } = storeOf(options);
     const wrap = document.createElement('div');
     wrap.className = 'sillynpc-setting';
@@ -100,25 +93,18 @@ export function buildSettingTextArea(options) {
     const stored = (value) => (builtIn !== undefined && value.trim() === String(builtIn).trim() ? '' : value);
     const shown = getNestedValue(read(), key) ?? '';
     textarea.value = builtIn !== undefined && !String(shown).trim() ? builtIn : shown;
-    const tokens = showTokens
-        ? buildTokenReadout(() => textarea.value, { note: emptyNote })
-        : null;
-
     textarea.addEventListener('input', () => {
         setNestedValue(read(), key, stored(textarea.value));
         write();
-        tokens?.refresh();
         onChange?.();
     });
     if (builtIn !== undefined) {
         textarea.addEventListener('blur', () => {
             if (textarea.value.trim()) return;
             textarea.value = builtIn;
-            tokens?.refresh();
         });
     }
     wrap.append(textarea);
-    if (tokens) wrap.append(tokens.element);
 
     appendSettingHelp(wrap, help);
 
@@ -141,7 +127,6 @@ export function buildSettingTextArea(options) {
             textarea.value = recommended;
             setNestedValue(read(), key, stored(String(recommended)));
             write();
-            tokens?.refresh();
             onChange?.();
         });
         wrap.append(restore);

@@ -65,7 +65,7 @@ async function portrait(card, isCurrent) {
 export const npcCreationService = createNpcCreationService({
     getContext, getSettings, getCards: getAllCharacters, getChatCards: getChatCharacters,
     getForbiddenNames: forbiddenNames, getReservedNames: reservedNames, getKnownActor: knownActor, buildContext,
-    requestFor: settings => generationRequestAdapter({ ...settings.statusTracker, extractionTemperature: '' }, settings.loreProfileId || '', 'npc'),
+    requestFor: settings => generationRequestAdapter({ ...settings.statusTracker, extractionTemperature: '' }, settings.loreProfileId || ''),
     commit: draft => {
         const held = knownActor(draft.name)?.collections || {};
         draft.statusCollections = Object.fromEntries(Object.entries(draft.statusCollections).map(([id, entries]) =>

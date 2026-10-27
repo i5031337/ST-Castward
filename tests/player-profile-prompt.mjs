@@ -1,3 +1,4 @@
+import { loreProfileValues } from '../src/prompts/profile-prompt-fields.js';
 import { readerCancellationHarness } from './helpers/reader-cancellation.mjs';
 import { profileFieldValue } from '../src/core/profile-fields.js';
 import assert from 'node:assert/strict';
@@ -132,7 +133,7 @@ async function lorePrompt(card, activePersona = persona, { worldFacts = '', exis
         ...readerCancellationHarness(),
         buildLoreExcerpt: () => ({ text: '' }), chat: [], retrieveWorldFacts: async () => worldFacts,
         loadWorldInfo: async () => ({ entries: { 1: { content: existingLore } } }),
-        DEFAULT_LORE_PROMPT, fillPromptText,
+        DEFAULT_LORE_PROMPT, fillPromptText, loreProfileValues,
         mergeLoreValues: () => ({}), profileFieldsForCard: () => fields, hintFor: () => 'Describe appearance.',
         fillTemplate: (template, values) => template.replace(/{{(\w+)}}/g, (_, key) => values[key] ?? ''),
         namesFor: card => [card.name], describeTrackedFacts: () => '', getPersonaData: () => activePersona,

@@ -87,7 +87,7 @@ export async function harness(systemId, state, { chat = [] } = {}) {
         saveStateToMetadata() {},
     });
     bind('status-apply-update');
-    return { settings, system, collectLeadUp: prompt.collectLeadUp,
+    return { settings, system, basePrompt: () => prompt.buildReaderBasePrompt(settings), collectLeadUp: prompt.collectLeadUp,
         prompt: (text, earlier = []) => prompt.buildUserPrompt(state, text, settings, earlier),
         schema: schema.buildExtractionSchema(settings, { state }),
         normalize(raw, text) {

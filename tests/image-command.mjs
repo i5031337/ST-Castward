@@ -17,7 +17,7 @@ function fixture() {
             return new Promise((resolve, reject) => pending.push({ resolve, reject }));
         } } } },
         getContext: () => context,
-        debugLog() {}, recordUsage() {},
+        debugLog() {},
         DEFAULT_IMAGE_NEGATIVE_PROMPT: '',
     };
     const generate = new Function(...Object.keys(dependencies), `${source}\nreturn generateImage;`)(...Object.values(dependencies));

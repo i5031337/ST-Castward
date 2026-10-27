@@ -56,10 +56,10 @@ test('lore forwards assigned preset parameters while retaining raw response and 
     context.generateRawData = () => assert.fail('Successful profile must not fall back');
     const { startGenerationTask, awaitGenerationRequest } = readerCancellationHarness();
     const request = new Function('getContext', 'getSettings', 'debugLog', 'describeConnection', 'promptText',
-        'customProfilePayload', 'extractMessageFromData', 'recordUsage', 'loreReplyWasTruncated', 'startGenerationTask', 'awaitGenerationRequest',
+        'customProfilePayload', 'extractMessageFromData', 'loreReplyWasTruncated', 'startGenerationTask', 'awaitGenerationRequest',
         `let lastLoreConnection; ${requestSource}\nreturn requestLore;`)(
         () => context, () => ({ loreProfileId: 'selected', loreMaxTokens: 400 }), () => {}, () => 'Custom',
-        () => 'System', customProfilePayload, raw => raw.choices[0].message.content, () => {},
+        () => 'System', customProfilePayload, raw => raw.choices[0].message.content,
         raw => raw.choices[0].finish_reason === 'length', startGenerationTask, awaitGenerationRequest);
     assert.deepEqual(await request('Prompt'), { text: 'Lore', truncated: true });
     assert.equal(received[2], 400);

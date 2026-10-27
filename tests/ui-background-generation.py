@@ -35,8 +35,8 @@ with browser_session() as browser:
         const source=(await (await fetch(root+'src/api/api-image-generate.js')).text())
             .replace(/^import\\s+[\\s\\S]*?\\s+from\\s+['"][^'"]+['"];\\s*/gm,'').replaceAll('export ','');
         const generate=new Function('getContext','executeSlashCommandsWithOptions','applyMacros',
-            'debugLog','recordUsage','DEFAULT_IMAGE_NEGATIVE_PROMPT',source+';return generateImage;')
-            (getContext,executeSlashCommandsWithOptions,v=>v,()=>{},()=>{},'');
+            'debugLog','DEFAULT_IMAGE_NEGATIVE_PROMPT',source+';return generateImage;')
+            (getContext,executeSlashCommandsWithOptions,v=>v,()=>{},'');
         const paths=await Promise.all(['First landscape','Second landscape'].map(prompt=>generate(prompt,{shape:{}})));
         out.bothReturned=paths.every(path=>path==='/user/images/background-fixture.png');
         out.serialized=peak===1&&prompts.join(',')==='First landscape,Second landscape';

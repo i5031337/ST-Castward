@@ -4,15 +4,9 @@ import { getContext } from '../../../../../../st-context.js';
 import { applyMacros } from '../../prompts/macros.js';
 import { LOG_PREFIX, debugLog, SYSTEM_PROMPT } from '../../core/constants.js';
 import { describeConnection, extractJSON, safeJsonParse } from '../../core/utils.js';
-import { recordUsage } from '../../core/usage.js';
 import { customProfilePayload } from '../../api/api-connection-profile.js';
 import { readerSchemaForConnection } from './status-extractor-schema-provider.js';
 
-/** What a reply cost, whether it arrived as text or as already-parsed data. */
-function describeAnswer(answer) {
-    if (typeof answer === 'string') return answer;
-    try { return JSON.stringify(answer ?? ''); } catch { return ''; }
-}
 /** Optional reader temperature, constrained to the supported 0–2 range. */
 export function readerTemperature(trackerSettings) {
     const typed = String(trackerSettings?.extractionTemperature ?? '').trim();
@@ -77,7 +71,6 @@ async function performExtraction(userPrompt, schema, trackerSettings, systemProm
             ), signal);
             signal.throwIfAborted();
             const answer = typeof result === 'string' ? result : (result?.content ?? result ?? '');
-            recordUsage(usageKind, { prompt: systemPrompt + userPrompt, reply: describeAnswer(answer) });
             return answer;
         } catch (err) {
             if (signal.aborted || err?.name === 'AbortError') throw signal.reason || err;
@@ -104,7 +97,6 @@ async function performExtraction(userPrompt, schema, trackerSettings, systemProm
     const answer = schema && trackerSettings.extractionUseSchema
         ? raw
         : extractMessageFromData(raw);
-    recordUsage(usageKind, { prompt: systemPrompt + userPrompt, reply: describeAnswer(answer) });
     return answer;
 }
 
