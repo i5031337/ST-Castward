@@ -308,6 +308,83 @@ authorized by recording this concern.
 Sources: `src/tracker/status-collection-updates.js` and the tombstone-aging logic in
 `src/tracker/status-apply-update.js`.
 
+## Follow-up review: 2026-10-27
+
+Independent source checks and isolated reproductions found four omissions. These
+are separate from the accepted historical-recovery limitation in item #3 and the
+open suppression policy in item #7. The pre-fix suite passed all 945 Node tests.
+
+### 8. Image prompts can inject host commands — fixed
+
+**P1.** `src/api/api-image-generate.js` inserted profile-derived prompts into an
+executable `/imagine` string. Its escaping preserved pipes and closure syntax. A
+safe parse-only reproduction against the installed host parser confirmed that
+`A portrait | /echo SENTINEL` produced separate `imagine` and `echo` commands.
+No injected commands were executed. Automatic profile-to-portrait generation
+made generated profile text a command input; ordinary pipes also truncated prompts.
+
+Image requests now invoke the registered host `imagine` callback with separate
+named arguments and literal prompt data, bypassing script parsing. Provider
+selection, temporary image settings, gallery controls and request serialization
+remain owned by their existing handlers. Missing Image Generation support produces
+an explicit error. Regression coverage in `tests/image-command.mjs` verifies literal
+pipes, quotes, backslashes, newlines, closure/macro syntax, negative prompts and
+argument-like text, plus unavailable-handler cleanup. Existing image tests cover
+queue ordering, failures, chat changes and landscape options.
+
+Verification: all 947 Node tests, the runtime syntax check and `git diff --check`
+pass. An unsaved running-host Chromium fixture confirmed that the host image handler
+is registered and receives one call with literal positive/negative text and the
+expected image options. Its mocked handler stopped before provider access or usage
+recording and was restored afterward; no image/model requests or fixture saves were
+made. This verifies routing, not a real provider's generated image.
+
+### 9. Session Dashboard saves stale state and cannot undo its own edits — resolved by removal
+
+**P2.** `src/ui/tracker/ui-tracker-popups.js` captures the state object when the
+Session Dashboard opens, then mutates and saves that entire object on field blur.
+A production-function fixture reproduced both failures: changing HP from 5 to 7
+records an undo point containing 7; replacing tracker state with newer HP and a
+weather value, then editing the still-open dashboard, removes the newer weather.
+
+Decision: remove the Session Dashboard, its launch button and unused styling. The
+fully editable in-chat tracker already provides manual stat editing with fewer steps,
+so a second editor does not justify its maintenance cost. The HTML/CSS template
+editor remains available. Removing this path resolves both reproduced failures.
+The original reproduction used isolated stores and a minimal DOM, not a live browser
+interaction.
+
+Removal verification: all 947 Node tests, syntax checks and `git diff --check` pass.
+An unsaved running-host Chromium fixture confirmed the dashboard action/export are
+gone, the Chat Size report remains, and the HTML/CSS template editor still opens.
+No fixture edits, model requests or saves were made.
+
+### 10. Collection schema renames omit inactive personas — open
+
+**P2.** `src/tracker/schema-operation-calculation.js` includes the active player
+and NPCs in collection migrations but skips chat-owned records in `state.players`.
+Direct production-calculation checks confirmed that renaming an item field from
+`kind` to `material`, or a collection from `gear` to `equipment`, migrates only the
+active persona. Returning to an inactive persona restores unmigrated holdings,
+hiding field values or the whole collection under the current schema.
+
+Include inactive chat personas in both migrations. Existing stat-rename coverage
+already handles that store; collection fixtures did not give it any holdings.
+
+### 11. In-flight readings overwrite newer corrections to the same field — open
+
+**P2.** `src/tracker/extractor/status-extractor-run.js` checks reply, persona and
+System identity after awaiting the model, but does not detect intervening edits to
+the fields it read. The existing extraction integration harness reproduced: prompt
+with HP 95, manually correct HP to 80 while waiting, receive HP 90, then install 90
+and report success. Existing coverage changes HP while the response changes XP,
+so it verifies only preservation of unrelated edits.
+
+This is missing conflict handling across the model request, rather than a failure
+of the narrower synchronous commit guard described in item #6. Preserve newer
+corrections or require review when a returned field's held reading changed during
+the request. The reproduction used mocked host/request boundaries.
+
 ## Evidence and limits
 
 The original review ran all 877 Node tests successfully. Its concurrency reproduction

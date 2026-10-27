@@ -126,10 +126,6 @@
     border-bottom: 1px solid currentColor;
 }
 
-.sillynpc-status-dashboard {
-    color: var(--sillynpc-fg-primary);
-}
-
 /* ─── HUD Widget ───────────────────────────────────────────────────────── */
 
 /* Gap, padding and radius are defined in HUD proportions. */

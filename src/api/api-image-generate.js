@@ -1,5 +1,5 @@
 import { loadWorldInfo } from '../../../../../world-info.js';
-import { executeSlashCommandsWithOptions } from '../../../../../slash-commands.js';
+import { SlashCommandParser } from '../../../../../slash-commands/SlashCommandParser.js';
 import { getContext } from '../../../../../st-context.js';
 import { debugLog, PORTRAIT_SHAPES, DEFAULT_PORTRAIT_SHAPE } from '../core/constants.js';
 import { applyMacros } from '../prompts/macros.js';
@@ -46,10 +46,6 @@ export async function generateCharacterImageLogic(char, { prompt, signal } = {})
     return generateImage(fullPrompt, { owner: char, ...(signal ? { signal } : {}) });
 }
 
-function escapeCommandValue(value) {
-    return String(value || '').trim().replace(/\r?\n/g, ' ').replace(/"/g, '\\"');
-}
-
 function imageUrlFromResult(result) {
     const candidate = typeof result === 'string' ? result
         : result && typeof result === 'object' ? result.pipe || result.output || result.image || result.url || result.result : '';
@@ -62,26 +58,30 @@ export async function generateImage(fullPrompt, { owner = null, shape = resolveP
     negativePrompt = DEFAULT_IMAGE_NEGATIVE_PROMPT, gallery, extend, edit, signal } = {}) {
     const negative = applyMacros(negativePrompt);
     const pixels = shape?.pixels;
-    const size = pixels ? `width=${pixels.width} height=${pixels.height} ` : '';
-    const controls = [gallery, extend, edit].map((value, index) => value === undefined ? ''
-        : `${['gallery', 'extend', 'edit'][index]}=${value} `).join('');
-    // The host command handles provider selection, credentials, gallery saving and errors.
-    const command = `/imagine quiet=true ${controls}${size}negative="${escapeCommandValue(negative)}" ${escapeCommandValue(fullPrompt)}`;
-    debugLog('Sending Image Generation command', command);
+    const args = { quiet: 'true', negative };
+    if (pixels) Object.assign(args, { width: String(pixels.width), height: String(pixels.height) });
+    for (const [key, value] of Object.entries({ gallery, extend, edit })) {
+        if (value !== undefined) args[key] = String(value);
+    }
+    debugLog('Sending Image Generation request', { args, prompt: fullPrompt });
     const context = getContext();
     const chatId = context.getCurrentChatId();
     const metadata = context.chatMetadata;
-    // /imagine temporarily overrides shared provider settings. Serialize our requests,
-    // and use the runner that does not silently reject a busy chat input.
+    // /imagine temporarily overrides shared provider settings. Serialize our requests.
+    // Call its handler with literal data so profile text cannot become slash commands.
     const task = imageQueue.then(async () => {
         signal?.throwIfAborted();
         const now = getContext();
         if (now.getCurrentChatId() !== chatId || now.chatMetadata !== metadata) {
             throw new Error('Chat changed before image generation could start.');
         }
+        const command = SlashCommandParser.commands.imagine;
+        if (typeof command?.callback !== 'function') {
+            throw new Error('Image Generation is not available. Enable the SillyTavern Image Generation extension.');
+        }
         const progress = startActivity({ kind: 'image',
             label: owner?.name ? `Drawing ${owner.name}’s portrait…` : 'Drawing an image…' }, signal);
-        try { return await executeSlashCommandsWithOptions(command, { source: 'Castward image generation' }); }
+        try { return await command.callback(args, String(fullPrompt)); }
         finally { progress.finish(); }
     });
     imageQueue = task.catch(() => {});

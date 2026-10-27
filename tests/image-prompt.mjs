@@ -10,7 +10,7 @@ import { validateShape } from '../src/generation/validate-shape.js';
 import { imageItemsFromCollections } from '../src/api/api-image-items.js';
 
 const source = readFileSync(new URL('../src/api/api-image-generate.js', import.meta.url), 'utf8')
-    .split('function escapeCommandValue')[0].replace(/^import .*;\n/gm, '').replaceAll('export ', '');
+    .split('function imageUrlFromResult')[0].replace(/^import .*;\n/gm, '').replaceAll('export ', '');
 function fixture() {
     const calls = [];
     const settings = { imgGenPromptPrefix: '' };
@@ -50,24 +50,22 @@ test('landscape generation uses the host image command without portrait prompt c
     const source = readFileSync(new URL('../src/api/api-image-generate.js', import.meta.url), 'utf8')
         .replace(/^import\s+[\s\S]*?\s+from\s+['"][^'"]+['"];\s*/gm, '')
         .replaceAll('export function ', 'function ').replaceAll('export async function ', 'async function ');
-    let command = '';
+    let request;
     const context = { getCurrentChatId: () => 'chat-a', chatMetadata: {} };
-    const generate = new Function('startActivity', 'applyMacros', 'executeSlashCommandsWithOptions', 'recordUsage',
+    const generate = new Function('startActivity', 'applyMacros', 'SlashCommandParser', 'recordUsage',
         'debugLog', 'persistGeneratedImage', 'DEFAULT_IMAGE_NEGATIVE_PROMPT', 'getContext',
-        `${source}\nreturn generateImage;`)(startActivity, value => value, async value => {
-        command = value; return { pipe: 'user/images/place.png' };
-    }, () => {}, () => {}, async value => value, 'portrait negatives', () => context);
+        `${source}\nreturn generateImage;`)(startActivity, value => value, { commands: { imagine: { callback: async (args, prompt) => {
+        request = { args, prompt }; return 'user/images/place.png';
+    } } } }, () => {}, () => {}, async value => value, 'portrait negatives', () => context);
     const path = await generate('Stone bridge at dusk', {
         shape: { pixels: { width: 1280, height: 720 } }, negativePrompt: 'people, text',
         gallery: false, extend: false, edit: false,
     });
     assert.equal(path, 'user/images/place.png');
-    assert.match(command, /^\/imagine\s/);
-    for (const option of ['quiet=true', 'gallery=false', 'extend=false', 'edit=false',
-        'width=1280', 'height=720', 'negative="people, text"']) {
-        assert.ok(command.includes(option), option);
-    }
-    assert.ok(command.endsWith('Stone bridge at dusk'));
+    assert.deepEqual(request, { prompt: 'Stone bridge at dusk', args: {
+        quiet: 'true', gallery: 'false', extend: 'false', edit: 'false',
+        width: '1280', height: '720', negative: 'people, text',
+    } });
 });
 
 

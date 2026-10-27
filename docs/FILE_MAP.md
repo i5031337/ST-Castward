@@ -426,10 +426,10 @@ This map covers tracked runtime files, tests and support files. Source files and
 | `src/ui/tracker/ui-tracker-settings.js` | Tracker settings entry point. |
 | `src/ui/tracker/ui-tracker-display-reading.js` | Display and extraction reader controls. |
 | `src/ui/tracker/ui-tracker-scan-review.js` | History scan and change review controls. |
-| `src/ui/tracker/ui-tracker-tools.js` | Context report and advanced tracker/dashboard popup controls. |
+| `src/ui/tracker/ui-tracker-tools.js` | Context report and HTML/CSS template editor control. |
 | `src/ui/tracker/ui-tracker-context.js` | Tracker context report. |
 | `src/ui/tracker/ui-tracker-history.js` | History-note field selection and current tracker placement. |
-| `src/ui/tracker/ui-tracker-popups.js` | Advanced tracker and dashboard popups. |
+| `src/ui/tracker/ui-tracker-popups.js` | HTML/CSS template editor popup. |
 | `src/ui/tracker/ui-read-button.js` | Manual latest-reply reading and safe replacement of an existing turn reading. |
 | `src/ui/tracker/ui-review-item-rule.js` | Review controls for persistent never-add and never-remove item rules. |
 | `src/ui/shared/ui-transfer.js` | Import/export dialogs. |

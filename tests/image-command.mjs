@@ -12,16 +12,17 @@ function fixture() {
     const calls = [], pending = [];
     const dependencies = { startActivity,
         applyMacros: value => value,
-        executeSlashCommandsWithOptions: (command, options) => {
-            calls.push({ command, options });
+        SlashCommandParser: { commands: { imagine: { callback: (args, prompt) => {
+            calls.push({ args, prompt });
             return new Promise((resolve, reject) => pending.push({ resolve, reject }));
-        },
+        } } } },
         getContext: () => context,
         debugLog() {}, recordUsage() {},
         DEFAULT_IMAGE_NEGATIVE_PROMPT: '',
     };
     const generate = new Function(...Object.keys(dependencies), `${source}\nreturn generateImage;`)(...Object.values(dependencies));
-    return { calls, pending, generate: prompt => generate(prompt, { shape: {} }),
+    return { calls, pending, generate: (prompt, options = {}) => generate(prompt, { shape: {}, ...options }),
+        commands: dependencies.SlashCommandParser.commands,
         changeChat: () => { context = { chatMetadata: {}, getCurrentChatId: () => 'chat-b' }; } };
 }
 const flush = () => new Promise(resolve => setImmediate(resolve));
@@ -67,4 +68,35 @@ test('queued images do not start in a different chat', async () => {
     await first;
     await canceled;
     assert.equal(f.calls.length, 1);
+});
+
+test('image prompts and negative prompts reach only the image handler as literal data', async () => {
+    const f = fixture();
+    const prompts = [
+        'A portrait | /echo SENTINEL',
+        'Mira "quoted" \\" | /echo SENTINEL\nSecond line',
+        '{: /echo SENTINEL :} {{pipe}} {{getvar::secret}}',
+        'quiet=false width=1 /echo SENTINEL',
+    ];
+    const negative = 'text "quote" | /echo NEGATIVE {: /echo CLOSURE :}\nwatermark';
+    for (const prompt of prompts) {
+        const index = f.calls.length;
+        const result = f.generate(prompt, { negativePrompt: negative, gallery: false,
+            extend: false, edit: false, shape: { pixels: { width: 1280, height: 720 } } });
+        await flush();
+        assert.equal(f.calls.length, index + 1);
+        assert.equal(f.calls[index].prompt, prompt);
+        assert.deepEqual(f.calls[index].args, { quiet: 'true', negative,
+            width: '1280', height: '720', gallery: 'false', extend: 'false', edit: 'false' });
+        f.pending[index].resolve('/literal.png');
+        assert.equal(await result, '/literal.png');
+    }
+});
+
+test('an unavailable host image handler fails without leaving activity behind', async () => {
+    const f = fixture();
+    delete f.commands.imagine;
+    await assert.rejects(f.generate('Portrait'), /Enable the SillyTavern Image Generation extension/);
+    assert.equal(f.calls.length, 0);
+    assert.deepEqual(getGenerationActivities(), []);
 });
