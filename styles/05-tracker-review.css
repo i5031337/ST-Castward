@@ -42,7 +42,6 @@
 .sillynpc-reader-row > strong { margin-right: 8px; }
 .sillynpc-reader-children { margin: 3px 0 6px 12px; padding-left: 10px; border-left: 1px solid var(--sillynpc-border); }
 .sillynpc-reader-raw { white-space: pre-wrap; overflow-wrap: anywhere; }
-.sillynpc-reader-retry { margin-top: 8px; }
 .sillynpc-reader-breakdown { width: 100%; margin: 8px 0; border-collapse: collapse; }
 .sillynpc-reader-breakdown th, .sillynpc-reader-breakdown td {
     text-align: left; vertical-align: top; padding: 4px 8px;
@@ -154,7 +153,8 @@
 
 .sillynpc-status-add-btn,
 .sillynpc-status-undo-btn,
-.sillynpc-status-settings-btn {
+.sillynpc-status-settings-btn,
+.sillynpc-status-refresh-btn {
     cursor: pointer !important;
     opacity: 0.5 !important;
     padding: 4px !important;
@@ -166,9 +166,21 @@
     transition: opacity 0.2s, color 0.2s !important;
 }
 
+.sillynpc-status-refresh-btn {
+    background: none;
+    border: 0;
+    margin: 0;
+}
+.sillynpc-status-refresh-btn:disabled {
+    cursor: default !important;
+    opacity: 0.25 !important;
+}
+.sillynpc-status-refresh-btn[hidden] { display: none !important; }
+
 .sillynpc-status-add-btn:hover,
 .sillynpc-status-undo-btn:hover,
-.sillynpc-status-settings-btn:hover {
+.sillynpc-status-settings-btn:hover,
+.sillynpc-status-refresh-btn:hover:not(:disabled) {
     opacity: 1 !important;
     /* Use the theme's readable accent rather than a raw SillyTavern variable, so the
        hover colour follows the selected Castward theme like everything else. */

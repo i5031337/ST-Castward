@@ -129,7 +129,7 @@ Sources:
 `src/ui/tracker/ui-tracker-display-reading.js`, `src/ui/tracker/ui-generation-activity.js`,
 and `src/core/usage.js`.
 
-## 5. Related settings and recovery actions need better discovery — Profiles implemented; chooser and refresh planned
+## 5. Related settings and recovery actions need better discovery — Profiles and refresh implemented; chooser planned
 
 The original claim of a large conceptual burden was too broad. Fantasy Adventure
 and automatic tracking are ready on a fresh install, other starter Systems provide
@@ -160,10 +160,11 @@ Agreed plan:
    Show short starter descriptions, preselect the current System, and offer automatic
    reuse of that choice for future chats. Existing chats do not prompt. Reuse saved
    Systems directly; choosing a starter creates an editable copy.
-3. **Tracker refresh action — planned.** Put a refresh icon beside the in-chat tracker
-   controls, independent of raw-output visibility. Its tooltip and accessible label
-   distinguish retrying a failed reading from regenerating the latest reading.
-   Disable it while the reading runs, and preserve the targeted retry when only
+3. **Tracker refresh action — implemented.** A refresh icon beside the in-chat tracker
+   controls replaces the button inside the output dropdown, independent of raw-output
+   visibility. Its tooltip and accessible label distinguish retrying a failed reading
+   from regenerating the latest reading. It is disabled while the reading runs,
+   including across redrawn controls, and preserves the targeted retry when only
    level-up rewards failed.
 
 These changes address discoverability while retaining customization. The findings
@@ -176,6 +177,13 @@ and editor behavior, memory controls/review, and generated System draft editing.
 chat/settings and make no model or image generation requests. Visual and DOM checks
 at 1280px and 390px confirm the Profiles panel and expanded memory controls fit without
 horizontal overflow. This is UI verification, not a usability study.
+
+Tracker refresh verification: all 932 Node tests pass, including action routing,
+duplicate-click prevention, stale controls and running/failure states. An unsaved
+running-host Chromium fixture confirmed placement beside the tracker controls,
+visibility with raw output hidden, accessible retry/reward labels, removal of the
+old dropdown action, disable/re-enable behavior and fit in a 360px container.
+No model requests or fixture saves were made.
 
 ## 6. File size limits do not remove architectural coupling — tracker update path addressed; broader coupling remains
 

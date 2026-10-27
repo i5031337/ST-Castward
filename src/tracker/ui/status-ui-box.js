@@ -14,6 +14,7 @@ import { buildStatusHtml } from './status-ui-template.js';
 import { showAddCharacterDropdown } from './status-ui-menu.js';
 import { attachInlineEditListeners } from './status-ui-edit.js';
 import { renderExtractionReport } from './status-ui-report.js';
+import { buildTrackerReadButton } from './status-ui-refresh.js';
 import { trackerMessageIndex } from './status-ui-placement.js';
 import { currentLocationTrail } from '../../locations/location-store.js';
 import { appendPlaceTrail } from './status-ui-place.js';
@@ -195,6 +196,12 @@ export function buildTrackerBox(state, {
     // Add header buttons inside the box
     const headerBtns = document.createElement('div');
     headerBtns.className = 'sillynpc-status-buttons-container';
+
+    const messageId = mesEl?.getAttribute('mesid') ?? trackerMessageIndex(getContext()?.chat || []);
+    headerBtns.appendChild(buildTrackerReadButton(Number(messageId), () => {
+        redrawStatusBoxes();
+        onRedraw?.();
+    }));
 
     // Undo is only offered when there is something to undo, so the button does not
     // sit there inert on a fresh chat.

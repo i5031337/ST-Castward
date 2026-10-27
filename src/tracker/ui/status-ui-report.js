@@ -2,8 +2,7 @@ import { applyThemeAppearance } from '../../core/theme-customization.js';
 import { getExtractionReport } from '../extractor/status-extraction-report.js';
 import { getSettings } from '../../core/settings.js';
 import { getContext } from '../../../../../../st-context.js';
-import { trackerMessageIndex } from './status-ui-placement.js';
-import { getSwipeBase } from '../status-logic.js';
+import { refreshTrackerReadButtons } from './status-ui-refresh.js';
 
 const labels = {
     why: 'Reasons given by the reader',
@@ -49,6 +48,7 @@ function appendValue(parent, key, value) {
 
 /** One message's reader status and complete model reply. Visible without console access. */
 export function renderExtractionReport(mesEl, messageId) {
+    refreshTrackerReadButtons();
     if (!mesEl) return;
     const previous = mesEl.querySelector('.sillynpc-reader-report');
     const wasOpen = previous?.querySelector('details')?.open;
@@ -123,37 +123,6 @@ export function renderExtractionReport(mesEl, messageId) {
         appendValue(content, 'Location reading', report.locationReading.raw ?? report.locationReading.output);
     }
     if (showOutput) details.appendChild(content);
-    if (Number(messageId) === trackerMessageIndex(getContext()?.chat || [])
-        && (report.status === 'failed' || getSwipeBase(messageId))) {
-        const retry = document.createElement('button');
-        retry.type = 'button';
-        retry.className = 'menu_button sillynpc-reader-retry';
-        const missingRewards = getContext()?.chat?.[Number(messageId)]?.extra?.sillynpc_level_reading?.failures?.length;
-        retry.textContent = missingRewards ? 'Retry missing level-up rewards'
-            : report.status === 'failed' ? 'Retry tracker reading' : 'Regenerate tracker reading';
-        retry.addEventListener('click', async () => {
-            const message = getContext()?.chat?.[Number(messageId)];
-            if (!message || Number(messageId) !== trackerMessageIndex(getContext()?.chat || [])) return;
-            retry.disabled = true;
-            const { extractStateFromMessage } = await import('../extractor/status-extractor-run.js');
-            try {
-                if (message.extra?.sillynpc_level_reading?.failures?.length) {
-                    const { retryLevelReading } = await import('../extractor/status-level-reading.js');
-                    const result = await retryLevelReading(messageId);
-                    if (result.applied) {
-                        message.extra.sillynpc_reader_report.summary = '0 applied · 0 awaiting review'
-                            + (result.failures ? ` · ${result.failures} choices still failed` : '');
-                        renderExtractionReport(mesEl, messageId);
-                    }
-                } else await extractStateFromMessage(message.mes, messageId, {
-                    manual: true, regenerate: Boolean(getSwipeBase(messageId)),
-                });
-            } finally {
-                retry.disabled = false;
-            }
-        });
-        details.appendChild(retry);
-    }
     panel.appendChild(details);
     // Keep diagnostics outside story text: the inline status parser reads .mes_text.
     const text = mesEl.querySelector('.mes_text');
