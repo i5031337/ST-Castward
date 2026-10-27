@@ -31,11 +31,7 @@ export function attachInlineEditListeners(container, { state: drawnState = null,
             const key = el.dataset.key;
             const newValue = el.innerText.trim();
 
-            /* Nothing typed, nothing written. This used to write on every blur, so merely
-               clicking a value and clicking away ran a whole update: it aged every tombstone
-               by one - and those expire after three, which is the guard that stops the model
-               re-adding an item you just deleted by hand - and filed an undo entry labelled
-               "AI update" for something the reader did. */
+            // Unchanged values should not create an update or an undo entry.
             if (newValue === String(el.dataset.initial ?? '')) return;
             el.dataset.initial = newValue;
 

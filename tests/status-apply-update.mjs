@@ -21,7 +21,7 @@ function fixture({ openChat = true } = {}) {
         characters: [
             { id: 'mira', name: 'Mira', stats: { HP: '4' }, collections: { items: [{ name: 'ring' }] } },
             { name: 'Jon', stats: { HP: '3' }, collections: {} },
-        ], recently_deleted: { items: { lost: 1, retained: 2 } } };
+        ] };
     const metadata = { state: initial };
     const calls = { saved: [], emitted: [], settings: 0 };
     const deps = { committedState: initial, committedChatId: 'test-chat',
@@ -57,11 +57,26 @@ test('committed update changes state and card, then saves once', () => {
     assert.deepEqual(state.characters[0].collections.items, [{ name: 'key' }]);
     assert.equal(card.statusOverrides.HP, '8');
     assert.deepEqual(card.statusCollections.items, [{ name: 'key' }]);
-    assert.deepEqual(state.recently_deleted, { items: { retained: 1 } });
     assert.equal(initial.global.Scene, 'old');
     assert.equal(calls.settings, 1);
     assert.equal(calls.saved.length, 1);
     assert.equal(calls.emitted.length, 1);
+});
+
+test('old saved deletion markers cannot block player or NPC acquisitions in previews or committed readings', () => {
+    for (const dryRun of [true, false]) {
+        const { deps, initial } = fixture();
+        initial.recently_deleted = { items: { sword: 3 } };
+        initial.player.collections.items = [];
+        const update = {
+            player: { collections: { items: { add: [{ name: 'Sword' }] } } },
+            characters: [{ name: 'Mira', collections: { items: { replace: [{ name: 'Sword' }] } } }],
+        };
+        const state = deps.applyUpdate(update, { dryRun });
+        assert.deepEqual(state.player.collections.items, [{ name: 'Sword' }]);
+        assert.deepEqual(state.characters[0].collections.items, [{ name: 'Sword' }]);
+        assert.deepEqual(initial.player.collections.items, []);
+    }
 });
 
 test('dry run previews character changes without mutating card or committing', () => {

@@ -134,9 +134,9 @@ function loadStateFromMetadata({ preferCache = false } = {}) {
         });
     }
 
-    // Ensure recently_deleted exists
-    if (!stateToReturn.recently_deleted) {
-        stateToReturn.recently_deleted = {};
+    // Retire obsolete item suppression from saved chats.
+    if (Object.hasOwn(stateToReturn, 'recently_deleted')) {
+        delete stateToReturn.recently_deleted;
         stateChanged = true;
     }
 

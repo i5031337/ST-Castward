@@ -18,7 +18,7 @@ function fixture(overrides = {}) {
             fields: [{ name: 'title', type: 'text', isPrimary: true, isStatic: true },
                 { name: 'qty', type: 'number', defaultValue: '1' },
                 { name: 'condition', type: 'text', options: ['New', 'Used'], defaultValue: 'New' }] }] },
-        tombstones: {}, itemLibrary: {}, ...overrides,
+        itemLibrary: {}, ...overrides,
     };
 }
 
@@ -76,22 +76,21 @@ test('calculation uses explicit scope and System instead of actor name or active
     }
 });
 
-test('tombstone effects are returned explicitly and automatic updates cannot re-add protected items', () => {
-    const base = freeze(fixture({ actor: { name: 'Player', collections: {} },
-        tombstones: { inventory: { potion: 1 } }, update: { add: [{ title: 'Potion', qty: 1 }] } }));
-    const automatic = calculateCollectionUpdate(base);
-    assert.deepEqual(automatic.collections.inventory, []);
-    assert.deepEqual(automatic.tombstones, base.tombstones);
-    const manual = calculateCollectionUpdate({ ...base, operation: 'add', update: { title: 'Potion', qty: 1 } });
-    assert.deepEqual(manual.collections.inventory, [{ title: 'Potion', qty: 1, condition: 'New' }]);
-    assert.equal(manual.tombstones.inventory.potion, undefined);
-    assert.equal(base.tombstones.inventory.potion, 1);
-    const removed = calculateCollectionUpdate({ ...base, actor: { name: 'Player', collections: manual.collections },
-        operation: 'remove', update: 'Potion', isManual: true });
-    assert.deepEqual(removed.collections.inventory, []);
-    assert.equal(removed.tombstones.inventory.potion, 3);
+test('removed items can be acquired again by their former holder or another actor', () => {
+    for (const scope of ['player', 'npc']) {
+        const base = freeze(fixture({ scope }));
+        const removed = calculateCollectionUpdate({ ...base, operation: 'remove', update: 'Potion' });
+        assert.deepEqual(removed.collections.inventory, []);
+        for (const update of [{ add: [{ title: 'Potion', qty: 1 }] }, { replace: [{ title: 'Potion', qty: 1 }] }]) {
+            for (const name of ['Player', 'Mira']) {
+                const reacquired = calculateCollectionUpdate({ ...base,
+                    actor: { name, collections: removed.collections }, update });
+                assert.deepEqual(reacquired.collections.inventory, [{ title: 'Potion', qty: 1, condition: 'New' }]);
+            }
+        }
+        assert.equal(base.actor.collections.inventory.length, 1);
+    }
 });
-
 
 test('field refusals belong to the returned calculation and cannot leak into another proposal', () => {
     const input = freeze(fixture({ update: { update: [{ title: 'Potion', condition: 'Broken' }] } }));

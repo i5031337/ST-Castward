@@ -102,10 +102,6 @@ export function calculateSchemaOperation({ tracker, system, state, personaData =
         for (const persona of Object.values(personaData)) moveCollection(persona?.collections);
         for (const card of cards) moveCollection(card?.statusCollections);
         for (const actor of actors) moveCollection(actor.collections, true);
-        if (nextState?.recently_deleted?.[oldName] !== undefined) {
-            nextState.recently_deleted[newName] = nextState.recently_deleted[oldName];
-            delete nextState.recently_deleted[oldName];
-        }
     } else if (['library-update', 'library-rename', 'library-delete'].includes(type)) {
         const definition = (tracker.collections || []).find(col => col.id === collectionId);
         if (!definition) return null;

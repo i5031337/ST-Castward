@@ -1,4 +1,4 @@
-import { buildItemRow, buildRuleSection, buildTombstoneSection } from './ui-item-library-sections.js';
+import { buildItemRow, buildRuleSection } from './ui-item-library-sections.js';
 import { POPUP_TYPE, Popup } from '../../../../../../popup.js';
 import { isStaticField } from '../../core/constants.js';
 import { getSettings, saveSettings } from '../../core/settings.js';
@@ -16,10 +16,6 @@ import { DISMISSED_KEY, PROTECTED_KEY } from '../../tracker/status-review.js';
  * nothing could display it, which meant near-duplicates ("The Eldritch Bloodline
  * Curse", "... (Innate)", "... (Harmonized)") accumulated invisibly and could not be
  * merged or removed.
- *
- * Also surfaces tombstones: state.recently_deleted suppresses a dropped item for a few
- * messages so the model cannot immediately re-add it, which is otherwise indistinguishable
- * from the item simply failing to come back.
  */
 
 /** Fields the Master Database actually stores. Shares its rule with updateMasterItem. */
@@ -307,12 +303,11 @@ export function render(root, filter = '') {
         root.appendChild(empty);
     }
 
-    root.appendChild(buildTombstoneSection(root, search));
     root.appendChild(buildRuleSection(root, search, DISMISSED_KEY, {
         title: 'Never Suggest Adding',
-        note: 'Entries you have told the tracker to stop proposing. Unlike the suppressed '
-            + 'entries above, these never expire, so a scan of the whole history will not '
-            + 'raise them again. Clear one to make it findable once more.',
+        note: 'Entries you have told the tracker to stop proposing. These decisions never '
+            + 'expire, so a scan of the whole history will not raise them again. '
+            + 'Clear one to allow it to be proposed again.',
         undo: 'Allow this entry to be proposed again',
     }));
     root.appendChild(buildRuleSection(root, search, PROTECTED_KEY, {

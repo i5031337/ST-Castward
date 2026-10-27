@@ -76,7 +76,7 @@ This map covers tracked runtime files, tests and support files. Source files and
 | `tests/collection-quantity.mjs` | Quantity arithmetic, consumption, transfers, migration, and reader contracts. |
 | `tests/collection-quantity-generation.mjs` | Generate and validate built-in quantity configuration. |
 | `tests/ui-collection-quantity.py` | Unsaved Firefox fixtures for quantity controls and stack arithmetic. |
-| `tests/collection-preview-purity.mjs` | Verify that previews never create library entries or mutate tombstones. |
+| `tests/collection-preview-purity.mjs` | Verify that collection previews never mutate stored Item Library data. |
 | `tests/ui-pool-readings.py` | Individual NPC pool/Level initialization, updates over plain saved values, live capacity, and tracker rendering. |
 | `tests/ui-progression-smoke.py` | Unsaved live Firefox fixtures for rewards, review dependencies, and Player/NPC progression controls. |
 | `tests/collection-rewards.mjs` | Reward field validation, schedules, intervals, targets, duplicate prevention, and rename stability. |
@@ -114,8 +114,8 @@ This map covers tracked runtime files, tests and support files. Source files and
 | `tests/status-dependencies.mjs` | Shared status dependency provider contract test, including independently imported helpers. |
 | `tests/status-update-parser.mjs` | Inline update extraction and grouped stat fragments through ordinary imports. |
 | `tests/stat-utilities.mjs` | Stat name precedence, allowed values, and constraint diagnostic isolation. |
-| `tests/collection-calculation.mjs` | Immutable collection calculations, explicit ownership, planned library changes, and manual/automatic tombstone rules. |
-| `tests/fixtures/collection-updates-bind.mjs` | Load the collection host wrapper with isolated storage and production calculation imports. |
+| `tests/collection-calculation.mjs` | Immutable collection calculations, explicit ownership, planned library changes, removal, and reacquisition. |
+| `tests/fixtures/collection-updates-bind.mjs` | Adapt pure collection calculations to isolated test holders and Item Library storage. |
 | `tests/ui-chat-boundaries.mjs` | Chat-switch confirmation guards and bulk deletion selection snapshots. |
 | `tests/world-character-export.mjs` | Inactive System export rules and reusable/chat NPC inclusion. |
 | `tests/ui-maintenance.mjs` | Lore generation and character editor routing tests. |
@@ -223,8 +223,7 @@ This map covers tracked runtime files, tests and support files. Source files and
 | `src/tracker/status-cast-decisions.js` | Record player, excluded, and character cast decisions. |
 | `src/tracker/status-character-match.js` | Resolve card names and aliases without depending on tracker storage. |
 | `src/tracker/status-scene-presence.js` | Reconcile scene presence and active characters using pure actor initialization. |
-| `src/tracker/collection-calculation.js` | Calculate collections, tombstones, and proposed Item Library additions from explicit inputs. |
-| `src/tracker/status-collection-updates.js` | Capture live collection inputs and apply calculated results through existing tracker APIs. |
+| `src/tracker/collection-calculation.js` | Calculate collections and proposed Item Library additions from explicit inputs. |
 | `src/tracker/npc-collections.js` | Copy current NPC collections onto character cards so belongings survive scene departure. |
 | `src/tracker/status-collection-schema.js` | Item Library operations, collection-ID renames, and card override synchronization. |
 | `src/tracker/schema-operation-calculation.js` | Calculate schema/library writes and stored-value migrations from supplied data. |
@@ -360,7 +359,7 @@ This map covers tracked runtime files, tests and support files. Source files and
 | `src/ui/hud/ui-hud-meters.js` | HUD bars, pips, and rings. |
 | `src/ui/hud/ui-hud-settings.js` | HUD configuration view. |
 | `src/ui/collections/ui-item-library.js` | Master item library. |
-| `src/ui/collections/ui-item-library-sections.js` | Item rows, rules, and tombstone sections. |
+| `src/ui/collections/ui-item-library-sections.js` | Item rows and explicit review-decision sections. |
 | `src/ui/story/ui-lorebook-section.js` | Lorebook settings and controls. |
 | `src/ui/characters/ui-character-memory-section.js` | Shared memory controls with actor-specific storage. |
 | `src/ui/characters/ui-player-sheet.js` | Route the active persona into the shared Cast view and expose the HUD/avatar open action. |

@@ -1,7 +1,6 @@
 import { Popup } from '../../../../../../popup.js';
-import { eventSource } from '../../../../../../events.js';
 import { buildBulkCheckbox } from '../shared/ui-bulk-select.js';
-import { loadStateFromMetadata, saveStateToMetadata, updateMasterItem, renameMasterItem, deleteMasterItem } from '../../tracker/status-logic.js';
+import { loadStateFromMetadata, updateMasterItem, renameMasterItem, deleteMasterItem } from '../../tracker/status-logic.js';
 import { getItemRules, clearItemRule, PLAYER_ACTOR } from '../../tracker/status-review.js';
 import { render, itemId, libraryBulk } from './ui-item-library.js';
 
@@ -92,16 +91,7 @@ export function buildItemRow({ root, search, master, colDef, fields, primary, ke
     return card;
 }
 
-/**
- * One of the two standing-decision lists, and the way back out of it.
- *
- * Distinct from the tombstones above, which expire on their own after a few messages.
- * These do not expire - that is the point of them, since a scan reads hundreds of
- * messages and would otherwise re-propose something settled long ago. Which makes them
- * exactly the sort of list that has to be visible and reversible: while one list served
- * both directions, ticking the box on a removal recorded the opposite of what it read
- * as, and items people still owned quietly stopped being proposable.
- */
+/** Display explicit item review decisions and let the user reverse them. */
 export function buildRuleSection(root, search, key, { title, note: noteText, undo }) {
     const section = document.createElement('div');
     section.style.marginTop = '20px';
@@ -159,74 +149,6 @@ export function buildRuleSection(root, search, key, { title, note: noteText, und
         });
 
         row.append(label, clear);
-        section.appendChild(row);
-    }
-
-    return section;
-}
-
-export function buildTombstoneSection(root, search) {
-    const section = document.createElement('div');
-    section.style.marginTop = '25px';
-
-    let state = null;
-    try { state = loadStateFromMetadata(); } catch { /* no chat */ }
-    const tombstones = state?.recently_deleted || {};
-    const entries = Object.entries(tombstones)
-        .flatMap(([colId, items]) => Object.entries(items || {}).map(([name, ttl]) => ({ colId, name, ttl })));
-
-    const heading = document.createElement('h3');
-    heading.className = 'sillynpc-section-title';
-    heading.textContent = `Suppressed Entries (${entries.length})`;
-    section.appendChild(heading);
-
-    const note = document.createElement('small');
-    note.className = 'notes';
-    note.style.display = 'block';
-    note.style.marginBottom = '10px';
-    note.textContent = 'Entries you dropped recently. The AI is prevented from re-adding them for '
-        + 'a few messages, so they do not reappear the moment you discard them.';
-    section.appendChild(note);
-
-    if (entries.length === 0) {
-        const none = document.createElement('p');
-        none.className = 'notes';
-        none.style.opacity = '0.6';
-        none.textContent = 'Nothing is currently suppressed.';
-        section.appendChild(none);
-        return section;
-    }
-
-    for (const { colId, name, ttl } of entries) {
-        const row = document.createElement('div');
-        row.className = 'sillynpc-setting-row';
-        row.style.cssText = 'margin:4px 0; gap:10px;';
-
-        const label = document.createElement('span');
-        label.style.flex = '1';
-        label.textContent = `${name}  (${colId})`;
-
-        const remaining = document.createElement('small');
-        remaining.style.opacity = '0.7';
-        remaining.textContent = `${ttl} message${ttl === 1 ? '' : 's'} left`;
-
-        const clear = document.createElement('button');
-        clear.type = 'button';
-        clear.className = 'menu_button';
-        clear.innerHTML = '<i class="fa-solid fa-xmark"></i>';
-        clear.title = 'Allow this entry to come back immediately';
-        clear.addEventListener('click', () => {
-            const live = loadStateFromMetadata();
-            if (live?.recently_deleted?.[colId]) {
-                delete live.recently_deleted[colId][name];
-                if (Object.keys(live.recently_deleted[colId]).length === 0) delete live.recently_deleted[colId];
-                saveStateToMetadata(live, { label: 'Tombstone cleared' });
-                eventSource.emit('sillynpc-status-updated', live);
-            }
-            render(root, search.value);
-        });
-
-        row.append(label, remaining, clear);
         section.appendChild(row);
     }
 

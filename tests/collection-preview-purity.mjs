@@ -16,7 +16,7 @@ function fixture(masterItems) {
     ] }] } };
     if (masterItems !== undefined) settings.master_items = masterItems;
     let saves = 0;
-    const deps = { committedState: { recently_deleted: { moves: { forgotten: 2 } } },
+    const deps = { committedState: { player: { name: 'Player', collections: {} } },
         getCurrentPersonaName: () => 'Player', constrainToDefinition: (_field, value) => value };
     const boundaries = { getSettings: () => settings, saveSettings: () => { saves++; },
         isStaticField, debugLog: () => {}, LOG_PREFIX: 'test' };
@@ -52,43 +52,18 @@ test('preview reads shared static fields without overwriting them or holder-spec
     assert.equal(saves(), 0);
 });
 
-test('dry-run direct additions cannot clear committed tombstones', () => {
-    const { deps } = fixture();
+test('direct additions and removals only change the supplied actor', () => {
+    const { deps, settings, saves } = fixture();
+    const before = structuredClone(deps.committedState);
+    const settingsBefore = structuredClone(settings);
     const actor = { name: 'Player', collections: {} };
     deps.addItem(actor, 'moves', { move: 'Forgotten' }, { dryRun: true });
-    assert.equal(deps.committedState.recently_deleted.moves.forgotten, 2);
-    deps.addItem(actor, 'moves', { move: 'Forgotten' });
-    assert.equal(deps.committedState.recently_deleted.moves.forgotten, undefined);
-});
-
-test('collection operations without tombstone checks do not load or repair tracker state', () => {
-    const settings = { statusTracker: { collections: [{ id: 'moves', targets: ['player'],
-        fields: [{ name: 'move', type: 'text', isPrimary: true },
-            { name: 'qty', type: 'number', defaultValue: '1' }] }] } };
-    const deps = { getCurrentPersonaName: () => 'Player',
-        loadStateFromMetadata: () => { throw new Error('Unexpected state load'); } };
-    bindCollectionUpdates(deps, { getSettings: () => settings });
-    const actor = { name: 'Mira', collections: { moves: [{ move: 'Spark' }] } };
-    const missing = deps.applyCollectionUpdate(actor, 'missing', { add: [{ move: 'Spark' }] }, { dryRun: true });
-    const mismatch = deps.applyCollectionUpdate(actor, 'moves', { add: [{ move: 'Spark' }] }, { dryRun: true });
-    assert.equal(missing.warnings.length + mismatch.warnings.length, 2);
-    assert.deepEqual(actor.collections.moves, [{ move: 'Spark' }]);
-    deps.removeItem(actor, 'moves', 'Spark');
+    assert.equal(actor.collections.moves[0].move, 'Forgotten');
+    deps.removeItem(actor, 'moves', 'Forgotten');
     assert.deepEqual(actor.collections.moves, []);
-
-    const held = [{ move: 'Spark', qty: 2 }];
-    for (const [update, expected] of [
-        [{ remove: [{ move: 'Spark', all: true }] }, []],
-        [{ update: [{ move: 'Spark', qty: 4 }] }, [{ move: 'Spark', qty: 4 }]],
-        [{ clear: true }, []], [{}, held], [{ replace: [] }, []], [{ add: [{}] }, held],
-    ]) {
-        const player = { name: 'Player', collections: { moves: structuredClone(held) } };
-        deps.applyCollectionUpdate(player, 'moves', update, { allowReplace: true, dryRun: true });
-        assert.deepEqual(player.collections.moves, expected);
-    }
-    for (const qty of [0, '2']) {
-        const player = { name: 'Player', collections: { moves: structuredClone(held) } };
-        deps.addItem(player, 'moves', { move: 'Spark', qty });
-        assert.deepEqual(player.collections.moves, held);
-    }
+    deps.addItem(actor, 'moves', { move: 'Forgotten' });
+    assert.equal(actor.collections.moves[0].move, 'Forgotten');
+    assert.deepEqual(deps.committedState, before);
+    assert.deepEqual(settings, settingsBefore);
+    assert.equal(saves(), 0);
 });

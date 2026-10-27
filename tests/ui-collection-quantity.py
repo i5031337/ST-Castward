@@ -33,26 +33,20 @@ with browser_session() as browser:
                     throw Error('Disable quantity');
                 check.click();
                 if (!col.trackQuantity || collectionQuantityField(col)?.defaultValue !== '1') throw Error('Enable quantity');
-                const runtimeUrl = root + 'src/tracker/status-collection-updates.js';
-                let source = await (await fetch(runtimeUrl)).text();
-                source = source.replace(/import [{] getSettings [}] from '[^']+';/, 'const getSettings = () => fixtureSettings;');
-                source = 'let fixtureSettings; export function installFixture(value) { fixtureSettings = value; }\\n' + source;
-                source = source.replace(/from '([^']+)'/g, (match, path) => "from '" + new URL(path, runtimeUrl).href + "'");
-                const url = URL.createObjectURL(new Blob([source], { type: 'text/javascript' }));
-                try {
-                    const { bind, installFixture } = await import(url);
-                    installFixture(settings);
-                    const deps = { committedState: {}, getCurrentPersonaName: () => 'Player' };
-                    bind(deps);
-                    const actor = { name: 'Player', collections: {} };
-                    deps.applyCollectionUpdate(actor, 'inventory', { add: [{ name: 'Potion', quantity: 2 }] }, { dryRun: true });
-                    deps.applyCollectionUpdate(actor, 'inventory', { add: [{ name: 'Potion', quantity: 2 }] }, { dryRun: true });
-                    deps.applyCollectionUpdate(actor, 'inventory', { remove: [{ name: 'Potion', quantity: 1 }] }, { dryRun: true });
-                    if (actor.collections.inventory[0]?.quantity !== 3) throw Error('Stack arithmetic');
-                    deps.applyCollectionUpdate(actor, 'inventory', { remove: [{ name: 'Potion', all: true }] }, { dryRun: true });
-                    if (actor.collections.inventory.length) throw Error('Whole stack');
-                    result = { option: true, reservedField: true, toggle: true, arithmetic: true, wholeStack: true, fixtureSaves: saves };
-                } finally { URL.revokeObjectURL(url); }
+                const { calculateCollectionUpdate } = await import(root + 'src/tracker/collection-calculation.js');
+                const actor = { name: 'Player', collections: {} };
+                const apply = update => {
+                    const calculated = calculateCollectionUpdate({ actor, collectionId: 'inventory', update,
+                        tracker: settings.statusTracker, scope: 'player', preview: true });
+                    actor.collections = calculated.collections;
+                };
+                apply({ add: [{ name: 'Potion', quantity: 2 }] });
+                apply({ add: [{ name: 'Potion', quantity: 2 }] });
+                apply({ remove: [{ name: 'Potion', quantity: 1 }] });
+                if (actor.collections.inventory[0]?.quantity !== 3) throw Error('Stack arithmetic');
+                apply({ remove: [{ name: 'Potion', all: true }] });
+                if (actor.collections.inventory.length) throw Error('Whole stack');
+                result = { option: true, reservedField: true, toggle: true, arithmetic: true, wholeStack: true, fixtureSaves: saves };
             } catch (error) { result = { error: error.stack || String(error) }; }
             finally { host.remove(); document.documentElement.setAttribute('data-quantity-check', JSON.stringify(result)); }
         `;

@@ -21,7 +21,6 @@ export async function collectionEditorFixture(root, { settings, state, cards = [
                 const updated = next.characters?.find(entry => entry.name === actor.name);
                 if (updated) Object.assign(actor, updated);
             }
-            state.recently_deleted = next.recently_deleted;
             metadata.sillynpc_status_state = state;
             writes++;
             return true;
@@ -45,7 +44,7 @@ export async function runCollectionEditorFixture(root) {
         { name: 'name', type: 'text', isPrimary: true }, { name: 'quantity', type: 'number' },
     ] }] } };
     const actor = { name: 'Fixture', isPlayer: true, collections: { items: [{ name: 'Sword', quantity: 1 }] } };
-    const state = { player: actor, characters: [], recently_deleted: {} };
+    const state = { player: actor, characters: [] };
     const fixture = await collectionEditorFixture(root, { settings, state });
     const { constrainNumericStat } = await import(root + 'src/tracker/numeric-stat-bounds.js');
     let confirm;
@@ -74,7 +73,7 @@ export async function runCollectionEditorFixture(root) {
         fixture.chat('collection-fixture');
         draw(); host.querySelector('.drop-item').click(); confirm(true);
         await new Promise(resolve => setTimeout(resolve, 0));
-        result.acceptedRemoval = actor.collections.items.length === 0 && state.recently_deleted.items.blade === 3;
+        result.acceptedRemoval = actor.collections.items.length === 0;
         host.querySelector('.sillynpc-add-item').click();
         result.acceptedAddition = actor.collections.items[0]?.name === 'New Item';
         return result;

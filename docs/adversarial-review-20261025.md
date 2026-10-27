@@ -283,36 +283,42 @@ fixtures pass in headless Chromium. Browser fixtures use isolated stores and moc
 saves without model requests. This cleanup does not change suppression policy, review decisions or
 historical recovery limits.
 
-## 7. Manual item removal silently blocks later additions — open
+## 7. Manual item removal silently blocks later additions — resolved by removal
 
-Manual item removal creates a temporary `recently_deleted` marker (a tombstone).
-Automatic additions and replacement lists skip matching items while it remains.
-The counter starts at three and ages with committed tracker updates, rather than
-elapsed time or necessarily three chat messages. Explicitly adding the item back
-clears the marker. Matching uses the collection ID and case-insensitive item identifier,
-without an owner: removing a player's Sword can also block an automatic addition of
-a Sword to an NPC in the same collection.
+Manual item removal previously created a temporary `recently_deleted` marker.
+Automatic additions and replacement lists skipped matching names across all actors
+in the collection. Its three-update expiry counted tracker commits, so it could
+silently suppress legitimate reacquisition or transfers. The behavior was inherited
+from upstream's initial commit `490349e` and version 0.6.0 (`5698f91`).
 
-This behavior is inherited from upstream's initial commit `490349e` and is also
-present in version 0.6.0 (`5698f91`). Its apparent purpose is to prevent the reader
-from restoring manually deleted items from recent story context, but it can also
-suppress legitimate reacquisition or transfers. The user was unaware of the behavior
-and questioned whether it should remain. This is a source-inspection finding and
-an open product decision, not a reproduced campaign failure.
+Decision: remove temporary item suppression. Manual removal now only removes the
+actor's item; later readings may add it again for any actor. Marker creation,
+filtering, expiry, schema migration and the Item Library's Suppressed Entries section
+are removed. Saved chats discard obsolete markers on load. Explicit, reversible
+“never propose” and “protect from removal” review decisions retain their separate
+purpose and behavior.
 
-Revisit whether to remove the suppression or make it explicit and owner-specific,
-and whether any expiry should follow story turns rather than tracker operations.
-Keep this decision separate from the dependency refactor; no behavior change is
-authorized by recording this concern.
+The unused `status-collection-updates.js` facade and its public add/remove exports
+are also removed. The editor and reader already use the collection calculations;
+collection tests now exercise those calculations directly.
 
-Sources: `src/tracker/status-collection-updates.js` and the tombstone-aging logic in
-`src/tracker/status-apply-update.js`.
+Verification: all 956 Node tests pass, including removal/reacquisition, cross-actor
+additions, previews, and obsolete saved markers. An unsaved running-host Chromium
+fixture verified collection edits, delayed-edit/confirmation guards, removal and
+addition, plus removal of the suppression section while explicit review decisions
+remain visible. No model requests or fixture saves were made.
+
+A separate audit finding remains: replacement lists containing repeated item names
+can preview different static fields from the accepted result, because pure
+calculations still treat their working Item Library differently during previews.
+For two Sword rows with descriptions A/B, the preview retains A/B while acceptance
+uses A/A. This is unrelated to suppression and remains a focused follow-up.
 
 ## Follow-up review: 2026-10-27
 
 Independent source checks and isolated reproductions found four omissions. These
 are separate from the accepted historical-recovery limitation in item #3 and the
-open suppression policy in item #7. The pre-fix suite passed all 945 Node tests.
+removed suppression policy in item #7. The pre-fix suite passed all 945 Node tests.
 
 ### 8. Image prompts can inject host commands — fixed
 

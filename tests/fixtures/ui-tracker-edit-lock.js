@@ -28,7 +28,7 @@ try {
     const settings = { enabled: true, activeSystem: 'fixture', statusTracker: { playerStats: stats, npcStats: stats,
         collections: [{ id: 'items', fields: [{ name: 'name', isPrimary: true, type: 'text' }] }] } };
     const actor = { isPlayer: true, name: 'Player', stats: { HP: '95', Mood: 'Calm' }, collections: { items: [{ name: 'Sword' }] } };
-    const state = { player: actor, characters: [], recently_deleted: {} };
+    const state = { player: actor, characters: [] };
     const npc = { name: 'NPC', statusOverrides: { HP: '70', Mood: 'Calm' } };
     const context = { chatMetadata: {}, getCurrentChatId: () => 'fixture' };
     const updates = [];

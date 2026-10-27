@@ -97,7 +97,7 @@ with browser_session() as browser:
             characters: [
               { id: 'fixture-enabled', name: 'Fixture Enabled NPC', npcTemplateId: 'levels-enabled', stats: { ...readings }, collections: {} },
               { id: 'fixture-disabled', name: 'Fixture Disabled NPC', npcTemplateId: 'levels-disabled', stats: { ...readings }, collections: {} }
-            ], recently_deleted: {} };
+            ] };
           for (const key of Object.keys(live)) delete live[key]; Object.assign(live, fixture);
           const parsed = { player: { stats: { Experience: '110/100' } }, characters: [
             { name: 'Fixture Enabled NPC', stats: { Experience: '110/100' } },

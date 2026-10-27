@@ -3,7 +3,7 @@ import { isStaticField } from '../core/constants.js';
 
 /** Calculate an authoritative sheet edit and its related library changes. */
 export function calculateCollectionEdit({ actor, collectionId, operation, item, index, fieldName, value,
-    tracker, system, scope, tombstones, itemLibrary = {} }) {
+    tracker, system, scope, itemLibrary = {} }) {
     const definition = tracker.collections?.find(collection => collection.id === collectionId);
     if (!definition) return null;
     const primary = definition.fields.find(field => field.isPrimary)?.name || 'name';
@@ -27,18 +27,17 @@ export function calculateCollectionEdit({ actor, collectionId, operation, item, 
                 .filter(field => isStaticField(field) && edited[field.name] !== undefined)
                 .map(field => [field.name, structuredClone(edited[field.name])]));
         }
-        return { collections, tombstones: structuredClone(tombstones), library,
+        return { collections, library,
             libraryChanged };
     }
-    const result = calculateCollectionUpdate({ actor, collectionId, tracker, system, scope, tombstones,
-        itemLibrary, operation, update: operation === 'add' ? item : current[primary],
-        isManual: scope !== 'offstage' });
+    const result = calculateCollectionUpdate({ actor, collectionId, tracker, system, scope,
+        itemLibrary, operation, update: operation === 'add' ? item : current[primary] });
     const library = structuredClone(itemLibrary);
     for (const change of result.libraryChanges) {
         library[change.collectionId] ||= {};
         library[change.collectionId][String(change.itemName).toLowerCase()] = change.fields;
     }
-    return { collections: result.collections, tombstones: result.tombstones,
+    return { collections: result.collections,
         library, libraryChanged: result.libraryChanges.length > 0 };
 }
 
@@ -58,7 +57,6 @@ export function commitCollectionEdit({ plan, state, actor, card, settings, isCur
     const target = actor === state.player ? next.player : next.characters[state.characters.indexOf(actor)];
     if (!target) return false;
     target.collections = plan.collections;
-    if (plan.tombstones) next.recently_deleted = plan.tombstones;
     if (saveState(next, { label, isCurrent, beforeCommit: install }) !== true) return false;
     if (card || plan.libraryChanged) saveSettings();
     emit(next);

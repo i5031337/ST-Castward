@@ -1,3 +1,4 @@
+import { bindCollectionUpdates } from './collection-updates-bind.mjs';
 import { bindStatusModule } from '../helpers/status-module.mjs';
 import * as statValueUtils from '../../src/tracker/stat-value-utils.js';
 import { groupIncomingStats } from '../../src/tracker/status-update-parser.js';
@@ -77,7 +78,7 @@ export async function harness(systemId, state, { chat = [] } = {}) {
     bind('status-update-constraints');
     deps.groupIncomingStats = groupIncomingStats;
     Object.assign(deps, { committedState: {}, getCurrentPersonaName: () => 'Alex', getMergedItem: (_id, item) => item });
-    bind('status-collection-updates');
+    bindCollectionUpdates(deps, host);
     Object.assign(deps, {
         resolveCanonicalName: name => name,
         mayJoinScene: () => true,

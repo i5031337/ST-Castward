@@ -32,7 +32,7 @@ function fixture(overrides = {}) {
         stats: { HP: '8/10', Experience: '95/100', Rank: '3' }, collections: { items: [] } };
     return { state: { global: { Weather: 'Clear' }, player: { name: 'Alex',
         stats: { HP: '5/10', Experience: '90/100', Rank: '2' }, collections: { items: [] } },
-        characters: [actor], recently_deleted: { items: { lost: 1, retained: 2 } } },
+        characters: [actor] },
     tracker, system, cards: [{ id: 'mira', name: 'Mira', npcTemplateId: 'fighter',
         statusOverrides: structuredClone(actor.stats), statusCollections: { items: [] } }],
     itemLibrary: {}, actorDecisions: [{ name: 'Mira', canonicalName: 'Mira', allowed: true }],
@@ -48,7 +48,6 @@ test('full calculation returns state and card/library plans without changing fro
     assert.equal(result.nextState.player.stats.HP, '4/10');
     assert.deepEqual(result.nextState.characters[0].stats, { HP: '7/10', Experience: '10/100', Rank: '4' });
     assert.deepEqual(result.nextState.characters[0].collections.items, [{ name: 'Key', description: 'Brass', quantity: 1 }]);
-    assert.deepEqual(result.nextState.recently_deleted, { items: { retained: 1 } });
     assert.equal(result.nextState.timestamp, 123);
     assert.equal(result.cardChanges[0].fields.statusOverrides.HP, '7/10');
     assert.deepEqual(result.libraryChanges, [{ collectionId: 'items', itemName: 'Key', fields: { name: 'Key', description: 'Brass' } }]);

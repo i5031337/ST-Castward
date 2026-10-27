@@ -18,7 +18,7 @@ export async function runSchemaOperationFixture(root) {
     const cards = [{ name: 'Mira', statusOverrides: { HP: '4' }, statusCollections: { gear: [{ name: 'Wand', kind: 'wood' }] } }];
     const host = { getCurrentChatId: () => 'fixture', chatMetadata: { sillynpc_system: 'story', sillynpc_status_state: {
         global: {}, player: { name: 'Hero', personaKey: 'hero', stats: { HP: '6' }, collections: { gear: [{ name: 'Wand', kind: 'wood' }] } },
-        characters: [], recently_deleted: {},
+        characters: [],
     } } };
     let accepted = true;
     let saves = 0;

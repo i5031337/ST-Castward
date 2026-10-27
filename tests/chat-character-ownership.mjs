@@ -102,7 +102,8 @@ test('fresh chat and persona values start at System defaults, without old global
 });
 
 test('storage loads legacy tracker player from master, but fresh chats use defaults', () => {
-    const metadata = { sillynpc_status_state: { global: {}, characters: [] } };
+    const metadata = { sillynpc_status_state: { global: {}, characters: [],
+        recently_deleted: { inventory: { 'old sword': 3 } } } };
     const storage = {
         STATE_KEY: 'sillynpc_status_state', HISTORY_KEY: 'sillynpc_status_history',
         committedState: null, committedChatId: null, currentChatId: () => 'chat A',
@@ -119,6 +120,7 @@ test('storage loads legacy tracker player from master, but fresh chats use defau
     assert.equal(storage.loadStateFromMetadata().player.stats.HP, '3');
     assert.deepEqual(storage.loadStateFromMetadata().player.collections.inventory, [{ name: 'old sword' }]);
     const loaded = storage.loadStateFromMetadata();
+    assert.equal(Object.hasOwn(loaded, 'recently_deleted'), false);
     loaded.locations = { enabled: false, currentId: 'inn', records: { inn: { name: 'Inn' } } };
     settings.statusTracker.locations = { enabled: true };
     assert.equal(storage.loadStateFromMetadata().locations.enabled, true);
@@ -149,7 +151,7 @@ test('saved player items survive repeated state loads with default and custom id
             { [identifier]: 'new item 12', description: 'Custom saved item' },
             { [identifier]: 'Sword', description: 'Ordinary item' },
         ];
-        const metadata = { state: { global: {}, characters: [], recently_deleted: {},
+        const metadata = { state: { global: {}, characters: [],
             player: { name: 'Rhea', stats: {}, collections: { inventory: structuredClone(items) } } } };
         const localSettings = { statusTracker: { collections: [
             { id: 'inventory', fields: [{ name: identifier, isPrimary: true }] },

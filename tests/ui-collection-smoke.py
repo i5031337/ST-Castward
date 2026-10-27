@@ -27,7 +27,7 @@ with browser_session() as browser:
             ] };
             const settings = { statusTracker: { collections: [col] } };
             const state = { player: { name: 'Smoke Player', stats: {}, collections: {} },
-                characters: [{ name: 'Smoke NPC', collections: {} }], recently_deleted: {} };
+                characters: [{ name: 'Smoke NPC', collections: {} }] };
             let confirmations = 0;
             const sceneCard = { name: 'Smoke NPC', statusCollections: {} };
             const fixtureCards = [sceneCard];

@@ -2,7 +2,7 @@
  * Working out what an update would change, and which of those changes deserve a look.
  *
  * The reader proposes state; it does not get to impose it. Collections in particular are
- * replaced wholesale (applyCollectionUpdate empties the array and repopulates), so an item
+ * replaced wholesale (collection replacement empties the array and repopulates), so an item
  * the model simply forgets to mention is deleted. Additions and removals are therefore
  * surfaced rather than applied silently.
  *
@@ -108,7 +108,7 @@ function diffCollections({ scope, actor, before, after, trackerSettings, fromRep
                 kind: 'item-remove', before: itemLabel(item, primary), after: '(gone)',
                 risk: 'risky', reason: 'item would be removed',
                 /* Where the removal came from, which decides whether the panel arrives
-                   ticked. A per-message reply cannot delete by omission - applyCollectionUpdate
+                   ticked. A per-message reply cannot delete by omission - the collection calculator
                    downgrades a bare list to additions - so an item missing from the "after"
                    state is one the reader explicitly asked to remove. A scan rebuilds the
                    whole list and means it, and there an item it forgot is indistinguishable
@@ -157,7 +157,7 @@ function diffCollections({ scope, actor, before, after, trackerSettings, fromRep
  * to arrive unticked, from a time when any reply restating an inventory could produce a
  * phantom removal - and the effect was that a thing the story plainly used up stayed on
  * the sheet unless you noticed the one row that needed a click. A per-message reply can no
- * longer delete by omission (applyCollectionUpdate downgrades a bare list to additions),
+ * longer delete by omission (the collection calculator downgrades a bare list to additions),
  * so a removal from the reader is one it asked for by name. A scan rebuilds whole lists
  * and means it, and there an item it forgot really is indistinguishable from one it
  * dropped on purpose, so that one still asks.

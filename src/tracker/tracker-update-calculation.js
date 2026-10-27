@@ -25,13 +25,6 @@ function collectCollections(source, collectionIds) {
     return collections;
 }
 
-function ageTombstones(state) {
-    for (const [id, items] of Object.entries(state.recently_deleted || {})) {
-        for (const name of Object.keys(items)) if (--items[name] <= 0) delete items[name];
-        if (!Object.keys(items).length) delete state.recently_deleted[id];
-    }
-}
-
 function cardLookup(cards) {
     const names = new Map(), regexes = [];
     cards.forEach((card, index) => {
@@ -61,7 +54,6 @@ export function calculateTrackerUpdate({ state, tracker, system = null, cards = 
         .map(actor => [actor.name.toLowerCase(), actor]));
     const collectionIds = new Set(tracker.collections.map(collection => collection.id.toLowerCase()));
     const cardPatches = new Map();
-    ageTombstones(nextState);
 
     const patchCard = (index, fields) => {
         if (index === undefined) return;
@@ -79,7 +71,7 @@ export function calculateTrackerUpdate({ state, tracker, system = null, cards = 
         const collections = collectCollections(source, collectionIds);
         for (const [id, reading] of Object.entries(collections)) {
             const calculated = calculateCollectionUpdate({ actor, collectionId: id, update: reading,
-                tracker, system, scope, tombstones: state.recently_deleted ?? null,
+                tracker, system, scope,
                 itemLibrary: library, allowReplace, preview });
             if (calculated.collections !== undefined) actor.collections = calculated.collections;
             result.collectionWarnings.push(...calculated.warnings);

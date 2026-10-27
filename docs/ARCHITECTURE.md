@@ -216,9 +216,12 @@ hook connects storage to snapshot maintenance without a dependency cycle.
 
 Calculation diagnostics belong to their caller. Reader previews supply a local
 `diagnostics` object; constraints return diagnostics or invoke explicit callbacks.
-There are no shared record/drain queues. Item suppression and its existing expiry,
-preview/library policies, model-input sanitization, review decisions and historical
-recovery limits are unchanged by this cleanup.
+There are no shared record/drain queues. Manual collection removal changes only the
+actor’s holdings; later readings can add the item again or give it to another actor.
+The former temporary item suppression and expiry counter have been removed, and
+obsolete `recently_deleted` markers are discarded when loading saved chats. Explicit
+item review decisions remain available. Preview/library policies, model-input
+sanitization and historical recovery limits are unchanged.
 
 ## Verification
 

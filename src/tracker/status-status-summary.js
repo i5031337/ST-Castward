@@ -16,7 +16,6 @@ function createInitialState() {
             stats: {},
             collections: {}
         },
-        recently_deleted: {},
         timestamp: Date.now()
     };
     

@@ -15,7 +15,6 @@ export { applyUpdate } from './status-apply-update.js';
 export { findCardForName, resolveCanonicalName } from './status-character-match.js';
 export { CAST_PERSONA, CAST_EXCLUDED, getCastDecisions, setCastDecision, resolvePersonaSpeaker, mayJoinScene } from './status-cast-decisions.js';
 export { reconcileScenePresence, registerActiveCharacter, removeActiveCharacter } from './status-scene-presence.js';
-export { addItem, removeItem } from './status-collection-updates.js';
 export { syncOverrideToActiveState, getMergedItem, updateMasterItem, renameMasterItem, deleteMasterItem, renameCollectionId } from './status-collection-schema.js';
 export { statsInSystem } from './status-stat-filter.js';
 export { renameStat, renameCollectionField } from './status-stat-schema.js';

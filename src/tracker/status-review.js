@@ -125,8 +125,7 @@ export function appendPendingMemoryChanges(messageId, rows) {
  * `dismissed` answers a row offering to *add* something: never propose this again.
  * `protected` answers a row offering to *remove* something: never propose losing this.
  *
- * These lists do not expire; recently_deleted tombstones only prevent immediate
- * re-additions after dropping an item.
+ * These explicit decisions do not expire.
  */
 export const DISMISSED_KEY = 'dismissed';
 export const PROTECTED_KEY = 'protected';

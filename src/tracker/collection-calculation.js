@@ -9,9 +9,9 @@ import { calculateFieldValue } from './stat-field-calculation.js';
  * not supply defaults to later duplicate rows until a real update is applied.
  */
 export function calculateCollectionUpdate({ actor, collectionId, update, tracker, system = null, scope,
-    tombstones = null, itemLibrary = {}, allowReplace = false, preview = false,
-    operation = 'update', isManual = false }) {
-    const result = { collections: structuredClone(actor.collections), tombstones: structuredClone(tombstones),
+    itemLibrary = {}, allowReplace = false, preview = false,
+    operation = 'update' }) {
+    const result = { collections: structuredClone(actor.collections),
         libraryChanges: [], warnings: [], refusedValues: [] };
     const definitions = tracker.collections || [];
     const colDef = definitions.find(col => operation === 'update'
@@ -45,15 +45,11 @@ export function calculateCollectionUpdate({ actor, collectionId, update, tracker
         }
         return normalized;
     };
-    const remove = (name, manual = false) => {
+    const remove = name => {
         if (!result.collections?.[collectionId] || name === undefined || name === null) return;
         const lower = String(name).toLowerCase();
         result.collections[collectionId] = result.collections[collectionId]
             .filter(item => String(item[primary]).toLowerCase() !== lower);
-        if (manual && result.tombstones) {
-            result.tombstones[collectionId] ||= {};
-            result.tombstones[collectionId][lower] = 3;
-        }
     };
     const add = item => {
         const name = identifier(item);
@@ -64,7 +60,6 @@ export function calculateCollectionUpdate({ actor, collectionId, update, tracker
             return;
         }
         const lower = String(name).toLowerCase();
-        if (!preview && result.tombstones?.[collectionId]) delete result.tombstones[collectionId][lower];
         const filtered = { [primary]: name };
         for (const field of colDef.fields) if (Object.hasOwn(item, field.name)) filtered[field.name] = item[field.name];
         const index = result.collections[collectionId].findIndex(entry => String(entry[primary]).toLowerCase() === lower);
@@ -78,7 +73,7 @@ export function calculateCollectionUpdate({ actor, collectionId, update, tracker
         }
     };
     if (operation === 'remove') {
-        remove(update, isManual);
+        remove(update);
         return result;
     }
     if (operation === 'add') {
@@ -107,7 +102,7 @@ export function calculateCollectionUpdate({ actor, collectionId, update, tracker
         const library = structuredClone(itemLibrary);
         for (const item of update) {
             const name = identifier(item);
-            if (name === undefined || result.tombstones?.[collectionId]?.[String(name).toLowerCase()]) continue;
+            if (name === undefined) continue;
             // Library lookup historically uses a truthy primary value, unlike item identity.
             const libraryName = item[primary] || item.name;
             const lower = libraryName && String(libraryName).toLowerCase();
@@ -140,7 +135,7 @@ export function calculateCollectionUpdate({ actor, collectionId, update, tracker
     }
     for (const item of Array.isArray(update.add) ? update.add : []) {
         const name = identifier(item);
-        if (name !== undefined && !result.tombstones?.[collectionId]?.[String(name).toLowerCase()]) add(item);
+        if (name !== undefined) add(item);
     }
     for (const removal of Array.isArray(update.remove) ? update.remove : []) {
         const structured = removal && typeof removal === 'object';

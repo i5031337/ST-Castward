@@ -64,8 +64,7 @@ try:
               settings.statusTracker = tracker;
               const baseline = {...structuredClone(liveSaved),global:{},
                 player:{...structuredClone(liveSaved.player),stats:{XP:'99/100',Level:'1',HP:'6/20'},collections:{}},
-                characters:[{name:'Absolute Fixture NPC',npcTemplateId:template.id,stats:{XP:'99/100',Level:'1',HP:'6/20'},collections:{}}],
-                recently_deleted:{}};
+                characters:[{name:'Absolute Fixture NPC',npcTemplateId:template.id,stats:{XP:'99/100',Level:'1',HP:'6/20'},collections:{}}]};
               for (const key of Object.keys(live)) delete live[key];
               Object.assign(live, structuredClone(baseline));
               chat.splice(0, chat.length,

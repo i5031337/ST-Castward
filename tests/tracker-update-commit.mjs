@@ -153,10 +153,9 @@ test('preferred cache stays read-only and invalidates after metadata or saved-st
         Object.assign(h.deps, {
             getCurrentPersonaKey: () => 'Alex.png', getCurrentPersonaName: () => 'Alex',
             activatePersona() {},
-            createInitialState: () => ({ global: {}, characters: [], recently_deleted: {} }),
+            createInitialState: () => ({ global: {}, characters: [] }),
             createChatPlayerSeed: () => ({ stats: { HP: '10' }, collections: {} }),
         });
-        h.original.recently_deleted = {};
         const cachedBefore = structuredClone(h.original);
         assert.equal(h.deps.loadStateFromMetadata({ preferCache: true }), h.original);
         assert.deepEqual(h.original, cachedBefore);
@@ -190,7 +189,6 @@ test('message-owned commits keep the turn base separate from manual undo', () =>
 
 test('raw state peeks never repair data or reuse a cache after its metadata source changes', () => {
     const h = fixture();
-    h.original.recently_deleted = {};
     const before = structuredClone(h.original);
     assert.equal(h.deps.peekStateFromMetadata(), h.original);
     assert.equal(h.deps.loadStateFromMetadata({ preferCache: true }), h.original);

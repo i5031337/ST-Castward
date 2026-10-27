@@ -62,7 +62,7 @@ export function createCollectionEditor(actor, isPlayer) {
                 && JSON.stringify(settings.master_items) === libraryRevision;
             const plan = calculateCollectionEdit({ actor: target, tracker: settings.statusTracker,
                 system: owner.definition, scope: state ? isPlayer ? 'player' : 'npc' : 'offstage',
-                tombstones: state?.recently_deleted ?? null, itemLibrary: settings.master_items || {}, ...change });
+                itemLibrary: settings.master_items || {}, ...change });
             return commitCollectionEdit({ plan, state, actor: target, card, settings, isCurrent,
                 saveState: saveStateToMetadata, saveSettings, label,
                 emit: next => eventSource.emit('sillynpc-status-updated', next, { source: 'collection-editor' }) });

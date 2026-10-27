@@ -13,7 +13,7 @@ function fixture({ offstage = false, noChat = false, boundSystem = 'World' } = {
     const definition = { id: 'canonical-world', metadata: { description: 'Rules' } };
     const card = { id: 'mira', name: 'Mira', statusCollections: { inventory: [{ name: 'Sword', kind: 'Steel' }] } };
     const state = { player: { name: 'Player', personaKey: 'alice', collections: {} },
-        characters: [{ id: 'mira', name: 'Mira', collections: structuredClone(card.statusCollections) }], recently_deleted: {} };
+        characters: [{ id: 'mira', name: 'Mira', collections: structuredClone(card.statusCollections) }] };
     if (offstage) state.characters = [];
     let context = { getCurrentChatId: () => noChat ? undefined : 'chat-a', chatMetadata: { sillynpc_status_state: state, sillynpc_system: boundSystem } };
     let persona = 'alice';
@@ -92,14 +92,15 @@ test('accepted item rename installs scene, card and library together and preserv
     assert.equal(f.emitted(), 1);
 });
 
-test('manual removal retains tombstone policy and explicit addition clears it', () => {
+test('manual removal updates the card and preserves undo, and the item can be added again', () => {
     const f = fixture();
     const change = { ...f.change, operation: 'remove' };
     assert.equal(f.editor.commit(change, 'Item dropped'), true);
-    assert.equal(f.context.chatMetadata.sillynpc_status_state.recently_deleted.inventory.sword, 3);
+    assert.deepEqual(f.context.chatMetadata.sillynpc_status_state.characters[0].collections.inventory, []);
+    assert.equal(f.history().characters[0].collections.inventory[0].name, 'Sword');
     assert.equal(f.card.statusCollections.inventory.length, 0);
     assert.equal(f.editor.commit({ operation: 'add', collectionId: 'inventory', item: change.item }, 'Item added'), true);
-    assert.equal(f.context.chatMetadata.sillynpc_status_state.recently_deleted.inventory.sword, undefined);
+    assert.equal(f.context.chatMetadata.sillynpc_status_state.characters[0].collections.inventory[0].name, 'Sword');
     assert.equal(f.card.statusCollections.inventory.length, 1);
 });
 

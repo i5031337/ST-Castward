@@ -12,7 +12,7 @@ function fixture() {
     const state = { global: {}, player: { name: 'Hero', stats: { HP: '3' }, collections: { gear: [{ name: 'Wand', kind: 'wood' }] } },
         players: { other: { stats: { HP: '9' }, collections: { gear: [{ name: 'Ring', kind: 'gold' }], keepsakes: [{ name: 'Letter' }] } },
             empty: { stats: {} } }, characters: [{ npcTemplateId: 'mage', stats: { HP: '4' }, collections: { gear: [{ name: 'Hat', kind: 'cloth' }] } },
-            { npcTemplateId: 'beast', stats: { HP: '8' } }], recently_deleted: { gear: { hat: 2 } } };
+            { npcTemplateId: 'beast', stats: { HP: '8' } }] };
     const cards = [{ npcTemplateId: 'mage', statusOverrides: { HP: '5' }, statusCollections: { gear: [{ name: 'Hat', kind: 'cloth' }] } }];
     const personaData = { p: { stats: { HP: '7' }, collections: { gear: [{ name: 'Cane', kind: 'wood' }] } } };
     const itemLibrary = { gear: { wand: { name: 'Wand', kind: 'wood' } } };
@@ -38,7 +38,7 @@ test('shared stat plan leaves inputs untouched, includes schema and assigned sto
     assert.equal(f.field.id, 'hp');
 });
 
-test('collection field and ID plans cover library, all personas, offstage cards, live actors and tombstones', () => {
+test('collection field and ID plans cover library, all personas, offstage cards, live actors', () => {
     const f = fixture();
     const oldField = f.collection.fields[1];
     const before = structuredClone(f);
@@ -65,7 +65,6 @@ test('collection field and ID plans cover library, all personas, offstage cards,
         equipment: [{ name: 'Ring', kind: 'gold' }], keepsakes: [{ name: 'Letter' }],
     });
     assert.deepEqual(idPlan.nextState.players.empty, { stats: {} });
-    assert.deepEqual(idPlan.nextState.recently_deleted, { equipment: { hat: 2 } });
 });
 
 test('collection renames retain migrated inactive persona holdings through installation', () => {
