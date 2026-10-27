@@ -27,9 +27,9 @@ The regression uses production formatters and prompt assembly to verify one copy
 | Test-only convenience APIs | Removed `currentLocationPath` and `setLocationsEnabled` from [location-store.js](../src/locations/location-store.js), and `getSystemField` from [system-schema.js](../src/core/system-schema.js). Tests use current trails, catalog lookups, and explicit fixtures. Storage coverage still verifies System-owned enablement and map preservation. |
 | Orphan character lore styling | Removed `.sillynpc-cv-lore` and `.sillynpc-cv-lore-text` from [11-character-sheets.css](../styles/11-character-sheets.css), preserving the shared `.sillynpc-cv-block` rules used by current profiles. |
 
-## Optional consolidation and retained boundaries
+## Shared reply gate and retained boundaries
 
-[expression-events.js](../src/expressions/expression-events.js) and [speech-events.js](../src/tts/speech-events.js) duplicate foreground-reply authorization machinery. Their reset and stop policies differ, so both remain live. A small shared gate with explicit cancellation callbacks could reduce drift; [foreground-replies.mjs](../tests/foreground-replies.mjs) already exercises both adapters.
+[expression-events.js](../src/expressions/expression-events.js) and [speech-events.js](../src/tts/speech-events.js) now share [foreground-replies.js](../src/chat/foreground-replies.js) for completed-reply authorization, expected regeneration deletion, and deferred source guards. Explicit cancellation callbacks retain each feature's policy: expressions clear displayed state only on chat changes; speech stops playback while preserving streaming authorization for regeneration's expected deletion. [foreground-replies.mjs](../tests/foreground-replies.mjs) exercises both adapters and their foreground-generation boundaries.
 
 The image-tag registration subsystem has no callers in this checkout, but [image-tags.js](../src/characters/image-tags.js) describes an external integration hook. Confirm that integration policy before removing it. Snapshot/swipe compatibility, persisted emotion defaults, voice-binding fallbacks, and old System/settings conversion paths still serve saved data and are outside the confirmed removal list.
 
@@ -37,4 +37,4 @@ The image-tag registration subsystem has no callers in this checkout, but [image
 
 The audit traced callers and used isolated production-function reproductions for the item purge and duplicated Fill context. Regression tests failed before those fixes and pass afterward. Coverage retains saved item metadata, old and current settings normalization, player inventories with custom identifiers, profile context, known stat purposes, and omission of empty prompt sections.
 
-After the remaining cleanup, `node --test tests/*.mjs` passes all 868 tests and `git diff --check` passes. The read-only running-host check `python3 tests/ui-smoke.py` also passes, covering startup, tracker reports, profile editors, review controls, and System Builder rendering. The browser check required execution outside the sandbox so the Firefox driver could start.
+After the remaining cleanup, `node --test tests/*.mjs` passes all 871 tests and `git diff --check` passes. The running-host checks `python3 tests/ui-smoke.py` and `python3 tests/ui-npc-expressions.py` also pass, covering startup, tracker reports, profile editors, review controls, System Builder rendering, expression streaming, regeneration authorization, and mocked Image Edit generation. The browser check required execution outside the sandbox so the Firefox driver could start.

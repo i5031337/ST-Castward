@@ -43,7 +43,7 @@ This map covers tracked runtime files, tests and support files. Source files and
 | `docs/ARCHITECTURE.md` | Current storage ownership, reader behavior, review, and verification boundaries. |
 | `docs/AUDIT_FOLLOWUP.md` | Historical cleanup decisions and focused verification guidance. |
 | `docs/tts-expressions-audit.md` | Speech and expression audit findings and fix status. |
-| `docs/code-cleanup-audit.md` | Completed obsolete and redundant code cleanup, verification, and optional consolidation boundaries. |
+| `docs/code-cleanup-audit.md` | Completed obsolete and redundant code cleanup, verification, and shared reply gate, and retained integration boundaries. |
 | `docs/test-audit.csv` | Test audit decisions, rationale, and replacement coverage references. |
 | `docs/tracker-prompt-draft.txt` | Archived tracker prompt draft from before the absolute-reading contract. |
 | `docs/REWRITE_HOST_SMOKE.md` | Dated user-reported host results and remaining manual checks. |
@@ -495,7 +495,8 @@ paths have regression tests under `tests/`.
 | File | Responsibility |
 | --- | --- |
 | `src/expressions/expression-engine.js` | Deterministic sprite variants, serialized per-line classification, and bounded result cache. |
-| `src/expressions/expression-events.js` | Completed foreground reply authorization, expected regeneration deletion, and cancellation on source changes. |
+| `src/chat/foreground-replies.js` | Shared completed foreground reply authorization, expected regeneration deletion, and deferred source guards. |
+| `src/expressions/expression-events.js` | Expression reset and error policies for the shared foreground reply gate. |
 | `src/expressions/host-expressions.js` | Host sprite listings, supported classifier modes, and dialogue-only classification. |
 | `src/expressions/expression-prompts.js` | Resolve and select emotion prompt variants, normalize saved overrides and workflow, and name portrait-specific packs. |
 | `src/expressions/expression-generation.js` | Serialized missing-sprite edits, duplicate prevention, freshness checks, and explicit failure retry. |
@@ -512,7 +513,7 @@ paths have regression tests under `tests/`.
 | `src/ui/characters/ui-expression-generation.js` | Compact manual emotion generation, saved prompts and workflow, and generate/retry/regenerate controls. |
 | `src/tts/tts-settings.js` | Independent speech settings normalization and per-NPC voice resolution. |
 | `src/tts/speech-units.js` | Ordered narration and quoted dialogue from rendered story paragraphs. |
-| `src/tts/speech-events.js` | Completed-reply authorization and stale-source cancellation. |
+| `src/tts/speech-events.js` | Speech cancellation and error policies for the shared foreground reply gate. |
 | `src/tts/speech-queue.js` | Appendable, cancellable ordered playback with bounded synthesis prefetch. |
 | `src/tts/line-stream.js` | Completed raw line commitment, continuation boundaries, and committed-prefix rewrite detection. |
 | `src/tts/stream-format-source.js` | Withhold unresolved quotes, fences, and hidden markup before speech discovery. |
