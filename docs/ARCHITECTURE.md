@@ -92,8 +92,10 @@ confirmed place, its ancestors, and explicitly mentioned places while the tracke
 enabled. Read-only lorebook links can seed local descriptions through an explicit
 copy action. Shared lorebooks are never rewritten by place updates. See
 [location-persistence-plan.md](location-persistence-plan.md) for the contract.
-The same request handles stats and places, including the opening greeting in automatic
-mode. An explicitly established initial scene does not require an arrival event.
+After the stat reading, a separate location request runs when no current place is
+recorded or the tracker reports a location change. This includes the opening greeting
+in automatic mode. An explicitly established initial scene does not require an
+arrival event.
 
 ## Current-turn consistency and review
 
@@ -108,6 +110,11 @@ System generation tasks retain their existing cancellation policies. Backends th
 cancellation may continue generating, but their replies are discarded. Message
 invalidation cancels waiting entries from the affected index onward. Pending review
 rows remain proposals and are not included as accepted state in the next reading.
+
+Each reading captures the System rules used to build its prompt. Changes to stat
+definitions, collections, progression, NPC templates or Places rules during inference
+or reward selection discard the result before applying changes. Display-only edits
+do not invalidate readings. Manual tracker edits pause while a reading runs.
 
 Latest-reply changes use a pre-turn base. Swipe, regeneration, latest-reply editing,
 and deletion replace that reply's accepted changes rather than accumulating them.
@@ -139,6 +146,12 @@ remain effective. Level-derived stat growth and collection rewards remain review
 proposals and depend on their originating XP transition. See
 [level-up-rewards-plan.md](level-up-rewards-plan.md) for the progression contract.
 
+Automatic application and limited historical recovery are deliberate product choices.
+The retained [reader evaluation](evaluations/dating-final-10x-20261026-report.md)
+measures independent scenes, not accumulating campaign errors or correction effort.
+It does not establish the best default review policy. Broader UI/extractor coupling
+remains outside the completed tracker dependency refactor.
+
 The player and NPC Cast pages share one Profile/Edit layout. The HUD opens the
 player’s Cast page and shows the same current state. Portrait generation uses SillyTavern Image Generation's `/imagine` provider.
 Maintained prompts use the active System's schema; the general raw-prompt editor is
@@ -162,9 +175,9 @@ Selected reader and scan connection failures propagate without retrying through 
 API by default. Tracker → How Stats Are Read → Fall Back To Main API opts into a
 warning followed by a retry through the main chat API. This policy applies to all
 requests using the reader request helper, including location readings, profile Fill,
-and phrase scans. Cancellation never triggers fallback. Selecting Main API directly
-still works with fallback disabled. Time is an ordinary editable world field; there
-is no automatic elapsed-time regeneration.
+and collection history scans. Cancellation never triggers fallback. Selecting Main API
+directly still works with fallback disabled. Time is an ordinary editable world field;
+there is no automatic elapsed-time regeneration.
 
 ## Tracker dependency refactor
 
@@ -237,10 +250,6 @@ cosmetic layout, historical benchmark details, and incidental implementation cho
 do not each need a regression test. Prompt checks should protect configured inputs
 and usable output contracts while allowing instructions to be rewritten. Evaluation
 scorers have their own correctness checks; these do not measure live model quality.
-
-The [2026-10-26 per-case audit](test-audit.csv) records individual decisions and
-reasons for all 881 cases present at the start of that review, including parameterized
-cases. This is a historical snapshot; source line numbers refer to that baseline.
 
 [REWRITE_HOST_SMOKE.md](REWRITE_HOST_SMOKE.md) preserves the dated user-reported host
 results and remaining manual checks. Mocked generator checks establish workflow and

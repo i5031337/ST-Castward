@@ -44,11 +44,7 @@ This map covers tracked runtime files, tests and support files. Source files and
 | `docs/npc-expressions-tts-plan.md` | Dialogue, expressions, independent speech stages, and verification. |
 | `docs/FILE_MAP.md` | This source map. |
 | `docs/ARCHITECTURE.md` | Current storage ownership, reader behavior, review, and verification boundaries. |
-| `docs/AUDIT_FOLLOWUP.md` | Historical cleanup decisions and focused verification guidance. |
-| `docs/tts-expressions-audit.md` | Speech and expression audit findings and fix status. |
-| `docs/code-cleanup-audit.md` | Completed obsolete and redundant code cleanup, verification, shared reply gate, and removed image-tag integration. |
 | `docs/feature-trimming-review.md` | Inherited feature cut/trim candidates, tradeoffs, and measured historical world-state note footprint. |
-| `docs/test-audit.csv` | Test audit decisions, rationale, and replacement coverage references. |
 | `docs/tracker-prompt-draft.txt` | Archived tracker prompt draft from before the absolute-reading contract. |
 | `docs/REWRITE_HOST_SMOKE.md` | Dated user-reported host results and remaining manual checks. |
 | `docs/level-up-rewards-plan.md` | Implemented progression/reward contract and verification criteria. |
@@ -112,7 +108,6 @@ This map covers tracked runtime files, tests and support files. Source files and
 | `tests/profile-memories.mjs` | Profile memory list normalization and capacity behavior. |
 | `tests/profile-memories-ui.mjs`, `tests/npc-memories.mjs` | Player/NPC memory display and persistence behavior. |
 | `tests/turn-delta.mjs` | Current turn change reversal and rebase behavior. |
-| `tests/status-dependencies.mjs` | Shared status dependency provider contract test, including independently imported helpers. |
 | `tests/status-update-parser.mjs` | Inline update extraction and grouped stat fragments through ordinary imports. |
 | `tests/stat-utilities.mjs` | Stat name precedence, allowed values, and constraint diagnostic isolation. |
 | `tests/collection-calculation.mjs` | Immutable collection calculations, explicit ownership, planned library changes, removal, and reacquisition. |
@@ -268,6 +263,7 @@ This map covers tracked runtime files, tests and support files. Source files and
 | `src/tracker/extractor/status-extractor-prompt-offstage.js` | Describe known absent NPCs named in the reply or activated lore, including held stats, collections, and profiles. |
 | `src/tracker/extractor/status-extractor-request.js` | Send and normalize model extraction responses. |
 | `src/tracker/extractor/status-extractor-run.js` | Per-message extraction lifecycle and cache invalidation. |
+| `src/tracker/extractor/status-extractor-rules.js` | Request-time rule capture and stale-reading checks, excluding display preferences. |
 | `src/tracker/extractor/status-level-reading.js` | Swipe-specific choice cache, decision retention, and missing-reward retries. |
 | `src/tracker/extractor/status-inline-grants.js` | Inline absolute-reading validation, review, and replacement-reading orchestration. |
 | `src/tracker/extractor/status-npc-profiles.js` | Optional profile generation for newly discovered reader NPCs, with chat and reply guards. |
@@ -505,13 +501,10 @@ This map covers tracked runtime files, tests and support files. Source files and
 coalesces duplicates, and validates queued reply ownership before execution.
 `tests/extraction-queue.mjs` and `tests/tracker-regenerate.mjs` cover ordering,
 cancellation, source invalidation, and use of the preceding applied state.
-`docs/adversarial-review-20261025.md` records the current critique and follow-up status.
+`docs/ARCHITECTURE.md` describes current ownership, recovery limits and verification.
 
-`src/tracker/status-logic.js` binds the state providers by name, then freezes the shared
-registry. Parser and stat helpers use ordinary imports; only the helpers still needed
-by bound providers are seeded into the registry. `tests/status-dependencies.mjs` checks
-that each shared dependency has one provider. The registry still resolves cross-module calls at runtime, so changes to
-initialization and shared state need care. `normalizeSettings` sequences focused
+`src/tracker/status-logic.js` is the public export surface; tracker modules import
+their dependencies directly. `normalizeSettings` sequences focused
 migration passes, `generateLoreEntry` separates dialog construction from its async
 actions, and `renderEditor` routes among smaller view builders. Their key behavior
 paths have regression tests under `tests/`.
