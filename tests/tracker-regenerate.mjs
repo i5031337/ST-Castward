@@ -1,5 +1,6 @@
 import { readerCancellationHarness } from './helpers/reader-cancellation.mjs';
 import { createExtractionQueue } from '../src/tracker/extractor/status-extractor-queue.js';
+import { captureReaderRules } from '../src/tracker/extractor/status-extractor-rules.js';
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFileSync } from 'node:fs';
@@ -47,7 +48,12 @@ function harness(mode = 'extract') {
     let pending = [{ old: true }];
     let response = { player: { stats: { XP: '30' } } };
     let onRequest = () => {};
+    let onLevelReading = () => {};
     let enabled = true;
+    const system = { stats: { character: [{ name: 'XP', purpose: 'xp' }] }, npcTemplates: [],
+        collections: structuredClone(settings.collections) };
+    const tracker = { ...structuredClone(settings), extractionMode: mode,
+        playerStats: [{ name: 'XP', purpose: 'xp' }], presets: { fixture: { definition: system } } };
     let previewWarnings = [];
     let rejectedPhase;
     const application = { attempts: [], records: 0, readingSaves: 0 };
@@ -62,13 +68,12 @@ function harness(mode = 'extract') {
     const snapshots = loadModule('../src/tracker/snapshots/status-snapshot-swipe.js', deps);
     const cancellation = readerCancellationHarness();
     const extraction = loadModule('../src/tracker/extractor/status-extractor-run.js', {
-        createExtractionQueue,
+        createExtractionQueue, captureReaderRules,
         lockTrackerEdits,
         ...cancellation,
         ...deps, ...snapshots, normalizeCollectionUpdates,
         trackerMessageIndex: chat => chat.length - 1,
-        getSettings: () => ({ enabled, statusTracker: { ...settings, extractionMode: mode,
-            playerStats: [{ name: 'XP', purpose: 'xp' }] } }),
+        getSettings: () => ({ enabled, activeSystem: 'fixture', statusTracker: tracker }),
         rememberSwipeBase: () => {},
         refreshTurnBase: () => { base.beforeApply = { state: structuredClone(live), profiles: {} }; },
         sanitizeModelUpdate: () => {}, reconcileScenePresence: () => {},
@@ -96,7 +101,8 @@ function harness(mode = 'extract') {
         buildUserPrompt: state => { prompted = structuredClone(state); return ''; }, collectLeadUp: () => '',
         requestExtraction: async () => { await onRequest(); return structuredClone(response); },
         coerceToUpdate: raw => raw, normalizeModelReadings,
-        prepareLevelReading: async () => ({ rows: [], failures: [], transitions: [], reading: { personaId: 'hero' } }),
+        prepareLevelReading: async () => { await onLevelReading();
+            return { rows: [], failures: [], transitions: [], reading: { personaId: 'hero' } }; },
         saveLevelReading: () => { application.readingSaves++; }, retryLevelReading: async () => ({ applied: false }),
         validateReviewedTransitions: () => ({ invalid: new Set() }),
         prepareGrantReview: () => {}, LEVEL_READING_KEY: 'sillynpc_level_reading',
@@ -109,12 +115,47 @@ function harness(mode = 'extract') {
         document: { querySelector: () => null }, LOG_PREFIX: 'test',
     });
     return { run: (options = { regenerate: true }, id = 0) => extraction.extractStateFromMessage(context.chat[id].mes, id, options),
-        cancellation, live: () => live, pending: () => pending, prompted: () => prompted, message, context, base,
+        cancellation, tracker, system, live: () => live, pending: () => pending, prompted: () => prompted, message, context, base,
         setEnabled: value => { enabled = value; },
         setResponse: value => { response = value; }, onRequest: fn => { onRequest = fn; },
+        onLevelReading: fn => { onLevelReading = fn; },
         setWarnings: value => { previewWarnings = value; },
         rejectUpdate: phase => { rejectedPhase = phase; }, application };
 }
+for (const phase of ['onRequest', 'onLevelReading']) {
+    test(`reader refuses changed System rules during ${phase} before applying or replacing a turn`, async () => {
+        for (const change of [h => { h.system.stats.character[0].purpose = 'A different meaning'; },
+            h => { h.tracker.playerStats[0].name = 'Renamed XP'; },
+            h => { h.system.collections[0].fields = [{ name: 'title', isPrimary: true }]; }]) {
+            const h = harness();
+            const before = structuredClone(h.live());
+            h[phase](() => change(h));
+            const result = await h.run({ regenerate: true });
+            assert.equal(result.applied, false);
+            assert.equal(result.reason, 'System rules changed while reading');
+            assert.deepEqual(h.live(), before);
+            assert.deepEqual(h.pending(), [{ old: true }]);
+            assert.deepEqual(h.message.extra.sillynpc_applied, [{ old: true }]);
+            assert.equal(h.application.attempts.length, 0);
+            assert.equal(h.application.readingSaves, 0);
+            assert.equal(isTrackerEditLocked(), false);
+            h[phase](() => {});
+            assert.equal((await h.run({ regenerate: true })).applied, true);
+        }
+    });
+}
+
+test('display-only System and tracker changes do not discard a reading', async () => {
+    const h = harness();
+    h.onRequest(() => {
+        h.system.hud = { layout: 'compact' };
+        Object.assign(h.system.stats.character[0], { color: '#fff', format: '{{value}}', visible: false, isPrimary: true });
+        Object.assign(h.tracker.playerStats[0], { color: '#fff', format: '{{value}}', visible: false, isPrimary: true });
+        h.tracker.showRawOutput = false;
+    });
+    assert.equal((await h.run()).applied, true);
+});
+
 test('reader locks editing before the request and releases it on success and failure', async () => {
     for (const fail of [false, true]) {
         const h = harness();

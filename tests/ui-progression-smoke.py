@@ -13,6 +13,8 @@ with browser_session() as browser:
         const root = ${JSON.stringify(new URL('.', entry.src).href)};
         const { getSettings } = await import(root + 'src/core/settings.js');
         const { buildProgressionEditor } = await import(root + 'src/ui/system/ui-system-progression.js');
+        const { createBuiltinSystem } = await import(root + 'src/core/builtin-systems.js');
+        const { normalizeSystemDefinition, projectSystemTracker } = await import(root + 'src/core/system-schema.js');
         const settings=getSettings(), saved=settings.statusTracker;
         const host=document.createElement('div'); host.style.width='320px'; document.body.append(host);
         const result={};
@@ -21,18 +23,23 @@ with browser_session() as browser:
             {id:'rank',name:'Rank',type:'number',defaultValue:'1',locked:true,carryOver:false},
             {id:'health',name:'Health',type:'number',defaultValue:'6/10',locked:true}];
           const template={id:'hero',statIds:['earned','rank','health'],progression:{enabled:true,xpFieldId:'earned',levelFieldId:'rank',pointsPerLevel:7,assignment:'random',statIds:['health'],increments:{health:2}}};
-          settings.statusTracker={playerStats:structuredClone(stats),npcStats:structuredClone(stats),npcTemplates:[template],progression:{player:structuredClone(template.progression)}};
+          const definition=normalizeSystemDefinition({...createBuiltinSystem('fantasy'),
+            stats:{world:[],character:stats.map(stat=>({...stat,targets:['player','npc']}))},
+            npcTemplates:[template],progression:{player:structuredClone(template.progression)}});
+          settings.statusTracker={...saved,...projectSystemTracker(definition),
+            presets:{...saved.presets,[settings.activeSystem]:{definition}}};
+          const npcTemplate=definition.npcTemplates[0];
           const render=(owner)=>{host.replaceChildren(buildProgressionEditor({template:owner,onSave:()=>{},onRefresh:()=>render(owner)}));};
           render();
           result.playerFields=[...host.querySelectorAll('select')].length===3;
           result.playerGrowth=host.querySelector('[aria-label="Skill points per level"]').value==='7' && host.textContent.includes('independently') && [...host.querySelectorAll('input[type=checkbox]')].some(input=>input.checked && input.parentElement.textContent.includes('Health'));
           result.narrowLayout=host.scrollWidth<=host.clientWidth+2;
-          render(template);
+          render(npcTemplate);
           const growth=host.querySelector('[aria-label="Point assignment"]'); growth.value='manual'; growth.dispatchEvent(new Event('change'));
           const points=host.querySelector('[aria-label="Skill points per level"]'); points.value='12'; points.dispatchEvent(new Event('change'));
-          result.npcPolicy=template.progression.assignment==='manual' && template.progression.pointsPerLevel===12;
+          result.npcPolicy=npcTemplate.progression.assignment==='manual' && npcTemplate.progression.pointsPerLevel===12;
           const invalid=host.querySelector('[aria-label="Skill points per level"]'); invalid.value='-1'; invalid.dispatchEvent(new Event('change'));
-          result.invalidPoints=invalid.value==='12' && template.progression.pointsPerLevel===12;
+          result.invalidPoints=invalid.value==='12' && npcTemplate.progression.pointsPerLevel===12;
           result.npcCarryoverIndependent=settings.statusTracker.npcStats.find(s=>s.id==='rank').carryOver===false;
           const enable=host.querySelector('[aria-label="Enable level progression"]'); enable.checked=false; enable.dispatchEvent(new Event('change'));
           result.disabledControls=!host.querySelector('[aria-label="Point assignment"]') && !!host.querySelector('[aria-label="XP field"]');
@@ -64,6 +71,8 @@ with browser_session() as browser:
         try {
           const root = ${JSON.stringify(new URL('.', entry.src).href)};
           const { getSettings } = await import(root + 'src/core/settings.js');
+          const { createBuiltinSystem } = await import(root + 'src/core/builtin-systems.js');
+          const { normalizeSystemDefinition, projectSystemTracker } = await import(root + 'src/core/system-schema.js');
           const { loadStateFromMetadata, applyUpdate, getCurrentPersonaKey } = await import(root + 'src/tracker/status-logic.js');
           const { computeStateDiff, buildUpdateFromChanges } = await import(root + 'src/tracker/status-diff.js');
           const { selectLevelGrants, collectLevelTransitions } = await import(root + 'src/tracker/extractor/status-level-grants.js');
@@ -88,9 +97,11 @@ with browser_session() as browser:
           const collection = { id: 'techniques', targets: ['player', 'npc', 'template:levels-enabled'],
             fields: [{ id: 'title', name: 'title', label: 'Technique', type: 'text', isPrimary: true }],
             levelUpRewards: { enabled: true, mode: 'scheduled', schedule: [{ id: 'dash', level: 2, entry: { title: 'Dash' } }] } };
-          const tracker = { ...structuredClone(originalTracker), globalStats: [], playerStats: stats, npcStats: stats,
-            npcTemplates: templates, progression: { player: progression }, collections: [collection],
-            presets: { ...originalTracker.presets, [settings.activeSystem]: { definition: { npcTemplates: templates, stats: { npc: stats } } } } };
+          const definition = normalizeSystemDefinition({ ...createBuiltinSystem('fantasy'),
+            stats: { world: [], character: stats.map(stat => ({ ...stat, targets: ['player', 'npc'] })) },
+            npcTemplates: templates, progression: { player: progression }, collections: [collection] });
+          const tracker = { ...structuredClone(originalTracker), ...projectSystemTracker(definition),
+            presets: { ...originalTracker.presets, [settings.activeSystem]: { definition } } };
           settings.statusTracker = tracker;
           const readings = { Experience: '90/100', Rank: '1', Health: '6/10', Power: '3/10' };
           const fixture = { ...savedLive, global: {}, player: { ...savedLive.player, name: 'Fixture Player', stats: { ...readings }, collections: {} },

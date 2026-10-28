@@ -1,5 +1,6 @@
 import { startGenerationTask, awaitGenerationRequest } from '../../core/generation-cancellation.js';
 import { createExtractionQueue } from './status-extractor-queue.js';
+import { captureReaderRules } from './status-extractor-rules.js';
 import { lockTrackerEdits } from '../tracker-edit-lock.js';
 import { prepareSceneLocationReading } from '../../locations/location-reading.js';
 import { getAllCharacters } from '../../characters/character-repository.js';
@@ -110,14 +111,15 @@ async function performExtraction(messageText, messageId, options, signal) {
     const swipe = extractionSwipe(reportMessage);
     const sourcePersona = getCurrentPersonaKey();
     const sourceSystem = getSettings().activeSystem;
+    let rulesAreCurrent;
     const sourceIsCurrent = () => getSettings().enabled && getSettings().statusTracker.enabled
         && !run.signal.aborted && activeExtraction === run && getContext()?.chatMetadata === sourceMetadata
         && getContext()?.chat?.[Number(messageId)] === reportMessage
         && reportMessage?.mes === sourceText && extractionSwipe(reportMessage) === swipe
-        && getCurrentPersonaKey() === sourcePersona && getSettings().activeSystem === sourceSystem;
+        && getCurrentPersonaKey() === sourcePersona && getSettings().activeSystem === sourceSystem && rulesAreCurrent();
     const staleResult = () => ({ applied: false, reason: run.signal.aborted ? 'cancelled' : !getSettings().enabled
         || !getSettings().statusTracker.enabled || activeExtraction !== run
-        ? 'extension disabled' : 'reply changed while reading' });
+        ? 'extension disabled' : !rulesAreCurrent() ? 'System rules changed while reading' : 'reply changed while reading' });
     let report = { swipe, status: 'failed', summary: 'The request did not complete', output: null };
     const refreshReport = () => {
         try {
@@ -131,10 +133,10 @@ async function performExtraction(messageText, messageId, options, signal) {
     let unlockEdits;
     try {
         unlockEdits = lockTrackerEdits(run.signal);
+        rulesAreCurrent = captureReaderRules(getSettings);
         const state = options.regenerate ? replacementReadingState(messageId) : loadStateFromMetadata();
         const locationBase = state.locations?.enabled ? { locations: structuredClone(state.locations) } : null;
-        // Before anything is applied. A later swipe of this message rebuilds from here
-        // rather than from what this one leaves behind.
+        // A later swipe rebuilds from this pre-turn state.
         rememberSwipeBase(messageId, state);
         const strangers = strangersToClassify(messageId);
         const schema = buildExtractionSchema(trackerSettings, { strangers, state, cards: getAllCharacters() });
@@ -182,7 +184,7 @@ async function performExtraction(messageText, messageId, options, signal) {
         run.signal.throwIfAborted();
         if (!sourceIsCurrent() || grants.reading.personaId !== getCurrentPersonaKey()
             || (options.manual && Number(messageId) !== trackerMessageIndex(getContext()?.chat || []))) {
-            return { applied: false, reason: 'reply changed while reading' };
+            return staleResult();
         }
 
         const freshState = options.regenerate ? replacementReadingState(messageId) : loadStateFromMetadata();
