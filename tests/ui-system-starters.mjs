@@ -82,3 +82,25 @@ test('starter activation is disabled after a chat has selected its System', () =
     const button = find(build(() => {}), element => element.textContent === 'Start from template');
     assert.equal(button.disabled, true);
 });
+
+test('Manager can enable and disable following the active System', () => {
+    const settings = { useActiveSystemForNewChats: false, statusTracker: { presets: {} } };
+    let saves = 0;
+    let refreshes = 0;
+    const build = manager({
+        document: { createElement: tag => new Element(tag) },
+        getSettings: () => settings, getActiveSystem: () => '',
+        getChatSystem: () => '', chatHasStarted: () => false,
+        builtinSystemChoices, saveSettings: () => saves++,
+    });
+    for (const enabled of [true, false]) {
+        const root = build(() => refreshes++);
+        const checkbox = find(root, element => element.tag === 'input' && element.type === 'checkbox');
+        assert.equal(checkbox.checked, !enabled);
+        checkbox.checked = enabled;
+        checkbox.listeners.change();
+        assert.equal(settings.useActiveSystemForNewChats, enabled);
+    }
+    assert.equal(saves, 2);
+    assert.equal(refreshes, 2);
+});

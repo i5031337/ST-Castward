@@ -8,6 +8,7 @@ import { onMessageRendered, onMessageForExtraction, onSwipe, onRegenerateStarted
 import { wireAvatarClicks } from './src/entry/entry-avatar-actions.js';
 import { offerChatScope } from './src/entry/entry-chat-scope.js';
 import { offerNewChatSystem, cancelNewChatSystemOffer } from './src/entry/entry-new-chat-system.js';
+import { registerNewChatSystemEvents } from './src/entry/new-chat-system-events.js';
 import { getContext } from '../../../st-context.js';
 import { syncActiveProfileLore } from './src/entry/entry-profile-lore.js';
 import { dropCopiedWorldNote } from './src/entry/entry-history-notes.js';
@@ -195,21 +196,15 @@ jQuery(async () => {
         // The HUD has to re-evaluate on every chat switch: it hides when none is open.
         eventSource.on(event_types.CHAT_CHANGED, () => updateHUD());
         eventSource.on(event_types.CHAT_CHANGED, () => {
-            cancelNewChatSystemOffer();
             if (!getSettings().enabled) return;
             syncLorebookScope().catch(err => console.error(LOG_PREFIX, 'syncLorebookScope failed', err));
         });
-        for (const type of [event_types.CHAT_CREATED, event_types.GROUP_CHAT_CREATED]) {
-            eventSource.on(type, async () => {
-                const context = getContext();
-                try {
-                    await offerNewChatSystem();
-                    if (getContext()?.chatMetadata === context?.chatMetadata) await offerChatScope();
-                } catch (err) {
-                    console.error(LOG_PREFIX, 'New chat setup failed', err);
-                }
-            });
-        }
+        registerNewChatSystemEvents({
+            eventSource, types: event_types, getContext,
+            offer: offerNewChatSystem, cancel: cancelNewChatSystemOffer,
+            offerScope: offerChatScope,
+            onError: err => console.error(LOG_PREFIX, 'New chat setup failed', err),
+        });
         eventSource.on(event_types.PERSONA_CHANGED, () => {
             try {
                 updateHUD();

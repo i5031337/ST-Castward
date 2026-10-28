@@ -10,7 +10,7 @@ const SYSTEM_EXCLUDED_ROOT = new Set([
     // Characters, persona records, and items are not System rules.
     'characters', 'personaData', 'master_items', 'systemNpcRosters',
     // The library itself, and which system is open.
-    'statusTracker', 'activeSystem', 'newChatSystem', 'version', 'enabled',
+    'statusTracker', 'activeSystem', 'useActiveSystemForNewChats', 'newChatSystem', 'version', 'enabled',
     // User-level image settings, including retired backend keys from old exports.
     'imageBackend', 'geminiImageModel', 'imageSaveRoute',
     'loreProfileId', 'imageProfileId',

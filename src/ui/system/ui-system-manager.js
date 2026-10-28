@@ -38,23 +38,20 @@ export function buildSystemManager(onRefresh) {
     const presetNames = Object.keys(presets);
     const chatSystem = chatHasStarted() ? (getChatSystem() || getActiveSystem()) : null;
 
-    if (settings.newChatSystem && Object.hasOwn(presets, settings.newChatSystem)) {
-        const reuseKey = settings.newChatSystem;
-        const reuse = document.createElement('label');
-        reuse.className = 'checkbox_label';
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.checked = true;
-        checkbox.addEventListener('change', () => {
-            settings.newChatSystem = checkbox.checked ? reuseKey : '';
-            saveSettings();
-            onRefresh();
-        });
-        const text = document.createElement('span');
-        text.textContent = `Automatically use ${presets[settings.newChatSystem].metadata?.name || settings.newChatSystem} for new chats`;
-        reuse.append(checkbox, text);
-        wrap.append(reuse);
-    }
+    const reuse = document.createElement('label');
+    reuse.className = 'checkbox_label';
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.checked = Boolean(settings.useActiveSystemForNewChats);
+    checkbox.addEventListener('change', () => {
+        settings.useActiveSystemForNewChats = checkbox.checked;
+        saveSettings();
+        onRefresh();
+    });
+    const text = document.createElement('span');
+    text.textContent = 'Use the active System for future new chats';
+    reuse.append(checkbox, text);
+    wrap.append(reuse);
 
     const listWrap = document.createElement('div');
     listWrap.className = 'sillynpc-system-list';

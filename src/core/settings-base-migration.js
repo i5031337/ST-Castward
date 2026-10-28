@@ -4,6 +4,10 @@ import { resolveImageFolder } from './utils.js';
 import { saveSettings } from './settings.js';
 
 export function normaliseBaseSettings(settings) {
+    if (settings.useActiveSystemForNewChats === undefined) {
+        settings.useActiveSystemForNewChats = Boolean(settings.newChatSystem);
+    }
+    delete settings.newChatSystem;
     // Retire the old opt-in flag; autoPortraitOnFill defaults to enabled.
     delete settings.autoFillPortrait;
     // Rename before defaults fill portraitShape; unsupported ratios use the default.

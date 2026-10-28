@@ -7,7 +7,7 @@ const createOffer = new Function(source.slice(source.indexOf('export function cr
     source.indexOf('\nlet activePopup')).replace('export ', '') + '\nreturn createNewChatSystemOffer;')();
 
 function fixture() {
-    const settings = { enabled: true, activeSystem: 'A', newChatSystem: '',
+    const settings = { enabled: true, activeSystem: 'A', useActiveSystemForNewChats: false,
         statusTracker: { presets: { A: {}, B: {} } } };
     let context = { chat: [{ mes: 'Welcome' }], chatMetadata: {}, getCurrentChatId: () => 'chat' };
     const calls = [];
@@ -30,34 +30,41 @@ test('new chat keeps current choice and is offered only once', async () => {
     assert.deepEqual(f.calls, ['choose', 'save', 'refresh']);
 });
 
-test('saved System is selected directly and remembered for later chats', async () => {
+test('skipping the picker follows the active System after switching Systems', async () => {
     const f = fixture();
     f.answer = { selection: { key: 'B' }, reuse: true };
     await f.offer();
-    assert.equal(f.settings.newChatSystem, 'B');
+    assert.equal(f.settings.useActiveSystemForNewChats, true);
     assert.deepEqual(f.calls, ['choose', ['activate', 'B'], 'save', 'refresh']);
     f.context = { ...f.context, chatMetadata: {} };
+    f.settings.activeSystem = 'A';
     f.calls.length = 0;
     await f.offer();
-    assert.deepEqual(f.calls, ['save', 'refresh']);
+    assert.deepEqual(f.calls, []);
+    assert.equal(f.settings.activeSystem, 'A');
 });
 
-test('starter makes one editable copy and automatic reuse selects that saved copy', async () => {
+test('starter makes one editable copy and future chats keep the active System', async () => {
     const f = fixture();
     f.answer = { selection: { starter: true, id: 'dating' }, reuse: true };
     await f.offer();
-    assert.equal(f.settings.newChatSystem, 'Copy');
+    assert.equal(f.settings.useActiveSystemForNewChats, true);
     f.context = { ...f.context, chatMetadata: {} };
     await f.offer();
     assert.equal(f.calls.filter(call => Array.isArray(call) && call[0] === 'import').length, 1);
     assert.equal(f.calls.filter(call => call === 'choose').length, 1);
 });
 
-test('deleted reuse target offers choices again', async () => {
-    const f = fixture(); f.settings.newChatSystem = 'deleted';
+test('turning off active-System reuse offers choices again', async () => {
+    const f = fixture();
+    f.settings.useActiveSystemForNewChats = true;
+    await f.offer();
+    assert.deepEqual(f.calls, []);
+    f.settings.useActiveSystemForNewChats = false;
+    f.context = { ...f.context, chatMetadata: {} };
     await f.offer();
     assert.equal(f.calls[0], 'choose');
-    assert.equal(f.settings.newChatSystem, '');
+    assert.equal(f.settings.useActiveSystemForNewChats, false);
 });
 
 test('cancel keeps current rules and does not repeat the offer', async () => {

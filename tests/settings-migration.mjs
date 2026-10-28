@@ -158,12 +158,7 @@ test('progression migration assigns IDs and retains saved narrative bonuses with
 
 
 test('retired writing and usage settings leave speaker exclusions and character data intact', () => {
-    const source = readFileSync(new URL('../src/core/settings-base-migration.js', import.meta.url), 'utf8')
-        .replace(/^import .*;\n/gm, '').replaceAll('export function ', 'function ');
-    const normalize = new Function('PORTRAIT_SHAPES', 'DEFAULT_PORTRAIT_SHAPE',
-        'defaultSettings', 'resolveImageFolder', 'saveSettings',
-        `${source}\nreturn normaliseBaseSettings;`)(PORTRAIT_SHAPES, DEFAULT_PORTRAIT_SHAPE,
-        defaultSettings, value => value, () => assert.fail('Unexpected save'));
+    const normalize = baseNormalizer();
     const settings = {
         banListEnabled: true, banList: ['stock phrase'], banScanDepth: 25,
         usage: { extraction: { runs: 7, promptTokens: 900 } },
@@ -179,4 +174,26 @@ test('retired writing and usage settings leave speaker exclusions and character 
     assert.equal(settings.speakerIgnoreList, 'Narration\nInventory');
     assert.deepEqual(settings.characters, characters);
     assert.equal(settings.dialogueFormatEnabled, true);
+});
+
+function baseNormalizer() {
+    const source = readFileSync(new URL('../src/core/settings-base-migration.js', import.meta.url), 'utf8')
+        .replace(/^import .*;\n/gm, '').replaceAll('export function ', 'function ');
+    return new Function('PORTRAIT_SHAPES', 'DEFAULT_PORTRAIT_SHAPE',
+        'defaultSettings', 'resolveImageFolder', 'saveSettings',
+        `${source}\nreturn normaliseBaseSettings;`)(PORTRAIT_SHAPES, DEFAULT_PORTRAIT_SHAPE,
+        defaultSettings, value => value, () => assert.fail('Unexpected save'));
+}
+
+test('new-chat preference replaces a fixed default with following the active System', () => {
+    const normalize = baseNormalizer();
+    for (const previous of ['', 'Saved System']) {
+        const settings = { newChatSystem: previous };
+        normalize(settings);
+        assert.equal(settings.useActiveSystemForNewChats, Boolean(previous));
+        assert.equal(Object.hasOwn(settings, 'newChatSystem'), false);
+        settings.useActiveSystemForNewChats = false;
+        normalize(settings);
+        assert.equal(settings.useActiveSystemForNewChats, false);
+    }
 });

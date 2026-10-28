@@ -42,11 +42,11 @@ export function buildNewChatSystemChooser(settings) {
     const reuse = document.createElement('input');
     reuse.type = 'checkbox';
     const reuseText = document.createElement('span');
-    reuseText.textContent = 'Automatically use this System for future new chats';
+    reuseText.textContent = 'Use the active System for future new chats';
     label.append(reuse, reuseText);
     const note = document.createElement('p');
     note.className = 'notes';
-    note.textContent = 'Turn automatic reuse off in System → Manager to choose again. Your choice becomes fixed after your first player message.';
+    note.textContent = 'New chats follow whichever System is active. Turn this off in System → Manager to choose each time. Your choice becomes fixed after your first player message.';
     wrap.append(heading, help, select, description, label, note);
     return { element: wrap, selection: () => choices[Number(select.value)], reuse: () => reuse.checked };
 }

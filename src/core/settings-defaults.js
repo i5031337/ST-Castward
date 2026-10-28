@@ -19,8 +19,8 @@ export const defaultSettings = {
     colorStyle: 'text',
     /** Active System name; empty means none. */
     activeSystem: '',
-    /** Saved System key to reuse for new chats; empty offers the chooser. */
-    newChatSystem: '',
+    /** Skip the chooser and let new chats adopt the active System. */
+    useActiveSystemForNewChats: false,
     /** Local opt-in reusable NPC rosters, keyed by System name. */
     systemNpcRosters: {},
     /** Add speaker-line formatting instructions to the story prompt. */
