@@ -4,7 +4,6 @@ import { getSettings, saveSettings } from '../../core/settings.js';
 import { activeNpcSystem } from '../../core/npc-templates.js';
 import { loadStateFromMetadata, saveStateToMetadata, hasOpenChat, undoLastChange, applyScenePrompt } from '../../tracker/status-logic.js';
 import { readLocationStore, editLocation, deleteLocation, setCurrentLocation, backgroundImageUrl } from '../../locations/location-store.js';
-import { buildLocationLore } from './ui-location-lore.js';
 import { syncPlaceBackground } from '../../locations/location-background.js';
 import { generatePlaceBackground } from '../../locations/location-image.js';
 
@@ -104,7 +103,6 @@ export function renderLocationsView(view, { locationId = null } = {}) {
     layout.append(list, editor);
     view.append(layout);
     let selectedId = '';
-    let editorToken;
     const expansion = view.locationExpansion;
     const sameChat = expansion?.metadata === metadata && expansion.chatId === chatId;
     const expandedIds = sameChat ? expansion.ids : new Set();
@@ -165,8 +163,6 @@ export function renderLocationsView(view, { locationId = null } = {}) {
     function drawEditor(record) {
         selectedId = record?.id || '';
         for (let parentId = record?.parentId; parentId; parentId = store.records[parentId]?.parentId) expandedIds.add(parentId);
-        editorToken = {};
-        const draftToken = editorToken;
         error.hidden = true;
         drawList();
         editor.replaceChildren();
@@ -241,9 +237,6 @@ export function renderLocationsView(view, { locationId = null } = {}) {
             if (!wouldCycle(place.id)) option(place.id, place.name);
         }
         parent.value = record?.parentId || '';
-        const lore = buildLocationLore(record || {}, description,
-            () => current() && editorToken === draftToken, showError);
-        form.append(lore.element);
         const actions = element('div', '', 'sillynpc-location-actions');
         const save = element('button', 'Save place', 'menu_button');
         save.type = 'submit';
@@ -252,10 +245,8 @@ export function renderLocationsView(view, { locationId = null } = {}) {
             if (record.id !== store.currentId) actions.append(button('Set as current place', () => commit(state => setCurrentLocation(state, record.id), 'Changed current place')));
             const generate = button('Generate background', async () => {
                 if (!current()) return;
-                const reference = lore.value();
                 if (name.value !== record.name || aliases.value !== record.aliases.join('\n')
                     || description.value !== record.description || parent.value !== record.parentId
-                    || reference.lorebook !== record.lorebook || reference.loreEntryId !== record.loreEntryId
                     || backgroundTouched) {
                     showError('Save your place edits before generating its background.');
                     return;
@@ -299,7 +290,7 @@ export function renderLocationsView(view, { locationId = null } = {}) {
                 description: description.value,
                 backgroundImage: backgroundTouched ? background.value
                     : readLocationStore(state).records[record?.id]?.backgroundImage || background.value,
-                parentId: parent.value, ...lore.value(),
+                parentId: parent.value,
             }), record ? 'Edited place' : 'Added place');
         });
         editor.append(form);

@@ -8,7 +8,6 @@ export async function checkLocations(root) {
     const store = await import(root + 'src/locations/location-store.js');
     const actual = await Promise.all([
         import(root + 'src/ui/locations/ui-locations.js'),
-        import(root + 'src/ui/locations/ui-location-lore.js'),
         import(root + 'src/ui/locations/ui-location-review.js'),
         import(root + 'src/ui/tracker/ui-change-review.js'),
         import(root + 'src/tracker/status-logic.js'),
@@ -46,7 +45,6 @@ export async function checkLocations(root) {
         getCurrentChatId: () => 'locations-ui-unsaved' };
     const history = [];
     let writes = 0;
-    let loreReads = 0;
     const system = { locations: { enabled: false } };
     const settings = { activeSystem: 'fixture', statusTracker: { enabled: true, extractionMode: 'extract' } };
     let settingWrites = 0;
@@ -56,17 +54,11 @@ export async function checkLocations(root) {
         context.chatMetadata.sillynpc_status_state = next;
     };
     try {
-        const buildLocationLore = await factory('src/ui/locations/ui-location-lore.js', {
-            document, queueMicrotask,
-            listLocationLorebooks: () => ['Fixture book'],
-            listLocationLoreEntries: async () => [{ uid: 0, name: 'The Lantern', content: 'A hearth of blue stone.' }],
-            readLocationLoreEntry: async () => { loreReads++; return { uid: 0, content: 'A hearth of blue stone.' }; },
-        }, 'buildLocationLore');
         const render = await factory('src/ui/locations/ui-locations.js', {
             document, getContext: () => context, hasOpenChat: () => true, ...store,
             getSettings: () => settings, activeNpcSystem: () => system, saveSettings: () => { settingWrites++; },
             loadStateFromMetadata: load, saveStateToMetadata: save, applyScenePrompt() {},
-            eventSource: { emit() {} }, buildLocationLore, syncPlaceBackground() {},
+            eventSource: { emit() {} }, syncPlaceBackground() {},
             generatePlaceBackground: async () => false,
             undoLastChange: () => { state = history.pop(); context.chatMetadata.sillynpc_status_state = state; },
         }, 'renderLocationsView');
@@ -89,16 +81,9 @@ export async function checkLocations(root) {
         field('Background image').value = background;
         fire(field('Background image'), 'change');
         check('backgroundPreview', view.querySelector('.sillynpc-location-background-preview').getAttribute('src') === 'user/images/place-fixture.png');
-        const selects = view.querySelectorAll('fieldset select');
-        selects[0].value = 'Fixture book'; fire(selects[0], 'change'); await tick();
-        selects[1].value = '0'; fire(selects[1], 'change');
-        button('Copy lore description').click(); await tick();
-        check('loreCopyIsDraft', !Object.keys(load().locations.records).length
-            && field('Description').value === 'A hearth of blue stone.' && loreReads === 1);
         submit();
         const id = Object.keys(state.locations.records)[0];
-        check('createAndLinkUidZero', state.locations.records[id].loreEntryId === 0
-            && state.locations.records[id].lorebook === 'Fixture book');
+        check('createPlace', state.locations.records[id].description === 'An old tavern.');
         check('placeBackgroundSaved', state.locations.records[id].backgroundImage === background);
         check('nameEscaped', !view.querySelector('the') && view.textContent.includes('<The Lantern>'));
         const card = () => view.querySelector('.sillynpc-location-card');
@@ -152,14 +137,14 @@ export async function checkLocations(root) {
         view.querySelector('.sillynpc-location-parent').click();
         render(view);
         check('currentParentCanStayCollapsed', view.querySelector('.sillynpc-location-parent')?.getAttribute('aria-expanded') === 'false');
-        const liveTracker = actual[6].getSettings().statusTracker;
+        const liveTracker = actual[5].getSettings().statusTracker;
         const wasShowingWorld = liveTracker.showGlobalStats;
         try {
             liveTracker.showGlobalStats = true;
             const trackerState = { global: {}, characters: [], locations: { enabled: true, currentId: 'room',
                 records: { city: { id: 'city', name: 'A very long parent place name', parentId: '' },
                     room: { id: 'room', name: 'Guest room', parentId: 'city' } } } };
-            const trackerBox = actual[5].buildTrackerBox(trackerState, { view: 'globals' });
+            const trackerBox = actual[4].buildTrackerBox(trackerState, { view: 'globals' });
             host.append(trackerBox);
             const place = trackerBox.querySelector('.sillynpc-status-place');
             check('trackerPlaceTrail', place?.textContent.includes('A very long parent place name')
@@ -206,7 +191,7 @@ export async function checkLocations(root) {
                 state = previousState;
             }
             liveTracker.showGlobalStats = false;
-            check('trackerWorldToggle', !actual[5].buildTrackerBox(trackerState, { view: 'globals' })
+            check('trackerWorldToggle', !actual[4].buildTrackerBox(trackerState, { view: 'globals' })
                 ?.querySelector('.sillynpc-status-place'));
             trackerBox.remove();
         } finally { liveTracker.showGlobalStats = wasShowingWorld; }
@@ -215,7 +200,7 @@ export async function checkLocations(root) {
         }, 'buildLocationReviewRow');
         const renderReview = await factory('src/ui/tracker/ui-change-review.js', {
             document, getSettings: () => ({ enabled: true }), applyThemeAppearance() {},
-            acceptedByDefault: () => true, buildLocationReviewRow,
+            acceptedByDefault: () => true, buildLocationReviewRow, bindTrackerEditor() {}, isTrackerEditLocked: () => false,
         }, 'renderReviewPanel');
         let pending = [{ kind: 'location-add', scope: 'location', actor: 'Moonlit Wharf', label: 'New place',
             before: '', after: 'A narrow wooden wharf.',
@@ -235,10 +220,10 @@ export async function checkLocations(root) {
         check('reviewEditableAndApplied', accepted[0].after === 'A weathered wooden wharf.'
             && !reviewView.querySelector('.sillynpc-review-panel'));
         const opening = { locations: { enabled: true, currentId: '', records: {} } };
-        check('locationInitializationGate', actual[8].shouldReadSceneLocation(opening, false));
-        check('locationReaderPromptLoaded', actual[7].buildLocationPrompt({ state: opening,
+        check('locationInitializationGate', actual[7].shouldReadSceneLocation(opening, false));
+        check('locationReaderPromptLoaded', actual[6].buildLocationPrompt({ state: opening,
             playerName: 'Alex', messageText: 'Alex enters Moonlit Wharf.' }).includes('Moonlit Wharf')
-            && actual[9].promptText('locationReaderSystem').includes('JSON place update'));
+            && actual[8].promptText('locationReaderSystem').includes('JSON place update'));
         const reportHost = document.createElement('div');
         reportHost.innerHTML = '<div class="mes_text">Temporary reader report fixture</div>';
         host.appendChild(reportHost);
@@ -247,7 +232,7 @@ export async function checkLocations(root) {
             output: { locationChanged: true },
             locationReading: { status: 'done', raw: { places: [{ name: '<Moonlit Wharf>' }], current: '<Moonlit Wharf>' } } };
         const renderReport = await factory('src/tracker/ui/status-ui-report.js', {
-            document, applyThemeAppearance() {}, getExtractionReport: () => report,
+            document, applyThemeAppearance() {}, getExtractionReport: () => report, refreshTrackerReadButtons() {},
             getSettings: () => ({ enabled: true, statusTracker: { showRawTrackerOutput: true } }),
             getContext: () => ({ chat: [{ extra: {} }] }), trackerMessageIndex: () => 0, getSwipeBase: () => null,
         }, 'renderExtractionReport');

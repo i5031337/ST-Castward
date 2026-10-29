@@ -2,8 +2,7 @@ import { sessionCache } from './status-session-context.js';
 import { loadStateFromMetadata } from './status-state-storage.js';
 import { formatCompactStatus } from './status-status-summary.js';
 import { describeNpcStatFields } from './status-stat-values.js';
-import { getContext } from '../../../../../st-context.js';
-import { buildLocationSceneContext, recentLocationMessages } from '../locations/location-context.js';
+import { buildLocationSceneContext } from '../locations/location-context.js';
 import { collectionQuantityField } from '../core/collection-fields.js';
 import { progressionFields } from './progression-fields.js';
 import { collectionAppliesTo, collectionTargetLabel } from '../core/collection-targets.js';
@@ -49,7 +48,7 @@ function getStatusInstructions() {
 
     // One text, 'storyBlock' in prompt-texts.js, from the heading to the format line.
     const places = currentState?.locations?.enabled
-        ? buildLocationSceneContext(currentState, recentLocationMessages(getContext()?.chat)) : '';
+        ? buildLocationSceneContext(currentState) : '';
     return '\n' + promptText('storyBlock', {
         status: formatCompactStatus(currentState, true, places),
         rules: applyMacros(DEFAULT_INLINE_RULES),
@@ -212,7 +211,7 @@ function buildSceneContext(given = null) {
            is sent less because it cannot change an item's description; the narrator needs it
            precisely because it is writing the scene. */
         const places = state.locations?.enabled
-            ? buildLocationSceneContext(state, recentLocationMessages(getContext()?.chat)) : '';
+            ? buildLocationSceneContext(state) : '';
         return formatCompactStatus(state, true, places).trim();
     } catch (err) {
         debugLog('Could not build the scene context', err);

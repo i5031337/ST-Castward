@@ -48,6 +48,7 @@ import { describeChatConnection } from './src/core/utils.js';
 import { applyDialogueFormatPrompt } from './src/prompts/dialogue-format.js';
 import { placeWritingPrompt } from './src/prompts/prompt-slot.js';
 import { initPlaceBackgrounds } from './src/locations/location-background.js';
+import { initPlaceLore, activateLocationLore } from './src/locations/location-lore-runtime.js';
 import { initGenerationActivity } from './src/ui/tracker/ui-generation-activity.js';
 
 async function addSettingsPanel() {
@@ -112,6 +113,7 @@ jQuery(async () => {
         // Register the aligner to preserve manual corrections without a circular import.
         setSwipeBaseAligner(alignSwipeBaseToNow);
         initPlaceBackgrounds();
+        initPlaceLore();
         await addSettingsPanel();
         wireAvatarClicks();
         // Presets replace the prompt list, so restore managed prompts and refresh the HUD.
@@ -152,6 +154,7 @@ jQuery(async () => {
         eventSource.on(event_types.PERSONA_CHANGED, () => npcProfileFollowups.clear());
 
         eventSource.on(event_types.WORLDINFO_ENTRIES_LOADED, activateCastLore);
+        eventSource.on(event_types.WORLDINFO_ENTRIES_LOADED, activateLocationLore);
 
         // Refresh the scene prompt after lore activation, before host chat injection.
         eventSource.on(event_types.WORLD_INFO_ACTIVATED, (entries) => {

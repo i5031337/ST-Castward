@@ -69,7 +69,7 @@ test('manual edits reject malformed fields and excessive prose instead of silent
     for (const patch of [{ description: null }, { description: 4 }, { aliases: 'Home' },
         { aliases: [null] }, { parentId: false }, { name: 'x'.repeat(201) },
         { description: 'x'.repeat(4001) }, { aliases: Array.from({ length: 31 }, (_, i) => `A${i}`) },
-        { aliases: ['x'.repeat(201)] }, { loreEntryId: -1 }]) {
+        { aliases: ['x'.repeat(201)] }]) {
         assert.throws(() => editLocation(state, { id: 'town', ...patch }));
     }
     assert.equal(state.locations.records.town.description, 'Old walls.');
@@ -79,7 +79,7 @@ test('manual edits reject malformed fields and excessive prose instead of silent
 });
 
 test('reserved IDs and allocation collisions cannot corrupt records; JSON preserves stable identity', () => {
-    let state = add({}, 'Town', 'town', { lorebook: 'World', loreEntryId: 0 });
+    let state = add({}, 'Town', 'town', { backgroundImage: 'url("user/images/town.png")' });
     for (const id of ['__proto__', 'constructor', 'prototype', '', ' town ', 'x'.repeat(201)]) {
         assert.throws(() => add(state, 'Other', id), /Invalid place ID/);
     }
@@ -88,7 +88,7 @@ test('reserved IDs and allocation collisions cannot corrupt records; JSON preser
     state = JSON.parse(JSON.stringify(state));
     state = editLocation(state, { id: 'town', name: 'New Town' });
     assert.equal(state.locations.currentId, 'town');
-    assert.equal(state.locations.records.town.loreEntryId, 0);
+    assert.equal(state.locations.records.town.backgroundImage, 'url("user/images/town.png")');
     const untrusted = JSON.parse('{"locations":{"records":{"__proto__":{"name":"Corrupt"},"ok":{"name":"Town"}}}}');
     assert.deepEqual(Object.keys(readLocationStore(untrusted).records), ['ok']);
     assert.equal({}.name, undefined);
@@ -102,4 +102,16 @@ test('place background links survive edits and reject invalid CSS URLs', () => {
     assert.throws(() => editLocation(state, { id: 'tavern', backgroundImage: 'url(javascript:alert)' }), /valid background/);
     state = editLocation(state, { id: 'tavern', backgroundImage: '' });
     assert.equal(state.locations.records.tavern.backgroundImage, '');
+});
+
+test('obsolete external lore links are discarded without changing place facts', () => {
+    const state = { locations: { enabled: true, currentId: 'inn', records: {
+        inn: { name: 'Inn', description: 'Warm hearth.', lorebook: 'Shared world', loreEntryId: 0 },
+    } } };
+    const record = readLocationStore(state).records.inn;
+    assert.equal(record.name, 'Inn');
+    assert.equal(record.description, 'Warm hearth.');
+    assert.equal(Object.hasOwn(record, 'lorebook'), false);
+    assert.equal(Object.hasOwn(record, 'loreEntryId'), false);
+    assert.equal(state.locations.records.inn.loreEntryId, 0);
 });

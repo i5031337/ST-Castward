@@ -6,16 +6,7 @@ import { saveSettings } from '../core/settings.js';
 import { syncEntryIdentity } from './lorebook.js';
 import { requireLorebook, lorebookWriteGuard } from './lorebook-write-target.js';
 import { createLoreEntry } from './lore-entries.js';
-
-const pending = new Map();
-function inOrder(world, work) {
-    const key = world;
-    const next = (pending.get(key) || Promise.resolve()).catch(() => {}).then(work);
-    pending.set(key, next);
-    next.then(() => { if (pending.get(key) === next) pending.delete(key); },
-        () => { if (pending.get(key) === next) pending.delete(key); });
-    return next;
-}
+import { inOrder } from './lore-write-queue.js';
 
 export function readLoreValues(content, cardProfile, scope = 'npc') {
     return mergeLoreValues(content, cardProfile, scope);

@@ -23,7 +23,7 @@ function fixture({ profiles = false, enabled = true, afterRequest, afterLocation
     let state = { global: { Time: 'noon' }, characters: [],
         locations: { enabled, currentId: currentPlace ? 'new-tavern' : '', records: knownPlace || currentPlace ? { 'new-tavern': {
             id: 'new-tavern', name: 'The Lantern', description: 'A tavern.', aliases: [],
-            parentId: '', lorebook: '', loreEntryId: null,
+            parentId: '', backgroundImage: '',
         } } : {} } };
     const context = { personaId: 'persona-a', chatMetadata: {}, getCurrentChatId: () => 'chat-a',
         chat: [{ mes: 'We enter the Lantern tavern at dusk.', swipe_id: 0, extra: {} }] };
@@ -172,7 +172,7 @@ test('place proposals keep the pre-request baseline so manual edits made while r
     } });
     f.state.locations.records['new-tavern'] = {
         id: 'new-tavern', name: 'The Lantern', description: 'The original known tavern.',
-        aliases: [], parentId: '', lorebook: '', loreEntryId: null,
+        aliases: [], parentId: '', backgroundImage: '',
     };
     f.state.locations.currentId = 'new-tavern';
     assert.deepEqual(await f.run(), { applied: true, pending: 1 });

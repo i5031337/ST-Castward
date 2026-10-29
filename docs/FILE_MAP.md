@@ -22,7 +22,7 @@ This map covers tracked runtime files, tests and support files. Source files and
 | `src/tts/` | Speech segmentation, streaming, voice cues, synthesis, and ordered playback. |
 | `src/expressions/` | NPC sprite packs, per-line expression cache, static dialogue portraits, and full-size speech sprites. |
 | `src/lore/` | Lorebook entries and synchronization. |
-| `src/locations/` | Chat-owned place identities, containment, reviewed discoveries, bounded recall, and read-only lore references. |
+| `src/locations/` | Chat-owned place identities, containment, reviewed discoveries, and managed lorebook recall. |
 | `src/story/` | Story beats, mentions, and collection scans. |
 | `src/prompts/` | Built-in prompt templates, formatting rules, and prompt placement. |
 | `src/tracker/` | Current state, progression, memories, updates, and review; `extractor/`, `snapshots/`, and `ui/` hold focused parts. |
@@ -307,6 +307,7 @@ This map covers tracked runtime files, tests and support files. Source files and
 | `src/lore/lorebook-target.js` | Choose and name an opt-in chat lorebook without overwriting an existing book. |
 | `src/lore/lorebook-cleanup.js`, `src/lore/lorebook-cleanup-runtime.js` | Find unused generated chat books, protect saved and live references, and delete through the host. |
 | `tests/lorebook-write-flows.mjs` | Manual Fill waiting/cancellation and replacement-book saves without stale UID reuse. |
+| `src/lore/lore-write-queue.js` | Shared per-book serialization for place reconciliation, profile synchronization, and entry allocation. |
 | `src/lore/lorebook-write-target.js` | Shared lorebook requirement and scoped write guards for profile, memory, Fill, import and entry writes; one chooser for concurrent requests. |
 | `src/ui/story/ui-chat-lorebook.js` | Pause a pending lorebook write to select or create its target, then resume; retry failed saves and cancel stale choices. |
 | `tests/ui-npc-lorebook-picker.py`, `tests/fixtures/ui-npc-lorebook-picker.js` | Real chooser with mocked generation/storage: select/create and resume, retries, explicit skip, Stop, and tracker profile generation through the shared writer. |
@@ -484,12 +485,13 @@ This map covers tracked runtime files, tests and support files. Source files and
 | `tests/eval-gemma-location-reader.js` | Explicit frozen local-model evaluation of dedicated place reading and production review proposals. |
 | `src/prompts/prompt-texts-locations.js` | Editable system and user prompts for the separate place reader. |
 | `src/locations/location-runtime.js` | Reader provenance, source validation, chat saves, and reviewed turn effects. |
-| `src/locations/location-context.js` | Literal mention detection, bounded narrator recall, current-place context and movement-flag instructions, and place-detail schema. |
-| `src/locations/location-lore.js` | Read-only lorebook listings and entry reads. |
+| `src/locations/location-context.js` | Literal mention detection for the reader, current-place path marker, movement-flag instructions, and place-detail schema. |
+| `src/locations/location-lore.js`, `src/locations/location-lore-runtime.js` | Guarded chat snapshot synchronization, shared lorebook target chooser, and host event wiring. |
+| `src/locations/location-lore-store.js`, `src/locations/location-lore-scan.js` | Managed entry ownership, full descriptions and containment paths, deletion reconciliation, and current/ancestor scan activation. |
+| `tests/location-lore.mjs`, `tests/location-lore-runtime.mjs`, `tests/ui-location-lore.py`, `tests/fixtures/ui-location-lore.js` | Managed-place persistence, ownership/freshness boundaries, and real host lore activation with isolated storage. |
 | `src/locations/location-background.js` | Apply a current Place's linked image through the chat background metadata and visible host background. |
 | `src/locations/location-image.js` | Build landscape prompts, draw a Place image through SillyTavern Image Generation, and attach fresh results to chat-owned cards. |
 | `src/ui/locations/ui-locations.js` | Chat-scoped Places management, search, manual editing, current marker, and deletion undo. |
-| `src/ui/locations/ui-location-lore.js` | Reference linking and explicit copying into an unsaved place description. |
 | `src/ui/locations/ui-location-review.js` | Visible place identities, containment, editable descriptions, and legacy citation display. |
 | `styles/18-locations.css` | Places editor, responsive list, and review row layout. |
 | `styles/19-generation-activity.css` | Activity indicators above the composer. |

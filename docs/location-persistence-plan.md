@@ -1,4 +1,4 @@
-# Persistent places, stage one
+# Persistent places
 
 ## Purpose and limits
 
@@ -6,7 +6,7 @@ Returning to a place should preserve its established identity and details. Castw
 will remember places alongside the cast, using the same chat ownership, reader,
 review, and current-turn consistency rules. This stage adds no coordinates, routes,
 travel mechanics, map visualization, automatic backgrounds, or NPC residence rules.
-Remembered information comes from explicit edits, selected lore, or reviewed story
+Remembered information comes from explicit edits or reviewed story
 evidence. A name mentioned in dialogue is not evidence that the scene moved there.
 
 ## Current reader flow
@@ -50,9 +50,7 @@ Places live in `sillynpc_status_state.locations`, inside existing chat metadata:
       "name": "The Rusty Lantern",
       "aliases": ["The Lantern"],
       "description": "A riverside tavern. Its eastern doorway is boarded up.",
-      "parentId": "",
-      "lorebook": "",
-      "loreEntryId": null
+      "parentId": ""
     }
   }
 }
@@ -84,38 +82,28 @@ create, rename, edit, delete, set current, and clear current. Deleting a record 
 its current marker and detaches children. The existing one-step undo handles these
 manual changes. No editor can save into a different chat after a host chat switch.
 
-Users may link an existing lorebook entry and explicitly copy its prose into the
-local description before saving. The link is reference metadata, not a second
-authoritative store. Foreground recall uses the saved local description. This stage
-never writes or deletes shared lorebook entries: chat swipe reversal cannot safely
-reverse changes to a shared external book. Async book loading checks chat freshness.
+Castward maintains one lorebook entry per saved place in the selected/default chat
+lorebook, using the same target chooser and automatic-creation preference as profiles.
+A missing target pauses synchronization for selection; skipping leaves local places
+intact. Existing saved places synchronize when opening their chat or on the next lore
+scan. Names and aliases become activation keys, and content includes the full
+containment path and saved description. Entries carry chat/place ownership markers;
+external entries and former user-linked references are never adopted or rewritten.
+The external reference picker and copy controls have been removed.
+
+Metadata remains authoritative so reviewed changes, undo, deletion, renaming, and
+reparenting can be reconciled into lore. Reparenting updates descendant paths;
+deleted places remove their owned entries from the current target. A shared per-book
+queue prevents place and profile saves from overwriting each other. Async writes
+check the chat, persona, System, and place snapshot before saving.
 
 ## Reader and review contract
 
-The existing background tracker request optionally receives a location directory
-and an additional structured `locations` output. There is no second model pass.
-Known places use their stable IDs; new places use request-local references, resolved
-to code-allocated stable IDs before review. The output can propose place discoveries,
-updates, containment, and movement. It cannot delete records or change lore links.
-Automatic mode reads an opening greeting through the same tracker entry point as
-later replies. An explicitly established named initial scene can propose both its
-card and current marker without a travel event. Location output is nested under the
-top-level `locations` key, alongside the usual `global`, `player`, and `characters`.
-
-Place proposals do not require textual citations. The reader selects established
-place facts from the latest reply, and the review shows its proposed cards and
-scene marker. A matching quote did not clearly improve place selection in the
-focused Gemma comparison, so the quote fields were removed from the output
-contract. Source chat, message text, and swipe remain bound to each proposal for
-freshness checks when a user reviews it.
-Prompt instructions require established facts only: no invented geography, inferred
-routes/distances/directions, hearsay treated as fact, or permanent NPC residency.
-Descriptions are concise current facts; updates preserve useful existing facts and
-replace superseded facts rather than append a visit log. Omitted update fields retain
-their values. Aliases refer to the same place; containment requires explicit support.
-The review is the user's decision about the model's interpretation.
-
-Place changes follow Ask Before Applying: new or edited place details count as risky, while movement to a known place is ordinary. Movement to a newly proposed place waits with its card. Apply everything accepts both automatically.
+The dedicated place reader returns names, optional descriptions and aliases, optional
+parent names, and an optional current-place name. Code resolves names to stored IDs
+and allocates stable IDs for discoveries. The stat reader supplies only the movement
+boolean. Applying changes supports automatic acceptance, review, and mixed batches.
+A proposed current marker waits for its new destination card if that card requires review.
 Review rows show the proposed place details. Descriptions can be
 corrected before acceptance; identity, destination, source, and dependencies come
 from the stored proposal, never from a returned UI object. Manual record editing is
@@ -132,19 +120,20 @@ review's discard behavior; Discard all rejects all remaining location proposals.
 
 ## Context and prompt cost
 
-Foreground recall contains only the last confirmed place, its ancestor chain, and
-a bounded number of known places explicitly named in recent chat messages. Matching
-is literal, case-insensitive, and boundary-aware; ambiguous matches are skipped.
-Names, aliases, hierarchy, and descriptions are factual reference data. A reminder
-explains that the marker may lag newer prose. No full place directory is added to
-every foreground prompt.
+The host scans place names and aliases using ordinary lorebook activation. All managed
+place entries are removed from incoming host scan arrays, then only the active chat's
+fresh entries are supplied, avoiding duplicates and cross-chat activation. The current
+place and all its ancestors receive scan-only constant and ignore-budget flags, with
+probability, groups, and timing restrictions cleared. Saved activation controls are
+unchanged; explicitly disabled entries remain disabled. Other places activate normally.
+New managed entries disable recursive activation to avoid a place's path or description
+pulling in unrelated places. Descriptions use their full saved text, without the former
+1,000-character recall truncation or recent-message recall limits.
 
-The reader receives a bounded identity directory with relevant descriptions. The
-prompt states when a directory is partial so omitted records are not assumed absent.
-Record counts, aliases, and description lengths are bounded. Disabled chats add no
-location schema, instructions, or recall. Both extraction/manual and inline story
-modes receive location recall; automatic discovery uses the existing reader modes.
-The Tracker must be enabled for its reader and story-context injection to run.
+The tracker scene prompt contains only a last-confirmed path marker. It does not
+duplicate place descriptions. The reader still receives a bounded directory of saved
+place facts, independently of lorebook activation. Disabling the extension, tracker,
+or Places suppresses all managed place entries from the scan while preserving records.
 
 ## Turn consistency and integration
 
@@ -171,14 +160,13 @@ small runtime helpers own host context, saving, and provenance. Files remain bel
 2. Proposal tests: uncited output, omissions, invalid references, new-place dependencies,
   rejection, source/record freshness, forged
   acceptance payloads, and replay.
-3. Context/schema tests: opt-in behavior, bounded directory and recall, mentions,
-   ancestors, ambiguous aliases, no geography inference, and inline/manual modes.
+3. Context/schema tests: opt-in behavior, bounded reader directory, current path marker, no geography inference, and inline/manual modes.
 4. Runtime tests: mixed stat/memory/place review, partial review and discard,
    chat/persona isolation, latest-reply movement, and pending-state persistence.
 5. Turn tests: swipe/regeneration/deletion reversal, manual correction survival,
    and legacy-base alignment, exercising the real snapshot machinery.
 6. Run the Node suite and a temporary unsaved browser fixture against the running
-   SillyTavern instance. Check startup, Places controls, review, lore references,
+   SillyTavern instance. Check startup, Places controls, review, managed lore activation,
    chat guards, and narrow layout without model requests or saving fixture data.
 
 Success means a user can discover or enter a place, review it, leave and return,

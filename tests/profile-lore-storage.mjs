@@ -6,6 +6,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFileSync } from 'node:fs';
 import { formatLoreContent, parseLoreContent, mergeLoreValues } from '../src/lore/lore-format.js';
+import { inOrder } from '../src/lore/lore-write-queue.js';
 import { createLoreEntryStore } from '../src/lore/lore-entry-store.js';
 import { promptText } from '../src/prompts/prompt-texts.js';
 
@@ -29,7 +30,7 @@ test('player profile saves create and update one lore entry using player fields'
             return data.entries[uid] = { uid };
         },
     });
-    const dependencies = {
+    const dependencies = { inOrder,
         loadWorldInfo: async () => book, saveWorldInfo: async () => {},
         formatLoreContent, parseLoreContent, mergeLoreValues, profileFieldsForCard, normalizeMemoryStore,
         saveSettings: () => {}, syncEntryIdentity: identify,
@@ -78,7 +79,7 @@ test('memory-only NPCs create a lore entry and sync active memories, excluding a
     const book = { entries: {} };
     let created = 0;
     let saved = 0;
-    const dependencies = {
+    const dependencies = { inOrder,
         loadWorldInfo: async () => book, saveWorldInfo: async () => { saved++; },
         formatLoreContent, parseLoreContent, mergeLoreValues, profileFieldsForCard: () => [], normalizeMemoryStore,
         saveSettings: () => {}, syncEntryIdentity: () => false,
@@ -111,7 +112,7 @@ test('manual profile and memory writes wait for a target, and skipping preserves
     for (const skip of [false, true]) {
         const book = { entries: {} };
         let choose, created = 0, saved = 0;
-        const dependencies = {
+        const dependencies = { inOrder,
             loadWorldInfo: async () => book, saveWorldInfo: async () => { saved++; },
             formatLoreContent, parseLoreContent, mergeLoreValues, profileFieldsForCard: () => [], normalizeMemoryStore,
             saveSettings: () => {}, syncEntryIdentity: () => false,

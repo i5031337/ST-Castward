@@ -1,8 +1,9 @@
+import { inOrder } from './lore-write-queue.js';
+
 /** Serialize allocation so concurrent saves cannot allocate duplicate entries or UIDs. */
 export function createLoreEntryStore({ load, save, allocate, identify, persist }) {
-    let pending = Promise.resolve();
     return (card, world, name, owner, { isCurrent = () => true } = {}) => {
-        const work = pending.catch(() => {}).then(async () => {
+        return inOrder(world, async () => {
             if (!isCurrent()) return null;
             if (!world) throw new Error('No lorebook selected.');
             const data = await load(world);
@@ -27,7 +28,5 @@ export function createLoreEntryStore({ load, save, allocate, identify, persist }
             persist();
             return { ...card.lorebook };
         });
-        pending = work;
-        return work;
     };
 }

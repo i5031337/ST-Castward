@@ -58,7 +58,6 @@ function fixture(open = true) {
         generatePlaceBackground: async () => false,
         saveStateToMetadata: next => { state = next; saves.push(next); },
         eventSource: { emit() {} }, undoLastChange() {},
-        buildLocationLore: () => ({ element: new Element('fieldset'), value: () => ({ lorebook: '', loreEntryId: null }) }),
     }, 'renderLocationsView');
     const view = new Element('div');
     render(view);
@@ -168,31 +167,6 @@ test('place draft uses fresh state and survives a persona change within its chat
     assert.equal(f.saves.length, 1);
     assert.equal(f.saves[0].marker, 'updated by reader');
     assert.equal(Object.values(f.saves[0].locations.records)[0].name, '<The Lantern>');
-});
-
-test('lore selection is retained while loading and async copy cannot enter a stale draft', async () => {
-    let resolveEntries;
-    let resolveRead;
-    let current = true;
-    const build = load('ui/locations/ui-location-lore.js', {
-        document, queueMicrotask,
-        listLocationLorebooks: () => ['World'],
-        listLocationLoreEntries: () => new Promise(resolve => { resolveEntries = resolve; }),
-        readLocationLoreEntry: () => new Promise(resolve => { resolveRead = resolve; }),
-    }, 'buildLocationLore');
-    const description = new Element('textarea');
-    description.value = 'Chat-owned description';
-    const lore = build({ lorebook: 'World', loreEntryId: 0 }, description, () => current, assert.fail);
-    await Promise.resolve();
-    assert.equal(lore.value().loreEntryId, 0);
-    resolveEntries([{ uid: 0, name: 'Tavern', content: 'Lore description' }]);
-    await Promise.resolve();
-    const copy = find(lore.element, el => el.tag === 'button');
-    const pending = copy.listeners.click();
-    current = false;
-    resolveRead({ uid: 0, content: 'Lore description' });
-    await pending;
-    assert.equal(description.value, 'Chat-owned description');
 });
 
 test('management refresh preserves blurred place drafts and redraws the list without an editor', () => {

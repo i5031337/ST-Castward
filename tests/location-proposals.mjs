@@ -91,13 +91,13 @@ test('reviews trust stored payloads, accept description edits and reject stale s
 });
 
 test('updates preserve omitted fields and fail safely after manual edits', () => {
-    let state = editLocation(enabled(), { name: 'Lantern', aliases: ['Inn'], description: 'An inn.', lorebook: 'World', loreEntryId: 4 }, { makeId: () => 'inn' });
+    let state = editLocation(enabled(), { name: 'Lantern', aliases: ['Inn'], description: 'An inn.', backgroundImage: 'url("user/images/inn.png")' }, { makeId: () => 'inn' });
     const { rows } = buildLocationProposals(state, { places: [
         { name: 'Lantern', description: 'An inn with a burned roof.' },
     ] }, options());
     const applied = applyLocationReview(state, rows, rows);
     assert.equal(applied.state.locations.records.inn.description, 'An inn with a burned roof.');
-    assert.equal(applied.state.locations.records.inn.loreEntryId, 4);
+    assert.equal(applied.state.locations.records.inn.backgroundImage, 'url("user/images/inn.png")');
     assert.deepEqual(applied.state.locations.records.inn.aliases, ['Inn']);
     state = editLocation(state, { id: 'inn', description: 'Manual description.' });
     assert.equal(applyLocationReview(state, rows, rows).appliedRows.length, 0);
@@ -246,7 +246,7 @@ test('disabling places preserves pending selections without applying them', () =
 
 test('known aliases update and select the existing place without renaming it', () => {
     let state = editLocation(enabled(), { name: 'The Lantern', aliases: ['Lantern Inn'],
-        description: 'A familiar inn.', lorebook: 'Places', loreEntryId: 8 }, { makeId: () => 'opaque-stored-id' });
+        description: 'A familiar inn.', backgroundImage: 'url("user/images/inn.png")' }, { makeId: () => 'opaque-stored-id' });
     const { rows, warnings } = buildLocationProposals(state, { places: [
         { name: 'LANTERN INN', description: 'A familiar inn with a repaired roof.' },
     ], current: 'Lantern Inn' }, options());
@@ -256,7 +256,7 @@ test('known aliases update and select the existing place without renaming it', (
     state = applyLocationReview(state, rows, rows).state;
     assert.equal(state.locations.currentId, 'opaque-stored-id');
     assert.equal(state.locations.records['opaque-stored-id'].name, 'The Lantern');
-    assert.equal(state.locations.records['opaque-stored-id'].loreEntryId, 8);
+    assert.equal(state.locations.records['opaque-stored-id'].backgroundImage, 'url("user/images/inn.png")');
 });
 
 test('remembering another place preserves the current scene', () => {

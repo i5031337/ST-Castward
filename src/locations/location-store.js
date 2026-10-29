@@ -24,9 +24,7 @@ export function normalizeLocationRecord(input, id = input?.id) {
     }
     return { id: text(id), name, aliases, description: text(input?.description),
         backgroundImage: backgroundImageUrl(input?.backgroundImage) ? text(input.backgroundImage) : '',
-        parentId: text(input?.parentId), lorebook: text(input?.lorebook),
-        loreEntryId: typeof input?.loreEntryId === 'number' && Number.isInteger(input.loreEntryId) && input.loreEntryId >= 0
-            ? input.loreEntryId : null };
+        parentId: text(input?.parentId) };
 }
 
 /** Locations belong to the chat, independently of persona and scene membership. */
@@ -89,15 +87,13 @@ function validateRecord(store, record) {
 /** All edits return a new state; callers own persistence and chat-boundary checks. */
 export function editLocation(state, input, { makeId = createLocationId } = {}) {
     if (input?.id !== undefined && typeof input.id !== 'string') throw new Error('Invalid place ID.');
-    for (const field of ['name', 'description', 'parentId', 'lorebook', 'backgroundImage']) {
+    for (const field of ['name', 'description', 'parentId', 'backgroundImage']) {
         if (Object.hasOwn(input || {}, field) && typeof input[field] !== 'string') {
             throw new Error(`The place ${field} must be text.`);
         }
     }
     if (Object.hasOwn(input || {}, 'aliases') && (!Array.isArray(input.aliases)
         || input.aliases.some(alias => typeof alias !== 'string'))) throw new Error('Place aliases must be a list of names.');
-    if (Object.hasOwn(input || {}, 'loreEntryId') && input.loreEntryId !== null
-        && (!Number.isInteger(input.loreEntryId) || input.loreEntryId < 0)) throw new Error('Invalid lore entry ID.');
     const store = readLocationStore(state);
     const existingId = text(input?.id);
     if (existingId && !Object.hasOwn(store.records, existingId)) throw new Error('The place no longer exists.');

@@ -77,7 +77,7 @@ Profiles → Lorebooks provides cleanup for the reserved `Castward Chat ` naming
 It checks every saved chat header through the host chat-list endpoint and conservatively
 keeps book names found anywhere in Castward settings, current chat metadata, character
 cards, groups, persona settings, or native lore selections. This includes saved rosters,
-place links and off-chat NPC links. Missing chat metadata or failed reference reads
+place records and off-chat NPC links. Missing chat metadata or failed reference reads
 abort cleanup. The preview lists every candidate; confirmation rechecks saved and live
 references and deletes only names from that preview through the host's deletion helper,
 which also refreshes its book list and cache. Renamed books outside the prefix are left
@@ -137,10 +137,15 @@ limit, default 50, with older entries archived.
 Place records are chat-owned independently of persona; their reader/recall switch is
 a System setting, enabled by default. The existing
 tracker reader proposes story-derived place cards, changes, containment, and
-movement; Ask Before Applying partitions them with other tracker changes. A bounded scene context recalls the last
-confirmed place, its ancestors, and explicitly mentioned places while the tracker is
-enabled. Read-only lorebook links can seed local descriptions through an explicit
-copy action. Shared lorebooks are never rewritten by place updates. See
+movement; Ask Before Applying partitions them with other tracker changes. Castward mirrors
+saved place descriptions into managed lorebook entries with name/alias keys and a
+full containment path. The host scans other places normally; current-place and
+ancestor entries receive temporary constant/ignore-budget flags for the scan.
+The scene prompt keeps only the last-confirmed path marker. Metadata remains the
+source of truth, including for undo, swipe replacement, and later lore synchronization.
+Managed entries are scoped to their owning chat; scans exclude other chats' entries
+and all managed places when the extension, tracker, or Places are disabled.
+External lore entries are never adopted. See
 [location-persistence-plan.md](location-persistence-plan.md) for the contract.
 After the stat reading, a separate location request runs when no current place is
 recorded or the tracker reports a location change. This includes the opening greeting

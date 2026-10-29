@@ -12,7 +12,7 @@ function fixture() {
     const card = { id: 'mira', name: 'Mira', profile: {} };
     const state = { player: { memories: ['Player secret'] }, locations: { enabled: true, currentId: 'inn', records: {
         town: { name: 'Town', aliases: ['Home'], description: 'A quiet town', parentId: '' },
-        inn: { name: 'Inn', parentId: 'town', description: 'Warm hearth', lorebook: 'World', loreEntryId: 4 },
+        inn: { name: 'Inn', parentId: 'town', description: 'Warm hearth', backgroundImage: 'url("user/images/inn.png")' },
     } }, npcMemories: { 'id:mira': { entries: [{ id: 'remember', text: 'Met the player',
         sourceMessageId: '10', provenance: { chatId: 'old', systemId: 'A', sources: [
             { messageId: 10, fingerprint: 'old-reply', swipeId: 2 },
@@ -51,14 +51,14 @@ test('Places and NPC memories are excluded by default, independently of NPC reus
     assert.equal(settings.systemNpcRosters.A.memories, undefined);
 });
 
-test('Places copy their graph and lore references independently while the current place resets', () => {
+test('Places copy their graph and backgrounds independently while the current place resets', () => {
     const { settings, context, enable, fresh } = fixture();
     enable();
     const result = fresh();
     assert.equal(result.locations.currentId, '');
     assert.equal(result.locations.records.inn.parentId, 'town');
     assert.deepEqual(result.locations.records.town.aliases, ['Home']);
-    assert.equal(result.locations.records.inn.loreEntryId, 4);
+    assert.equal(result.locations.records.inn.backgroundImage, 'url("user/images/inn.png")');
     result.locations.records.inn.description = 'Different hearth';
     assert.equal(settings.systemNpcRosters.A.places.inn.description, 'Warm hearth');
     assert.equal(captureNpcRoster(settings, context), true);

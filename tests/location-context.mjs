@@ -2,7 +2,7 @@ import { bindStatusModule } from './helpers/status-module.mjs';
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFileSync } from 'node:fs';
-import { buildLocationSceneContext, buildLocationReaderNotes, recentLocationMessages,
+import { buildLocationSceneContext, buildLocationReaderNotes,
     mentionsLocation, locationExtractionSchema } from '../src/locations/location-context.js';
 
 const record = (id, name, extra = {}) => ({ id, name, aliases: [], description: `Facts about ${name}`, parentId: '', ...extra });
@@ -12,18 +12,13 @@ const state = () => ({ locations: { enabled: true, currentId: 'inn', records: {
     other: record('other', 'Unmentioned Cave'),
 } } });
 
-test('recall includes current ancestors and places named by the player without a global dump', () => {
+test('narrator marker preserves the current place tree without duplicating lore descriptions', () => {
     const current = state();
     const before = structuredClone(current);
-    const context = buildLocationSceneContext(current, recentLocationMessages([
-        { is_user: true, mes: 'What happened at the Old Ruins?' }, { mes: 'You wait.' },
-    ]));
-    for (const value of ['Rusty Lantern', 'the Lantern', 'Facts about Rusty Lantern',
-        'Ashford', 'Facts about Ashford', 'Old Ruins', 'Facts about Old Ruins']) {
-        assert.ok(context.includes(value), value);
-    }
-    assert.ok(!context.includes('Unmentioned Cave'));
-    assert.doesNotMatch(context, /"ref"|lastConfirmedCurrentRef|\binn\b|\btown\b|\bruins\b/);
+    const context = buildLocationSceneContext(current);
+    assert.ok(context.includes('Ashford') && context.includes('Rusty Lantern'));
+    assert.ok(context.indexOf('Ashford') < context.indexOf('Rusty Lantern'));
+    assert.doesNotMatch(context, /Facts about|the Lantern|Old Ruins|Unmentioned Cave|"id"|"parentId"/);
     assert.deepEqual(current, before);
 });
 
@@ -36,11 +31,9 @@ test('literal Unicode boundaries and punctuation aliases never run user patterns
     assert.equal(mentionsLocation('éclairshop', 'éclair'), false);
 });
 
-test('ambiguous aliases do not recall either record or infer a current destination', () => {
+test('place mentions cannot infer a current destination', () => {
     const current = state(); current.locations.currentId = '';
-    current.locations.records.inn.aliases = ['the hall'];
-    current.locations.records.ruins.aliases = ['the hall'];
-    assert.equal(buildLocationSceneContext(current, ['We enter the hall.']), '');
+    assert.equal(buildLocationSceneContext(current, ['We enter the Old Ruins.']), '');
     assert.equal(current.locations.currentId, '');
 });
 
@@ -49,15 +42,6 @@ test('disabled locations contribute no narrator or reader context', () => {
     assert.equal(buildLocationSceneContext(current, ['Old Ruins']), '');
     assert.equal(buildLocationReaderNotes(current, 'We arrive.'), '');
     assert.equal(buildLocationSceneContext({}), '');
-});
-
-test('recent messages retain latest player input and remain bounded', () => {
-    const chat = [{ is_user: true, mes: 'Old Ruins' },
-        ...Array.from({ length: 12 }, () => ({ mes: 'a'.repeat(3000) }))];
-    const recent = recentLocationMessages(chat);
-    assert.ok(recent.length < chat.length);
-    assert.equal(recent[0], 'Old Ruins');
-    assert.ok(recent.every(text => text.length <= 1200));
 });
 
 test('reader receives only current location identities and containment context', () => {
@@ -71,44 +55,18 @@ test('reader receives only current location identities and containment context',
     assert.deepEqual(current, before);
 });
 
-test('narrator context remains bounded under large saved records', () => {
-    const current = state();
-    for (const place of Object.values(current.locations.records)) {
-        place.description = 'x'.repeat(4000);
-        place.aliases = Array.from({ length: 30 }, (_, i) => `${place.id} ${i} ${'a'.repeat(180)}`);
-    }
-    assert.ok(buildLocationSceneContext(current, ['Old Ruins Unmentioned Cave']).length < 14500);
-});
-
 test('schema allows uncited place discoveries and field omission for updates', () => {
     const schema = locationExtractionSchema();
     assert.deepEqual(schema.properties.places.items.required, ['name']);
     assert.equal(schema.required, undefined);
 });
 
-test('lore selections resolve linked entry IDs and reject missing books and entries', async () => {
-    const source = readFileSync(new URL('../src/locations/location-lore.js', import.meta.url), 'utf8')
-        .replace(/^import .*;\n/gm, '').replaceAll('export function ', 'function ')
-        .replaceAll('export async function ', 'async function ');
-    let loads = 0;
-    const api = new Function('world_names', 'loadWorldInfo', source
-        + '\nreturn {listLocationLorebooks,listLocationLoreEntries,readLocationLoreEntry};')(['Story'], async () => {
-        loads++;
-        return { entries: { 0: { uid: 0, comment: 'Lantern', content: 'Warm hearth.' } } };
-    });
-    assert.deepEqual(api.listLocationLorebooks(), ['Story']);
-    assert.deepEqual(await api.listLocationLoreEntries('missing'), []);
-    assert.equal(loads, 0);
-    assert.deepEqual(await api.readLocationLoreEntry('Story', 0), { uid: 0, name: 'Lantern', content: 'Warm hearth.' });
-    assert.equal(await api.readLocationLoreEntry('Story', 9), null);
-});
-
 const sourceWithoutImports = path => readFileSync(new URL(path, import.meta.url), 'utf8')
     .replace(/^import\s+[\s\S]*?\s+from\s+['"][^'"]+['"];\s*/gm, '')
     .replaceAll('export function ', 'function ');
 
-test('scene and inline narrator prompts wire place recall to live player messages', () => {
-    const current = state(); current.locations.currentId = '';
+test('scene and inline narrator prompts include the current location marker', () => {
+    const current = state();
     const deps = {
         committedState: current, formatCompactStatus: (_state, _detail, places) => ['Character facts.', places].filter(Boolean).join('\n'),
         describeNpcStatFields: () => '',
@@ -116,12 +74,14 @@ test('scene and inline narrator prompts wire place recall to live player message
     const settings = { collections: [], npcTemplates: [] };
     bindStatusModule(new URL('../src/tracker/status-scene-prompt.js', import.meta.url), deps, {
         getSettings: () => ({ statusTracker: settings }), getContext: () => ({ chat: [{ is_user: true, mes: 'Old Ruins' }] }),
-        buildLocationSceneContext, recentLocationMessages, describeStatDefinitions: () => '',
+        buildLocationSceneContext, describeStatDefinitions: () => '',
         promptText: (_id, values) => `Inline instructions.\n${values.status}`,
         applyMacros: text => text, DEFAULT_INLINE_RULES: '', progressionFields: () => ({ enabled: false }),
     });
     for (const context of [deps.buildSceneContext(), deps.getStatusInstructions()]) {
-        assert.match(context, /Old Ruins/);
+        assert.match(context, /Rusty Lantern/);
+        assert.match(context, /Ashford/);
+        assert.doesNotMatch(context, /Old Ruins|Facts about/);
         assert.ok(!context.includes('Unmentioned Cave'));
         assert.doesNotMatch(context, /"ref"|lastConfirmedCurrentRef/);
     }
