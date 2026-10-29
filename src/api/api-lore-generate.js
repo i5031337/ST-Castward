@@ -18,6 +18,7 @@ import { formatLoreContent, parseLoreContent, parseGeneratedProfileFields, merge
 import { loreReplyWasTruncated, parseLoreReply } from '../lore/lore-reply.js';
 import { requireLorebook, lorebookWriteGuard } from '../lore/lorebook-write-target.js';
 import { createLoreEntry } from '../lore/lore-entries.js';
+import { inOrder } from '../lore/lore-write-queue.js';
 import { getPersonaData } from '../tracker/status-logic.js';
 
 /**
@@ -282,57 +283,62 @@ export async function saveLoreContent(char, world, uid, tags, content, { preserv
         uid = link.uid;
     }
     world = target;
-    const worldData = await loadWorldInfo(world);
-    if (!worldData || !worldData.entries) throw new Error('Lorebook not found or entries missing');
-    
-    const entries = worldData.entries;
-    let entry;
-    if (Array.isArray(entries)) {
-        entry = entries.find(e => Number(e.uid) === Number(uid));
-    } else {
-        entry = entries[uid];
-    }
+    return inOrder(world, async () => {
+        if (!isCurrent()) throw new DOMException('Lorebook write cancelled.', 'AbortError');
+        const loaded = await loadWorldInfo(world);
+        if (!isCurrent()) throw new DOMException('Lorebook write cancelled.', 'AbortError');
+        if (!loaded?.entries) throw new Error('Lorebook not found or entries missing');
 
-    if (!entry) throw new Error(`Entry UID ${uid} not found in Lorebook`);
-
-    const submitted = String(content ?? '').trim();
-    let profile = char.profile;
-    let profileFieldsSaved = 0;
-    if (char.isPlayer) {
-        const parsed = parseGeneratedProfileFields(submitted, 'player');
-        if (parsed) {
-            const values = preserveEmpty ? Object.fromEntries(Object.entries(parsed).filter(([, value]) => value)) : parsed;
-            profile = { ...profile, ...values };
-            profileFieldsSaved = Object.values(values).filter(Boolean).length;
-            const existing = preserveEmpty ? mergeLoreValues(entry.content, char.profile, 'player') || char.profile || {} : {};
-            entry.content = formatLoreContent({ ...existing, ...values },
-                preserveEmpty ? entry.content : '', undefined, 'player');
+        const worldData = structuredClone(loaded);
+        const entries = worldData.entries;
+        let entry;
+        if (Array.isArray(entries)) {
+            entry = entries.find(e => Number(e.uid) === Number(uid));
         } else {
-            entry.content = submitted;
+            entry = entries[uid];
         }
-    } else if (!profileFieldsForCard(char).length) {
-        entry.content = submitted;
-    } else {
-        const parsed = parseGeneratedProfileFields(submitted, 'npc');
-        if (!parsed) throw new Error('NPC lore must use named fields in the required order.');
-        const selectedIds = new Set(profileFieldsForCard(char).map(field => field.id));
-        const accepted = Object.fromEntries(Object.entries(parsed).filter(([id, value]) => selectedIds.has(id) && (!preserveEmpty || value)));
-        const complete = Object.keys(accepted).length === profileFieldsForCard(char).length;
-        const values = complete ? accepted : { ...(mergeLoreValues(entry.content, profile) || profile || {}), ...accepted };
-        entry.content = formatLoreContent(values, entry.content, undefined, 'npc', profileFieldsForCard(char));
-        profile = { ...profile, ...accepted };
-        profileFieldsSaved = Object.values(accepted).filter(Boolean).length;
-    }
-    // The writer returns Abilities/History/Ties and never a name, so the heading is put
-    // on here rather than asked for. Before the tags merge, which must not be lost.
-    syncEntryIdentity(char, entry);
-    entry.key = mergeKeywords(entry.key, tags);
-    
-    if (!isCurrent()) throw new DOMException('Lorebook write cancelled.', 'AbortError');
-    await saveWorldInfo(world, worldData, true);
-    if (!isCurrent()) throw new DOMException('Lorebook write cancelled.', 'AbortError');
-    char.profile = profile;
-    char.lorebook = { world, uid: Number(uid) };
-    saveSettings();
-    return { profileFieldsSaved };
+
+        if (!entry) throw new Error(`Entry UID ${uid} not found in Lorebook`);
+
+        const submitted = String(content ?? '').trim();
+        let profile = char.profile;
+        let profileFieldsSaved = 0;
+        if (char.isPlayer) {
+            const parsed = parseGeneratedProfileFields(submitted, 'player');
+            if (parsed) {
+                const values = preserveEmpty ? Object.fromEntries(Object.entries(parsed).filter(([, value]) => value)) : parsed;
+                profile = { ...profile, ...values };
+                profileFieldsSaved = Object.values(values).filter(Boolean).length;
+                const existing = preserveEmpty ? mergeLoreValues(entry.content, char.profile, 'player') || char.profile || {} : {};
+                entry.content = formatLoreContent({ ...existing, ...values },
+                    preserveEmpty ? entry.content : '', undefined, 'player');
+            } else {
+                entry.content = submitted;
+            }
+        } else if (!profileFieldsForCard(char).length) {
+            entry.content = submitted;
+        } else {
+            const parsed = parseGeneratedProfileFields(submitted, 'npc');
+            if (!parsed) throw new Error('NPC lore must use named fields in the required order.');
+            const selectedIds = new Set(profileFieldsForCard(char).map(field => field.id));
+            const accepted = Object.fromEntries(Object.entries(parsed).filter(([id, value]) => selectedIds.has(id) && (!preserveEmpty || value)));
+            const complete = Object.keys(accepted).length === profileFieldsForCard(char).length;
+            const values = complete ? accepted : { ...(mergeLoreValues(entry.content, profile) || profile || {}), ...accepted };
+            entry.content = formatLoreContent(values, entry.content, undefined, 'npc', profileFieldsForCard(char));
+            profile = { ...profile, ...accepted };
+            profileFieldsSaved = Object.values(accepted).filter(Boolean).length;
+        }
+        // The writer returns Abilities/History/Ties and never a name, so the heading is put
+        // on here rather than asked for. Before the tags merge, which must not be lost.
+        syncEntryIdentity(char, entry);
+        entry.key = mergeKeywords(entry.key, tags);
+
+        if (!isCurrent()) throw new DOMException('Lorebook write cancelled.', 'AbortError');
+        await saveWorldInfo(world, worldData, true);
+        if (!isCurrent()) throw new DOMException('Lorebook write cancelled.', 'AbortError');
+        char.profile = profile;
+        char.lorebook = { world, uid: Number(uid) };
+        saveSettings();
+        return { profileFieldsSaved };
+    });
 }

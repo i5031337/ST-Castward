@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
+import { inOrder } from '../src/lore/lore-write-queue.js';
 
 function bind(path, name, dependencies, start) {
     let source = readFileSync(new URL(path, import.meta.url), 'utf8');
@@ -40,11 +41,11 @@ test('saving into a replacement book allocates its own entry instead of reusing 
     const card = { name: 'Mira', profile: {}, lorebook: { world: 'Deleted', uid: 77 } };
     const book = { entries: { 77: { content: 'Another person' } } };
     const save = bind('../src/api/api-lore-generate.js', 'saveLoreContent', {
-        lorebookWriteGuard: guard => guard || (() => true),
+        inOrder, lorebookWriteGuard: guard => guard || (() => true),
         requireLorebook: () => new Promise(resolve => { select = () => resolve('Chosen'); }),
         createLoreEntry: async () => { allocated++; book.entries[3] = { content: '' }; return { world: 'Chosen', uid: 3 }; },
         loadWorldInfo: async world => { assert.equal(world, 'Chosen'); return book; },
-        saveWorldInfo: async () => { saved++; }, saveSettings() {},
+        saveWorldInfo: async (_world, data) => { book.entries = data.entries; saved++; }, saveSettings() {},
         profileFieldsForCard: () => [{ id: 'appearance' }],
         parseGeneratedProfileFields: () => ({ appearance: 'Blue coat' }),
         formatLoreContent: values => `Appearance: ${values.appearance}`,

@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs';
 import { createLocationLoreStore } from '../src/locations/location-lore-store.js';
 import { createLocationLoreRuntime } from '../src/locations/location-lore.js';
 import { createLoreEntryStore } from '../src/lore/lore-entry-store.js';
+import { inOrder } from '../src/lore/lore-write-queue.js';
 
 function bind(path, result, dependencies) {
     const source = readFileSync(new URL(path, import.meta.url), 'utf8')
@@ -63,4 +64,38 @@ test('entry allocation persists each target before returning its link', async ()
     }
     host.flush();
     assert.equal(host.disk.size, 2);
+});
+
+test('entry edits, deletion, and identity repair wait for place transactions and preserve their entries', async () => {
+    for (const operation of ['updateLorebookEntry', 'deleteLorebookEntry', 'renameLorebookEntry', 'syncLorebookScope', 'repairEntryIdentities']) {
+        const host = storage();
+        const card = { name: 'Mira', lorebook: { world: 'A', uid: 0 } };
+        host.cache.get('A').entries[0] = { uid: 0, comment: 'Old', content: 'Old profile', disable: false };
+        const methods = bind('../src/lore/lorebook.js', `({ ${operation} })`, {
+            ...host, inOrder, debugLog() {}, getAllCharacters: () => [card], getActiveCharacters: () => [card],
+            getChatCast: () => [], isCharacterInChat: () => false,
+            deleteWorldInfoEntry: async (data, uid) => { delete data.entries[uid]; return true; },
+        });
+        let release;
+        const held = new Promise(resolve => { release = resolve; });
+        let started;
+        const entered = new Promise(resolve => { started = resolve; });
+        const places = createLocationLoreStore({
+            load: async name => { const data = await host.loadWorldInfo(name); started(); await held; return data; },
+            save: (name, data) => host.saveWorldInfo(name, data, true), allocate: host.createWorldInfoEntry,
+        });
+        const placeWrite = places('A', { locations: { records: { inn: { name: 'Inn' } } } }, 'owner');
+        await entered;
+        const edit = operation === 'updateLorebookEntry' ? methods[operation]('A', 0, { content: 'Edited' })
+            : operation === 'deleteLorebookEntry' ? methods[operation]('A', 0)
+                : operation === 'renameLorebookEntry' ? methods[operation](card) : methods[operation]();
+        release();
+        await Promise.all([placeWrite, edit]);
+        const entries = host.disk.get('A')?.entries;
+        assert.equal(Object.values(entries || {}).filter(entry => entry.castwardPlace).length, 1, operation);
+        if (operation === 'deleteLorebookEntry') assert.equal(entries[0], undefined);
+        else if (operation === 'updateLorebookEntry') assert.equal(entries[0].content, 'Edited');
+        else if (operation === 'syncLorebookScope') assert.equal(entries[0].disable, true);
+        else assert.equal(entries[0].comment, 'Mira');
+    }
 });

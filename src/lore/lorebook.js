@@ -6,6 +6,7 @@ import { getActiveCharacters, getChatCast, isCharacterInChat } from '../characte
 import { getAllCharacters } from '../characters/character-repository.js';
 import { canAutoLinkLorebook } from '../characters/character-scope.js';
 import { existingFillLorebookName, newChatLorebookName } from './lorebook-target.js';
+import { inOrder } from './lore-write-queue.js';
 
 /** world_names is undefined until SillyTavern initialization finishes. */
 function knownWorlds() {
@@ -16,15 +17,17 @@ function knownWorlds() {
  * Updates an existing lorebook entry.
  */
 export async function updateLorebookEntry(world, uid, { comment, content }) {
-    const data = await loadWorldInfo(world);
-    const entry = data?.entries?.[uid];
-    if (!entry) throw new Error(`Entry UID ${uid} not found in world "${world}"`);
+    return inOrder(world, async () => {
+        const data = await loadWorldInfo(world);
+        const entry = data?.entries?.[uid];
+        if (!entry) throw new Error(`Entry UID ${uid} not found in world "${world}"`);
 
-    if (comment !== undefined) entry.comment = comment;
-    if (content !== undefined) entry.content = content;
+        if (comment !== undefined) entry.comment = comment;
+        if (content !== undefined) entry.content = content;
 
-    await saveWorldInfo(world, data, true);
-    return entry;
+        await saveWorldInfo(world, data, true);
+        return entry;
+    });
 }
 
 /**
@@ -35,15 +38,17 @@ export async function updateLorebookEntry(world, uid, { comment, content }) {
  * @returns {Promise<boolean>} False when there was nothing there to delete.
  */
 export async function deleteLorebookEntry(world, uid) {
-    const data = await loadWorldInfo(world);
-    if (!data?.entries) throw new Error(`Could not load lorebook "${world}"`);
+    return inOrder(world, async () => {
+        const data = await loadWorldInfo(world);
+        if (!data?.entries) throw new Error(`Could not load lorebook "${world}"`);
 
-    const removed = await deleteWorldInfoEntry(data, uid, { silent: true });
-    if (removed === false) return false;
+        const removed = await deleteWorldInfoEntry(data, uid, { silent: true });
+        if (removed === false) return false;
 
-    await saveWorldInfo(world, data, true);
-    debugLog(`Deleted entry ${uid} from "${world}"`);
-    return true;
+        await saveWorldInfo(world, data, true);
+        debugLog(`Deleted entry ${uid} from "${world}"`);
+        return true;
+    });
 }
 
 /**
@@ -247,21 +252,23 @@ export async function syncLorebookScope() {
     let flipped = 0;
 
     for (const [worldName, members] of byWorld) {
-        let data;
-        try { data = await loadWorldInfo(worldName); } catch { continue; }
-        if (!data?.entries) continue;
+        await inOrder(worldName, async () => {
+            let data;
+            try { data = await loadWorldInfo(worldName); } catch { return; }
+            if (!data?.entries) return;
 
-        let changed = false;
-        for (const char of members) {
-            const entry = data.entries[char.lorebook.uid];
-            if (!entry) continue;                      // deleted in SillyTavern's editor
-            const shouldBeOff = !isCharacterInChat(char, cast);
-            if (!!entry.disable === shouldBeOff) continue;
-            entry.disable = shouldBeOff;
-            changed = true;
-            flipped++;
-        }
-        if (changed) await saveWorldInfo(worldName, data, true);
+            let changed = false;
+            for (const char of members) {
+                const entry = data.entries[char.lorebook.uid];
+                if (!entry) continue;                      // deleted in SillyTavern's editor
+                const shouldBeOff = !isCharacterInChat(char, cast);
+                if (!!entry.disable === shouldBeOff) continue;
+                entry.disable = shouldBeOff;
+                changed = true;
+                flipped++;
+            }
+            if (changed) await saveWorldInfo(worldName, data, true);
+        });
     }
 
     if (flipped) debugLog(`Lore entries switched for this chat: ${flipped}`);
@@ -298,14 +305,16 @@ export async function renameLorebookEntry(char) {
     const world = char?.lorebook?.world;
     if (!world || !char.name) return false;
 
-    const data = await loadWorldInfo(world);
-    const entry = data?.entries?.[char.lorebook.uid];
-    if (!entry) return false;
+    return inOrder(world, async () => {
+        const data = await loadWorldInfo(world);
+        const entry = data?.entries?.[char.lorebook.uid];
+        if (!entry) return false;
 
-    if (!syncEntryIdentity(char, entry)) return false;
-    await saveWorldInfo(world, data, true);
-    debugLog(`Lorebook entry now filed under "${char.name}"`);
-    return true;
+        if (!syncEntryIdentity(char, entry)) return false;
+        await saveWorldInfo(world, data, true);
+        debugLog(`Lorebook entry now filed under "${char.name}"`);
+        return true;
+    });
 }
 
 /**
@@ -324,27 +333,29 @@ export async function repairEntryIdentities() {
 
     let updated = 0;
     for (const [world, chars] of byWorld) {
-        let worldData;
-        try {
-            worldData = await loadWorldInfo(world);
-        } catch (err) {
-            debugLog(`Could not open "${world}" to check its entries`, err);
-            continue;
-        }
-        if (!worldData?.entries) continue;
-
-        let dirty = false;
-        for (const char of chars) {
-            const entry = worldData.entries[char.lorebook.uid];
-            // A missing entry is left to tryAutoSyncLorebook rather than repaired into
-            // existence: the user may have deleted it on purpose.
-            if (entry && syncEntryIdentity(char, entry)) {
-                dirty = true;
-                updated += 1;
+        await inOrder(world, async () => {
+            let worldData;
+            try {
+                worldData = await loadWorldInfo(world);
+            } catch (err) {
+                debugLog(`Could not open "${world}" to check its entries`, err);
+                return;
             }
-        }
+            if (!worldData?.entries) return;
 
-        if (dirty) await saveWorldInfo(world, worldData, true);
+            let dirty = false;
+            for (const char of chars) {
+                const entry = worldData.entries[char.lorebook.uid];
+                // A missing entry is left to tryAutoSyncLorebook rather than repaired into
+                // existence: the user may have deleted it on purpose.
+                if (entry && syncEntryIdentity(char, entry)) {
+                    dirty = true;
+                    updated += 1;
+                }
+            }
+
+            if (dirty) await saveWorldInfo(world, worldData, true);
+        });
     }
 
     if (updated) debugLog(`Named ${updated} lorebook entr(ies) after their characters`);

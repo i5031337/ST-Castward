@@ -4,6 +4,7 @@ import { npcTemplates } from '../src/core/npc-templates.js';
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFileSync } from 'node:fs';
+import { inOrder } from '../src/lore/lore-write-queue.js';
 import { isReaderStat } from '../src/tracker/stat-update-policy.js';
 import { PROFILE_FIELDS, NPC_LORE_FIELDS } from '../src/core/constants-profile.js';
 import { formatLoreContent, parseLoreContent, parseGeneratedProfileFields, mergeLoreValues } from '../src/lore/lore-format.js';
@@ -160,10 +161,10 @@ test('saving partial lore records supported NPC and player fields', async () => 
     let saved = 0;
     const saveLoreContent = new Function('loadWorldInfo', 'saveWorldInfo', 'parseLoreContent',
         'parseGeneratedProfileFields', 'mergeLoreValues', 'formatLoreContent', 'syncEntryIdentity',
-        'mergeKeywords', 'saveSettings', 'profileFieldsForCard', `const requireLorebook = async (card, {world}) => world; const lorebookWriteGuard = guard => guard || (() => true);\n${saveSource}\nreturn saveLoreContent;`)(
-        async () => ({ entries }), async () => { saved++; }, parseLoreContent,
+        'mergeKeywords', 'saveSettings', 'profileFieldsForCard', 'inOrder', `const requireLorebook = async (card, {world}) => world; const lorebookWriteGuard = guard => guard || (() => true);\n${saveSource}\nreturn saveLoreContent;`)(
+        async () => ({ entries }), async (_world, data) => { Object.assign(entries, data.entries); saved++; }, parseLoreContent,
         parseGeneratedProfileFields, mergeLoreValues, formatLoreContent, () => {},
-        (old, tags) => [...old, tags], () => {}, card => resolveProfileFields(card.isPlayer ? 'player' : 'npc'),
+        (old, tags) => [...old, tags], () => {}, card => resolveProfileFields(card.isPlayer ? 'player' : 'npc'), inOrder,
     );
     const npc = { name: 'Mira', profile: { role: '' } };
     const npcSaved = await saveLoreContent(npc, 'World', 0, 'Mira', 'Role: Watchmaker\nHistory: Moved here.');
@@ -194,10 +195,10 @@ test('empty generated fields preserve existing lore and profile values', async (
     const entries = { 0: { uid: 0, content: formatLoreContent({ role: 'Professor', wants: 'Help trainers' }), key: [] } };
     const saveLoreContent = new Function('loadWorldInfo', 'saveWorldInfo', 'parseLoreContent',
         'parseGeneratedProfileFields', 'mergeLoreValues', 'formatLoreContent', 'syncEntryIdentity',
-        'mergeKeywords', 'saveSettings', 'profileFieldsForCard', `const requireLorebook = async (card, {world}) => world; const lorebookWriteGuard = guard => guard || (() => true);\n${saveSource}\nreturn saveLoreContent;`)(
-        async () => ({ entries }), async () => {}, parseLoreContent,
+        'mergeKeywords', 'saveSettings', 'profileFieldsForCard', 'inOrder', `const requireLorebook = async (card, {world}) => world; const lorebookWriteGuard = guard => guard || (() => true);\n${saveSource}\nreturn saveLoreContent;`)(
+        async () => ({ entries }), async (_world, data) => { Object.assign(entries, data.entries); }, parseLoreContent,
         parseGeneratedProfileFields, mergeLoreValues, formatLoreContent, () => {},
-        (old, tags) => [...old, tags], () => {}, card => resolveProfileFields(card.isPlayer ? 'player' : 'npc'),
+        (old, tags) => [...old, tags], () => {}, card => resolveProfileFields(card.isPlayer ? 'player' : 'npc'), inOrder,
     );
     const npc = { name: 'Sycamore', profile: { role: 'Professor', wants: 'Help trainers' } };
     const saved = await saveLoreContent(npc, 'World', 0, '', 'Role: \nWants: Prepare trainers',
