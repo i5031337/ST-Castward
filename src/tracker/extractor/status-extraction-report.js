@@ -1,6 +1,7 @@
 import { getContext } from '../../../../../../st-context.js';
 import { saveChatSoon, appliedChangesForCurrentSwipe } from '../snapshots/status-snapshot-records.js';
 import { buildReportBreakdown } from './status-report-counts.js';
+import { npcProfileFollowupSummary } from './status-profile-followups.js';
 import { getSettings } from '../../core/settings.js';
 
 const REPORT_KEY = 'sillynpc_reader_report';
@@ -22,7 +23,8 @@ export function getExtractionReport(messageId) {
     const appliedRows = appliedChangesForCurrentSwipe(messageId) || [];
     const applied = appliedRows.length + (report.reviewedMemories || 0);
     const pending = message.extra?.sillynpc_pending;
-    const summary = String(report.summary || '')
+    const followup = npcProfileFollowupSummary(report.npcProfiles);
+    const summary = (String(report.summary || '') + (followup ? ` · ${followup}` : ''))
         .replace(/\b\d+ applied\b/, `${applied} applied`)
         .replace(/\b\d+ awaiting review\b/, `${Array.isArray(pending) ? pending.length : 0} awaiting review`);
     const tracker = getSettings().statusTracker;

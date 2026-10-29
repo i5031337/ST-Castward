@@ -19,7 +19,9 @@ function fixture() {
     let current = true;
     let imageReply = async card => `/images/${card.name}.png`;
     let reply = async () => ({ content: 'generated' });
+    let chooseBook = async () => 'Book';
     const dependencies = { profileFieldValue,
+        requireLorebook: (...args) => chooseBook(...args),
         getContext: () => context, getSettings: () => settings,
         saveSettings: () => calls.push('save'), LOG_PREFIX: '[test]',
         profileFieldsForCard: () => fields,
@@ -50,6 +52,7 @@ function fixture() {
         (...Object.values(dependencies));
     return { settings, cards, state, fields, calls, warnings, context,
         run: names => run(names, () => current),
+        setLoreTarget: value => { chooseBook = value; },
         setReply: value => { reply = value; }, setImageReply: value => { imageReply = value; }, invalidate: () => { current = false; } };
 }
 
@@ -150,4 +153,29 @@ test('a stale portrait result is not assigned and manual portrait selection take
     await manual.run(['Mira']);
     assert.equal(manual.cards.find(card => card.name === 'Mira').imageUrl, '/manual.png');
     assert.deepEqual(manual.cards.find(card => card.name === 'Mira').images, ['/generated.png']);
+});
+
+test('tracker profiles wait for a lorebook choice before creating cards or requesting generation', async () => {
+    const f = fixture();
+    let select;
+    f.setLoreTarget(() => new Promise(resolve => { select = resolve; }));
+    const pending = f.run(['Mira']);
+    await new Promise(resolve => setImmediate(resolve));
+    assert.equal(f.cards.some(card => card.name === 'Mira'), false);
+    assert.deepEqual(f.calls, []);
+    select('Selected book');
+    assert.deepEqual(await pending, { generated: 1, failed: 0 });
+    assert.equal(f.cards.find(card => card.name === 'Mira').profile.appearance, 'Blue coat');
+    assert.equal(f.calls.filter(call => call === 'generate:Mira').length, 1);
+});
+
+test('skipping a tracker lorebook choice cancels the batch without requests or empty cards', async () => {
+    const f = fixture();
+    let choices = 0;
+    f.setLoreTarget(async () => { choices++; throw new DOMException('Skipped', 'AbortError'); });
+    assert.deepEqual(await f.run(['Mira', 'Elza']), { generated: 0, failed: 0 });
+    assert.equal(choices, 1);
+    assert.deepEqual(f.calls, []);
+    assert.deepEqual(f.cards.map(card => card.name), ['Known']);
+    assert.deepEqual(f.warnings, []);
 });

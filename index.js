@@ -16,6 +16,7 @@ import { allowStoryPlayerDialogue, restorePlayerDialogueSetting } from './src/en
 import { renderExtensionTemplateAsync } from '../../../extensions.js';
 import { LOG_PREFIX, extensionName, debugLog } from './src/core/constants.js';
 import { initSettings, getSettings } from './src/core/settings.js';
+import { npcProfileFollowups } from './src/tracker/extractor/status-profile-followups-runtime.js';
 import { REVIEW_EVENT } from './src/tracker/status-review.js';
 import { repairDefaultImages } from './src/characters/default-portraits.js';
 import { migrateImagesToFolders } from './src/characters/character-images.js';
@@ -147,6 +148,8 @@ jQuery(async () => {
         eventSource.on(event_types.GENERATION_ENDED, restorePlayerDialogueSetting);
         eventSource.on(event_types.GENERATION_STOPPED, restorePlayerDialogueSetting);
         eventSource.on(event_types.GENERATION_STOPPED, resetMemorySchedule);
+        eventSource.on(event_types.GENERATION_STOPPED, () => npcProfileFollowups.clear());
+        eventSource.on(event_types.PERSONA_CHANGED, () => npcProfileFollowups.clear());
 
         eventSource.on(event_types.WORLDINFO_ENTRIES_LOADED, activateCastLore);
 
@@ -223,6 +226,7 @@ jQuery(async () => {
         });
 
         eventSource.on(REVIEW_EVENT, ({ messageId } = {}) => {
+            void npcProfileFollowups.resume(messageId);
             try {
                 const mesEl = document.querySelector(`#chat .mes[mesid="${messageId}"]`);
                 if (mesEl) reprocessMessage(mesEl);

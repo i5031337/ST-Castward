@@ -1,7 +1,7 @@
 const statRules = fields => fields?.map(({ format, visible, isPrimary, color, ...rules }) => rules);
 
 /** Compare the rules behind a reading, without invalidating it for display changes. */
-function readingRules(settings) {
+export function readerRuleSignature(settings) {
     const tracker = settings.statusTracker;
     const system = tracker.presets?.[settings.activeSystem]?.definition;
     return JSON.stringify({
@@ -17,6 +17,6 @@ function readingRules(settings) {
 
 /** Capture after focused edits settle and before constructing the model request. */
 export function captureReaderRules(getSettings) {
-    const rules = readingRules(getSettings());
-    return () => readingRules(getSettings()) === rules;
+    const rules = readerRuleSignature(getSettings());
+    return () => readerRuleSignature(getSettings()) === rules;
 }

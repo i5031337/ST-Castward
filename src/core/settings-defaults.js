@@ -59,6 +59,8 @@ export const defaultSettings = {
     speechPadY: 6,
     /** @type {string[]} */
     scanLorebooks: [],
+    /** Create a chat-bound book when profiles or memories have no selected target. */
+    autoCreateLorebook: true,
     /** @type {string} */
     defaultLorebook: '',
     contextMessages: 15,

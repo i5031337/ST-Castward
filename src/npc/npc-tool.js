@@ -5,7 +5,9 @@ import { getAllCharacters, getChatCharacters } from '../characters/character-rep
 import { createCharacter } from '../characters/characters.js';
 import { buildLoreExcerpt } from '../api/api-lore-generate.js';
 import { generationRequestAdapter } from '../generation/request.js';
-import { syncProfileToLore } from '../lore/lore-sync.js';
+import { prepareNpcLore, npcLoreHandoff } from './npc-lore-runtime.js';
+import { requireLorebook } from '../lore/lorebook-write-target.js';
+import { compactNpcToolHistory } from './npc-lore-handoff.js';
 import { triggerReprocess } from '../chat/reprocess.js';
 import { generateCharacterImageLogic } from '../api/api-image-generate.js';
 import { LOG_PREFIX } from '../core/constants.js';
@@ -80,9 +82,10 @@ export const npcCreationService = createNpcCreationService({
         triggerReprocess();
         return card;
     },
-    afterCommit: async (card, isCurrent) => {
-        try { await syncProfileToLore(card, undefined, { isCurrent }); }
-        finally { void portrait(card, isCurrent); }
+    beforeCreate: options => requireLorebook(null, { ...options, purpose: 'NPC creation', skipLabel: 'Continue without NPC' }),
+    afterCommit: async (card, isCurrent, { reused }) => {
+        await prepareNpcLore(card, isCurrent);
+        if (!reused && isCurrent()) void portrait(card, isCurrent);
     },
 });
 
@@ -94,7 +97,7 @@ export function initNpcCreationTool() {
     const parameters = npcToolParameters(getSettings());
     context.registerFunctionTool({
         name: 'castward_create_npc', displayName: 'Create NPC',
-        description: 'Create a profile, stats and starting belongings for one substantial NPC before introducing them. Supply their role, situation and established facts. Use one call and a distinct requestKey per character, including shared relationships in requirements. Choose an offered npcTemplateId when required. Supply a name only when it is clear from context. Continue narration with the returned name and details. Use existing cards for returning characters and introduce anonymous extras directly. On failure, continue with the existing cast or anonymous extras.',
+        description: 'Create a profile, stats and starting belongings for one substantial NPC before introducing them. Supply their role, situation and established facts. Use one call and a distinct requestKey per character, including shared relationships in requirements. Choose an offered npcTemplateId when required. Supply a name only when it is clear from context. The result is a creation receipt; use the linked lore profile and tracker sheet for narration. A selected lorebook or automatic chat lorebook creation is required. Use existing cards for returning characters and introduce anonymous extras directly. On failure, continue with the existing cast or anonymous extras.',
         parameters,
         shouldRegister: () => {
             // The host calls this before serializing each request, including after a System edit or switch.
@@ -105,6 +108,9 @@ export function initNpcCreationTool() {
             try { return await npcCreationService.create(request); }
             catch (error) {
                 console.warn(LOG_PREFIX, 'NPC creation tool failed', error);
+                if (error.name !== 'AbortError') {
+                    toastr.warning(error.message || String(error), 'Castward NPC creation', { escapeHtml: true });
+                }
                 return JSON.stringify({ ok: false, error: error.message || String(error),
                     instruction: 'Continue with the existing cast or anonymous extras for this turn.' });
             }
@@ -113,7 +119,13 @@ export function initNpcCreationTool() {
         stealth: false,
     });
     for (const event of [event_types.CHAT_CHANGED, event_types.GENERATION_STOPPED, event_types.PERSONA_CHANGED]) {
-        eventSource.on(event, npcCreationService.invalidate);
+        eventSource.on(event, () => {
+            npcCreationService.invalidate();
+            npcLoreHandoff.clear();
+        });
     }
+    eventSource.on(event_types.CHAT_COMPLETION_PROMPT_READY, data => {
+        if (getSettings().enabled) compactNpcToolHistory(data);
+    });
     initialized = true;
 }

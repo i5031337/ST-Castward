@@ -40,8 +40,48 @@ linked entries to the per-scan chat lore array; it does not change chat, global,
 or persona lorebook selections, copy whole books, or override disabled-entry settings.
 Entries already present from any host source are deduplicated by world and UID. Loads
 are grouped by book and discarded if the chat, System, active cast or link changes.
-Fill's existing creation path remains responsible for creating and attaching a new
-chat book when there is no selected chat/default book.
+The narrator Create NPC tool returns only a creation receipt (identity and reuse status).
+Profiles are synchronized to a readable lore entry before success, including reused cards;
+missing targets open the shared blocking lorebook chooser before generation. Choosing an existing
+book or creating a one-time chat book attaches it and resumes the same pending tool call;
+the automatic-creation preference is unchanged. Concurrent requests share the chooser.
+Save errors remain in the dialog for retry; stopping, changing chats/personas, or explicitly
+continuing without the NPC cancels the choice. Failed lore saves can be retried without
+regenerating the saved NPC. There is no direct profile-prompt fallback.
+For the immediate tool continuation, linked scan copies are constant and ignore lore
+budgets and probability; they are deduplicated against native sources. The handoff is
+scoped to the current chat, System, user turn and unchanged card link, and clears on
+cancellation. Saved entry settings are untouched; normal lore policy resumes with the
+next user turn. Activated-lore tracking supplies the starting sheet through the existing
+scene prompt. Historical full Castward tool results are reduced to receipts in outgoing
+Chat Completion prompts without rewriting saved messages or other tools' results.
+
+The shared lore target helper reuses a selected chat/default book. Creating and attaching
+a new chat book requires `autoCreateLorebook` (on by default when absent) or a one-time
+explicit creation from the shared lorebook chooser.
+An explicit off setting is preserved. Creation shows one toast naming the book; automatic
+creation also points to Profiles → Lorebooks to disable the option.
+
+All profile and memory synchronization, tracker-triggered profile generation, manual
+Fill, lore-entry creation/saving, and imported lore use the same target requirement.
+With automatic creation disabled, a missing target opens the chooser and resumes the
+pending action after selection. Tracker profiles choose before creating a card or
+requesting generation. Skipping preserves existing local card data and stops the current
+tracker/startup sync batch; imports retain cards but skip remaining lore writes. Existing
+valid links continue without prompting. Outside a chat, explicit selection/creation sets
+the default target for library writes. Guards preserve chat, persona and System boundaries
+through selection and asynchronous writes. Identity repairs and deletions operate only
+on their existing entries; they never redirect an old UID into another book.
+
+Profiles → Lorebooks provides cleanup for the reserved `Castward Chat ` naming prefix.
+It checks every saved chat header through the host chat-list endpoint and conservatively
+keeps book names found anywhere in Castward settings, current chat metadata, character
+cards, groups, persona settings, or native lore selections. This includes saved rosters,
+place links and off-chat NPC links. Missing chat metadata or failed reference reads
+abort cleanup. The preview lists every candidate; confirmation rechecks saved and live
+references and deletes only names from that preview through the host's deletion helper,
+which also refreshes its book list and cache. Renamed books outside the prefix are left
+alone because their origin cannot be identified.
 
 System exports contain a normalized `schemaVersion: 2` rules definition, including
 shared profile and character stat catalogs, assignment targets, NPC templates, collections, progression,
@@ -79,7 +119,17 @@ periodically proposes NPC memories. Memory additions are risky changes: the Trac
 Ask Before Applying setting saves them automatically in Nothing mode and holds them
 for review in Risky changes only or Every change mode. The turn reader does not update profile
 fields. Optional new-NPC profile generation is a separate request, disabled by
-default, which preserves existing cards and edits.
+default, which preserves existing cards and edits. A reading with pending review queues
+only NPC names and source provenance on its report, finishes, and unlocks the review
+controls. Filling (including the lorebook chooser and portraits) begins only after all
+pending rows are accepted or rejected, using the resulting live stats and collections.
+Unselected ordinary rows count as rejected; retained level-up rewards or failed rows
+keep profiles waiting. With no pending changes, profiles fill immediately.
+The review event resumes a batch once. Stop, a replacement reading, source edits/swipes,
+chat/persona/System changes, disabled profile/tracker settings, and stale turn/rule guards
+cancel its pending or active work. Follow-up requests own their Stop controls and edit
+lock independently of the completed reader. Reports show waiting, running and result
+states without sending this bookkeeping to the narrator.
 
 Memory lists are manually editable and bounded by the System's configured active
 limit, default 50, with older entries archived.

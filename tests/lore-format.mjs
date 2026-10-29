@@ -160,7 +160,7 @@ test('saving partial lore records supported NPC and player fields', async () => 
     let saved = 0;
     const saveLoreContent = new Function('loadWorldInfo', 'saveWorldInfo', 'parseLoreContent',
         'parseGeneratedProfileFields', 'mergeLoreValues', 'formatLoreContent', 'syncEntryIdentity',
-        'mergeKeywords', 'saveSettings', 'profileFieldsForCard', `${saveSource}\nreturn saveLoreContent;`)(
+        'mergeKeywords', 'saveSettings', 'profileFieldsForCard', `const requireLorebook = async (card, {world}) => world; const lorebookWriteGuard = guard => guard || (() => true);\n${saveSource}\nreturn saveLoreContent;`)(
         async () => ({ entries }), async () => { saved++; }, parseLoreContent,
         parseGeneratedProfileFields, mergeLoreValues, formatLoreContent, () => {},
         (old, tags) => [...old, tags], () => {}, card => resolveProfileFields(card.isPlayer ? 'player' : 'npc'),
@@ -194,7 +194,7 @@ test('empty generated fields preserve existing lore and profile values', async (
     const entries = { 0: { uid: 0, content: formatLoreContent({ role: 'Professor', wants: 'Help trainers' }), key: [] } };
     const saveLoreContent = new Function('loadWorldInfo', 'saveWorldInfo', 'parseLoreContent',
         'parseGeneratedProfileFields', 'mergeLoreValues', 'formatLoreContent', 'syncEntryIdentity',
-        'mergeKeywords', 'saveSettings', 'profileFieldsForCard', `${saveSource}\nreturn saveLoreContent;`)(
+        'mergeKeywords', 'saveSettings', 'profileFieldsForCard', `const requireLorebook = async (card, {world}) => world; const lorebookWriteGuard = guard => guard || (() => true);\n${saveSource}\nreturn saveLoreContent;`)(
         async () => ({ entries }), async () => {}, parseLoreContent,
         parseGeneratedProfileFields, mergeLoreValues, formatLoreContent, () => {},
         (old, tags) => [...old, tags], () => {}, card => resolveProfileFields(card.isPlayer ? 'player' : 'npc'),
@@ -289,7 +289,7 @@ test('Fill requests missing named fields in one generation call', async () => {
     const entry = formatLoreContent({ role: 'Watchmaker' });
     const fillLore = new Function('loadWorldInfo', 'debugLog', 'getSettings', 'saveSettings',
         'createLoreEntry', 'generateLoreContent', 'saveLoreContent',
-        'tryAutoSyncLorebook', 'getChatLorebookName', 'profileFieldsForCard', 'parseLoreContent',
+        'tryAutoSyncLorebook', 'requireLorebook', 'profileFieldsForCard', 'parseLoreContent',
         'parseGeneratedProfileFields', 'profileFieldValue',
         `${source}\nreturn fillLore;`)(
         async () => ({ entries: { 0: { content: entry } } }),

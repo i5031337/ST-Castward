@@ -4,14 +4,15 @@ import { npcGenerationContract, validateGeneratedNpc, randomIndex } from '../src
 import { request, settingsFixture, generated, fixture } from './helpers/npc-creation.mjs';
 import { setProfileSettingsProvider } from '../src/core/profile-fields.js';
 
-test('names are randomly selected from distinct unused candidates and returned with a complete saved profile', async () => {
+test('creation returns only a receipt while saving the complete profile and sheet', async () => {
     const f = fixture();
     const result = JSON.parse(await f.service.create(request));
+    assert.deepEqual(Object.keys(result).sort(), ['id', 'name', 'ok', 'reused']);
     assert.equal(result.name, 'Hessa Quill');
     assert.equal(result.name, f.cards[0].name);
-    assert.equal(result.stats.Level, '2');
-    assert.equal(result.stats.XP, '0/100');
-    assert.deepEqual(result.collections, {});
+    assert.equal(f.cards[0].statusOverrides.Level, '2');
+    assert.equal(f.cards[0].statusOverrides.XP, '0/100');
+    assert.deepEqual(f.cards[0].statusCollections, {});
     assert.equal(f.cards[0].npcCreation.requestKey, request.requestKey);
     assert.equal(f.calls.length, 1);
     assert.doesNotMatch(f.calls[0].userPrompt, /player-only/);
@@ -144,14 +145,17 @@ test('newly claimed names are excluded at commit time', async () => {
     assert.equal(JSON.parse(await pending).name, 'Daro Rusk');
 });
 
-test('lore failure returns the saved character and a recoverable warning', async () => {
+test('lore failure cannot report success and retry prepares the saved card without regenerating', async () => {
     const f = fixture();
     f.setAfterCommit(async () => { throw new Error('Lorebook offline'); });
+    await assert.rejects(f.service.create(request), /Lorebook offline/);
+    assert.equal(f.cards.length, 1);
+    await assert.rejects(f.service.create(request), /Lorebook offline/);
+    f.setAfterCommit(async () => {});
     const result = JSON.parse(await f.service.create(request));
     assert.equal(result.ok, true);
-    assert.ok(result.warnings.length > 0);
-    assert.equal(JSON.parse(await f.service.create(request)).id, result.id);
-    assert.equal(f.cards.length, 1);
+    assert.equal(result.reused, true);
+    assert.equal(f.calls.length, 1);
 });
 
 test('disabled creation and malformed tool arguments make no requests', async () => {
@@ -171,4 +175,32 @@ test('a System without templates uses default NPC fields and no invented templat
     const raw = { nameCandidates: generated().nameCandidates, npcTemplateId: '',
         profile: Object.fromEntries(contract.choices[0].fields.map(field => [field.id, 'A useful detail.'])), stats: {}, collections: {} };
     assert.equal(validateGeneratedNpc(raw, contract, [], () => 1).name, 'Beska Venn');
+});
+
+test('missing lorebook stops creation before any model request or card commit', async () => {
+    const f = fixture({ beforeCreate: async () => { throw new Error('Select or create a lorebook'); } });
+    await assert.rejects(f.service.create(request), /lorebook/);
+    assert.equal(f.calls.length, 0);
+    assert.equal(f.cards.length, 0);
+});
+
+test('chat switches while selecting a lorebook cannot start NPC generation', async () => {
+    let release;
+    const f = fixture({ beforeCreate: () => new Promise(resolve => { release = resolve; }) });
+    const creating = f.service.create(request);
+    f.switchChat(); release();
+    await assert.rejects(creating, /cancelled/);
+    assert.equal(f.calls.length, 0);
+    assert.equal(f.cards.length, 0);
+});
+
+test('cancelling an existing-card lore preparation cannot return a stale success receipt', async () => {
+    const f = fixture();
+    f.cards.push({ id: 'existing', name: 'Mira' });
+    let release;
+    f.setAfterCommit(() => new Promise(resolve => { release = resolve; }));
+    const delivery = f.service.create({ ...request, name: 'Mira' });
+    f.service.invalidate(); release();
+    await assert.rejects(delivery, /cancelled/);
+    assert.equal(f.calls.length, 0);
 });

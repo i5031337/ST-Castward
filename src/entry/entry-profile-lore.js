@@ -14,6 +14,6 @@ export async function syncActiveProfileLore() {
         if (getContext()?.chatMetadata !== metadata) return;
         if (!Object.values(card.profile || {}).some(value => String(value ?? '').trim())) continue;
         try { await syncProfileToLore(card); }
-        catch (error) { console.error(LOG_PREFIX, `Could not save ${card.name}'s profile to lore`, error); }
+        catch (error) { if (error?.name === 'AbortError') return; console.error(LOG_PREFIX, `Could not save ${card.name}'s profile to lore`, error); }
     }
 }

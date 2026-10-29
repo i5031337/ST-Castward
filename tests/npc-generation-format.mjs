@@ -28,7 +28,7 @@ test('Dating Sim numeric relationship readings become saved strings without a re
     f.setGenerate(async () => raw);
     const result = JSON.parse(await f.service.create(request));
     assert.equal(f.calls.length, 1);
-    assert.deepEqual(result.stats, { Mood: 'Calm', Affection: '15', Trust: '10', Comfort: '20', Relationship: 'Acquaintances' });
+    assert.deepEqual(f.cards[0].statusOverrides, { Mood: 'Calm', Affection: '15', Trust: '10', Comfort: '20', Relationship: 'Acquaintances' });
     assert.equal(raw.stats.Affection, 15); // Input remains untouched.
 });
 

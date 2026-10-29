@@ -125,6 +125,8 @@ This map covers tracked runtime files, tests and support files. Source files and
 | `src/npc/npc-collection-generation.js` | Player/NPC starting collection selection, reader-style initialization guidance, typed entry contracts, defaults, bounds and identifier validation. |
 | `src/npc/npc-creation.js` | NPC creation lifecycle, identity/request deduplication, validation retries, cancellation, guarded commits, and preservation of established stats and belongings. |
 | `src/npc/npc-generation.js` | Narrator tool parameters, System-aware NPC response contracts, prompts, name/alias matching, and generated NPC validation. |
+| `src/npc/npc-lore-handoff.js`, `src/npc/npc-lore-runtime.js` | Prepare tool-created profiles for immediate continuation, and compact historical tool results in outgoing prompts. |
+| `tests/npc-lore-handoff.mjs`, `tests/npc-lore-runtime.mjs` | Single-source tool lore, saved policy preservation, continuation boundaries, and missing-book/failure handling. |
 | `src/npc/npc-tool.js` | Register the narrator Create NPC tool, bind host services, save chat-owned cards and starting belongings, synchronize lore, and start optional background portraits. |
 | `tests/npc-creation.mjs`, `tests/npc-creation-name.mjs`, `tests/npc-creation-template.mjs`, `tests/npc-collection-creation.mjs`, `tests/npc-generation-format.mjs`, `tests/ui-npc-creation.py` | Creation contracts, randomized and exact names, template selection, alias reuse, starting collections, held-state preservation, JSON recovery, numeric stat normalization, compact prompt definitions, stat bounds, retries, cancellation, duplicate prevention and unsaved host tool/UI checks. |
 | `index.js` | Initialize the extension, register SillyTavern events, and mount settings. |
@@ -266,6 +268,8 @@ This map covers tracked runtime files, tests and support files. Source files and
 | `src/tracker/extractor/status-extractor-rules.js` | Request-time rule capture and stale-reading checks, excluding display preferences. |
 | `src/tracker/extractor/status-level-reading.js` | Swipe-specific choice cache, decision retention, and missing-reward retries. |
 | `src/tracker/extractor/status-inline-grants.js` | Inline absolute-reading validation, review, and replacement-reading orchestration. |
+| `src/tracker/extractor/status-profile-followups.js`, `src/tracker/extractor/status-profile-followups-runtime.js` | Defer profile batches until review completes, preserve source boundaries, and own follow-up cancellation, locking and report updates. |
+| `tests/npc-profile-followups.mjs`, `tests/npc-profile-followups-runtime.mjs`, `tests/ui-profile-review.py`, `tests/fixtures/ui-profile-review.js` | Review-before-autofill ordering, reviewed starting sheets, partial review, stale work, Stop, and real Apply/Discard controls with mocked generation. |
 | `src/tracker/extractor/status-npc-profiles.js` | Optional profile generation for newly discovered reader NPCs, with chat and reply guards. |
 | `src/tracker/extractor/status-collection-normalize.js` | Repair omitted collection IDs only when one actor-compatible destination exists; warn and discard ambiguous changes. |
 | `src/tracker/extractor/status-extraction-report.js` | Persist swipe-specific reader reports, guard late results, and refresh summaries against current applied and pending changes. |
@@ -300,7 +304,14 @@ This map covers tracked runtime files, tests and support files. Source files and
 | `src/lore/lorebook.js` | Lorebook linking, identity, and synchronization. |
 | `src/lore/lore-entries.js` | Create or reuse lore entries for player and NPC identities. |
 | `src/lore/lore-entry-store.js` | Serialize entry allocation and reuse ownership markers. |
-| `src/lore/lorebook-target.js` | Choose and name a chat lorebook for Fill without overwriting an existing book. |
+| `src/lore/lorebook-target.js` | Choose and name an opt-in chat lorebook without overwriting an existing book. |
+| `src/lore/lorebook-cleanup.js`, `src/lore/lorebook-cleanup-runtime.js` | Find unused generated chat books, protect saved and live references, and delete through the host. |
+| `tests/lorebook-write-flows.mjs` | Manual Fill waiting/cancellation and replacement-book saves without stale UID reuse. |
+| `src/lore/lorebook-write-target.js` | Shared lorebook requirement and scoped write guards for profile, memory, Fill, import and entry writes; one chooser for concurrent requests. |
+| `src/ui/story/ui-chat-lorebook.js` | Pause a pending lorebook write to select or create its target, then resume; retry failed saves and cancel stale choices. |
+| `tests/ui-npc-lorebook-picker.py`, `tests/fixtures/ui-npc-lorebook-picker.js` | Real chooser with mocked generation/storage: select/create and resume, retries, explicit skip, Stop, and tracker profile generation through the shared writer. |
+| `src/ui/settings/ui-settings-lorebooks.js` | Opt-in lorebook creation and confirmed unused-book cleanup under Profiles. |
+| `tests/lorebook-cleanup.mjs`, `tests/ui-lorebook-cleanup.py` | Cleanup reference boundaries, rescan and failure handling, and browser controls with mocked deletion. |
 | `src/lore/lore-format.js` | Parse and format active System fields while retaining unknown saved lore lines. |
 | `src/lore/lore-sync.js` | Save player and NPC profile fields to lore, creating a link when needed. |
 | `src/entry/entry-enabled.js` | Apply the master switch, synchronize both controls, clear prompts and refresh runtime UI. |

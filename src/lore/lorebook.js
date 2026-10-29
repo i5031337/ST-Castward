@@ -58,11 +58,13 @@ export function getChatLorebookName() {
 
 const pendingChatBooks = new WeakMap();
 
-/** Fill creates a chat-bound target only when no existing target was chosen. */
-export async function ensureChatLorebookForFill() {
+/** Reuse a target; create only with the automatic preference or a one-time explicit choice. */
+export async function ensureChatLorebookForFill({ allowCreate = false, isCurrent = () => true } = {}) {
+    if (!isCurrent()) return '';
     const selected = existingFillLorebookName(getChatLorebookName(),
         getSettings().defaultLorebook, knownWorlds());
     if (selected) return selected;
+    if (!allowCreate && getSettings().autoCreateLorebook !== true) return '';
     const context = getContext();
     const chatId = context?.getCurrentChatId?.();
     if (!chatId || !context?.chatMetadata) return '';
@@ -71,10 +73,12 @@ export async function ensureChatLorebookForFill() {
     const work = (async () => {
         const name = newChatLorebookName(chatId, knownWorlds());
         if (!await createNewWorldInfo(name)) return '';
-        if (getContext()?.chatMetadata !== metadata) return '';
+        if (!isCurrent() || getContext()?.chatMetadata !== metadata) return '';
         metadata[METADATA_KEY] = name;
         context.saveMetadataDebounced?.();
         document.querySelector('.chat_lorebook_button')?.classList.add('world_set');
+        toastr.info(`Created lorebook “${name}” for this chat.`
+            + (allowCreate ? '' : ' You can turn off automatic creation in Profiles → Lorebooks.'), 'Castward', { escapeHtml: true });
         return name;
     })();
     pendingChatBooks.set(metadata, work);

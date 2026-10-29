@@ -5,6 +5,7 @@ let settings, saved, context, metadataSnapshot;
 try {
     const { getSettings } = await import(new URL('src/core/settings.js', root));
     const { getContext } = await import(new URL('st-context.js', host));
+    const { eventSource, event_types } = await import(new URL('events.js', host));
     const { ToolManager } = await import(new URL('tool-calling.js', host));
     const { renderWritingRulesView } = await import(new URL('src/ui/settings/ui-settings-writing.js', root));
     const { createNpcCreationService } = await import(new URL('src/npc/npc-creation.js', root));
@@ -33,6 +34,13 @@ try {
     result.templateSchemaRefresh = JSON.stringify(toolSchema.properties.npcTemplateId)
         === JSON.stringify(npcToolParameters(settings).properties.npcTemplateId);
     result.argumentFailure = JSON.parse(await tool.invoke({})).ok === false;
+    const prompt = { chat: [
+        { role: 'assistant', tool_calls: [{ id: 'unsaved-call', function: { name: 'castward_create_npc' } }] },
+        { role: 'tool', tool_call_id: 'unsaved-call', content: JSON.stringify({ ok: true, id: 'npc', name: 'Test', profile: { appearance: 'Unsaved detail' }, stats: {}, collections: {} }) },
+    ], dryRun: true };
+    await eventSource.emit(event_types.CHAT_COMPLETION_PROMPT_READY, prompt);
+    result.oldToolResultCompacted = !prompt.chat[1].content.includes('Unsaved detail')
+        && JSON.parse(prompt.chat[1].content).name === 'Test';
 
     const view = document.createElement('div');
     renderWritingRulesView(view, () => {});
@@ -82,11 +90,12 @@ try {
     result.namingHints = namingBrief.syllables === 4 && namingBrief.candidateInitials.length === 4
         && new Set(namingBrief.candidateInitials).size === 4 && !namingBrief.candidateInitials.includes('Z')
         && !namingBrief.candidateInitials.includes('C') && namingBrief.guidance.includes('take precedence');
-    result.profileInOutput = Object.values(created.profile).every(text => text === 'A useful ferryman detail.');
-    result.startingCollections = created.collections.clothes[0].piece === 'Oilskin coat'
-        && created.collections.clothes[0].worn === true && cards[0].statusCollections.clothes[0].worn === true;
+    result.compactOutput = JSON.stringify(Object.keys(created).sort()) === JSON.stringify(['id', 'name', 'ok', 'reused']);
+    result.savedProfile = Object.values(cards[0].profile).every(text => text === 'A useful ferryman detail.');
+    result.startingCollections = cards[0].statusCollections.clothes[0].piece === 'Oilskin coat'
+        && cards[0].statusCollections.clothes[0].worn === true && cards[0].statusCollections.clothes[0].worn === true;
     const clothingView = document.createElement('div');
-    clothingView.innerHTML = renderCollectionUI('clothes', { collections: created.collections }, localSettings.statusTracker, { isEditMode: false });
+    clothingView.innerHTML = renderCollectionUI('clothes', { collections: cards[0].statusCollections }, localSettings.statusTracker, { isEditMode: false });
     result.startingCollectionRendering = clothingView.textContent.includes('Oilskin coat') && clothingView.textContent.includes('Yes');
     result.idempotent = JSON.parse(await service.create(input)).id === created.id && cards.length === 1 && requests === 1;
     result.noSceneMutation = localContext.chatMetadata.sillynpc_status_state === undefined;
@@ -95,8 +104,8 @@ try {
     const fixedInput = { ...input, requestKey: 'unsaved-canon', name: 'Éowyn', requirements: 'Preserve established canon.' };
     const fixed = JSON.parse(await service.create(fixedInput));
     result.fixedNameInOutput = fixed.name === 'Éowyn' && cards[1].name === fixed.name && fixedSchema && namingBrief === undefined;
-    result.namedStatePreserved = fixed.collections.items[0].name === 'Sword'
-        && cards[1].statusCollections.items !== actor.collections.items && fixed.collections.clothes.length === 0;
+    result.namedStatePreserved = cards[1].statusCollections.items[0].name === 'Sword'
+        && cards[1].statusCollections.items !== actor.collections.items && cards[1].statusCollections.clothes.length === 0;
     result.namedRetry = JSON.parse(await service.create(fixedInput)).id === fixed.id && requests === 2;
     cards[1].aliases = [{ pattern: 'White Lady', isRegex: false }];
     const alias = JSON.parse(await service.create({ ...fixedInput, requestKey: 'another-key', name: 'White Lady' }));
@@ -115,9 +124,9 @@ try {
     catch (error) { result.templateRequired = error.message.includes('npcTemplateId: required') && requests === 2; }
     const person = JSON.parse(await service.create({ ...input, requestKey: 'new-person', npcTemplateId: 'person' }));
     const body = JSON.parse(lastGeneration.userPrompt);
-    result.selectedTemplate = person.npcTemplateId === 'person' && body.templates.length === 1 && body.templates[0].id === 'person';
+    result.selectedTemplate = cards[2].npcTemplateId === 'person' && body.templates.length === 1 && body.templates[0].id === 'person';
     result.templateNoiseRemoved = !/"creature"|"instinct"|"moves"/.test(lastGeneration.userPrompt)
-        && person.collections.clothes[0].piece === 'Oilskin coat';
+        && cards[2].statusCollections.clothes[0].piece === 'Oilskin coat';
     result.hostMetadataUnchanged = JSON.stringify(context.chatMetadata) === metadataSnapshot;
 } catch (error) {
     result.error = String(error);

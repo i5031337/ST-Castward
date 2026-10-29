@@ -2,7 +2,8 @@ import { activeNpcSystem, npcTemplateFor, npcStatsFor } from '../core/npc-templa
 import { getSettings, saveSettings, normalizeSettings } from '../core/settings.js';
 import { createCharacter, instantiateWorldCharacter } from './characters.js';
 import { createLoreEntry, saveLoreContent } from '../api/api.js';
-import { tryAutoSyncLorebook, getChatLorebookName, ensureChatLorebookForFill } from '../lore/lorebook.js';
+import { tryAutoSyncLorebook } from '../lore/lorebook.js';
+import { requireLorebook, lorebookWriteGuard } from '../lore/lorebook-write-target.js';
 import { loadWorldInfo } from '../../../../../world-info.js';
 import { debugLog } from '../core/constants.js';
 import { blankActiveProfile, profileStrings } from '../core/profile-fields.js';
@@ -204,7 +205,7 @@ async function restoreImages(char, record) {
  *
  * @returns {Promise<string>} What happened, for the report.
  */
-async function restoreLore(char, record) {
+async function restoreLore(char, record, isCurrent) {
     if (!record.lore || !String(record.lore.content || '').trim()) return '';
 
     if (await tryAutoSyncLorebook(char, { silent: true })) {
@@ -213,19 +214,20 @@ async function restoreLore(char, record) {
 
     let world;
     try {
-        world = getSettings().defaultLorebook || getChatLorebookName()
-            || await ensureChatLorebookForFill();
+        world = await requireLorebook(char, { isCurrent, purpose: 'Import character lore' });
     } catch (err) {
+        if (err?.name === 'AbortError') throw err;
         debugLog('Could not create a lorebook for the imported character', err);
         return 'could not create a lorebook for its lore';
     }
     if (!world) return 'no lorebook to write the lore into';
 
     try {
-        const { uid } = await createLoreEntry(char, world, char.name);
-        await saveLoreContent(char, world, uid, (record.lore.keys || []).join(', '), record.lore.content);
+        const { uid } = await createLoreEntry(char, world, char.name, { isCurrent });
+        await saveLoreContent(char, world, uid, (record.lore.keys || []).join(', '), record.lore.content, { isCurrent });
         return `wrote its lore into "${world}"`;
     } catch (err) {
+        if (err?.name === 'AbortError') throw err;
         debugLog('Could not write the imported lore entry', err);
         return 'could not write its lore entry';
     }
@@ -246,8 +248,11 @@ async function restoreLore(char, record) {
 export async function importCharacters(payload, { onCollision } = {}) {
     const result = { added: [], overwritten: [], skipped: [], notes: [] };
     const seenIncoming = new Set();
+    const isCurrent = lorebookWriteGuard();
+    let skipLore = false;
 
     for (const record of payload.characters) {
+        if (!isCurrent()) break;
         const wanted = String(record?.name || '').trim();
         if (!wanted) { result.skipped.push('(unnamed)'); continue; }
         const repeatedInFile = seenIncoming.has(wanted.toLowerCase());
@@ -287,8 +292,16 @@ export async function importCharacters(payload, { onCollision } = {}) {
         if (Object.values(char.presentation.voices).some(voice => voice.mode === 'voice')) {
             result.notes.push(`${name}: voice reference needs checking on this installation`);
         }
-        const loreNote = await restoreLore(char, record);
-        if (loreNote) result.notes.push(`${name}: ${loreNote}`);
+        if (!skipLore) {
+            try {
+                const loreNote = await restoreLore(char, record, isCurrent);
+                if (loreNote) result.notes.push(`${name}: ${loreNote}`);
+            } catch (error) {
+                if (error?.name !== 'AbortError') throw error;
+                skipLore = true;
+                result.notes.push('Lorebook writes skipped for the rest of this import. Character cards were retained.');
+            }
+        }
 
         (overwriting && !localInstance ? result.overwritten : result.added).push(name);
     }

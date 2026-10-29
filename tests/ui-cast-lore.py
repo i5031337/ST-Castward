@@ -10,6 +10,7 @@ with browser_session() as browser:
         const result = {}; let events, listener;
         try {
           const root = ${JSON.stringify(new URL('.', entry.src).href)};
+          const { createNpcLoreHandoff } = await import(root + 'src/npc/npc-lore-handoff.js');
           const { createCastLoreActivator } = await import(root + 'src/lore/cast-lore.js');
           const hostRoot = new URL('../../../', root);
           const { eventSource, event_types } = await import(new URL('events.js', hostRoot));
@@ -21,14 +22,16 @@ with browser_session() as browser:
             2:{...structuredClone(newWorldInfoEntryTemplate),uid:2,key:['CastwardBlockedProbe'],content:'Disabled lore.',disable:true,selective:false,ignoreBudget:true,scanDepth:1},
             3:{...structuredClone(newWorldInfoEntryTemplate),uid:3,key:['CastwardUnrelatedProbe'],content:'Unrelated old adventure.',constant:true,ignoreBudget:true}
           }};
-          const context = {getCurrentChatId:()=> 'unsaved',chatMetadata:{sillynpc_system:'A',world_info:'Keep this selection'}};
-          const settings = {enabled:true,activeSystem:'A'};
+          const context = {chat:[{is_user:true,mes:'A river.'}],getCurrentChatId:()=> 'unsaved',chatMetadata:{sillynpc_system:'A',world_info:'Keep this selection'}};
+          const settings = {enabled:true,npcCreationToolEnabled:true,activeSystem:'A'};
           let cards = [
             {id:'new',rosterSourceId:'old',lorebook:{world,uid:1}},
             {id:'disabled',rosterSourceId:'old2',lorebook:{world,uid:2}}
           ];
-          listener = createCastLoreActivator({getContext:()=>context,getSettings:()=>settings,
+          const handoff = createNpcLoreHandoff({getContext:()=>context,getSettings:()=>settings,getCards:()=>cards});
+          const activate = createCastLoreActivator({getContext:()=>context,getSettings:()=>settings,
             getCharacters:()=>cards,loadWorldInfo:async()=>data});
+          listener = async lore => {await activate(lore);handoff.apply(lore);};
           eventSource.on(event_types.WORLDINFO_ENTRIES_LOADED,listener);
           const sorted = await getSortedEntries();
           result.scanHook = sorted.filter(e=>e.world===world).length===2;
@@ -43,7 +46,23 @@ with browser_session() as browser:
           cards = [{id:'generated',lorebook:{world,uid:1}}];
           result.generatedProfile = (await activated('CastwardRosterProbe arrives.')).some(e=>e.uid===1);
           result.existingSelection = context.chatMetadata.world_info==='Keep this selection';
-          result.sourceUnchanged = data.entries[1].key.length===2 && data.entries[1].world===undefined;
+          data.entries[1].ignoreBudget = false;
+          data.entries[1].useProbability = true;
+          data.entries[1].probability = 0;
+          data.entries[1].content = 'Unique carried profile knowledge. '.repeat(1000);
+          handoff.remember(cards[0]);
+          const immediate = await activated('A quiet day, without naming anyone.');
+          result.toolContinuation = immediate.length===1 && immediate[0].uid===1
+            && immediate[0].constant===true && immediate[0].ignoreBudget===true;
+          const native = {...data.entries[1],world};
+          const nativeLore = {chatLore:[native],globalLore:[],characterLore:[],personaLore:[]};
+          await listener(nativeLore);
+          result.nativeEntryOnce = nativeLore.chatLore.length===1 && nativeLore.chatLore[0].constant===true;
+          context.chat.push({is_user:true,mes:'The next user turn.'});
+          result.normalRecallResumes = (await activated('A quiet day.')).length===0;
+          result.sourceUnchanged = data.entries[1].key.length===2 && data.entries[1].world===undefined
+            && data.entries[1].constant===false && data.entries[1].ignoreBudget===false;
+
         } catch(error) {result.error=String(error);result.stack=error.stack;}
         finally {if(listener) events.eventSource.removeListener(events.event_types.WORLDINFO_ENTRIES_LOADED,listener);}
         document.body.setAttribute('data-cast-lore-result',JSON.stringify(result));

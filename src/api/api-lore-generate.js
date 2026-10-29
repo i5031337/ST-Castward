@@ -16,6 +16,8 @@ import { loreProfileValues } from '../prompts/profile-prompt-fields.js';
 import { profileFieldsForCard } from '../core/profile-fields.js';
 import { formatLoreContent, parseLoreContent, parseGeneratedProfileFields, mergeLoreValues } from '../lore/lore-format.js';
 import { loreReplyWasTruncated, parseLoreReply } from '../lore/lore-reply.js';
+import { requireLorebook, lorebookWriteGuard } from '../lore/lorebook-write-target.js';
+import { createLoreEntry } from '../lore/lore-entries.js';
 import { getPersonaData } from '../tracker/status-logic.js';
 
 /**
@@ -270,7 +272,16 @@ async function buildLoreContent(char, world, uid, options) {
  * @param {{ preserveEmpty?: boolean }} [options]
  * @returns {Promise<{ profileFieldsSaved: number }>}
  */
-export async function saveLoreContent(char, world, uid, tags, content, { preserveEmpty = false } = {}) {
+export async function saveLoreContent(char, world, uid, tags, content, { preserveEmpty = false, isCurrent: suppliedCurrent, signal } = {}) {
+    const current = lorebookWriteGuard(suppliedCurrent);
+    const isCurrent = () => !signal?.aborted && current();
+    const target = await requireLorebook(char, { world, isCurrent, signal, purpose: 'Save character lore' });
+    if (target !== world || uid == null) {
+        const link = await createLoreEntry(char, target, char.name, { isCurrent, signal });
+        if (!link) throw new DOMException('Lorebook write cancelled.', 'AbortError');
+        uid = link.uid;
+    }
+    world = target;
     const worldData = await loadWorldInfo(world);
     if (!worldData || !worldData.entries) throw new Error('Lorebook not found or entries missing');
     
@@ -317,7 +328,9 @@ export async function saveLoreContent(char, world, uid, tags, content, { preserv
     syncEntryIdentity(char, entry);
     entry.key = mergeKeywords(entry.key, tags);
     
+    if (!isCurrent()) throw new DOMException('Lorebook write cancelled.', 'AbortError');
     await saveWorldInfo(world, worldData);
+    if (!isCurrent()) throw new DOMException('Lorebook write cancelled.', 'AbortError');
     char.profile = profile;
     char.lorebook = { world, uid: Number(uid) };
     saveSettings();

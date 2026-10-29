@@ -1,7 +1,8 @@
 import { readerCancellationHarness } from './helpers/reader-cancellation.mjs';
 import { createExtractionQueue } from '../src/tracker/extractor/status-extractor-queue.js';
 import { captureReaderRules } from '../src/tracker/extractor/status-extractor-rules.js';
-import { lockTrackerEdits } from '../src/tracker/tracker-edit-lock.js';
+import { createNpcProfileFollowups } from '../src/tracker/extractor/status-profile-followups.js';
+import { lockTrackerEdits, isTrackerEditLocked } from '../src/tracker/tracker-edit-lock.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -17,7 +18,7 @@ function evaluate(file, dependencies, result) {
     return new Function(...Object.keys(dependencies), `${source}\nreturn ${result};`)(...Object.values(dependencies));
 }
 
-function fixture({ enabled = true, afterRequest, afterLocationRequest, reviewMode = 'off',
+function fixture({ profiles = false, enabled = true, afterRequest, afterLocationRequest, reviewMode = 'off',
     knownPlace = false, currentPlace = false, locationChanged = false, locationError = null, locationWarnings = [] } = {}) {
     let state = { global: { Time: 'noon' }, characters: [],
         locations: { enabled, currentId: currentPlace ? 'new-tavern' : '', records: knownPlace || currentPlace ? { 'new-tavern': {
@@ -30,6 +31,13 @@ function fixture({ enabled = true, afterRequest, afterLocationRequest, reviewMod
         statusTracker: { enabled: true, extractionMode: 'extract', reviewMode } };
     const records = [], reports = [], requests = [], locationRequests = [];
     let pending;
+    const profileCalls = [];
+    settings.statusTracker.autoGenerateNpcProfiles = profiles;
+    const followups = createNpcProfileFollowups({
+        getContext: () => context, getSettings: () => settings, getPersona: () => context.personaId,
+        latestIndex: trackerMessageIndex, ruleSignature: () => 'rules', pendingChanges: () => pending || [],
+        generate: async names => { profileCalls.push({ names, global: { ...state.global } }); return { generated: 1, failed: 0 }; },
+    });
     const runtime = evaluate('../src/locations/location-runtime.js', {
         getContext: () => context, buildLocationProposals, applyLocationReview,
         loadStateFromMetadata: () => state, saveStateToMetadata: next => { state = next; },
@@ -83,16 +91,17 @@ function fixture({ enabled = true, afterRequest, afterLocationRequest, reviewMod
         validateReviewedTransitions: () => ({ invalid: new Set() }),
         prepareLevelReading: async () => ({ reading: { personaId: 'persona-a' }, transitions: [], rows: [], failures: [] }),
         saveLevelReading: () => {}, retryLevelReading: () => {}, LEVEL_READING_KEY: 'level-reading',
-        startExtractionReport: id => context.chat[id], finishExtractionReport: (id, message, report) => reports.push(report),
+        startExtractionReport: id => context.chat[id], finishExtractionReport: (id, message, report) => { message.extra.sillynpc_reader_report = report; reports.push(report); },
         extractionSwipe: message => Number(message.swipe_id || 0), renderExtractionReport: () => {},
         normalizeCollectionUpdates: () => [], replacementReadingState: () => null, revertToBase: () => {},
-        trackerMessageIndex, generateNewNpcProfiles: async () => ({ generated: 0, failed: 0 }),
+        trackerMessageIndex, npcProfileFollowups: followups,
         locationProposalsForReading: runtime.locationProposalsForReading,
         partitionLocationRows: runtime.partitionLocationRows,
         resolveLocationRows: runtime.resolveLocationRows,
     };
     const run = evaluate('../src/tracker/extractor/status-extractor-run.js', { createExtractionQueue, captureReaderRules, lockTrackerEdits, ...readerCancellationHarness(), ...dependencies }, 'extractStateFromMessage');
     return { run: () => run('We enter the Lantern tavern at dusk.', 0), context, requests, locationRequests, reports, records, output, settings,
+        followups, profileCalls,
         get pending() { return pending; }, get state() { return state; } };
 }
 
@@ -274,4 +283,19 @@ test('ignored location fields are reported without blocking usable place proposa
     assert.equal(f.state.locations.records[f.state.locations.currentId].name, 'The Lantern');
     assert.ok(f.reports[0].warnings.includes(warning));
     assert.ok(f.reports[0].locationReading.warnings.includes(warning));
+});
+
+test('readings finish and unlock review before automatic NPC profile work is scheduled', async () => {
+    const f = fixture({ profiles: true, reviewMode: 'all' });
+    f.output.characters = [{ name: 'Mira' }];
+    const result = await f.run();
+    assert.equal(result.applied, true);
+    assert.ok(f.pending.length > 0);
+    assert.equal(isTrackerEditLocked(), false);
+    assert.deepEqual(f.profileCalls, []);
+    assert.equal(f.context.chat[0].extra.sillynpc_reader_report.npcProfiles.status, 'waiting');
+    f.state.global.Time = 'reviewed dusk';
+    f.pending.splice(0);
+    await f.followups.resume(0);
+    assert.deepEqual(f.profileCalls, [{ names: ['Mira'], global: { Time: 'reviewed dusk' } }]);
 });

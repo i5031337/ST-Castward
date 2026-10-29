@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFileSync } from 'node:fs';
+import { npcProfileFollowupSummary } from '../src/tracker/extractor/status-profile-followups.js';
 import { buildReportBreakdown } from '../src/tracker/extractor/status-report-counts.js';
 
 const source = readFileSync(new URL('../src/tracker/extractor/status-extraction-report.js', import.meta.url), 'utf8')
@@ -10,11 +11,11 @@ const source = readFileSync(new URL('../src/tracker/extractor/status-extraction-
 function harness() {
     const context = { chat: [{ swipe_id: 0, extra: {} }] };
     let saves = 0;
-    const api = new Function('getContext', 'saveChatSoon', 'appliedChangesForCurrentSwipe', 'buildReportBreakdown', 'getSettings', `${source}\nreturn {
+    const api = new Function('getContext', 'saveChatSoon', 'appliedChangesForCurrentSwipe', 'buildReportBreakdown', 'getSettings', 'npcProfileFollowupSummary', `${source}\nreturn {
         getExtractionReport, startExtractionReport, finishExtractionReport,
         clearExtractionReport, extractionSwipe,
     };`)(() => context, () => saves++, id => context.chat[id]?.extra?.sillynpc_applied || [], buildReportBreakdown,
-        () => ({ statusTracker: {} }));
+        () => ({ statusTracker: {} }), npcProfileFollowupSummary);
     return { context, api, saves: () => saves };
 }
 
@@ -138,4 +139,18 @@ test('initial NPC XP and Level are stats rather than progression, including save
         { scope: 'character', actor: 'Mira', kind: 'stat', label: 'XP', before: '0', after: '1' },
         { scope: 'character', actor: 'Mira', kind: 'stat', label: 'Level', before: '0', after: '1' },
     ]).applied, '1 XP update, 1 level-up');
+});
+
+test('profile follow-up status is shown separately from the changing review counts', () => {
+    const { context, api } = harness();
+    const message = context.chat[0];
+    message.extra.sillynpc_pending = [{}, {}];
+    const report = { swipe: 0, status: 'done', summary: '0 applied · 2 awaiting review',
+        npcProfiles: { status: 'waiting', names: ['Mira'] } };
+    api.finishExtractionReport(0, message, report);
+    assert.match(api.getExtractionReport(0).summary, /2 awaiting review · NPC profiles waiting for review/);
+    message.extra.sillynpc_pending = [];
+    report.npcProfiles = { status: 'done', generated: 1, failed: 0 };
+    assert.match(api.getExtractionReport(0).summary, /0 awaiting review · 1 NPC profile/);
+    assert.doesNotMatch(report.summary, /profile/);
 });

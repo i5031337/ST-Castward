@@ -6,6 +6,7 @@ import { buildConnectionProfilePicker } from './ui-connection-profiles.js';
 import { buildLastLoreConnectionNote, updateExcerptReadout, buildWorldInfoScannerSettings } from './ui-settings-generation-helpers.js';
 import { renderImageGenerationSettings } from './ui-settings-generation-image.js';
 import { getSettings } from '../../core/settings.js';
+import { appendLorebookControls } from './ui-settings-lorebooks.js';
 import { buildMemoryControls } from '../system/ui-system-memories.js';
 
 export function renderImageSettingsView(view) {
@@ -27,6 +28,7 @@ export function renderProfileSettingsView(view, openProfileFields) {
         label: 'Generate Profiles For New NPCs',
         help: 'When the tracker reader identifies an NPC without a character card, creates a '
             + 'card in this chat and writes its configured profile fields to lore. '
+            + 'Waits until all pending changes from that reading are accepted or rejected. '
             + 'Works with separate-pass and manual tracker readings. Uses the Profile Connection '
             + 'and context settings below, with one extra request per new NPC. Unsupported '
             + 'details may stay blank. Existing cards are left as they are.',
@@ -123,8 +125,10 @@ export function renderProfileSettingsView(view, openProfileFields) {
     const lorebooks = document.createElement('details');
     lorebooks.className = 'sillynpc-customize';
     const linking = document.createElement('summary');
-    linking.textContent = 'Lorebook linking';
-    lorebooks.append(linking, buildWorldInfoScannerSettings(), buildSettingSelect({
+    linking.textContent = 'Lorebooks';
+    lorebooks.append(linking);
+    appendLorebookControls(lorebooks);
+    lorebooks.append(buildWorldInfoScannerSettings(), buildSettingSelect({
         key: 'defaultLorebook', label: 'Default Target Lorebook',
         options: [{ value: '', label: '-- current --' }, ...(Array.isArray(world_names) ? world_names : []).map(w => ({ value: w, label: w }))],
     }));

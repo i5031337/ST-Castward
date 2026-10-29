@@ -15,7 +15,7 @@ function updateButton(button) {
     button.hidden = !getSettings().enabled || !getSettings().statusTracker.enabled
         || id !== trackerMessageIndex(chat) || !message
         || !(report?.status === 'running' || report?.status === 'failed' || missingRewards || getSwipeBase(id));
-    button.disabled = report?.status === 'running' || Boolean(message && pending.has(message));
+    button.disabled = report?.status === 'running' || report?.npcProfiles?.status === 'running' || Boolean(message && pending.has(message));
     button.title = missingRewards ? 'Retry missing level-up rewards'
         : report?.status === 'failed' ? 'Retry tracker reading' : 'Regenerate tracker reading';
     button.setAttribute('aria-label', button.title);

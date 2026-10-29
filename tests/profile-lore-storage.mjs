@@ -33,7 +33,8 @@ test('player profile saves create and update one lore entry using player fields'
         loadWorldInfo: async () => book, saveWorldInfo: async () => {},
         formatLoreContent, parseLoreContent, mergeLoreValues, profileFieldsForCard, normalizeMemoryStore,
         saveSettings: () => {}, syncEntryIdentity: identify,
-        ensureChatLorebookForFill: async () => 'Chat',
+        lorebookWriteGuard: guard => guard || (() => true),
+        requireLorebook: async () => 'Chat',
         createLoreEntry: (card, world) => create(card, world, card.name, 'player/avatar'),
     };
     const sync = new Function(...Object.keys(dependencies),
@@ -81,7 +82,8 @@ test('memory-only NPCs create a lore entry and sync active memories, excluding a
         loadWorldInfo: async () => book, saveWorldInfo: async () => { saved++; },
         formatLoreContent, parseLoreContent, mergeLoreValues, profileFieldsForCard: () => [], normalizeMemoryStore,
         saveSettings: () => {}, syncEntryIdentity: () => false,
-        ensureChatLorebookForFill: async () => 'Chat',
+        lorebookWriteGuard: guard => guard || (() => true),
+        requireLorebook: async () => 'Chat',
         createLoreEntry: async card => {
             created++;
             card.lorebook = { world: 'Chat', uid: 0 };
@@ -103,4 +105,41 @@ test('memory-only NPCs create a lore entry and sync active memories, excluding a
     assert.match(book.entries[0].content, /Learned the harbor was closed/);
     assert.ok(!book.entries[0].content.includes('Promised to meet'));
     assert.equal(saved, 2);
+});
+
+test('manual profile and memory writes wait for a target, and skipping preserves local card data', async () => {
+    for (const skip of [false, true]) {
+        const book = { entries: {} };
+        let choose, created = 0, saved = 0;
+        const dependencies = {
+            loadWorldInfo: async () => book, saveWorldInfo: async () => { saved++; },
+            formatLoreContent, parseLoreContent, mergeLoreValues, profileFieldsForCard: () => [], normalizeMemoryStore,
+            saveSettings: () => {}, syncEntryIdentity: () => false,
+            lorebookWriteGuard: guard => guard || (() => true),
+            requireLorebook: () => new Promise((resolve, reject) => { choose = () => skip
+                ? reject(new DOMException('Skipped', 'AbortError')) : resolve('Selected'); }),
+            createLoreEntry: async card => {
+                created++;
+                card.lorebook = { world: 'Selected', uid: 0 };
+                book.entries[0] = { uid: 0, content: '', comment: card.name };
+            },
+        };
+        const sync = new Function(...Object.keys(dependencies),
+            source('../src/lore/lore-sync.js') + '\nreturn syncProfileToLore;')(...Object.values(dependencies));
+        const card = { name: 'Mira', profile: { appearance: 'Blue coat' } };
+        const pending = sync(card, { entries: [{ text: 'A promise' }] });
+        assert.equal(created, 0);
+        assert.equal(saved, 0);
+        choose();
+        if (skip) {
+            await assert.rejects(pending, { name: 'AbortError' });
+            assert.equal(card.profile.appearance, 'Blue coat');
+            assert.equal(created, 0);
+            assert.equal(saved, 0);
+        } else {
+            await pending;
+            assert.equal(created, 1);
+            assert.equal(saved, 1);
+        }
+    }
 });

@@ -41,7 +41,7 @@ test('a missing or unknown template is rejected before requesting generation', a
 test('a selected template limits the generation prompt and response schema for unnamed NPCs', async () => {
     const f = setup();
     const result = JSON.parse(await f.service.create({ ...request, npcTemplateId: 'human' }));
-    assert.equal(result.npcTemplateId, 'human');
+    assert.equal(f.cards[0].npcTemplateId, 'human');
     const body = JSON.parse(f.calls[0].userPrompt);
     assert.equal(body.request.npcTemplateId, 'human');
     assert.deepEqual(body.templates.map(template => template.id), ['human']);
@@ -53,10 +53,10 @@ test('a selected template limits the generation prompt and response schema for u
 test('a selected creature template includes its fields and holdings without humanoid collections', async () => {
     const f = setup();
     const result = JSON.parse(await f.service.create({ ...request, npcTemplateId: 'beast' }));
-    assert.equal(result.npcTemplateId, 'beast');
-    assert.equal(result.profile.instinct, 'Protect its den.');
-    assert.equal(result.stats.Hunger, '3');
-    assert.deepEqual(result.collections.moves, [{ name: 'Bite' }]);
+    assert.equal(f.cards[0].npcTemplateId, 'beast');
+    assert.equal(f.cards[0].profile.instinct, 'Protect its den.');
+    assert.equal(f.cards[0].statusOverrides.Hunger, '3');
+    assert.deepEqual(f.cards[0].statusCollections.moves, [{ name: 'Bite' }]);
     assert.doesNotMatch(f.calls[0].userPrompt, /"human"|humanoid citizens|"clothes"/);
 });
 
@@ -72,7 +72,7 @@ test('single-template and template-free Systems remain automatic without a requi
     const f = fixture();
     assert.ok(!npcToolParameters(f.settings).required.includes('npcTemplateId'));
     const result = JSON.parse(await f.service.create(request));
-    assert.equal(result.npcTemplateId, 'human');
+    assert.equal(f.cards[0].npcTemplateId, 'human');
     assert.equal(JSON.parse(f.calls[0].userPrompt).request.npcTemplateId, 'human');
     const empty = { statusTracker: { npcStats: [] } };
     assert.deepEqual(npcToolParameters(empty).properties.npcTemplateId.enum, ['']);
@@ -115,7 +115,8 @@ test('concurrent requests for the same identity cannot change its pending templa
     await assert.rejects(f.service.create({ ...request, requestKey: 'another-key', name: 'Gandalf', npcTemplateId: 'beast' }), /cannot change their assignment/);
     const raw = generated(); delete raw.nameCandidates; raw.collections = { clothes: [] };
     finish(raw);
-    assert.equal(JSON.parse(await first).npcTemplateId, 'human');
+    await first;
+    assert.equal(f.cards[0].npcTemplateId, 'human');
     assert.equal(f.calls.length, 1);
     assert.equal(f.cards.length, 1);
 });

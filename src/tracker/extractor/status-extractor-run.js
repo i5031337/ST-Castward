@@ -24,7 +24,7 @@ import { renderExtractionReport } from '../ui/status-ui-report.js';
 import { normalizeCollectionUpdates } from './status-collection-normalize.js';
 import { replacementReadingState, revertToBase } from '../snapshots/status-snapshot-swipe.js';
 import { trackerMessageIndex } from '../ui/status-ui-placement.js';
-import { generateNewNpcProfiles } from './status-npc-profiles.js';
+import { npcProfileFollowups } from './status-profile-followups-runtime.js';
 import { locationProposalsForReading, partitionLocationRows, resolveLocationRows } from '../../locations/location-runtime.js';
 
 /** The reading currently applying state. */
@@ -39,6 +39,7 @@ export function isExtractionRunning() { return activeExtraction !== null; }
 const extractedMessages = new Set();
 
 export function resetExtractionState() {
+    npcProfileFollowups.clear();
     extractionQueue.clear();
     activeExtraction?.abort();
     activeExtraction = null;
@@ -54,6 +55,7 @@ export function resetExtractionState() {
 export function forgetExtractionsFrom(index) {
     const from = Number(index);
     if (!Number.isFinite(from)) return 0;
+    npcProfileFollowups.clear(from);
     extractionQueue.forgetFrom(from);
 
     let forgotten = 0;
@@ -103,6 +105,7 @@ async function performExtraction(messageText, messageId, options, signal) {
     const canReplace = () => Number(messageId) === trackerMessageIndex(getContext()?.chat || [])
         && replacementReadingState(messageId) !== null;
     if (options.regenerate && !canReplace()) return { applied: false, reason: 'no latest-turn base' };
+    npcProfileFollowups.clear();
     const run = startGenerationTask({ signal });
     activeExtraction = run;
     const reportMessage = startExtractionReport(messageId);
@@ -286,20 +289,11 @@ async function performExtraction(messageText, messageId, options, signal) {
         if (grants.failures.length) parts.push(`${grants.failures.length} level-up choices failed; retry rewards`);
         if (blocked) parts.push(`${blocked} blocked by standing decisions`);
         report = { swipe, status: 'done', summary: parts.join(' · '), output: readerOutput, warnings, ...(locationReading ? { locationReading } : {}) };
-        // Save the reading before the additional lore requests, so changing chats or
-        // replies during profile generation cannot lose applied rows or review proposals.
-        const profiles = await awaitGenerationRequest(generateNewNpcProfiles(
-            (parsed.characters || []).map(character => character?.name).filter(Boolean),
-            () => getSettings().enabled && !run.signal.aborted && activeExtraction === run
-                && getContext()?.chatMetadata === sourceMetadata
-                && getContext()?.chat?.[Number(messageId)] === reportMessage
-                && reportMessage?.mes === sourceText
-                && extractionSwipe(reportMessage) === swipe
-                && Number(messageId) === trackerMessageIndex(getContext()?.chat || []), run.signal,
-        ), run.signal);
-        if (profiles.generated) parts.push(`${profiles.generated} NPC profile(s) generated`);
-        if (profiles.failed) parts.push(`${profiles.failed} NPC profile(s) failed`);
-        report.summary = parts.join(' · ');
+        // Finish the reading first. Pending review must release its controls before any
+        // follow-up profile request or lorebook chooser can start.
+        finishExtractionReport(messageId, reportMessage, report);
+        await npcProfileFollowups.schedule(messageId,
+            (parsed.characters || []).map(character => character?.name).filter(Boolean), { signal: run.signal });
         // Cleared on success so a later failure is announced rather than swallowed as a
         // repeat of one the user has already dealt with.
         lastReportedProblem = '';

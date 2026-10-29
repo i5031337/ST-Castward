@@ -65,13 +65,11 @@ function buildLoreDialog(char, defaultWorld) {
     profileField.className = 'sillynpc-editor-field';
     profileField.style.flex = '1';
 
-    // With no lorebook at all, Create can only fail - say so where it is about to be
-    // clicked, rather than after.
+    // Missing targets use the shared chooser when Create Entry is clicked.
     if (!worlds.length) {
         const warn = document.createElement('small');
         warn.className = 'notes';
-        warn.textContent = 'No lorebooks exist yet. Create one in SillyTavern\'s World Info '
-            + 'panel first, then come back.';
+        warn.textContent = 'Choose or create a lorebook when you create this entry.';
         profileField.append(warn);
     }
 
@@ -81,7 +79,6 @@ function buildLoreDialog(char, defaultWorld) {
     createBtn.style.height = '32px';
     createBtn.style.display = char.lorebook ? 'none' : '';
     createBtn.innerHTML = '<i class="fa-solid fa-plus"></i> Create Entry';
-    createBtn.disabled = !worlds.length;
 
     actionRow.append(profileField, createBtn);
     container.append(actionRow);
@@ -199,12 +196,12 @@ export async function generateLoreEntry(char, { onSave, template, facts, default
 
         try {
             createBtn.disabled = true;
-            const { uid } = await createLoreEntry(char, targetWorld, entryName);
+            const { uid, world } = await createLoreEntry(char, targetWorld, entryName);
             
             createdUid = uid;
-            createdWorld = targetWorld;
+            createdWorld = world;
             
-            statusBox.innerHTML = `<span style="color:var(--SmartThemeGreenColor)">✓ Entry "${entryName}" created (UID: ${uid}) in "${targetWorld}"</span>`;
+            statusBox.innerHTML = `<span style="color:var(--SmartThemeGreenColor)">✓ Entry "${entryName}" created (UID: ${uid}) in "${world}"</span>`;
             toastr.success('Lorebook entry created!');
             
             resultsContainer.style.display = 'flex';

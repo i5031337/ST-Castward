@@ -3,7 +3,8 @@ import { normalizeMemoryStore } from '../core/profile-memories.js';
 import { loadWorldInfo, saveWorldInfo } from '../../../../../world-info.js';
 import { formatLoreContent, parseLoreContent, mergeLoreValues } from './lore-format.js';
 import { saveSettings } from '../core/settings.js';
-import { syncEntryIdentity, ensureChatLorebookForFill } from './lorebook.js';
+import { syncEntryIdentity } from './lorebook.js';
+import { requireLorebook, lorebookWriteGuard } from './lorebook-write-target.js';
 import { createLoreEntry } from './lore-entries.js';
 
 const pending = new Map();
@@ -21,14 +22,18 @@ export function readLoreValues(content, cardProfile, scope = 'npc') {
 }
 
 /** Write current structured card values to its linked lorebook entry. */
-export async function syncProfileToLore(char, memories, { isCurrent = () => true } = {}) {
+export async function syncProfileToLore(char, memories, { isCurrent: suppliedCurrent, signal } = {}) {
+    const current = lorebookWriteGuard(suppliedCurrent);
+    const isCurrent = () => !signal?.aborted && current();
     if (!char?.name || !isCurrent()) return;
     if (!char.lorebook?.world) {
         const hasProfile = Object.values(char.profile || {}).some(value => String(value ?? '').trim());
         if (!hasProfile && !normalizeMemoryStore(memories, 500).entries.length) return;
-        const target = await ensureChatLorebookForFill();
-        if (!target || !isCurrent()) return;
-        await createLoreEntry(char, target, char.name, { isCurrent });
+    }
+    const target = await requireLorebook(char, { isCurrent, signal, purpose: 'Save profiles and memories' });
+    if (!target || !isCurrent()) return;
+    if (!char.lorebook?.world) {
+        await createLoreEntry(char, target, char.name, { isCurrent, signal });
     }
     if (!isCurrent() || !char.lorebook) return;
     const { world, uid } = char.lorebook;

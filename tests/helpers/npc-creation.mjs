@@ -24,7 +24,7 @@ export function generated() {
         npcTemplateId: 'human', profile: { appearance: 'A compact figure in patched oilskins.', motive: 'They want to buy back a family boat.' },
         stats: { Health: '12/12', Strength: '6', Level: '2', XP: '0/100', Mood: 'Calm' }, collections: {} };
 }
-export function fixture() {
+export function fixture({ beforeCreate } = {}) {
     const settings = settingsFixture();
     let context = { getCurrentChatId: () => 'chat', chatMetadata: {}, chat: [{ is_user: true, mes: 'Cross the river.' }] };
     const cards = [], world = [], calls = [];
@@ -44,6 +44,7 @@ export function fixture() {
         buildContext: () => ({ story: 'A river crossing.' }),
         requestFor: () => async options => { calls.push(options); return generate(options); },
         commit: draft => { const card = { id: `card-${cards.length}`, ...draft }; cards.push(card); return card; },
+        beforeCreate,
         afterCommit: (...args) => afterCommit(...args), pick: length => length - 1,
     });
     return { settings, cards, world, calls, service, get context() { return context; },

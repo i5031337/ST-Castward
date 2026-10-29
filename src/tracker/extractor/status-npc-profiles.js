@@ -7,6 +7,7 @@ import { findCharacterRecord } from '../../characters/character-repository.js';
 import { findCardForName, loadStateFromMetadata, mayJoinScene, resolveCanonicalName } from '../status-logic.js';
 import { generateLoreContent } from '../../api/api-lore-generate.js';
 import { parseGeneratedProfileFields } from '../../lore/lore-format.js';
+import { requireLorebook } from '../../lore/lorebook-write-target.js';
 import { syncProfileToLore } from '../../lore/lore-sync.js';
 import { generateCharacterImageLogic } from '../../api/api-image-generate.js';
 import { triggerReprocess } from '../../chat/reprocess.js';
@@ -28,6 +29,15 @@ export async function generateNewNpcProfiles(names, isCurrent, signal) {
         seen.add(key);
         const fields = profileFieldsForCard(actor);
         if (!fields.length) continue;
+        try {
+            await requireLorebook(null, { isCurrent, signal, purpose: 'Automatic NPC profiles' });
+        } catch (error) {
+            if (error?.name === 'AbortError' || !isCurrent()) break;
+            result.failed++;
+            if (typeof toastr !== 'undefined') toastr.warning(error.message || String(error), 'Castward');
+            continue;
+        }
+        if (!isCurrent()) break;
         const card = createCharacter(name);
         card.npcTemplateId = actor.npcTemplateId || '';
         card.statusOverrides = structuredClone(actor.stats || {});
@@ -55,7 +65,7 @@ export async function generateNewNpcProfiles(names, isCurrent, signal) {
                 }
             }
             saveSettings();
-            await syncProfileToLore(card, undefined, { isCurrent: canSave });
+            await syncProfileToLore(card, undefined, { isCurrent: canSave, signal });
             if (!canSave()) break;
             result.generated++;
             triggerReprocess();

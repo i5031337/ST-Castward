@@ -3,16 +3,13 @@ import { npcToolParameters, NPC_GENERATION_INSTRUCTIONS, npcGenerationContract,
 import { validateShape } from '../generation/validate-shape.js';
 
 export function npcToolResult(card, reused = false) {
-    return JSON.stringify({ ok: true, reused, id: card.id, name: card.name,
-        npcTemplateId: card.npcTemplateId, profile: card.profile,
-        stats: card.statusOverrides, collections: card.statusCollections,
-        instruction: 'Use this exact name and the returned profile, stats and belongings when narrating this NPC.' });
+    return JSON.stringify({ ok: true, reused, id: card.id, name: card.name });
 }
 
 /** One request per identity, with no live writes until generation and validation finish. */
 export function createNpcCreationService({ getContext, getSettings, getCards, getChatCards,
     getForbiddenNames, getReservedNames = () => [], getKnownActor = () => null,
-    buildContext, requestFor, commit, afterCommit = async () => {}, pick = randomIndex }) {
+    buildContext, requestFor, commit, beforeCreate, afterCommit = async () => {}, pick = randomIndex }) {
     const pending = new WeakMap();
     const controllers = new Set();
     let epoch = 0;
@@ -48,18 +45,29 @@ export function createNpcCreationService({ getContext, getSettings, getCards, ge
         const chatId = context.getCurrentChatId();
         const system = settings.activeSystem;
         const connection = settings.loreProfileId;
+        const deliveryEpoch = epoch;
+        const deliveryUser = context.chat?.findLast(message => message.is_user);
         const matches = card => card.npcCreation?.requestKey === request.requestKey
             && card.npcCreation.system === system && card.npcCreation.chatId === chatId;
+        const deliver = async (card, reused, isCurrent = () => enabled() && epoch === deliveryEpoch
+            && getContext().chatMetadata === metadata && getContext().getCurrentChatId() === chatId
+            && getSettings().activeSystem === system && getSettings().loreProfileId === connection
+            && getContext().chat?.findLast(message => message.is_user) === deliveryUser && getCards().includes(card)) => {
+            if (!isCurrent()) throw new Error('NPC creation cancelled because the chat or character changed.');
+            await afterCommit(card, isCurrent, { reused });
+            if (!isCurrent()) throw new Error('NPC creation cancelled because the chat or character changed.');
+            return npcToolResult(card, reused);
+        };
         const existing = getChatCards().find(matches);
         if (existing) {
             assertTemplateMatches(existing);
             if (nameKey && !findNamedNpc([existing], request.name)) {
                 throw new Error(`This requestKey already belongs to ${existing.name}. Use another key for another character.`);
             }
-            return npcToolResult(existing, true);
+            return deliver(existing, true);
         }
         const namedCard = nameKey && findNamedNpc(getCards(), request.name);
-        if (namedCard) { assertTemplateMatches(namedCard); return npcToolResult(namedCard, true); }
+        if (namedCard) { assertTemplateMatches(namedCard); return deliver(namedCard, true); }
         if (nameKey) assertTemplateMatches(getKnownActor(request.name));
         let jobs = pending.get(metadata);
         if (!jobs) { jobs = new Map(); pending.set(metadata, jobs); }
@@ -94,6 +102,7 @@ export function createNpcCreationService({ getContext, getSettings, getCards, ge
                 && message.mes === text && message.swipe_id === swipe);
         const assertCurrent = () => { if (!isCurrent()) throw new Error('NPC creation cancelled because the chat, reply, System or settings changed.'); };
         const run = async () => {
+            if (beforeCreate) { await beforeCreate({ isCurrent, signal: controller.signal }); assertCurrent(); }
             const generate = requestFor(settings);
             let userPrompt = npcGenerationPrompt(request, contract, buildContext(getCards(), request), pick);
             let draft;
@@ -114,7 +123,7 @@ export function createNpcCreationService({ getContext, getSettings, getCards, ge
             assertCurrent();
             assertNameAllowed();
             const alreadyCreated = nameKey && findNamedNpc(getCards(), request.name);
-            if (alreadyCreated) { assertTemplateMatches(alreadyCreated); return npcToolResult(alreadyCreated, true); }
+            if (alreadyCreated) { assertTemplateMatches(alreadyCreated); return deliver(alreadyCreated, true); }
             // A previously mentioned NPC may already hold adventure state without a profile card.
             const known = nameKey && getKnownActor(request.name);
             if (known) {
@@ -127,13 +136,7 @@ export function createNpcCreationService({ getContext, getSettings, getCards, ge
             }
             const card = commit({ ...draft, npcCreation: { requestKey: request.requestKey, system, chatId } });
             const currentCard = () => isCurrent() && getChatCards().includes(card);
-            const warnings = [];
-            try { await afterCommit(card, currentCard); }
-            catch (error) { warnings.push(`NPC saved; lore synchronization failed: ${error.message}. Retry Fill from their sheet.`); }
-            // Never return another chat's character to a resumed narrator.
-            assertCurrent();
-            if (!getChatCards().includes(card)) throw new Error('The created NPC was removed before creation finished.');
-            return warnings.length ? JSON.stringify({ ...JSON.parse(npcToolResult(card)), warnings }) : npcToolResult(card);
+            return deliver(card, false, currentCard);
         };
         const job = run().finally(() => {
             if (jobs.get(key)?.job === job) jobs.delete(key);

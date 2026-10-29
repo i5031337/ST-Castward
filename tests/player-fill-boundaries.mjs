@@ -11,6 +11,7 @@ test('player profile Fill discards generation after ownership changes or manual 
         const card = { name: 'Hero', isPlayer: true, profile: {}, lorebook: { world: 'Chat', uid: 0 } };
         let current = true, saves = 0;
         const dependencies = {
+            requireLorebook: async () => 'Chat',
             loadWorldInfo: async () => ({ entries: { 0: { content: '' } } }), debugLog() {}, saveSettings() {},
             profileFieldValue, profileFieldsForCard: () => [{ id: 'appearance', label: 'Appearance' }],
             parseGeneratedProfileFields: content => content ? { appearance: 'Generated hair' } : null,

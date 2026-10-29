@@ -69,11 +69,10 @@ test('starting entries are returned and saved in one request with typed defaults
     const f = setup(); f.setGenerate(async () => response());
     const result = JSON.parse(await f.service.create({ ...request, npcTemplateId: 'human' }));
     assert.equal(f.calls.length, 1);
-    assert.deepEqual(result.collections, {
+    assert.deepEqual(f.cards[0].statusCollections, {
         clothes: [{ piece: 'Oilskin coat', description: 'A patched yellow coat.', colour: 'blue', worn: true }],
         gear: [{ label: 'Ferry pole', qty: 1 }], quests: [],
     });
-    assert.deepEqual(f.cards[0].statusCollections, result.collections);
     assert.equal(f.context.chatMetadata.sillynpc_status_state, undefined);
 });
 
@@ -156,10 +155,10 @@ test('named actors retain held entries and intentionally empty lists while missi
         return raw;
     });
     const result = JSON.parse(await f.service.create({ ...request, name: 'Gandalf', npcTemplateId: 'human' }));
-    assert.deepEqual(result.collections.clothes, []);
-    assert.deepEqual(result.collections.gear, [{ label: 'Old staff', qty: 2 }]);
-    assert.deepEqual(result.collections.quests, [{ quest: 'An established errand' }]);
-    assert.equal(result.stats.Level, '7');
+    assert.deepEqual(f.cards[0].statusCollections.clothes, []);
+    assert.deepEqual(f.cards[0].statusCollections.gear, [{ label: 'Old staff', qty: 2 }]);
+    assert.deepEqual(f.cards[0].statusCollections.quests, [{ quest: 'An established errand' }]);
+    assert.equal(f.cards[0].statusOverrides.Level, '7');
     assert.deepEqual(actor, before);
     f.cards[0].statusCollections.gear[0].qty = 3;
     assert.equal(actor.collections.gear[0].qty, 2);

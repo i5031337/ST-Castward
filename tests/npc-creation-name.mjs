@@ -108,7 +108,7 @@ test('a matching card created during generation is reused without overwriting ma
     const result = JSON.parse(await pending);
     assert.equal(result.id, 'manual');
     assert.equal(result.reused, true);
-    assert.equal(result.profile.motive, 'Keep this edit.');
+    assert.equal(f.cards[0].profile.motive, 'Keep this edit.');
     assert.equal(f.cards.length, 1);
 });
 
@@ -121,11 +121,11 @@ test('previously tracked named NPCs preserve assigned template, current stats an
     const before = structuredClone(actor);
     const result = JSON.parse(await f.service.create({ ...request, name: 'Gandalf', npcTemplateId: 'human' }));
     assert.deepEqual(f.calls[0].schema.properties.npcTemplateId.enum, ['human']);
-    assert.equal(result.stats.Health, '2/30');
-    assert.equal(result.stats.Level, '7');
-    assert.equal(result.stats.XP, '75/100');
-    assert.equal(result.stats.Strength, '6');
-    assert.deepEqual(result.collections, actor.collections);
+    assert.equal(f.cards[0].statusOverrides.Health, '2/30');
+    assert.equal(f.cards[0].statusOverrides.Level, '7');
+    assert.equal(f.cards[0].statusOverrides.XP, '75/100');
+    assert.equal(f.cards[0].statusOverrides.Strength, '6');
+    assert.deepEqual(f.cards[0].statusCollections, actor.collections);
     assert.deepEqual(actor, before);
     f.cards[0].statusCollections.items[0].quantity = 2;
     assert.equal(actor.collections.items[0].quantity, 1);

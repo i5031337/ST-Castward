@@ -108,7 +108,7 @@ function harness(mode = 'extract') {
         prepareGrantReview: () => {}, LEVEL_READING_KEY: 'sillynpc_level_reading',
         getCurrentPersonaKey: () => 'hero', getCurrentPersonaName: () => 'Hero',
         prepareSceneLocationReading: async () => null,
-        generateNewNpcProfiles: async () => ({ generated: 0, failed: 0 }),
+        npcProfileFollowups: { schedule: async () => ({}), clear() {} },
         startExtractionReport: id => context.chat[id], finishExtractionReport: (id, msg, report) => { msg.report = report; },
         extractionSwipe: () => 0, renderExtractionReport: () => {},
         getAllCharacters: () => [],
