@@ -63,6 +63,48 @@ test('an empty place store still reconciles deletion without requesting a new ta
     assert.deepEqual(f.lore.chatLore, [f.external]);
 });
 
+test('group places reuse the same entries while idle and across speakers', async () => {
+    const f = fixture();
+    f.context.groupId = 'party';
+    f.context.characters.push({ avatar: 'companion.png' });
+    let uids;
+    for (const characterId of [undefined, 0, 1, undefined]) {
+        f.context.characterId = characterId;
+        assert.equal(await f.update(f.lore), 2);
+        const entries = f.lore.chatLore.filter(entry => entry.castwardPlace);
+        assert.ok(entries.every(entry => entry.castwardPlace.owner === JSON.stringify(['place', 'party', null, 'adventure'])));
+        const currentUids = entries.map(entry => entry.uid);
+        if (uids) assert.deepEqual(currentUids, uids);
+        uids = currentUids;
+        assert.equal(Object.keys(f.book.entries).length, 3);
+    }
+});
+
+for (const stage of ['target', 'sync']) {
+    test(`group speaker changes during ${stage} preserve the write; group and chat changes cancel it`, async () => {
+        for (const boundary of ['speaker', 'group', 'chat']) {
+            const f = fixture();
+            f.context.groupId = 'party';
+            f.context.characterId = undefined;
+            const key = stage === 'target' ? 'getTarget' : 'sync';
+            const original = f.deps[key];
+            let release, entered;
+            const waiting = new Promise(resolve => { release = resolve; });
+            const started = new Promise(resolve => { entered = resolve; });
+            f.deps[key] = async (...args) => { entered(); await waiting; return original(...args); };
+            const pending = createLocationLoreRuntime(f.deps)(f.lore);
+            await started;
+            if (boundary === 'speaker') f.context.characterId = 0;
+            if (boundary === 'group') f.context.groupId = 'another party';
+            if (boundary === 'chat') f.context.getCurrentChatId = () => 'another adventure';
+            release();
+            assert.equal(await pending, boundary === 'speaker' ? 2 : 0, boundary);
+            assert.equal(f.lore.chatLore.length, boundary === 'speaker' ? 3 : 1, boundary);
+            assert.equal(Object.keys(f.book.entries).length, boundary === 'speaker' ? 3 : 1, boundary);
+        }
+    });
+}
+
 test('disabled feature, missing chat, and System mismatch suppress all managed scan copies', async () => {
     const mutations = [
         f => { f.settings.enabled = false; },

@@ -5,7 +5,8 @@ import { applyLocationLore } from './location-lore-scan.js';
 export function createLocationLoreRuntime({ getContext, getSettings, getTarget, sync,
     getPersona = () => getContext()?.user_avatar }) {
     const ownerFor = context => JSON.stringify(['place', context?.groupId || null,
-        context?.characters?.[context.characterId]?.avatar || null, context?.getCurrentChatId?.()]);
+        context?.groupId ? null : context?.characters?.[context.characterId]?.avatar || null,
+        context?.getCurrentChatId?.()]);
     const snapshot = () => {
         const context = getContext();
         const settings = getSettings();
