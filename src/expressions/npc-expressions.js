@@ -13,7 +13,7 @@ import { clearSpeechSprite, showSpeechSprite } from './speech-sprite.js';
 import { wireExpressionEvents } from './expression-events.js';
 import { EMOTION_LABELS, prepareExpressionReference, expressionWorkflow } from './expression-prompts.js';
 import { expressionGenerator, expressionJob } from './host-expression-generation.js';
-import { rememberNpcSprite, initSceneSprites } from './scene-sprites.js';
+import { rememberNpcSprite, initSceneSprites, focusSceneSprite } from './scene-sprites.js';
 import { portraitFromResult, readDialoguePortrait, rememberDialoguePortrait } from './dialogue-portraits.js';
 
 const results = new Map();
@@ -185,7 +185,6 @@ export function adoptStreamExpressions(messageId, records) {
 /** Called only by the audio element's playing event, never by synthesis completion. */
 export function showNpcSpeechExpression(unit) {
     if (unit.kind !== 'dialogue') return;
-    if (getSettings().showPresentNpcSprites) { clearSpeechSprite(); return; }
     const card = cardFor(unit.npcId);
     if (!getSettings().enabled || !card) {
         clearSpeechSprite(); return;
@@ -195,6 +194,9 @@ export function showNpcSpeechExpression(unit) {
         candidate.line.messageId === line.messageId && candidate.line.lineIndex === line.lineIndex
         && candidate.line.npcId === line.npcId && candidate.line.text === (line.dialogueText ?? line.text)) : null);
     if (!dialogueLineCurrent(line)) return;
+    if (getSettings().showPresentNpcSprites) {
+        clearSpeechSprite(); focusSceneSprite(card.id); return;
+    }
     const picture = (result && isCurrent(result, false) ? portraitFromResult(result) : null) || readDialoguePortrait(line);
     showSpeechSprite(card, picture?.path || '', picture?.fallbackPath || '', unit);
 }

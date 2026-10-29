@@ -16,11 +16,15 @@ export function showSpeechSprite(card, path, fallback, unit) {
     image.alt = card.name;
     const sources = [...new Set([source, fallback, card.imageUrl].filter(Boolean))];
     let index = 0;
+    const showSource = () => {
+        image.dataset.portrait = String(sources[index] === card.imageUrl);
+        image.src = sources[index];
+    };
     image.onerror = () => {
-        if (++index < sources.length) image.src = sources[index];
+        if (++index < sources.length) showSource();
         else holder.remove();
     };
-    image.src = sources[0];
+    showSource();
     holder.append(image);
     document.body.append(holder);
 }

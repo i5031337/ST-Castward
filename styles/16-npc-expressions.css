@@ -57,15 +57,41 @@
     filter: drop-shadow(2px 2px 2px #51515199);
 }
 .sillynpc-scene-sprite-side {
-    display: flex;
-    align-items: flex-end;
+    position: relative;
     width: max(100px, calc((100vw - var(--sheldWidth, 50vw)) / 2));
     max-height: 90vh;
     align-self: flex-end;
     height: 100%;
 }
-.sillynpc-scene-sprite { flex: 1; min-width: 0; height: 100%; }
+.sillynpc-scene-sprite {
+    position: absolute;
+    display: flex;
+    align-items: flex-end;
+    bottom: 0;
+    left: var(--sprite-offset, 0%);
+    width: 100%;
+    height: 100%;
+    transform: scale(.94);
+    transform-origin: bottom center;
+    z-index: var(--sprite-layer, 0);
+}
+.sillynpc-scene-sprite-side[data-side="right"] .sillynpc-scene-sprite {
+    left: auto;
+    right: var(--sprite-offset, 0%);
+}
+.sillynpc-scene-sprite[data-active="true"],
+.sillynpc-scene-sprite:only-child { transform: none; }
+.sillynpc-scene-sprite[data-active="true"] { z-index: 1000; }
 .sillynpc-scene-sprite img { width: 100%; height: 100%; object-fit: contain; object-position: bottom center; }
+/* Give square profile pictures the presence of a tall sprite, cropping rather than stretching. */
+#sillynpc-speech-sprite img[data-portrait="true"],
+.sillynpc-scene-sprite img[data-portrait="true"] {
+    height: auto;
+    max-height: 100%;
+    aspect-ratio: 1 / 2;
+    object-fit: cover;
+    object-position: top center;
+}
 @media (max-width: 768px) {
     #sillynpc-scene-sprites { z-index: 1; }
     .sillynpc-scene-sprite-side { width: 35vw; height: 35vh; }

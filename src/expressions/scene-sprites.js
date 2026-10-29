@@ -2,7 +2,7 @@ import { eventSource, event_types } from '../../../../../events.js';
 import { getContext } from '../../../../../st-context.js';
 import { getSettings } from '../core/settings.js';
 import { getActiveCharacters } from '../characters/characters.js';
-import { dialogueRevision } from '../chat/dialogue-presentation.js';
+import { dialogueRevision, readDialogueRecords } from '../chat/dialogue-presentation.js';
 import { fnv1a } from '../core/hash.js';
 import { loadSpritePack } from './host-expressions.js';
 import { selectSprite } from './expression-engine.js';
@@ -20,6 +20,24 @@ const sourceFor = id => {
     const context = getContext();
     return context.chat?.[id] ? fnv1a(dialogueRevision(context, id)) : null;
 };
+
+/** Layer the speaker above overlapping scene partners without changing their slots. */
+export function focusSceneSprite(npcId) {
+    const root = document.getElementById('sillynpc-scene-sprites');
+    if (!root) return;
+    root.dataset.activeNpcId = npcId || '';
+    for (const figure of root.querySelectorAll('.sillynpc-scene-sprite')) {
+        figure.dataset.active = String(figure.dataset.npcId === npcId);
+    }
+}
+
+function latestSceneSpeaker(ids) {
+    for (const message of [...document.querySelectorAll('#chat .mes')].reverse()) {
+        const line = readDialogueRecords(message).filter(line => !line.isPersona && ids.has(line.npcId)).at(-1);
+        if (line) return line.npcId;
+    }
+    return '';
+}
 
 export function clearSceneSprites() {
     version++; packs.clear();
@@ -80,23 +98,36 @@ export async function refreshSceneSprites({ loadPack = loadSpritePack } = {}) {
         element.dataset.side = side; return element;
     });
     const existing = new Map([...root.querySelectorAll('.sillynpc-scene-sprite')].map(figure => [figure.dataset.npcId, figure]));
-    entries.filter(entry => entry.path).forEach(({ card, path }, index) => {
+    const visible = entries.filter(entry => entry.path);
+    visible.forEach(({ card, path }, index) => {
         const figure = existing.get(card.id) || document.createElement('div'); figure.className = 'sillynpc-scene-sprite';
         figure.dataset.npcId = card.id; figure.title = card.name;
+        const slot = Math.floor(index / 2), count = Math.ceil((visible.length - index % 2) / 2);
+        figure.style.setProperty('--sprite-offset', `${count > 1 ? slot / (count - 1) * 30 : 0}%`);
+        figure.style.setProperty('--sprite-layer', String(slot));
         const image = figure.querySelector('img') || document.createElement('img'); image.alt = card.name;
+        image.dataset.portrait = String(path === card.imageUrl);
         if (image.getAttribute('src') !== path) image.src = path;
         image.onerror = () => {
-            if (card.imageUrl && image.getAttribute('src') !== card.imageUrl) image.src = card.imageUrl;
+            if (card.imageUrl && image.getAttribute('src') !== card.imageUrl) {
+                image.dataset.portrait = 'true'; image.src = card.imageUrl;
+            }
             else figure.remove();
         };
         figure.append(image); sides[index % 2].append(figure);
     });
     root.replaceChildren(...sides);
+    const ids = new Set(visible.map(({ card }) => card.id));
+    focusSceneSprite(ids.has(root.dataset.activeNpcId) ? root.dataset.activeNpcId : latestSceneSpeaker(ids) || visible[0].card.id);
 }
 
 export function initSceneSprites(renderedEvent) {
-    for (const event of ['sillynpc-status-updated', renderedEvent, event_types.MESSAGE_SWIPED,
-        event_types.MESSAGE_EDITED, event_types.MESSAGE_DELETED]) eventSource.on(event, () => void refreshSceneSprites());
+    eventSource.on('sillynpc-status-updated', () => void refreshSceneSprites());
+    for (const event of [renderedEvent, event_types.MESSAGE_SWIPED,
+        event_types.MESSAGE_EDITED, event_types.MESSAGE_DELETED]) eventSource.on(event, () => {
+        focusSceneSprite(null);
+        void refreshSceneSprites();
+    });
     eventSource.on(event_types.CHAT_CHANGED, () => { clearSceneSprites(); void refreshSceneSprites(); });
     void refreshSceneSprites();
 }
