@@ -7,7 +7,7 @@ import { requireLorebook, lorebookWriteGuard } from './lorebook-write-target.js'
 import { createLoreEntryStore } from './lore-entry-store.js';
 
 const create = createLoreEntryStore({
-    load: loadWorldInfo, save: saveWorldInfo, allocate: createWorldInfoEntry,
+    load: loadWorldInfo, save: (world, data) => saveWorldInfo(world, data, true), allocate: createWorldInfoEntry,
     identify: syncEntryIdentity, persist: saveSettings,
 });
 

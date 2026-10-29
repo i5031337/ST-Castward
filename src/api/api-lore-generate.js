@@ -329,7 +329,7 @@ export async function saveLoreContent(char, world, uid, tags, content, { preserv
     entry.key = mergeKeywords(entry.key, tags);
     
     if (!isCurrent()) throw new DOMException('Lorebook write cancelled.', 'AbortError');
-    await saveWorldInfo(world, worldData);
+    await saveWorldInfo(world, worldData, true);
     if (!isCurrent()) throw new DOMException('Lorebook write cancelled.', 'AbortError');
     char.profile = profile;
     char.lorebook = { world, uid: Number(uid) };

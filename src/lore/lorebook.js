@@ -23,7 +23,7 @@ export async function updateLorebookEntry(world, uid, { comment, content }) {
     if (comment !== undefined) entry.comment = comment;
     if (content !== undefined) entry.content = content;
 
-    await saveWorldInfo(world, data);
+    await saveWorldInfo(world, data, true);
     return entry;
 }
 
@@ -41,7 +41,7 @@ export async function deleteLorebookEntry(world, uid) {
     const removed = await deleteWorldInfoEntry(data, uid, { silent: true });
     if (removed === false) return false;
 
-    await saveWorldInfo(world, data);
+    await saveWorldInfo(world, data, true);
     debugLog(`Deleted entry ${uid} from "${world}"`);
     return true;
 }
@@ -261,7 +261,7 @@ export async function syncLorebookScope() {
             changed = true;
             flipped++;
         }
-        if (changed) await saveWorldInfo(worldName, data);
+        if (changed) await saveWorldInfo(worldName, data, true);
     }
 
     if (flipped) debugLog(`Lore entries switched for this chat: ${flipped}`);
@@ -303,7 +303,7 @@ export async function renameLorebookEntry(char) {
     if (!entry) return false;
 
     if (!syncEntryIdentity(char, entry)) return false;
-    await saveWorldInfo(world, data);
+    await saveWorldInfo(world, data, true);
     debugLog(`Lorebook entry now filed under "${char.name}"`);
     return true;
 }
@@ -344,7 +344,7 @@ export async function repairEntryIdentities() {
             }
         }
 
-        if (dirty) await saveWorldInfo(world, worldData);
+        if (dirty) await saveWorldInfo(world, worldData, true);
     }
 
     if (updated) debugLog(`Named ${updated} lorebook entr(ies) after their characters`);

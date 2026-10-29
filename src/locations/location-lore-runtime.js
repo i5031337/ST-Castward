@@ -8,7 +8,7 @@ import { getChatLorebookName } from '../lore/lorebook.js';
 import { createLocationLoreStore } from './location-lore-store.js';
 import { createLocationLoreRuntime } from './location-lore.js';
 
-const sync = createLocationLoreStore({ load: loadWorldInfo, save: saveWorldInfo, allocate: createWorldInfoEntry });
+const sync = createLocationLoreStore({ load: loadWorldInfo, save: (world, data) => saveWorldInfo(world, data, true), allocate: createWorldInfoEntry });
 const update = createLocationLoreRuntime({
     getContext, getSettings, sync, getPersona: () => user_avatar,
     getTarget: ({ isCurrent, hasPlaces }) => hasPlaces

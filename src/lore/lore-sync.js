@@ -42,7 +42,7 @@ export async function syncProfileToLore(char, memories, { isCurrent: suppliedCur
         entry.content = formatLoreContent(values, previous, memories, scope, profileFieldsForCard(char));
         const identityChanged = syncEntryIdentity(char, entry);
         entry.comment = title;
-        if (entry.content !== previous || identityChanged) await saveWorldInfo(world, data);
+        if (entry.content !== previous || identityChanged) await saveWorldInfo(world, data, true);
         if (!isCurrent()) return;
         if (Object.entries(values || {}).some(([id, value]) => char.profile?.[id] !== value)) {
             char.profile = { ...char.profile, ...values };
