@@ -1,5 +1,5 @@
 import { fieldAppliesTo } from '../core/system-fields.js';
-import { isStaticField } from '../core/constants-profile.js';
+import { calculateCollectionPlan } from './collection-pipeline.js';
 
 const SCOPES = ['globalStats', 'playerStats', 'npcStats'];
 const escapePattern = value => String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -103,19 +103,9 @@ export function calculateSchemaOperation({ tracker, system, state, personaData =
         for (const card of cards) moveCollection(card?.statusCollections);
         for (const actor of actors) moveCollection(actor.collections, true);
     } else if (['library-update', 'library-rename', 'library-delete'].includes(type)) {
-        const definition = (tracker.collections || []).find(col => col.id === collectionId);
-        if (!definition) return null;
-        if (type === 'library-rename' && !itemLibrary[collectionId]) return null;
-        if (type === 'library-delete' && !Object.hasOwn(itemLibrary[collectionId] || {}, String(operation.itemName).toLowerCase())) return null;
-        const library = { ...itemLibrary, [collectionId]: { ...itemLibrary[collectionId] } };
-        if (type === 'library-delete') delete library[collectionId][String(operation.itemName).toLowerCase()];
-        else {
-            if (type === 'library-rename') delete library[collectionId][String(oldName).toLowerCase()];
-            const fields = {};
-            for (const field of definition.fields) if (isStaticField(field) && operation.itemData[field.name] !== undefined) fields[field.name] = operation.itemData[field.name];
-            library[collectionId][String(type === 'library-rename' ? newName : operation.itemName).toLowerCase()] = fields;
-        }
-        return { writes, nextState: null, itemLibrary: library, result };
+        const plan = calculateCollectionPlan({ ...operation, operation: type, tracker, itemLibrary });
+        if (!plan) return null;
+        return { writes, nextState: null, collectionPlan: plan, result };
     } else return null;
     return { writes, nextState, result };
 }

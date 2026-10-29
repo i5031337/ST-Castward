@@ -11,7 +11,7 @@ function fixture() {
     const settings = { statusTracker: { collections: [{ id: 'moves', name: 'Moves', target: 'player',
         fields: [{ name: 'dex', type: 'number', isPrimary: true }, { name: 'power', type: 'number' }] }] } };
     const deps = { committedState: {}, getCurrentPersonaName: () => 'Player',
-        getMergedItem: (_id, item) => item, constrainToDefinition: (_field, value) => value };
+        constrainToDefinition: (_field, value) => value };
     bindCollectionUpdates(deps, { getSettings: () => settings });
     return deps;
 }

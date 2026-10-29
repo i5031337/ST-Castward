@@ -5,7 +5,8 @@ import { getAllCharacters } from '../characters/character-repository.js';
 import { activeNpcSystem } from '../core/npc-templates.js';
 import { getCurrentPersonaKey } from './status-persona-state.js';
 import { loadStateFromMetadata, saveStateToMetadata } from './status-state-storage.js';
-import { calculateCollectionEdit, commitCollectionEdit } from './collection-editor-calculation.js';
+import { calculateCollectionPlan } from './collection-pipeline.js';
+import { commitCollectionEdit } from './collection-editor-commit.js';
 import { isTrackerEditLocked, trackerEditRevision } from './tracker-edit-lock.js';
 
 /** Keep the editor bound to the chat, persona, rules and card it displayed. */
@@ -60,7 +61,7 @@ export function createCollectionEditor(actor, isPlayer) {
                 && getContext()?.chatMetadata?.sillynpc_status_state === stored
                 && JSON.stringify(state) === revision && JSON.stringify(card?.statusCollections) === cardRevision
                 && JSON.stringify(settings.master_items) === libraryRevision;
-            const plan = calculateCollectionEdit({ actor: target, tracker: settings.statusTracker,
+            const plan = calculateCollectionPlan({ actor: target, tracker: settings.statusTracker,
                 system: owner.definition, scope: state ? isPlayer ? 'player' : 'npc' : 'offstage',
                 itemLibrary: settings.master_items || {}, ...change });
             return commitCollectionEdit({ plan, state, actor: target, card, settings, isCurrent,

@@ -1,7 +1,7 @@
 import { Popup, POPUP_TYPE } from '../../../../../../popup.js';
 import { getContext } from '../../../../../../st-context.js';
 import { eventSource } from '../../../../../../events.js';
-import { getSettings } from '../../core/settings.js';
+import { getSettings, saveSettings } from '../../core/settings.js';
 import { startGenerationTask } from '../../core/generation-cancellation.js';
 import { generationRequestAdapter } from '../../generation/request.js';
 import { getPersonaData, loadStateFromMetadata, saveStateToMetadata, applyScenePrompt } from '../../tracker/status-logic.js';
@@ -40,7 +40,7 @@ export const playerAdventureService = createPlayerAdventureService({
         const settings = getSettings();
         return generationRequestAdapter({ ...settings.statusTracker, extractionTemperature: '' }, settings.loreProfileId || '')(args);
     },
-    review: reviewStartingSheet, saveState: saveStateToMetadata,
+    review: reviewStartingSheet, saveState: saveStateToMetadata, saveSettings,
     afterSave: state => {
         applyScenePrompt();
         eventSource.emit('sillynpc-status-updated', state, { source: 'player-creation' });

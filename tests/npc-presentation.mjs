@@ -1,3 +1,4 @@
+import { calculateCollectionPlan, installCollectionChanges } from '../src/tracker/collection-pipeline.js';
 import { portableMemories, carriesNpcMemories } from '../src/characters/system-roster-state.js';
 import { writeNpcMemories } from '../src/tracker/npc-memories.js';
 import assert from 'node:assert/strict';
@@ -153,7 +154,7 @@ test('reusable card instantiation copies preferences into independent chat insta
 });
 
 test('transfer exports safe preferences and imports explicit unresolved external references', async () => {
-    const deps = {
+    const deps = { calculateCollectionPlan, installCollectionChanges,
         portableMemories, writeNpcMemories, readNpcMemories: () => ({}), getContext: () => ({}), isChatCharacter: () => false,
         normalizeNpcPresentation, getSettings: () => ({ statusTracker: {} }), activeNpcSystem: () => ({}),
         npcTemplateFor: () => null, splitNpcStats: () => ({ innate: {} }), profileStrings: () => ({}),

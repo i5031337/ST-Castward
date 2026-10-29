@@ -96,7 +96,7 @@ test('collection additions, replacements, defaults and updates respect optional 
         { name: 'pp', type: 'number', min: '-2.5', maxStatValue: '5.5', defaultValue: '99' },
         { name: 'unbounded', type: 'number' }]);
     const deps = { committedState: {}, getCurrentPersonaName: () => 'Player',
-        constrainToDefinition: constrainNumericStat, getMergedItem: (id, item) => item };
+        constrainToDefinition: constrainNumericStat };
     bindCollectionUpdates(deps, { getSettings: () => ({ statusTracker: { collections: [col] } }) });
     const actor = { name: 'Player', collections: {} };
     deps.applyCollectionUpdate(actor, 'moves', { add: [{ name: 'Thunderbolt', pp: 10, unbounded: 999 }] });

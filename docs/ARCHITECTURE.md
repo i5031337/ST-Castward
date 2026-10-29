@@ -266,15 +266,35 @@ validation immediately before installing card/library effects, history and state
 Rejected updates publish no status event or applied reader rows. Settings and metadata
 remain separate host saves, without a cross-store durable atomicity guarantee.
 
-Manual item editors use `collection-editor.js` and `collection-editor-calculation.js`.
+Manual item editors use `collection-editor.js` and `collection-editor-commit.js`.
 An editor retains the chat, persona, System and card it displayed, plus the rendered
 item contents, so delayed input and confirmation cannot silently target a different
 owner or row. Accepted plans install scene, card and library changes through the
 storage boundary; offstage cards can be edited without an open chat. Manual changes
 remain authoritative and preserve one-step undo and latest-reply swipe alignment.
 
-Schema and Item Library operations calculate explicit writes in
-`schema-operation-calculation.js`. The host adapter captures rules, state, persona
+`collection-pipeline.js` is the single mutation pipeline for reader/inline/review
+updates, manual item edits, player/NPC starting equipment, imports, and Item Library
+tools. It resolves definitions, validates the resulting items, and returns collections,
+library changes, and diagnostics as a private plan. Features supply intent and ownership
+context; their save adapters install the plan only after acceptance. Previews and
+discarded or invalid plans write nothing. `collection-operations.js` supplies internal
+collection arithmetic, and `collection-library.js` supplies the internal registry;
+features call neither directly.
+
+Existing definitions win over proposed static fields; quantity and other non-static
+fields remain local to each holder. Explicit manual static-field edits update the
+definition. Holder renames retain the source definition for other holders. Accepted
+holdings can fill missing definitions and missing shared fields before a proposal is
+considered; proposals cannot fill gaps in an existing definition. This prevents a
+rejected proposal from redefining someone else's belongings. Strict creation/import
+plans reject invalid final values and duplicate identities; reader/manual update
+plans use the shared field constraints and return diagnostics. Unknown archived
+collections remain readable on import. An invalid library definition fails strict
+creation before any writes and remains available for manual correction.
+
+Schema operations calculate explicit writes in `schema-operation-calculation.js`;
+Item Library operations delegate to the collection pipeline. The host adapter captures rules, state, persona
 records, cards and library data and checks them again before installation. The schema
 name itself belongs to the same plan as its stored-value migration. Shared stat fields
 move all applicable scopes together. Tracker undo retains renamed keys rather than
@@ -299,8 +319,8 @@ There are no shared record/drain queues. Manual collection removal changes only 
 actor’s holdings; later readings can add the item again or give it to another actor.
 The former temporary item suppression and expiry counter have been removed, and
 obsolete `recently_deleted` markers are discarded when loading saved chats. Explicit
-item review decisions remain available. Preview/library policies, model-input
-sanitization and historical recovery limits are unchanged.
+item review decisions remain available. Model-input sanitization and historical
+recovery limits are unchanged.
 
 ## Verification
 

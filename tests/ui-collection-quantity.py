@@ -33,10 +33,10 @@ with browser_session() as browser:
                     throw Error('Disable quantity');
                 check.click();
                 if (!col.trackQuantity || collectionQuantityField(col)?.defaultValue !== '1') throw Error('Enable quantity');
-                const { calculateCollectionUpdate } = await import(root + 'src/tracker/collection-calculation.js');
+                const { calculateCollectionPlan } = await import(root + 'src/tracker/collection-pipeline.js');
                 const actor = { name: 'Player', collections: {} };
                 const apply = update => {
-                    const calculated = calculateCollectionUpdate({ actor, collectionId: 'inventory', update,
+                    const calculated = calculateCollectionPlan({ actor, collectionId: 'inventory', update,
                         tracker: settings.statusTracker, scope: 'player', preview: true });
                     actor.collections = calculated.collections;
                 };

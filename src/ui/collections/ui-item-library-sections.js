@@ -4,9 +4,20 @@ import { loadStateFromMetadata, updateMasterItem, renameMasterItem, deleteMaster
 import { getItemRules, clearItemRule, PLAYER_ACTOR } from '../../tracker/status-review.js';
 import { render, itemId, libraryBulk } from './ui-item-library.js';
 
+function inputValue(input, field) {
+    if (field.type === 'boolean') return input.type === 'checkbox' ? input.checked : input.value === 'true';
+    return field.type === 'number' ? Number(input.value) : input.value;
+}
+
+function showValue(input, value) {
+    if (input.type === 'checkbox') input.checked = value === true;
+    else input.value = value ?? '';
+}
+
 export function buildItemRow({ root, search, master, colDef, fields, primary, key }) {
     const data = master[colDef.id][key] || {};
     const owner = { library: master, definition: colDef, collectionId: colDef.id };
+    const identifier = colDef.fields.find(field => field.name === primary) || {};
 
     const card = document.createElement('div');
     card.className = 'sillynpc-item-card';
@@ -16,17 +27,25 @@ export function buildItemRow({ root, search, master, colDef, fields, primary, ke
     header.style.cssText = 'display:flex; gap:8px; align-items:center; flex-wrap:wrap;';
 
     // Primary field doubles as the storage key, so editing it is a rename.
-    const nameInput = document.createElement('input');
-    nameInput.type = 'text';
+    const nameInput = document.createElement(identifier.type === 'boolean' ? 'select' : 'input');
+    if (identifier.type === 'boolean') {
+        for (const value of ['true', 'false']) {
+            const option = document.createElement('option'); option.value = value; option.textContent = value;
+            nameInput.append(option);
+        }
+    } else nameInput.type = identifier.type === 'number' ? 'number' : 'text';
     nameInput.className = 'text_pole';
     nameInput.style.cssText = 'flex:1; min-width:160px; font-weight:bold;';
     nameInput.value = data[primary] ?? key;
     nameInput.addEventListener('change', () => {
         const newName = nameInput.value.trim();
-        if (!newName || newName.toLowerCase() === key) return;
         const current = master[colDef.id]?.[key];
         if (!current) return;
-        const updated = { ...current, [primary]: newName };
+        if (!newName || newName.toLowerCase() === key) {
+            showValue(nameInput, current[primary] ?? key);
+            return;
+        }
+        const updated = { ...current, [primary]: inputValue(nameInput, identifier) };
         renameMasterItem(colDef.id, key, newName, updated, { ...owner, item: current, itemKey: key });
         render(root, search.value);
     });
@@ -65,23 +84,29 @@ export function buildItemRow({ root, search, master, colDef, fields, primary, ke
         label.textContent = field.label || field.name;
         wrap.appendChild(label);
 
-        const input = field.isMultiline
-            ? document.createElement('textarea')
-            : document.createElement('input');
+        const input = document.createElement(field.options?.length ? 'select' : field.isMultiline ? 'textarea' : 'input');
         input.className = 'text_pole';
         input.style.width = '100%';
-        if (field.isMultiline) {
+        if (field.options?.length) {
+            for (const value of field.options) {
+                const option = document.createElement('option'); option.value = String(value); option.textContent = String(value);
+                input.append(option);
+            }
+        } else if (field.isMultiline) {
             input.rows = Math.min(8, Math.max(2, String(data[field.name] ?? '').split('\n').length));
             input.style.resize = 'vertical';
         } else {
-            input.type = 'text';
+            input.type = field.type === 'boolean' ? 'checkbox' : field.type === 'number' ? 'number' : 'text';
+            if (input.type === 'checkbox') input.style.width = 'auto';
         }
-        input.value = data[field.name] ?? '';
+        showValue(input, data[field.name]);
         input.addEventListener('change', () => {
             const current = master[colDef.id]?.[key];
             if (!current) return;
-            const merged = { ...current, [primary]: nameInput.value.trim(), [field.name]: input.value };
-            updateMasterItem(colDef.id, nameInput.value.trim() || key, merged, { ...owner, item: current, itemKey: key });
+            const merged = { ...current, [primary]: current[primary] ?? inputValue(nameInput, identifier),
+                [field.name]: inputValue(input, field) };
+            const result = updateMasterItem(colDef.id, key, merged, { ...owner, item: current, itemKey: key });
+            if (!result) showValue(input, master[colDef.id]?.[key]?.[field.name]);
         });
 
         wrap.appendChild(input);

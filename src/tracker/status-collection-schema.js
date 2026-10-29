@@ -2,13 +2,20 @@ import { getCurrentPersonaKey } from './status-persona-state.js';
 import { peekStateFromMetadata, loadStateFromMetadata, saveStateToMetadata } from './status-state-storage.js';
 import { getSettings } from '../core/settings.js';
 import { runSchemaOperation } from './schema-operation-runtime.js';
-import { isStaticField } from '../core/constants.js';
 
-const run = operation => runSchemaOperation(operation, {
-    peekState: peekStateFromMetadata,
-    saveState: (state, options) => saveStateToMetadata(state, options),
-    personaKey: () => getCurrentPersonaKey(),
-});
+const run = operation => {
+    try {
+        return runSchemaOperation(operation, {
+            peekState: peekStateFromMetadata,
+            saveState: (state, options) => saveStateToMetadata(state, options),
+            personaKey: () => getCurrentPersonaKey(),
+        });
+    } catch (error) {
+        console.warn('Castward: Collection edit rejected', error);
+        if (typeof toastr !== 'undefined') toastr.warning(error.message || String(error), 'Castward Item Library', { escapeHtml: true });
+        return null;
+    }
+};
 function syncOverrideToActiveState(charName, statName, newValue) {
     if (!charName || !statName) return false;
     
@@ -34,40 +41,6 @@ function syncOverrideToActiveState(charName, statName, newValue) {
     return false;
 }
 
-/**
- * Merges an AI-provided item with its Master Database entry if it exists.
- * If not, adds the item to the Master Database.
- */
-function getMergedItem(collectionId, aiItem, { dryRun = false } = {}) {
-    const settings = getSettings();
-    const colDef = settings.statusTracker.collections.find(c => c.id === collectionId);
-    if (!colDef) return aiItem;
-
-    const primaryField = colDef.fields.find(f => f.isPrimary) || { name: 'name' };
-    const itemName = aiItem[primaryField.name] || aiItem.name;
-    if (!itemName) return aiItem;
-
-    const masterDb = settings.master_items || {};
-    
-    const lowerName = String(itemName).toLowerCase();
-    const masterEntry = masterDb[collectionId]?.[lowerName];
-
-    if (masterEntry) {
-        const mergedItem = { ...aiItem };
-        colDef.fields.forEach(field => {
-            // Static fields come from Master DB if available
-            if (isStaticField(field) && masterEntry[field.name] !== undefined) {
-                mergedItem[field.name] = masterEntry[field.name];
-            }
-        });
-        return mergedItem;
-    } else {
-        // Not found, add to master
-        if (!dryRun) updateMasterItem(collectionId, itemName, aiItem);
-        return aiItem;
-    }
-}
-
 /** Library operations calculate their complete write before accepting it. */
 function updateMasterItem(collectionId, itemName, itemData, expected) {
     return run({ type: 'library-update', collectionId, itemName, itemData, expected });
@@ -83,4 +56,4 @@ function renameCollectionId(oldName, newName, definition) {
     return result ? result.values : null;
 }
 
-export { syncOverrideToActiveState, getMergedItem, updateMasterItem, renameMasterItem, deleteMasterItem, renameCollectionId };
+export { syncOverrideToActiveState, updateMasterItem, renameMasterItem, deleteMasterItem, renameCollectionId };

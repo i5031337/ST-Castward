@@ -2,9 +2,10 @@
 export async function runSchemaOperationFixture(root) {
     const url = path => new URL(path, root).href;
     const [{ normalizeSystemDefinition, projectSystemTracker }, { calculateSchemaOperation, installSchemaWrites },
-        { buildStatsEditor }, { buildCollectionsEditor }] = await Promise.all([
+        { buildStatsEditor }, { buildCollectionsEditor }, { installCollectionChanges }] = await Promise.all([
         import(url('src/core/system-schema.js')), import(url('src/tracker/schema-operation-calculation.js')),
         import(url('src/ui/system/ui-system-stats.js')), import(url('src/ui/system/ui-system-collections.js')),
+        import(url('src/tracker/collection-pipeline.js')),
     ]);
     const definition = normalizeSystemDefinition({ schemaVersion: 2, name: 'Schema fixture',
         stats: { world: [], character: [{ id: 'hp', name: 'HP', type: 'number', defaultValue: '10', targets: ['player', 'npc'] }] },
@@ -25,8 +26,8 @@ export async function runSchemaOperationFixture(root) {
     const runtimeSource = (await (await fetch(url('src/tracker/schema-operation-runtime.js'))).text())
         .replace(/^import .*;\n/gm, '').replace('export function ', 'function ');
     const runtime = new Function('getContext', 'getSettings', 'saveSettings', 'getLibraryCharacters',
-        'calculateSchemaOperation', 'installSchemaWrites', `${runtimeSource}\nreturn runSchemaOperation;`)(
-        () => host, () => settings, () => saves++, () => cards, calculateSchemaOperation, installSchemaWrites);
+        'calculateSchemaOperation', 'installSchemaWrites', 'installCollectionChanges', `${runtimeSource}\nreturn runSchemaOperation;`)(
+        () => host, () => settings, () => saves++, () => cards, calculateSchemaOperation, installSchemaWrites, installCollectionChanges);
     const run = operation => runtime(operation, { peekState: () => null, personaKey: () => 'hero',
         saveState: (state, options) => {
             if (!accepted || !options.isCurrent()) return false;

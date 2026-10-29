@@ -15,10 +15,10 @@ function fixture({ counted = true, primary = 'name', quantity = 'quantity' } = {
     const col = { id: 'items', name: 'Items', targets: ['player', 'npc'], trackQuantity: counted,
         fields: [{ name: primary, type: 'text', isPrimary: true },
             ...(counted ? [{ name: quantity, type: 'number', defaultValue: '1' }] : []),
-            { name: 'condition', type: 'text', defaultValue: '' }] };
+            { name: 'condition', type: 'text', isStatic: false, defaultValue: '' }] };
     const settings = { collections: [col] };
     const deps = { committedState: {}, getCurrentPersonaName: () => 'Player',
-        constrainToDefinition: (_field, value) => value, getMergedItem: (_id, item) => item };
+        constrainToDefinition: (_field, value) => value };
     bindCollectionUpdates(deps, { getSettings: () => ({ statusTracker: settings }) });
     const actor = { name: 'Player', collections: {} };
     const apply = update => deps.applyCollectionUpdate(actor, 'items', update, { dryRun: true });

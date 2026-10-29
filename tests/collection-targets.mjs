@@ -54,7 +54,6 @@ test('model adds, removals, updates and replacements cannot change another templ
     fixture();
     const deps = { committedState: {}, getCurrentPersonaName: () => 'Player',
         constrainToDefinition: (field, value) => value,
-        getMergedItem: (id, item) => item,
     };
     bindCollectionUpdates(deps, { getSettings: () => settings });
     const trainer = { ...human, collections: { moves: [{ name: 'Old move' }] } };
@@ -117,7 +116,6 @@ test('shared collections accept updates for the player and humans while refusing
     fixture();
     const deps = { committedState: {}, getCurrentPersonaName: () => 'Player',
         constrainToDefinition: (field, value) => value,
-        getMergedItem: (id, item) => item,
     };
     bindCollectionUpdates(deps, { getSettings: () => settings });
     for (const actor of [{ name: 'Player', collections: {} }, structuredClone(human), structuredClone(pokemon)]) {

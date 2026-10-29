@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFileSync } from 'node:fs';
-import { calculateCollectionEdit, commitCollectionEdit } from '../src/tracker/collection-editor-calculation.js';
+import { calculateCollectionPlan } from '../src/tracker/collection-pipeline.js';
+import { commitCollectionEdit } from '../src/tracker/collection-editor-commit.js';
 import { lockTrackerEdits, isTrackerEditLocked, trackerEditRevision } from '../src/tracker/tracker-edit-lock.js';
 
 function fixture({ offstage = false, noChat = false, boundSystem = 'World' } = {}) {
@@ -33,7 +34,7 @@ function fixture({ offstage = false, noChat = false, boundSystem = 'World' } = {
             return true;
         },
         saveSettings: () => saves++, eventSource: { emit: () => emitted++ },
-        calculateCollectionEdit, commitCollectionEdit, isTrackerEditLocked, trackerEditRevision };
+        calculateCollectionPlan, commitCollectionEdit, isTrackerEditLocked, trackerEditRevision };
     const source = readFileSync(new URL('../src/tracker/collection-editor.js', import.meta.url), 'utf8')
         .replace(/^import\s+[\s\S]*?\s+from\s+['"][^'"]+['"];\s*/gm, '').replace('export function', 'function');
     const create = new Function(...Object.keys(globals), `${source}\nreturn createCollectionEditor;`)(...Object.values(globals));
@@ -85,7 +86,7 @@ test('accepted item rename installs scene, card and library together and preserv
     assert.equal(f.editor.commit(f.change, 'Item edited'), true);
     assert.equal(f.context.chatMetadata.sillynpc_status_state.characters[0].collections.inventory[0].name, 'Blade');
     assert.equal(f.card.statusCollections.inventory[0].name, 'Blade');
-    assert.equal(f.settings.master_items.inventory.sword, undefined);
+    assert.equal(f.settings.master_items.inventory.sword.name, 'Sword');
     assert.equal(f.settings.master_items.inventory.blade.name, 'Blade');
     assert.equal(f.history().characters[0].collections.inventory[0].name, 'Sword');
     assert.equal(f.state.characters[0].collections.inventory[0].name, 'Sword');

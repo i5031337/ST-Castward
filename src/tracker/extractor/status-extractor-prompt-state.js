@@ -83,7 +83,7 @@ export function summariseCollections(actor, target, trackerSettings) {
 
                Nothing is withheld any more. Descriptions used to be left out on the grounds
                that a static field is owned by the item library and written back over
-               whatever the reader returns (getMergedItem), so the reader could not change
+               whatever the reader returns (the collection pipeline), so the reader could not change
                one - which is true, and was the wrong conclusion. It cannot change a
                description; it has to READ one to judge what a message did with the thing.
                Choosing whether somebody just ate {"name":"Fekete Bomba","quantity":1} with

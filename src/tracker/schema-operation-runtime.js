@@ -2,6 +2,7 @@ import { getContext } from '../../../../../st-context.js';
 import { getSettings, saveSettings } from '../core/settings.js';
 import { getLibraryCharacters } from '../characters/character-repository.js';
 import { calculateSchemaOperation, installSchemaWrites } from './schema-operation-calculation.js';
+import { installCollectionChanges } from './collection-pipeline.js';
 
 /** Schema edits can run without a chat; an existing chat state must keep its owner. */
 export function runSchemaOperation(operation, { peekState, saveState, personaKey }) {
@@ -46,10 +47,7 @@ export function runSchemaOperation(operation, { peekState, saveState, personaKey
     if (!calculated || !isCurrent()) return null;
     const install = () => {
         installSchemaWrites(calculated.writes);
-        if (calculated.itemLibrary) {
-            if (source.itemLibrary) source.itemLibrary[operation.collectionId] = calculated.itemLibrary[operation.collectionId];
-            else source.settings.master_items = calculated.itemLibrary;
-        }
+        if (calculated.collectionPlan) installCollectionChanges(source.settings, calculated.collectionPlan.libraryChanges);
     };
     if (calculated.nextState) {
         // Schema migration is not a tracker correction: history must use the new keys too.

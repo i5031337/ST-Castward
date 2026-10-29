@@ -1,3 +1,5 @@
+import { installCollectionChanges } from './collection-pipeline.js';
+
 /** Capture identity and readings used by a calculation without retaining mutable revisions. */
 export function captureTrackerOwner(snapshot) {
     return { ...snapshot, stateRevision: JSON.stringify(snapshot.state),
@@ -32,13 +34,7 @@ export function commitTrackerUpdate({ owner, calculated, cards, settings, readCu
     if (!isCurrent()) return null;
     const accepted = saveState(calculated.nextState, { ...options, isCurrent, beforeCommit: () => {
         for (const { cardIndex, fields } of calculated.cardChanges) Object.assign(cards[cardIndex], fields);
-        if (calculated.libraryChanges.length) {
-            settings.master_items ||= {};
-            for (const change of calculated.libraryChanges) {
-                settings.master_items[change.collectionId] ||= {};
-                settings.master_items[change.collectionId][String(change.itemName).toLowerCase()] = change.fields;
-            }
-        }
+        installCollectionChanges(settings, calculated.libraryChanges);
     } });
     if (accepted !== true) return null;
     if (calculated.cardChanges.length || calculated.libraryChanges.length) saveSettings();

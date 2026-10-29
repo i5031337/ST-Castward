@@ -21,7 +21,7 @@ with browser_session() as browser:
         assert result and not result.get('error'), result
         assert all(result.get(key) for key in [
             'threeStages', 'personaAndSystemExplained', 'startingSheetSelected', 'preview',
-            'noWriteBeforeReview', 'cancelKeptDefaults', 'appliedOnce', 'repeatDisabled',
+            'noWriteBeforeReview', 'cancelKeptDefaults', 'appliedOnce', 'repeatDisabled', 'libraryRegistered',
         ]), result
         print(json.dumps(result, indent=2))
     finally:

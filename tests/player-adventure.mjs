@@ -29,15 +29,15 @@ function fixture() {
     const draft = { stats: { Health: '18/18', Strength: '4', Level: '1', XP: '0/100', Mood: 'Eager' },
         collections: { gear: [{ name: 'Travel cloak', quantity: 1, description: 'A patched wool cloak.' }], powers: [{ name: 'Minor healing' }] } };
     const calls = [], saves = [];
-    let request = async () => structuredClone(draft), review = async () => true;
+    let request = async () => structuredClone(draft), review = async () => true, storageAccepts = true;
     const service = createPlayerAdventureService({
         getContext: () => context, getSettings: () => settings, getPersona: () => persona, loadState: () => state,
         request: async args => { calls.push(args); return request(args); },
         review: (...args) => review(...args),
-        saveState: (next, options) => { saves.push(options); state = next; return true; },
+        saveState: (next, options) => { if (!storageAccepts) return false; options.beforeCommit?.(); saves.push(options); state = next; return true; },
     });
     return { settings, persona, context, card, draft, service, calls, saves, state: () => state,
-        setRequest: fn => { request = fn; }, setReview: fn => { review = fn; } };
+        rejectStorage: () => { storageAccepts = false; }, setRequest: fn => { request = fn; }, setReview: fn => { review = fn; } };
 }
 
 test('player Fill creates a reviewed chat-owned starting sheet with locked stats and collections', async () => {
@@ -106,6 +106,7 @@ for (const change of [
     f => { f.state().player.stats.Health = '8/10'; },
     f => { f.context.chat[0].mes = 'Changed opening'; },
     f => { f.card.profile.appearance = 'Manually edited'; },
+    f => { f.settings.master_items = { gear: { staff: { name: 'Staff' } } }; },
 ]) {
     test('stale starting-sheet results cannot write after generation or review', async () => {
         for (const duringReview of [false, true]) {
@@ -149,5 +150,61 @@ test('starting-sheet validation enforces stats, progression, collection types, a
     ]) {
         const draft = structuredClone(f.draft); change(draft);
         assert.throws(() => validatePlayerAdventure(draft, contract));
+    }
+});
+
+
+test('starting equipment resolves shared definitions before review and registers new ones only on acceptance', async () => {
+    for (const decision of ['accept', 'discard', 'reject storage']) {
+        const f = fixture();
+        f.settings.master_items = { gear: { 'travel cloak': { name: 'Travel cloak', description: 'Established green silk.' } } };
+        const before = structuredClone(f.settings.master_items);
+        f.setReview(async draft => {
+            assert.equal(draft.collections.gear[0].description, 'Established green silk.');
+            assert.equal(draft.collections.gear[0].quantity, 1);
+            assert.deepEqual(f.settings.master_items, before);
+            return decision !== 'discard';
+        });
+        if (decision === 'reject storage') {
+            f.rejectStorage();
+            await assert.rejects(f.service.initialize(f.card), /could not be saved/);
+        } else await f.service.initialize(f.card);
+        if (decision === 'accept') {
+            assert.equal(f.state().player.collections.gear[0].description, 'Established green silk.');
+            assert.equal(f.settings.master_items.powers['minor healing'].name, 'Minor healing');
+            assert.equal(f.settings.master_items.gear['travel cloak'].quantity, undefined);
+        } else assert.deepEqual(f.settings.master_items, before);
+    }
+});
+
+test('invalid resolved Item Library values stop player creation before review or any write', async () => {
+    for (const invalid of ['option', 'type', 'bound', 'duplicate']) {
+        const f = fixture();
+        const fields = f.settings.statusTracker.collections[0].fields;
+        let key = 'travel cloak', entry = { name: 'Travel cloak' };
+        if (invalid === 'option') {
+            fields.push({ name: 'rarity', type: 'text', options: ['Common'] });
+            f.draft.collections.gear[0].rarity = 'Common';
+            entry.rarity = 'Retired';
+        } else if (invalid === 'type') {
+            fields.push({ name: 'waterproof', type: 'boolean' });
+            f.draft.collections.gear[0].waterproof = false;
+            entry.waterproof = 'yes';
+        } else if (invalid === 'bound') {
+            Object.assign(fields[0], { type: 'number', min: '1', maxStatValue: '3' });
+            f.draft.collections.gear[0].name = 1;
+            key = '1'; entry.name = 100;
+        } else {
+            f.draft.collections.gear.push({ name: 'Staff', quantity: 1 });
+            entry.name = 'Staff';
+        }
+        f.settings.master_items = { gear: { [key]: entry } };
+        const before = structuredClone({ state: f.state(), library: f.settings.master_items });
+        let reviews = 0;
+        f.setReview(async () => { reviews++; return true; });
+        await assert.rejects(f.service.initialize(f.card), /Cannot use Item Library values/);
+        assert.equal(reviews, 0, invalid);
+        assert.equal(f.saves.length, 0, invalid);
+        assert.deepEqual({ state: f.state(), library: f.settings.master_items }, before, invalid);
     }
 });

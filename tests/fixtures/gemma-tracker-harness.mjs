@@ -77,7 +77,7 @@ export async function harness(systemId, state, { chat = [] } = {}) {
     bind('status-stat-values');
     bind('status-update-constraints');
     deps.groupIncomingStats = groupIncomingStats;
-    Object.assign(deps, { committedState: {}, getCurrentPersonaName: () => 'Alex', getMergedItem: (_id, item) => item });
+    Object.assign(deps, { committedState: {}, getCurrentPersonaName: () => 'Alex' });
     bindCollectionUpdates(deps, host);
     Object.assign(deps, {
         resolveCanonicalName: name => name,

@@ -1,7 +1,8 @@
 /** Production editor and calculator with isolated stores; never saves host settings. */
 export async function collectionEditorFixture(root, { settings, state, cards = [] }) {
     const { isTrackerEditLocked, trackerEditRevision } = await import(root + 'src/tracker/tracker-edit-lock.js');
-    const { calculateCollectionEdit, commitCollectionEdit } = await import(root + 'src/tracker/collection-editor-calculation.js');
+    const { calculateCollectionPlan } = await import(root + 'src/tracker/collection-pipeline.js');
+    const { commitCollectionEdit } = await import(root + 'src/tracker/collection-editor-commit.js');
     const source = await (await fetch(root + 'src/tracker/collection-editor.js')).text();
     const strip = text => text.replace(/^import\s+[\s\S]*?\s+from\s+['"][^'"]+['"];\s*/gm, '').replaceAll('export function ', 'function ');
     let chatId = 'collection-fixture', persona = 'fixture-player', writes = 0, events = 0;
@@ -26,7 +27,7 @@ export async function collectionEditorFixture(root, { settings, state, cards = [
             return true;
         },
         saveSettings: () => writes++, eventSource: { emit(type, ...args) { events++; handler(...args); } },
-        calculateCollectionEdit, commitCollectionEdit, isTrackerEditLocked, trackerEditRevision,
+        calculateCollectionPlan, commitCollectionEdit, isTrackerEditLocked, trackerEditRevision,
     };
     const createCollectionEditor = new Function(...Object.keys(globals), strip(source)
         + '; return createCollectionEditor;')(...Object.values(globals));

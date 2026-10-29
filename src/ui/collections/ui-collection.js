@@ -167,7 +167,15 @@ export function attachCollectionListeners(dom, actor, onRefresh) {
         const item = renderedItems.get(card);
         if (!editor.commit({ operation: 'edit', collectionId: colId, index: idx, item,
             fieldName, value }, 'Item edited')) return;
-        renderedItems.set(card, { ...item, [fieldName]: value });
+        const saved = editor.current()?.target.collections?.[colId]?.[idx];
+        if (!saved) return;
+        renderedItems.set(card, structuredClone(saved));
+        for (const control of card.querySelectorAll('.item-field-input')) {
+            const key = control.dataset.field;
+            if (key !== fieldName && saved[key] === item[key]) continue;
+            if (control.type === 'checkbox') control.checked = !!saved[key];
+            else control.value = String(saved[key] ?? '');
+        }
     };
 
     dom.querySelectorAll('.item-field-input').forEach(input => {

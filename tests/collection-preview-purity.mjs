@@ -52,10 +52,9 @@ test('preview reads shared static fields without overwriting them or holder-spec
     assert.equal(saves(), 0);
 });
 
-test('direct additions and removals only change the supplied actor', () => {
+test('direct additions register shared definitions only on acceptance; removal keeps definitions', () => {
     const { deps, settings, saves } = fixture();
     const before = structuredClone(deps.committedState);
-    const settingsBefore = structuredClone(settings);
     const actor = { name: 'Player', collections: {} };
     deps.addItem(actor, 'moves', { move: 'Forgotten' }, { dryRun: true });
     assert.equal(actor.collections.moves[0].move, 'Forgotten');
@@ -64,6 +63,6 @@ test('direct additions and removals only change the supplied actor', () => {
     deps.addItem(actor, 'moves', { move: 'Forgotten' });
     assert.equal(actor.collections.moves[0].move, 'Forgotten');
     assert.deepEqual(deps.committedState, before);
-    assert.deepEqual(settings, settingsBefore);
-    assert.equal(saves(), 0);
+    assert.deepEqual(settings.master_items, { moves: { forgotten: { move: 'Forgotten', description: '' } } });
+    assert.equal(saves(), 1);
 });

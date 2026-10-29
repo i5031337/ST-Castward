@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { calculateSchemaOperation, installSchemaWrites } from '../src/tracker/schema-operation-calculation.js';
+import { installCollectionChanges } from '../src/tracker/collection-pipeline.js';
 
 function fixture() {
     const field = { id: 'hp', name: 'HP', targets: ['player', 'template:mage'] };
@@ -96,8 +97,8 @@ function runtimeFixture({ noChat = false, refuse = false, switchDuringSave = fal
     let settingsSaves = 0;
     const source = readFileSync(new URL('../src/tracker/schema-operation-runtime.js', import.meta.url), 'utf8')
         .replace(/^import .*;\n/gm, '').replace('export function ', 'function ');
-    const run = new Function('getContext', 'getSettings', 'saveSettings', 'getLibraryCharacters', 'calculateSchemaOperation', 'installSchemaWrites', `${source}\nreturn runSchemaOperation;`)(
-        () => context, () => settings, () => settingsSaves++, () => f.cards, calculateSchemaOperation, installSchemaWrites);
+    const run = new Function('getContext', 'getSettings', 'saveSettings', 'getLibraryCharacters', 'calculateSchemaOperation', 'installSchemaWrites', 'installCollectionChanges', `${source}\nreturn runSchemaOperation;`)(
+        () => context, () => settings, () => settingsSaves++, () => f.cards, calculateSchemaOperation, installSchemaWrites, installCollectionChanges);
     const capabilities = { personaKey: () => 'hero', peekState: () => f.state, saveState: (state, options) => {
         if (switchDuringSave) context = { getCurrentChatId: () => 'other', chatMetadata: {} };
         if (changeBoundDuringSave) context.chatMetadata.sillynpc_system = 'other';
@@ -196,5 +197,17 @@ test('unassigned reusable stat can be renamed without migrating live values', ()
     assert.equal(result.values, 0);
     assert.equal(f.field.name, 'Health');
     assert.deepEqual(f.state, before);
+    assert.equal(f.history.length, 0);
+});
+
+
+test('library edits reject invalid configured values before any shared or chat writes', () => {
+    const f = runtimeFixture();
+    f.collection.fields[1].options = ['wood', 'oak'];
+    const before = structuredClone({ library: f.settings.master_items, state: f.state, cards: f.cards });
+    assert.throws(() => f.run({ type: 'library-update', collectionId: 'gear', itemName: 'Wand',
+        itemData: { name: 'Wand', kind: 'Invalid material' } }));
+    assert.deepEqual({ library: f.settings.master_items, state: f.state, cards: f.cards }, before);
+    assert.equal(f.settingsSaves(), 0);
     assert.equal(f.history.length, 0);
 });

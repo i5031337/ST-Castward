@@ -1,3 +1,4 @@
+import { calculateCollectionPlan, installCollectionChanges } from '../src/tracker/collection-pipeline.js';
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFileSync } from 'node:fs';
@@ -18,7 +19,7 @@ function fixture() {
     const source = readFileSync(new URL('../src/characters/character-transfer.js', import.meta.url), 'utf8')
         .replace(/^import\s+[\s\S]*?\s+from\s+['"][^'"]+['"];\s*/gm, '')
         .replaceAll('export ', '');
-    const deps = { getSettings: () => settings, activeNpcSystem: () => system, getContext: () => context,
+    const deps = { calculateCollectionPlan, installCollectionChanges, getSettings: () => settings, activeNpcSystem: () => system, getContext: () => context,
         isChatCharacter: id => id === 'source', profileStrings, npcTemplateFor: () => null,
         splitNpcStats: () => ({ innate: {} }), normalizeNpcPresentation, portableMemories, readNpcMemories,
         writeNpcMemories, initialiseNpcStats: () => ({}), npcStatsFor: () => [], blankActiveProfile: () => ({}) };

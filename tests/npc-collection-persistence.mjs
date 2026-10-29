@@ -34,7 +34,7 @@ function fixture() {
     },
     resolveCanonicalName: name => name, mayJoinScene: () => true,
     mergeDuplicateCharacters: () => false, groupIncomingStats: () => new Map(),
-    getMergedItem: (_id, item) => item, constrainToDefinition: (_field, value) => value };
+    constrainToDefinition: (_field, value) => value };
     bindCollectionUpdates(deps, globals);
     bindTrackerUpdate(deps, globals);
     for (const module of ['status-scene-presence']) {

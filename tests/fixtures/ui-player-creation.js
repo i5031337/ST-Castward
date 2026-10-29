@@ -34,7 +34,7 @@ try {
         request: async () => { requests++; return { stats: { Health: '18/18' }, collections: {
             gear: [{ name: 'Travel cloak', description: 'Warm wool & brass clasps.' }],
         } }; },
-        review, saveState: next => { state = next; saves++; return true; },
+        review, saveState: (next, options) => { options.beforeCommit?.(); state = next; saves++; return true; },
     });
     playerAdventureService.audit = (...args) => local.audit(...args);
     playerAdventureService.initialize = (...args) => local.initialize(...args);
@@ -51,7 +51,7 @@ try {
         const preview = await waitFor(() => Popup.util.popups.find(popup => popup.dlg.textContent.includes('Review your starting sheet')));
         result.preview = preview.dlg.textContent.includes('Health: 18/18')
             && preview.dlg.textContent.includes('Travel cloak') && preview.dlg.textContent.includes('Warm wool & brass clasps.');
-        result.noWriteBeforeReview = saves === 0;
+        result.noWriteBeforeReview = saves === 0 && settings.master_items === undefined;
         if (accept) await preview.completeAffirmative();
         else await preview.completeNegative();
         await running; running = null;
@@ -59,6 +59,7 @@ try {
     }
     result.appliedOnce = saves === 1 && requests === 2 && state.player.adventureInitialized
         && state.player.stats.Health === '18/18' && state.player.collections.gear[0].name === 'Travel cloak';
+    result.libraryRegistered = settings.master_items?.gear?.['travel cloak']?.description === 'Warm wool & brass clasps.';
     result.repeatDisabled = local.audit(card).done;
 } catch (error) {
     result.error = String(error) + '\n' + (error.stack || '');

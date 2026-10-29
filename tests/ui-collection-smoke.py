@@ -135,6 +135,7 @@ with browser_session() as browser:
                     if (first !== document.activeElement || first.selectionEnd !== first.value.length) throw Error('Name not focused');
                     if (actor.collections.smoke[0].quantity !== 1 || actor.collections.smoke[0].equipped !== false) throw Error('Defaults');
                     first.value = 'Sword'; first.dispatchEvent(new Event('change'));
+                    if (settings.master_items?.smoke?.sword?.title !== 'Sword') throw Error('Missing renamed library item');
                     section.querySelector('.sillynpc-add-item').click();
                     section.querySelector('.sillynpc-add-item').click();
                     if (actor.collections.smoke.map(item => item.title).join(',') !== 'Sword,New Item,New Item 2') throw Error('Add/rename');
@@ -143,6 +144,8 @@ with browser_session() as browser:
                     section.querySelector('.drop-item').click();
                     await new Promise(resolve => setTimeout(resolve, 0));
                     if (actor.collections.smoke.length !== 2 || actor.collections.smoke.some(item => item.title === 'Sword')) throw Error('Delete');
+                    if (!settings.master_items?.smoke?.['new item']) throw Error('Missing added library item');
+                    if ('quantity' in settings.master_items.smoke['new item']) throw Error('Quantity leaked into library');
                     result[actor.name] = true;
                 }
                 const listenerSource = manageSource.slice(
@@ -154,21 +157,31 @@ with browser_session() as browser:
                     + '; return refreshManageOnStatusUpdate;')(
                         { manageRoot: host, activeTab: 'player' }, () => redraws++);
                 host.style.height = '220px'; host.style.overflow = 'auto';
-                host.innerHTML = '<div style="height:600px"></div>'
+                host.innerHTML = '<div style="height:600px; flex-shrink:0"></div>'
                     + api.renderCollectionUI('smoke', state.player, settings.statusTracker)
-                    + '<div style="height:400px"></div>';
+                    + '<div style="height:400px; flex-shrink:0"></div>';
                 api.attachCollectionListeners(host, state.player);
                 host.scrollTop = 500;
                 const numeric = host.querySelector('[data-field="quantity"]');
                 const scrollBefore = host.scrollTop;
+                delete settings.master_items.smoke['new item'].equipped;
                 document.activeElement?.blur();
                 for (let i = 0; i < 3; i++) {
+                    if (i === 1) settings.master_items.smoke['new item'].equipped = true;
                     numeric.value = String(Number(numeric.value) + 1);
                     numeric.dispatchEvent(new Event('input', { bubbles: true }));
                     numeric.dispatchEvent(new Event('change', { bubbles: true }));
+                    if (i === 0) result.partialDefinitionBackfilled =
+                        state.player.collections.smoke[0].equipped === false
+                        && settings.master_items.smoke['new item'].equipped === false;
                 }
                 result.numericScroll = scrollBefore > 0 && host.scrollTop === scrollBefore && redraws === 0
-                    && numeric.isConnected && state.player.collections.smoke[0].quantity === 4;
+                    && numeric.isConnected && state.player.collections.smoke[0].quantity === 4
+                    && state.player.collections.smoke[0].equipped === true
+                    && host.querySelector('[data-field=equipped]').checked;
+                if (!result.numericScroll) throw Error('Numeric edit: ' + JSON.stringify({ scrollBefore,
+                    scrollAfter: host.scrollTop, redraws, connected: numeric.isConnected,
+                    quantity: state.player.collections.smoke[0].quantity }));
                 statusHandler(state);
                 result.externalUpdatesRefresh = redraws === 1;
                 statusHandler = () => {};

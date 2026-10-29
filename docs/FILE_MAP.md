@@ -111,6 +111,9 @@ This map covers tracked runtime files, tests and support files. Source files and
 | `tests/status-update-parser.mjs` | Inline update extraction and grouped stat fragments through ordinary imports. |
 | `tests/stat-utilities.mjs` | Stat name precedence, allowed values, and constraint diagnostic isolation. |
 | `tests/collection-calculation.mjs` | Immutable collection calculations, explicit ownership, planned library changes, removal, and reacquisition. |
+| `tests/collection-pipeline.mjs` | Shared mutation rules across entry points, identifier normalization before lookup, definition precedence, and rejection without writes. |
+| `tests/collection-library.mjs` | Shared definitions across delta operations, manual edits and NPC creation; holder-specific values remain local. |
+| `tests/collection-library-validation.mjs` | Final NPC equipment validation after library resolution, zero-write rejection, and archived collection preservation. |
 | `tests/fixtures/collection-updates-bind.mjs` | Adapt pure collection calculations to isolated test holders and Item Library storage. |
 | `tests/ui-chat-boundaries.mjs` | Chat-switch confirmation guards and bulk deletion selection snapshots. |
 | `tests/world-character-export.mjs` | Inactive System export rules and reusable/chat NPC inclusion. |
@@ -224,12 +227,14 @@ This map covers tracked runtime files, tests and support files. Source files and
 | `src/tracker/status-cast-decisions.js` | Record player, excluded, and character cast decisions. |
 | `src/tracker/status-character-match.js` | Resolve card names and aliases without depending on tracker storage. |
 | `src/tracker/status-scene-presence.js` | Reconcile scene presence and active characters using pure actor initialization. |
-| `src/tracker/collection-calculation.js` | Calculate collections and proposed Item Library additions from explicit inputs. |
+| `src/tracker/collection-pipeline.js` | Sole item mutation pipeline: definition resolution, final validation, collection/library plans and accepted library installation. |
+| `src/tracker/collection-operations.js` | Internal collection arithmetic invoked only by the pipeline. |
+| `src/tracker/collection-library.js` | Internal private registry for shared definitions and accepted-holding backfill; invoked only by the pipeline. |
 | `src/tracker/npc-collections.js` | Copy current NPC collections onto character cards so belongings survive scene departure. |
 | `src/tracker/status-collection-schema.js` | Item Library operations, collection-ID renames, and card override synchronization. |
 | `src/tracker/schema-operation-calculation.js` | Calculate schema/library writes and stored-value migrations from supplied data. |
 | `src/tracker/schema-operation-runtime.js` | Validate operation ownership and install schema/library plans after storage acceptance. |
-| `src/tracker/collection-editor-calculation.js` | Calculate authoritative manual item edits and commit related accepted effects. |
+| `src/tracker/collection-editor-commit.js` | Install a pipeline plan for a manual editor inside its guarded scene/card save boundary. |
 | `src/tracker/collection-editor.js` | Keep delayed manual item edits bound to their displayed owner and item. |
 | `src/tracker/status-system-presets.js` | Active System, reusable definitions, chat locking, import, detail edits, and independent duplication of rules and local carryover rosters. Renames update display metadata and definition names while retaining library keys used by chats and rosters. |
 | `src/tracker/npc-memories.js` | Store NPC memories in chat-owned or reusable character records. |

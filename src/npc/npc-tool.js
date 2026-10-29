@@ -13,8 +13,10 @@ import { generateCharacterImageLogic } from '../api/api-image-generate.js';
 import { LOG_PREFIX } from '../core/constants.js';
 import { npcToolParameters, normalizedNpcName } from './npc-generation.js';
 import { createNpcCreationService } from './npc-creation.js';
-import { getMergedItem, saveStateToMetadata } from '../tracker/status-logic.js';
-import { seedKnownNpcCollections } from './npc-collection-generation.js';
+import { saveStateToMetadata } from '../tracker/status-logic.js';
+import { calculateCollectionPlan, installCollectionChanges } from '../tracker/collection-pipeline.js';
+import { seedKnownNpcCollections, npcStartingCollections } from './npc-collection-generation.js';
+import { activeNpcSystem } from '../core/npc-templates.js';
 
 function reservedNames() {
     const context = getContext();
@@ -70,10 +72,16 @@ export const npcCreationService = createNpcCreationService({
     requestFor: settings => generationRequestAdapter({ ...settings.statusTracker, extractionTemperature: '' }, settings.loreProfileId || ''),
     commit: draft => {
         const held = knownActor(draft.name)?.collections || {};
-        draft.statusCollections = Object.fromEntries(Object.entries(draft.statusCollections).map(([id, entries]) =>
-            [id, Object.hasOwn(held, id) ? entries : entries.map(entry => getMergedItem(id, entry))]));
+        const settings = getSettings();
+        const collectionPlan = calculateCollectionPlan({ actor: { ...draft, collections: {} },
+            tracker: { collections: npcStartingCollections(settings, draft, activeNpcSystem(settings)) },
+            itemLibrary: settings.master_items, acceptedHoldings: [held],
+            operation: 'replace-all', update: draft.statusCollections,
+            validation: 'strict', preserveUnknown: true });
+        draft.statusCollections = collectionPlan.collections;
         const card = createCharacter(draft.name);
         Object.assign(card, draft);
+        installCollectionChanges(settings, collectionPlan.libraryChanges);
         if (knownActor(card.name)) {
             const state = structuredClone(getContext().chatMetadata.sillynpc_status_state);
             if (seedKnownNpcCollections(state, card)) saveStateToMetadata(state, { label: 'NPC starting belongings' });

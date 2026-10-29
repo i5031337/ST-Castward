@@ -5,7 +5,7 @@ import { mergeStatValue, combineStatValue, getInitialStatValue } from './stat-va
 import { groupIncomingStats } from './status-update-parser.js';
 import { progressXp } from './progression.js';
 import { progressionFields } from './progression-fields.js';
-import { calculateCollectionUpdate } from './collection-calculation.js';
+import { calculateCollectionPlan, installCollectionChanges } from './collection-pipeline.js';
 import { buildActorState, calculateActorStats } from './actor-calculation.js';
 
 function warnClamped(warnings, owner, key, incoming, merged) {
@@ -49,6 +49,8 @@ export function calculateTrackerUpdate({ state, tracker, system = null, cards = 
         refusedValues: [], offstageComparisons: [], offstageSkipped: [] };
     const workingCards = structuredClone(cards);
     const library = structuredClone(itemLibrary);
+    const acceptedHoldings = [state.player?.collections, ...state.characters.map(actor => actor.collections),
+        ...cards.map(card => card.statusCollections)].filter(Boolean);
     const lookup = cardLookup(workingCards);
     const stateMap = new Map(nextState.characters.filter(actor => actor && typeof actor.name === 'string')
         .map(actor => [actor.name.toLowerCase(), actor]));
@@ -70,17 +72,14 @@ export function calculateTrackerUpdate({ state, tracker, system = null, cards = 
     const applyCollections = (actor, source, scope) => {
         const collections = collectCollections(source, collectionIds);
         for (const [id, reading] of Object.entries(collections)) {
-            const calculated = calculateCollectionUpdate({ actor, collectionId: id, update: reading,
+            const calculated = calculateCollectionPlan({ actor, collectionId: id, update: reading,
                 tracker, system, scope,
-                itemLibrary: library, allowReplace });
+                itemLibrary: library, acceptedHoldings, allowReplace });
             if (calculated.collections !== undefined) actor.collections = calculated.collections;
             result.collectionWarnings.push(...calculated.warnings);
             result.refusedValues.push(...calculated.refusedValues);
             result.libraryChanges.push(...calculated.libraryChanges);
-            for (const change of calculated.libraryChanges) {
-                library[change.collectionId] ||= {};
-                library[change.collectionId][String(change.itemName).toLowerCase()] = structuredClone(change.fields);
-            }
+            installCollectionChanges({ master_items: library }, calculated.libraryChanges);
         }
         return Object.keys(collections).length > 0;
     };

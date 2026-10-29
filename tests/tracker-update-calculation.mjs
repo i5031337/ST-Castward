@@ -122,3 +122,24 @@ test('preview and acceptance share newly planned static fields across actors wit
     assert.deepEqual(input.state.player.collections.items, []);
     assert.deepEqual(input.state.characters[0].collections.items, []);
 });
+
+
+test('accepted holdings establish definitions before rejected proposals can influence another actor', () => {
+    for (const itemLibrary of [{}, { items: { sword: { name: 'Sword' } } }]) {
+        const input = fixture({ itemLibrary, update: {
+            player: { collections: { items: { replace: [{ name: 'Sword', description: 'Iron blade', quantity: 1 }] } } },
+            characters: [{ name: 'Mira', collections: { items: { replace: [
+                { name: 'Sword', description: 'Steel blade', quantity: 1 },
+            ] } } }],
+        } });
+        input.state.characters[0].collections.items = [{ name: 'Sword', description: 'Steel blade', quantity: 1 }];
+        const before = structuredClone(itemLibrary);
+        freeze(input);
+        const result = calculateTrackerUpdate({ ...input, policy: { preview: true } });
+        assert.deepEqual(result.nextState.characters[0].collections.items, input.state.characters[0].collections.items);
+        assert.equal(result.nextState.player.collections.items[0].description, 'Steel blade');
+        assert.deepEqual(result.libraryChanges, [{ collectionId: 'items', itemName: 'Sword',
+            fields: { name: 'Sword', description: 'Steel blade' } }]);
+        assert.deepEqual(input.itemLibrary, before);
+    }
+});

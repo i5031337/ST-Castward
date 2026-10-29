@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { calculateCollectionUpdate } from '../src/tracker/collection-calculation.js';
+import { calculateCollectionPlan } from '../src/tracker/collection-pipeline.js';
 import { setNpcTemplateSettingsProvider } from '../src/core/npc-templates.js';
 
 function freeze(value) {
@@ -17,7 +17,7 @@ function fixture(overrides = {}) {
         tracker: { collections: [{ id: 'inventory', targets: ['player', 'npc'], trackQuantity: true,
             fields: [{ name: 'title', type: 'text', isPrimary: true, isStatic: true },
                 { name: 'qty', type: 'number', defaultValue: '1' },
-                { name: 'condition', type: 'text', options: ['New', 'Used'], defaultValue: 'New' }] }] },
+                { name: 'condition', type: 'text', isStatic: false, options: ['New', 'Used'], defaultValue: 'New' }] }] },
         itemLibrary: {}, ...overrides,
     };
 }
@@ -28,10 +28,10 @@ test('collection calculation accepts frozen inputs and keeps quantity operations
         remove: [{ title: 'Potion', qty: 1 }],
         update: [{ title: 'Potion', qty: 6, condition: 'Used' }],
     } }));
-    const result = calculateCollectionUpdate(input);
+    const result = calculateCollectionPlan(input);
     assert.deepEqual(result.collections.inventory, [{ title: 'Potion', qty: 6, condition: 'Used' }]);
     assert.deepEqual(input.actor.collections.inventory, [{ title: 'Potion', qty: 2, condition: 'New' }]);
-    assert.deepEqual(result.libraryChanges, []);
+    assert.deepEqual(result.libraryChanges, [{ collectionId: 'inventory', itemName: 'Potion', fields: { title: 'Potion' } }]);
     assert.deepEqual(result.warnings, []);
     assert.deepEqual(result.refusedValues, []);
 });
@@ -39,18 +39,19 @@ test('collection calculation accepts frozen inputs and keeps quantity operations
 test('ordinary arrays retain omitted holdings while explicit replacements plan library changes', () => {
     const base = fixture({ itemLibrary: { inventory: { tonic: { title: 'Tonic', condition: 'Used' } } } });
     base.tracker.collections[0].fields[2].isStatic = true;
-    const additions = calculateCollectionUpdate(freeze({ ...base,
+    const additions = calculateCollectionPlan(freeze({ ...base,
         update: [{ title: 'Tonic', qty: 3, condition: 'New' }] }));
     assert.deepEqual(additions.collections.inventory, [
-        { title: 'Potion', qty: 2, condition: 'New' }, { title: 'Tonic', qty: 3, condition: 'New' },
+        { title: 'Potion', qty: 2, condition: 'New' }, { title: 'Tonic', qty: 3, condition: 'Used' },
     ]);
     assert.deepEqual(additions.libraryChanges, []);
-    const replacement = calculateCollectionUpdate(freeze({ ...base,
+    const replacement = calculateCollectionPlan(freeze({ ...base,
         update: { replace: [{ title: 'Tonic', qty: 3, condition: 'New' }, { title: 'Elixir', qty: 4, condition: 'New' }] } }));
     assert.deepEqual(replacement.collections.inventory, [
         { title: 'Tonic', qty: 3, condition: 'Used' }, { title: 'Elixir', qty: 4, condition: 'New' },
     ]);
-    assert.deepEqual(replacement.libraryChanges, [{ collectionId: 'inventory', itemName: 'Elixir',
+    assert.deepEqual(replacement.libraryChanges, [{ collectionId: 'inventory', itemName: 'Potion',
+        fields: { title: 'Potion', condition: 'New' } }, { collectionId: 'inventory', itemName: 'Elixir',
         fields: { title: 'Elixir', condition: 'New' } }]);
     assert.deepEqual(base.itemLibrary, { inventory: { tonic: { title: 'Tonic', condition: 'Used' } } });
 });
@@ -65,12 +66,12 @@ test('calculation uses explicit scope and System instead of actor name or active
         presets: { Other: { definition: { npcTemplates: [] } } },
     } }));
     try {
-        const accepted = calculateCollectionUpdate(freeze(base));
+        const accepted = calculateCollectionPlan(freeze(base));
         assert.deepEqual(accepted.collections.inventory, [{ title: 'Coat', qty: 1, condition: 'New' }]);
-        const denied = calculateCollectionUpdate({ ...base, scope: 'player' });
+        const denied = calculateCollectionPlan({ ...base, scope: 'player' });
         assert.deepEqual(denied.collections, {});
         assert.equal(denied.warnings.length, 1);
-        assert.deepEqual(calculateCollectionUpdate({ ...base, system: null }).collections, {});
+        assert.deepEqual(calculateCollectionPlan({ ...base, system: null }).collections, {});
     } finally {
         setNpcTemplateSettingsProvider(() => null);
     }
@@ -79,11 +80,11 @@ test('calculation uses explicit scope and System instead of actor name or active
 test('removed items can be acquired again by their former holder or another actor', () => {
     for (const scope of ['player', 'npc']) {
         const base = freeze(fixture({ scope }));
-        const removed = calculateCollectionUpdate({ ...base, operation: 'remove', update: 'Potion' });
+        const removed = calculateCollectionPlan({ ...base, operation: 'remove', update: 'Potion' });
         assert.deepEqual(removed.collections.inventory, []);
         for (const update of [{ add: [{ title: 'Potion', qty: 1 }] }, { replace: [{ title: 'Potion', qty: 1 }] }]) {
             for (const name of ['Player', 'Mira']) {
-                const reacquired = calculateCollectionUpdate({ ...base,
+                const reacquired = calculateCollectionPlan({ ...base,
                     actor: { name, collections: removed.collections }, update });
                 assert.deepEqual(reacquired.collections.inventory, [{ title: 'Potion', qty: 1, condition: 'New' }]);
             }
@@ -94,10 +95,10 @@ test('removed items can be acquired again by their former holder or another acto
 
 test('field refusals belong to the returned calculation and cannot leak into another proposal', () => {
     const input = freeze(fixture({ update: { update: [{ title: 'Potion', condition: 'Broken' }] } }));
-    const refused = calculateCollectionUpdate(input);
+    const refused = calculateCollectionPlan(input);
     assert.equal(refused.collections.inventory[0].condition, 'New');
     assert.deepEqual(refused.refusedValues, [{ field: 'condition', wanted: 'Broken', allowed: ['New', 'Used'], kept: 'New' }]);
-    const accepted = calculateCollectionUpdate({ ...input, update: { update: [{ title: 'Potion', condition: 'Used' }] } });
+    const accepted = calculateCollectionPlan({ ...input, update: { update: [{ title: 'Potion', condition: 'Used' }] } });
     assert.equal(accepted.collections.inventory[0].condition, 'Used');
     assert.deepEqual(accepted.refusedValues, []);
     assert.deepEqual(accepted.warnings, []);
@@ -111,8 +112,8 @@ test('replacement previews reuse the first new item’s static fields without ch
     ] } });
     input.tracker.collections[0].fields[2].isStatic = true;
     freeze(input);
-    const preview = calculateCollectionUpdate({ ...input, preview: true });
-    const accepted = calculateCollectionUpdate(input);
+    const preview = calculateCollectionPlan({ ...input, preview: true });
+    const accepted = calculateCollectionPlan(input);
     assert.deepEqual(preview, accepted);
     assert.deepEqual(preview.collections.inventory, [
         { title: 'Sword', qty: 1, condition: 'New' },

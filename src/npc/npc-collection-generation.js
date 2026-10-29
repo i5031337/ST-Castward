@@ -1,6 +1,5 @@
 import { collectionAppliesTo } from '../core/collection-targets.js';
-import { collectionQuantityField } from '../core/collection-fields.js';
-import { validateRewardEntry } from '../core/collection-rewards.js';
+import { calculateCollectionPlan } from '../tracker/collection-pipeline.js';
 
 /** Use the same targets, identifiers and typed fields as the story reader. */
 export function startingCollections(settings, scope, actor, system) {
@@ -38,29 +37,9 @@ export function npcCollectionsSchema(choices) {
 
 /** Initial holdings are full arrays, not the reader's add/remove/update operations. */
 export function validateNpcStartingCollections(source, definitions) {
-    const allowed = definitions.map(collection => collection.id);
-    if (Object.keys(source).some(id => !allowed.includes(id)) || allowed.some(id => !Object.hasOwn(source, id))) {
-        throw new Error('Incomplete or off-template collections. Include every applicable collection, using [] when empty.');
-    }
-    const result = {};
-    for (const collection of definitions) {
-        const primary = collection.fields.find(field => field.isPrimary) || collection.fields[0];
-        if (!primary) throw new Error(`Collection ${collection.id} needs an identifier field.`);
-        const quantity = collectionQuantityField(collection);
-        const seen = new Set();
-        result[collection.id] = source[collection.id].map(item => {
-            const validated = validateRewardEntry(collection, item);
-            if (!validated.entry) throw new Error(`${collection.id}: ${validated.errors.join(' ')}`);
-            const entry = validated.entry;
-            if (typeof entry[primary.name] === 'string') entry[primary.name] = entry[primary.name].trim();
-            const key = String(entry[primary.name]).normalize('NFKC').toLowerCase();
-            if (seen.has(key)) throw new Error(`Duplicate entry in ${collection.id}: ${entry[primary.name]}.`);
-            seen.add(key);
-            if (quantity && !(entry[quantity.name] > 0)) throw new Error(`${collection.id}: starting quantity must be positive.`);
-            return entry;
-        });
-    }
-    return result;
+    return calculateCollectionPlan({ tracker: { collections: definitions },
+        operation: 'replace-all', update: source, validation: 'strict',
+        requiredCollections: true, preserveUnknown: false }).collections;
 }
 
 /** A mentioned NPC can already be in tracker state before its first profile card exists. */

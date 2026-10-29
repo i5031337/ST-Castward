@@ -2,11 +2,12 @@ import { activeNpcSystem } from '../core/npc-templates.js';
 import { resolveProgressionConfig } from '../core/progression-config.js';
 import { getInitialStatValue } from '../tracker/stat-value-utils.js';
 import { validateShape } from '../generation/validate-shape.js';
-import { startingCollections, npcCollectionsSchema, validateNpcStartingCollections,
+import { startingCollections, npcCollectionsSchema,
     NPC_COLLECTION_INSTRUCTIONS } from '../npc/npc-collection-generation.js';
 import { parseNpcResponse, describeNpcGenerationTemplate } from '../npc/npc-generation-format.js';
 import { validateStartingStats } from './starting-stats.js';
 import { playerCreationSystemContext } from '../prompts/player-creation.js';
+import { calculateCollectionPlan, installCollectionChanges } from '../tracker/collection-pipeline.js';
 
 const object = properties => ({ type: 'object', properties, required: Object.keys(properties), additionalProperties: false });
 
@@ -39,12 +40,19 @@ export function playerAdventureAvailability(context, state, contract, personaKey
     return contract.stats.length || contract.collections.length ? '' : 'This System has no player stats or collections.';
 }
 
-export function validatePlayerAdventure(raw, contract) {
+function preparePlayerAdventure(raw, contract, itemLibrary = {}) {
     const value = parseNpcResponse(raw, { choices: [contract] });
     const errors = validateShape(value, contract.schema);
     if (errors.length) throw new Error(errors.slice(0, 4).join('; '));
-    return { stats: validateStartingStats(value.stats, contract.stats, contract.progression),
-        collections: validateNpcStartingCollections(value.collections, contract.collections) };
+    const stats = validateStartingStats(value.stats, contract.stats, contract.progression);
+    const collectionPlan = calculateCollectionPlan({ tracker: { collections: contract.collections },
+        itemLibrary, operation: 'replace-all', update: value.collections,
+        validation: 'strict', requiredCollections: true, preserveUnknown: false });
+    return { draft: { stats, collections: collectionPlan.collections }, collectionPlan };
+}
+
+export function validatePlayerAdventure(raw, contract) {
+    return preparePlayerAdventure(raw, contract).draft;
 }
 
 export const PLAYER_ADVENTURE_INSTRUCTIONS = `Create a starting sheet for the player's new adventure.
@@ -58,7 +66,7 @@ ${NPC_COLLECTION_INSTRUCTIONS}`;
 
 /** Generate and review a draft before one chat-owned save; stale results never commit. */
 export function createPlayerAdventureService({ getContext, getSettings, getPersona, loadState,
-    request, review, saveState, afterSave = () => {} }) {
+    request, review, saveState, saveSettings = () => {}, afterSave = () => {} }) {
     let pending = false;
     return {
         audit(card) {
@@ -76,7 +84,7 @@ export function createPlayerAdventureService({ getContext, getSettings, getPerso
             const signature = () => JSON.stringify({ system: getSettings().activeSystem,
                 setting: playerCreationSystemContext(getSettings()),
                 contract: playerAdventureContract(getSettings()), connection: getSettings().loreProfileId,
-                persona: getPersona(), profile: card.profile, player: loadState()?.player,
+                persona: getPersona(), profile: card.profile, player: loadState()?.player, library: getSettings().master_items,
                 story: getContext()?.chat?.map(message => [message.mes, message.swipe_id]) });
             const original = signature();
             const assertCurrent = () => {
@@ -93,7 +101,7 @@ export function createPlayerAdventureService({ getContext, getSettings, getPerso
                         definitions: describeNpcGenerationTemplate(contract), responseSchema: contract.schema }),
                     schema: contract.schema, maxTokens: settings.loreMaxTokens || 2048, signal });
                 assertCurrent();
-                const draft = validatePlayerAdventure(raw, contract);
+                const { draft, collectionPlan } = preparePlayerAdventure(raw, contract, settings.master_items);
                 const accepted = await review(structuredClone(draft), contract);
                 assertCurrent();
                 if (!accepted) return { ok: true, skipped: true };
@@ -101,9 +109,11 @@ export function createPlayerAdventureService({ getContext, getSettings, getPerso
                 state.player.stats = { ...state.player.stats, ...draft.stats };
                 state.player.collections = { ...state.player.collections, ...draft.collections };
                 state.player.adventureInitialized = true;
-                if (saveState(state, { label: 'Created player starting sheet' }) === false) {
+                if (saveState(state, { label: 'Created player starting sheet',
+                    beforeCommit: () => installCollectionChanges(settings, collectionPlan.libraryChanges) }) === false) {
                     throw new Error('The starting sheet could not be saved in this chat.');
                 }
+                if (collectionPlan.libraryChanges.length) saveSettings();
                 afterSave(state);
                 return { ok: true };
             } finally { pending = false; }

@@ -11,6 +11,7 @@ import { splitNpcStats, initialiseNpcStats } from '../tracker/stat-persistence.j
 import { getAllCharacters, isChatCharacter } from './character-repository.js';
 import { normalizeNpcPresentation } from '../core/npc-presentation.js';
 import { getContext } from '../../../../../st-context.js';
+import { calculateCollectionPlan, installCollectionChanges } from '../tracker/collection-pipeline.js';
 import { readNpcMemories, writeNpcMemories } from '../tracker/npc-memories.js';
 import { portableMemories } from './system-roster-state.js';
 import { captureCharacterMedia, restoreCharacterImages, restoreCharacterSprites } from './character-transfer-media.js';
@@ -148,8 +149,17 @@ function freeName(wanted) {
     }
 }
 
+/** Plan imported belongings before creating or changing their destination card. */
+function importedCollectionPlan(record, version) {
+    const settings = getSettings();
+    const update = version >= 3 && record.collections && typeof record.collections === 'object'
+        && !Array.isArray(record.collections) ? record.collections : {};
+    return calculateCollectionPlan({ tracker: settings.statusTracker, itemLibrary: settings.master_items,
+        operation: 'replace-all', update, validation: 'strict', preserveUnknown: true });
+}
+
 /** Writes the record's fields onto a card, leaving its id and its place alone. */
-function applyRecord(char, record, name, version) {
+function applyRecord(char, record, name, version, collectionPlan = importedCollectionPlan(record, version)) {
     char.name = name;
     char.color = String(record.color || char.color || '');
     char.imageFit = String(record.imageFit || '');
@@ -160,8 +170,8 @@ function applyRecord(char, record, name, version) {
     // travel; turn fields receive its defaults instead.
     const incoming = version >= 2 ? record.innateStats : record.statusOverrides;
     char.statusOverrides = initialiseNpcStats(incoming, npcStatsFor(char, getSettings().statusTracker));
-    char.statusCollections = version >= 3 && record.collections && typeof record.collections === 'object'
-        && !Array.isArray(record.collections) ? structuredClone(record.collections) : {};
+    char.statusCollections = collectionPlan.collections;
+    installCollectionChanges(getSettings(), collectionPlan.libraryChanges);
     char.memories = portableMemories(version >= 3 || activeNpcSystem()?.memories?.carryOver === true
         ? record.memories : undefined);
     const context = getContext();
@@ -263,10 +273,19 @@ export async function importCharacters(payload, { onCollision } = {}) {
 
         let choice = 'rename';
         if (existing && !repeatedInFile) choice = onCollision ? await onCollision(wanted) : 'rename';
+        if (!isCurrent()) break;
         if (existing && choice === 'skip') { result.skipped.push(wanted); continue; }
 
         // Two distinct source NPCs in one file must never overwrite one another merely
         // because they share a name, even when Replace Mine was chosen for local clashes.
+        let collectionPlan;
+        try { collectionPlan = importedCollectionPlan(record, Number(payload.version) || 1); }
+        catch (error) {
+            result.skipped.push(wanted);
+            result.notes.push(`${wanted}: ${error.message || error}`);
+            continue;
+        }
+
         const overwriting = Boolean(existing) && !repeatedInFile && choice === 'overwrite';
         const localInstance = overwriting && !isChatCharacter(existing.id)
             ? instantiateWorldCharacter(existing.id) : null;
@@ -281,7 +300,7 @@ export async function importCharacters(payload, { onCollision } = {}) {
         // decisions and anything else pointing at the old id kept pointing at a ghost.
         const char = localInstance || (overwriting ? existing : createCharacter(name));
 
-        applyRecord(char, record, name, Number(payload.version) || 1);
+        applyRecord(char, record, name, Number(payload.version) || 1, collectionPlan);
         await restoreImages(char, record);
         if (Array.isArray(record.sprites) && record.sprites.length) {
             try { await restoreCharacterSprites(char, record); }
