@@ -65,6 +65,8 @@ The tracker beneath the latest reply keeps the current state in view. Let the re
 
 A floating HUD keeps your player's stats on screen while you scroll. Drag it where you like and click the portrait to open your sheet. Find its settings under **Appearance → Floating HUD**.
 
+**Create your player character:** Open **Player → Fill** to flesh out your SillyTavern persona using the active System. Before your first message in a new adventure, it can also create starting stats, equipment, and abilities for you to review.
+
 [![Skritch's floating HUD after casting the spell](img/screenshots/fantasy-demo/player-hud.png)](img/screenshots/fantasy-demo/player-hud.png)
 
 ## Change genres with Systems
@@ -76,8 +78,6 @@ A System defines what Castward tracks for your adventure. Start with one of the 
 | **Fantasy Adventure** | Adventurers and beasts with familiar RPG stats, equipment, and spells. |
 | **Dating Sim** | Relationships that develop through affection, trust, and comfort. |
 | **Creature Trainer** | Trainers and creatures with teams, moves, and their own progression. A stronger reader model helps with this more involved System. |
-
-Fantasy Adventure is selected on a fresh install. When you start a new chat, Castward offers your saved Systems and the included starters before your first player message. Choosing a starter gives you an editable copy. Tick **Use the active System for future new chats** to skip the picker and follow whichever System is active when you start a chat. Turn it off in **System → Manager** to choose each time. Existing chats keep their System.
 
 Stats have written descriptions that help the reader judge what changed in the story. You can edit those descriptions along with the rules.
 
@@ -94,8 +94,6 @@ The reader updates collections as characters gain, use, or give things away. You
 The reader makes a separate request after each story reply. Your writing model can concentrate on the story while the reader handles tracking. You can give the reader its own connection through SillyTavern's Connection Manager.
 
 Castward asks for named dialogue lines so it can add speaker portraits. You can change or disable that instruction under **Dialogue**.
-
-Use SillyTavern’s **Stop** button to cancel Castward’s LLM calls, including tracker readings, lore writing, NPC creation, and System generation.
 
 Automatic reading adds a model request each turn. Manual mode lets you choose when to read, and inline mode asks for story and tracking in one reply.
 

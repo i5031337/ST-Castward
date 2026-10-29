@@ -2,6 +2,7 @@
 export function automaticFillStages(audit, includePortrait = true) {
     return {
         lore: !audit.lore.done,
+        ...(audit.adventure ? { adventure: !audit.adventure.done } : {}),
         image: !audit.image.done && includePortrait,
     };
 }

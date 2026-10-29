@@ -3,13 +3,17 @@ import { collectionQuantityField } from '../core/collection-fields.js';
 import { validateRewardEntry } from '../core/collection-rewards.js';
 
 /** Use the same targets, identifiers and typed fields as the story reader. */
-export function npcStartingCollections(settings, actor, system) {
+export function startingCollections(settings, scope, actor, system) {
     return (settings.statusTracker?.collections ?? system?.collections ?? [])
-        .filter(collection => collection?.id && collectionAppliesTo(collection, 'npc', actor, system))
+        .filter(collection => collection?.id && collectionAppliesTo(collection, scope, actor, system))
         .map(collection => ({ id: collection.id, name: collection.name,
             guidance: collection.guidance || collection.hint || '', trackQuantity: collection.trackQuantity,
             fields: (collection.fields || []).filter(field => !field.retired).map(field => ({ ...field,
                 guidance: field.guidance || field.hint || '' })) }));
+}
+
+export function npcStartingCollections(settings, actor, system) {
+    return startingCollections(settings, 'npc', actor, system);
 }
 
 function entrySchema(collection) {

@@ -154,6 +154,17 @@ remains outside the completed tracker dependency refactor.
 
 The player and NPC Cast pages share one Profile/Edit layout. The HUD opens the
 player’s Cast page and shows the same current state. Portrait generation uses SillyTavern Image Generation's `/imagine` provider.
+Player Fill creatively completes missing profile fields from the active persona and
+System; NPC Fill continues to use supported facts. Existing profile values are retained.
+Before the first player message, Fill also offers starting stats and collections while
+the chat-owned player still has System defaults and empty collections. This separate
+Profile Connection request uses the completed profile, persona, opening scene, and
+configured player stat/collection guidance. Typed entries, numeric bounds, pool capacities,
+and initial XP/Level are validated with the same rules as NPC creation. A preview must
+be accepted before one undoable state save; initialization grants no level-up rewards.
+The chat player's `adventureInitialized` marker prevents repeated creation. Changed
+chat, persona, System, story, profile, or held player state invalidates a pending draft.
+Existing adventures retain their progress; persona profiles remain reusable across chats.
 Maintained prompts use the active System's schema; the general raw-prompt editor is
 removed, while extraction diagnostics remain available.
 

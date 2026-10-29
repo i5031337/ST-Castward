@@ -31,4 +31,5 @@
 
 - Write the README for the average SillyTavern user. Keep it understandable and appealing: lead with what a feature lets them do and how it improves their roleplay, using plain language and brief, concrete examples where helpful.
 - Include only the setup, controls, and important limitations users need to get started or make a meaningful choice. The README is not a complete feature reference; omit API arguments, internal algorithms, persistence mechanics, validation, retry behavior, and exhaustive edge cases. Menu options that are self-explanatory (other than enabling core features) also need not be included.
+- Explicitly confirm with the user every time you edit README.md.
 - Put detailed technical explanations and troubleshooting in `docs/` or relevant code documentation, linking from the README when useful. Update the relevant existing text instead of appending a detailed account of every implementation change.

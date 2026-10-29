@@ -64,7 +64,9 @@ function buildEditorHeader(char, showGrid, refreshEditor, viewState) {
     title.textContent = char.name || '(unnamed)';
     const fill = actionButton('sillynpc-fill-btn', 'fa-fill-drip', 'Fill',
         () => fillCharacter(char, { onSave: () => refreshPortrait(char, refreshEditor) }));
-    fill.title = 'Write missing profile details and lore, then offer a portrait.';
+    fill.title = char.isPlayer
+        ? 'Create your player profile, starting stats and collections from your persona and active System, then offer a portrait.'
+        : 'Write missing profile details and lore, then offer a portrait.';
     if (!char.isPlayer) header.append(actionButton('sillynpc-back-btn', 'fa-arrow-left', 'Back',
         () => { manageState.editingCharId = null; showGrid(); }));
     header.append(title, fill);

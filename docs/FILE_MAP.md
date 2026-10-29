@@ -122,7 +122,7 @@ This map covers tracked runtime files, tests and support files. Source files and
 | --- | --- |
 | `src/npc/npc-generation-format.js` | Reader-compatible JSON repair, numeric stat string normalization, and concise model-facing template definitions. |
 | `src/npc/npc-naming.js` | Randomized naming briefs: adjustable syllable/stress weights, four distinct initials favoring unused cast initials, and uniform selection. Cultural fit overrides the hints. |
-| `src/npc/npc-collection-generation.js` | Template-scoped starting collections, reader-style initialization guidance, typed entry contracts, defaults, bounds and identifier validation. |
+| `src/npc/npc-collection-generation.js` | Player/NPC starting collection selection, reader-style initialization guidance, typed entry contracts, defaults, bounds and identifier validation. |
 | `src/npc/npc-creation.js` | NPC creation lifecycle, identity/request deduplication, validation retries, cancellation, guarded commits, and preservation of established stats and belongings. |
 | `src/npc/npc-generation.js` | Narrator tool parameters, System-aware NPC response contracts, prompts, name/alias matching, and generated NPC validation. |
 | `src/npc/npc-tool.js` | Register the narrator Create NPC tool, bind host services, save chat-owned cards and starting belongings, synchronize lore, and start optional background portraits. |
@@ -293,6 +293,9 @@ This map covers tracked runtime files, tests and support files. Source files and
 | `src/characters/character-image-migration.js` | Copy and migrate images between character folders. |
 | `src/characters/character-fill.js` | Audit missing lore and portrait data, gather story sources, and fill profile fields. |
 | `src/characters/character-fill-lore.js` | Fill or generate character lore. |
+| `src/characters/player-adventure.js` | Player starting-sheet contracts, validation, review orchestration, and guarded chat-owned initialization. |
+| `src/characters/starting-stats.js` | Shared player/NPC starting stat, pool, and progression validation. |
+| `src/prompts/player-creation.js` | Creative player profile prompt and active System context. |
 | `src/characters/default-portraits.js` | Stranger portrait pool and assignments. |
 | `src/lore/lorebook.js` | Lorebook linking, identity, and synchronization. |
 | `src/lore/lore-entries.js` | Create or reuse lore entries for player and NPC identities. |
@@ -349,6 +352,7 @@ This map covers tracked runtime files, tests and support files. Source files and
 | `src/ui/collections/ui-collection.js` | Collection editor and event handlers. |
 | `src/ui/settings/ui-connection-profiles.js` | Generation connection picker. |
 | `src/ui/characters/ui-fill.js` | Character Fill controls and pending portrait-stage tracking. |
+| `src/ui/characters/ui-player-adventure.js` | Starting-sheet preview, Profile Connection requests, cancellation, and tracker refresh. |
 | `src/ui/characters/ui-fill-new.js` | Create or reuse a chat NPC and run automatic Fill with duplicate-request protection. |
 | `src/ui/characters/ui-grid-filter.js` | Character grid filtering. |
 | `src/ui/hud/ui-hud.js` | Floating HUD, portrait, meters, and drag handling. |
@@ -578,6 +582,7 @@ paths have regression tests under `tests/`.
 | --- | --- |
 | `tests/activated-lore-prompt.mjs`, `tests/lore-format.mjs`, `tests/lorebook-target.mjs` | Activated-lore freshness, structured profile/lore round trips, partial Fill output, and safe chat lorebook selection. |
 | `tests/auto-npc-profiles.mjs`, `tests/player-profile-prompt.mjs`, `tests/lore-cancellation.mjs` | Opt-in profile and portrait generation, manual-edit precedence, persona descriptions, nonduplicated field-generation context, and cancellation without late saves. |
+| `tests/player-adventure.mjs`, `tests/player-fill-boundaries.mjs`, `tests/ui-player-creation.py`, `tests/fixtures/ui-player-creation.js` | Starting-sheet validation, chat/persona boundaries, manual-edit precedence, review cancellation, repeat protection, and unsaved live Fill dialogs. |
 | `tests/connection-profile.mjs`, `tests/ui-connection-profile.py` | Request-local Custom connection preset parameters, macro substitution, and precedence without changing saved presets. |
 | `tests/collection-fields.mjs`, `tests/collection-reading.mjs`, `tests/ui-collection-fields.py` | Pinned typed identifiers, optional ranges, defaults, typed prompt examples, preview diagnostics, and live field controls. |
 | `tests/npc-collection-persistence.mjs`, `tests/npc-change-counts.mjs` | Persist NPC holdings across scene exits and manual edits; count actual changes rather than repeated or offstage records. |

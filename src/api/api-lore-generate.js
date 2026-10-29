@@ -7,6 +7,7 @@ import { LOG_PREFIX, debugLog } from '../core/constants.js';
 import { fillTemplate } from '../prompts/macros.js';
 import { getSettings, saveSettings } from '../core/settings.js';
 import { DEFAULT_LORE_PROMPT } from '../prompts/default-prompt-texts.js';
+import { PLAYER_CREATION_PROMPT, playerCreationSystemContext } from '../prompts/player-creation.js';
 import { customProfilePayload } from './api-connection-profile.js';
 import { syncEntryIdentity, mergeKeywords, namesFor } from '../lore/lorebook.js';
 import { escapeRegExp, describeConnection } from '../core/utils.js';
@@ -167,7 +168,7 @@ async function performLoreRequest(prompt, signal) {
 export async function generateLoreContent(char, world, uid, options = {}) {
     const task = startGenerationTask({ signal: options.signal, activity: {
         kind: 'profile', label: `Filling ${char.name}’s profile…`,
-    } });
+    }, ...(char.isPlayer ? { getPersonaKey: () => getPersonaData().avatar } : {}) });
     try {
         return await awaitGenerationRequest(buildLoreContent(char, world, uid, { ...options, signal: task.signal }), task.signal);
     } finally { task.finish(); }
@@ -190,7 +191,7 @@ async function buildLoreContent(char, world, uid, options) {
     const worldFacts = await retrieveWorldFacts(char.name);
     options.signal.throwIfAborted();
 
-    const template = options.template || DEFAULT_LORE_PROMPT;
+    const template = options.template || (char.isPlayer ? PLAYER_CREATION_PROMPT : DEFAULT_LORE_PROMPT);
     const givenFacts = typeof options.facts === 'function' ? options.facts() : options.facts;
     const established = char.isPlayer ? (char.profile || {})
         : (mergeLoreValues(existingLore, char.profile) || char.profile || {});
@@ -206,6 +207,7 @@ async function buildLoreContent(char, world, uid, options) {
         world: worldFacts,
         facts: givenFacts !== undefined ? String(givenFacts ?? '').trim() : describeTrackedFacts(char),
         aliases: namesFor(char).slice(1).join(', ') || '(none)',
+        system: char.isPlayer && !options.template ? playerCreationSystemContext(getSettings()) : '',
         ...loreProfileValues(fields, established),
     };
     // Built-in sections depend on available sources; custom templates retain host macros.
@@ -234,8 +236,9 @@ async function buildLoreContent(char, world, uid, options) {
     const namePattern = new RegExp(`^#*\\s*${escapeRegExp(char.name)}\\s*[:\\-]?\\s*\\n?`, 'i');
     content = content.replace(namePattern, '').trim();
 
-    if (!options.template && !char.isPlayer) {
-        const generated = parseLoreContent(content, { allowPartial: true });
+    if (!options.template) {
+        const generated = char.isPlayer ? parseGeneratedProfileFields(content, 'player')
+            : parseLoreContent(content, { allowPartial: true });
         if (generated) {
             content = profileFieldsForCard(char)
                 .filter(field => Object.hasOwn(generated, field.id))

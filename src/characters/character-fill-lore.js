@@ -30,15 +30,21 @@ export async function readLoreEntry(char) {
  *
  * @returns {Promise<{ ok: boolean, action: string, reason?: string }>}
  */
-export async function fillLore(char) {
+export async function fillLore(char, { isCurrent = () => true } = {}) {
+    const assertCurrent = () => {
+        if (!isCurrent()) throw new DOMException('Character Fill cancelled because its chat, persona or System changed.', 'AbortError');
+    };
+    assertCurrent();
     // A Fill request in a chat with no chosen book gets its own lorebook before
     // auto-linking, so a stray global book is never silently made this chat's target.
     const target = char?.lorebook?.world || await ensureChatLorebookForFill();
     let existing = await readLoreEntry(char);
+    assertCurrent();
 
     if (!char.lorebook && await tryAutoSyncLorebook(char, { silent: true })) {
         existing = await readLoreEntry(char);
     }
+    assertCurrent();
 
     const scope = char.isPlayer ? 'player' : 'npc';
     const parsed = char.isPlayer ? parseGeneratedProfileFields(existing, scope) : parseLoreContent(existing);
@@ -77,8 +83,14 @@ export async function fillLore(char) {
     // Creating an entry links it before generation starts. If generation failed on a
     // previous attempt, reuse that empty entry instead of treating the link as done.
     const uid = char.lorebook?.uid ?? (await createLoreEntry(char, world, char.name)).uid;
+    assertCurrent();
+    const profileBefore = JSON.stringify(char.profile);
     const { content, tags } = await generateLoreContent(char, world, uid,
-        { preserveLore: Boolean(parsed) });
+        { preserveLore: true });
+    assertCurrent();
+    if (JSON.stringify(char.profile) !== profileBefore) {
+        throw new DOMException('Character Fill cancelled because the profile was edited.', 'AbortError');
+    }
     if (!String(content || '').trim()) {
         return { ok: false, action: 'none', reason: 'The lore writer returned nothing usable.' };
     }

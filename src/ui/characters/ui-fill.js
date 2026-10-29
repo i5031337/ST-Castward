@@ -1,4 +1,5 @@
 import { Popup, POPUP_TYPE } from '../../../../../../popup.js';
+import { getContext } from '../../../../../../st-context.js';
 // The chat shows this picture beside every line the character speaks, so changing
 // it has to redraw. reprocess.js rather than chat.js: chat.js imports this file.
 import { triggerReprocess } from '../../chat/reprocess.js';
@@ -7,6 +8,10 @@ import { LOG_PREFIX, debugLog } from '../../core/constants.js';
 import { auditCharacter, fillLore } from '../../characters/character-fill.js';
 import { generateCharacterImageLogic } from '../../api/api.js';
 import { automaticFillStages } from '../../prompts/fill-preset.js';
+import { playerAdventureService, fillPlayerAdventure } from './ui-player-adventure.js';
+import { getPersonaData } from '../../tracker/status-logic.js';
+
+const filling = new WeakSet();
 
 /**
  * One row of the plan: what this stage would do, and whether to do it.
@@ -57,16 +62,17 @@ async function askPlan(char, audit) {
 
     const intro = document.createElement('small');
     intro.className = 'notes';
-    intro.textContent = 'Each stage feeds the next: the description and lore are written '
+    intro.textContent = (char.isPlayer
+        ? 'Creatively complete your player profile using your SillyTavern persona and active System. New adventures can also get starting stats and collections, reviewed before applying. '
+        : '') + 'Each stage feeds the next: the description and lore are written '
         + 'together, and both describe the portrait. Nothing '
-        + 'already filled in is overwritten, and nothing you already carry is removed.';
+        + 'already filled in on your profile is overwritten.';
     wrap.append(intro);
 
     // Numbered in the order they run; later stages can use the completed description.
-    wrap.append(
-        stageRow('lore', '1. Lore', audit.lore),
-        stageRow('image', '2. Portrait', audit.image),
-    );
+    wrap.append(stageRow('lore', '1. Profile and lore', audit.lore));
+    if (audit.adventure) wrap.append(stageRow('adventure', '2. Starting stats and collections', audit.adventure));
+    wrap.append(stageRow('image', `${audit.adventure ? 3 : 2}. Portrait`, audit.image));
 
     const popup = new Popup(wrap, POPUP_TYPE.CONFIRM, '', {
         okButton: 'Fill', cancelButton: 'Cancel',
@@ -93,12 +99,33 @@ async function askPlan(char, audit) {
  * @param {{ onSave?: () => void, preset?: 'automatic' }} [options]
  */
 export async function fillCharacter(char, { onSave, preset } = {}) {
+    if (!char || filling.has(char)) return;
+    filling.add(char);
+    try { return await performFill(char, { onSave, preset }); }
+    finally { filling.delete(char); }
+}
+
+async function performFill(char, { onSave, preset }) {
     if (!char?.name) {
         toastr.warning('Give the character a name first.', 'Castward');
         return;
     }
 
+    const metadata = getContext()?.chatMetadata, chatId = getContext()?.getCurrentChatId?.();
+    const system = getSettings().activeSystem;
+    const isCurrent = () => getContext()?.chatMetadata === metadata
+        && getContext()?.getCurrentChatId?.() === chatId && getSettings().activeSystem === system
+        && (!char.isPlayer || getPersonaData().avatar === char.personaKey);
+    if (!isCurrent()) return;
+    const refresh = onSave;
+    onSave = () => { if (isCurrent()) refresh?.(); };
+
     const audit = await auditCharacter(char);
+    if (!isCurrent()) return;
+    if (char.isPlayer) {
+        audit.adventure = playerAdventureService.audit(char);
+        audit.anything ||= !audit.adventure.done;
+    }
     if (!audit.anything) {
         toastr.info(`${char.name} is already filled in.`, 'Castward');
         return;
@@ -107,7 +134,7 @@ export async function fillCharacter(char, { onSave, preset } = {}) {
     const chosen = preset === 'automatic'
         ? automaticFillStages(audit, getSettings().autoPortraitOnFill !== false)
         : await askPlan(char, audit);
-    if (!chosen) return;
+    if (!chosen || !isCurrent()) return;
     if (!Object.values(chosen).some(Boolean)) return;
 
     const done = [];
@@ -116,7 +143,9 @@ export async function fillCharacter(char, { onSave, preset } = {}) {
             let result;
             let reason;
             try {
+                if (!isCurrent()) return null;
                 result = await action();
+                if (!isCurrent()) return null;
                 if (succeeded(result)) return result;
                 reason = result?.reason || 'The response could not be used.';
             } catch (err) {
@@ -137,7 +166,7 @@ export async function fillCharacter(char, { onSave, preset } = {}) {
     /** @returns {Promise<boolean>} False when the run should stop. */
     const runLore = async () => {
         toastr.info('Looking for a lore entry...', 'Castward');
-        const result = await retryStage('Lore', () => fillLore(char));
+        const result = await retryStage('Lore', () => fillLore(char, { isCurrent }));
         if (!result) return false;
         done.push(`Lore: ${result.action}`);
         onSave?.();
@@ -147,6 +176,13 @@ export async function fillCharacter(char, { onSave, preset } = {}) {
     try {
         // One request writes the named profile fields and the rest of the lore together.
         if (chosen.lore && !(await runLore())) return;
+
+        if (chosen.adventure) {
+            const result = await retryStage('Starting sheet', () => fillPlayerAdventure(char));
+            if (!result) return;
+            if (!result.skipped) done.push('Starting stats and collections: created');
+            onSave?.();
+        }
 
         if (chosen.image) {
             toastr.info('Drawing a portrait...', 'Castward');
@@ -170,6 +206,6 @@ export async function fillCharacter(char, { onSave, preset } = {}) {
     }
 
     debugLog('Filled in', char.name, done);
-    toastr.success(done.join('. ') + '.', 'Castward');
+    if (done.length) toastr.success(done.join('. ') + '.', 'Castward');
     onSave?.();
 }

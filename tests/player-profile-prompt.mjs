@@ -6,6 +6,9 @@ import test from 'node:test';
 import { readFileSync } from 'node:fs';
 import { promptText, fillPromptText } from '../src/prompts/prompt-texts.js';
 import { DEFAULT_LORE_PROMPT } from '../src/prompts/default-prompt-texts.js';
+import { PLAYER_CREATION_PROMPT, playerCreationSystemContext } from '../src/prompts/player-creation.js';
+import { parseGeneratedProfileFields } from '../src/lore/lore-format.js';
+import { parseLoreReply } from '../src/lore/lore-reply.js';
 import { describeKnownStatReadings } from '../src/tracker/stat-prompt-definitions.js';
 import { npcStatsFor, setNpcTemplateSettingsProvider } from '../src/core/npc-templates.js';
 
@@ -124,7 +127,9 @@ test('tracker context uses player and live NPC template definitions and omits un
     } finally { setNpcTemplateSettingsProvider(() => null); }
 });
 
-async function lorePrompt(card, activePersona = persona, { worldFacts = '', existingLore = '' } = {}) {
+async function loreGeneration(card, activePersona = persona, {
+    worldFacts = '', existingLore = '', settings = {}, reply = '', options = {}, profileFields = fields,
+} = {}) {
     const source = load('../src/api/api-lore-generate.js')
         .split('export async function generateLoreContent')[1]
         .split('export async function saveLoreContent')[0];
@@ -133,25 +138,59 @@ async function lorePrompt(card, activePersona = persona, { worldFacts = '', exis
         ...readerCancellationHarness(),
         buildLoreExcerpt: () => ({ text: '' }), chat: [], retrieveWorldFacts: async () => worldFacts,
         loadWorldInfo: async () => ({ entries: { 1: { content: existingLore } } }),
-        DEFAULT_LORE_PROMPT, fillPromptText, loreProfileValues,
-        mergeLoreValues: () => ({}), profileFieldsForCard: () => fields, hintFor: () => 'Describe appearance.',
+        DEFAULT_LORE_PROMPT, PLAYER_CREATION_PROMPT, playerCreationSystemContext,
+        getSettings: () => settings, fillPromptText, loreProfileValues,
+        mergeLoreValues: () => ({}), profileFieldsForCard: () => profileFields, hintFor: () => 'Describe appearance.',
         fillTemplate: (template, values) => template.replace(/{{(\w+)}}/g, (_, key) => values[key] ?? ''),
         namesFor: card => [card.name], describeTrackedFacts: () => '', getPersonaData: () => activePersona,
-        requestLore: async prompt => { sent = prompt; return { text: '', truncated: false }; },
-        parseLoreReply: () => ({ tags: '', content: '', followedSections: false }),
+        requestLore: async prompt => { sent = prompt; return { text: reply, truncated: false }; },
+        parseLoreReply, parseGeneratedProfileFields,
         escapeRegExp: text => text, parseLoreContent: () => null,
     };
     const generate = new Function(...Object.keys(dependencies),
         `return async function generateLoreContent${source}`)(...Object.values(dependencies));
-    await generate(card, existingLore ? 'World' : null, 1);
-    return sent;
+    const result = await generate(card, existingLore ? 'World' : null, 1, options);
+    return { prompt: sent, result };
 }
+
+async function lorePrompt(...args) { return (await loreGeneration(...args)).prompt; }
 
 test('the combined profile and lore request includes the player persona description', async () => {
     assert.ok((await lorePrompt(player)).includes(persona.description));
     for (const card of [{ name: 'Player' }, { ...player, personaKey: 'other.png' }]) {
         assert.ok(!(await lorePrompt(card)).includes(persona.description));
     }
+});
+
+test('player creation uses the active System and creative prompt while NPC Fill stays factual', async () => {
+    const settings = { activeSystem: 'voyage', statusTracker: { presets: { voyage: { definition: {
+        name: 'Deep Space', metadata: { description: 'Aboard a worn exploration ship.' },
+        stats: { character: [
+            { name: 'Oxygen', purpose: 'Breathing reserves.', targets: ['player'] },
+            { name: 'Suspicion', purpose: 'NPC-only marker', targets: ['npc'] },
+        ] }, collections: [
+            { name: 'Tools', targets: ['player'], guidance: 'Practical shipboard equipment.' },
+            { name: 'NPC secrets', targets: ['npc'] },
+        ],
+    } } } } };
+    const prompt = await lorePrompt(player, persona, { settings });
+    for (const detail of ['Deep Space', 'Aboard a worn exploration ship.', 'Oxygen', 'Practical shipboard equipment.', persona.description]) {
+        assert.ok(prompt.includes(detail), detail);
+    }
+    assert.match(prompt, /Creatively fill gaps/);
+    assert.doesNotMatch(prompt, /Do not invent profile details|NPC-only marker|NPC secrets/);
+    assert.match(await lorePrompt({ name: 'Mira' }, persona, { settings }), /Do not invent profile details/);
+});
+
+test('player Fill preserves existing values while accepting newly invented fields', async () => {
+    const card = { ...player, profile: { appearance: 'Established silver hair' } };
+    const { result } = await loreGeneration(card, persona, {
+        options: { preserveLore: true }, profileFields: [...fields, { id: 'personality', label: 'Personality' }],
+        reply: 'tags: Player\ncontent: |\n  Appearance: Unwanted black hair\n  Personality: Cheerful and curious',
+    });
+    assert.match(result.content, /Appearance: Established silver hair/);
+    assert.match(result.content, /Personality: Cheerful and curious/);
+    assert.doesNotMatch(result.content, /Unwanted/);
 });
 
 test('lore prompts omit empty setting and existing-entry sections and retain available sources', async () => {
