@@ -11,6 +11,7 @@ import { requireLorebook } from '../../lore/lorebook-write-target.js';
 import { syncProfileToLore } from '../../lore/lore-sync.js';
 import { generateCharacterImageLogic } from '../../api/api-image-generate.js';
 import { triggerReprocess } from '../../chat/reprocess.js';
+import { confirmGenerationNotice } from '../../ui/shared/ui-generation-notice.js';
 
 /** Generate once for newly discovered, admitted NPCs. Cards keep failed attempts editable. */
 export async function generateNewNpcProfiles(names, isCurrent, signal) {
@@ -18,6 +19,7 @@ export async function generateNewNpcProfiles(names, isCurrent, signal) {
     if (getSettings().statusTracker.autoGenerateNpcProfiles !== true
         || getContext()?.getCurrentChatId?.() === undefined) return result;
     const seen = new Set();
+    let noticeConfirmed = false;
     for (const rawName of names) {
         if (!isCurrent() || getSettings().statusTracker.autoGenerateNpcProfiles !== true) break;
         const name = resolveCanonicalName(rawName);
@@ -29,6 +31,10 @@ export async function generateNewNpcProfiles(names, isCurrent, signal) {
         seen.add(key);
         const fields = profileFieldsForCard(actor);
         if (!fields.length) continue;
+        if (!noticeConfirmed) {
+            if (!await confirmGenerationNotice('Automatic NPC profile generation') || !isCurrent()) break;
+            noticeConfirmed = true;
+        }
         try {
             await requireLorebook(null, { isCurrent, signal, purpose: 'Automatic NPC profiles' });
         } catch (error) {

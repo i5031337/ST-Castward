@@ -17,6 +17,7 @@ import { saveStateToMetadata } from '../tracker/status-logic.js';
 import { calculateCollectionPlan, installCollectionChanges } from '../tracker/collection-pipeline.js';
 import { seedKnownNpcCollections, npcStartingCollections } from './npc-collection-generation.js';
 import { activeNpcSystem } from '../core/npc-templates.js';
+import { confirmGenerationNotice } from '../ui/shared/ui-generation-notice.js';
 
 function reservedNames() {
     const context = getContext();
@@ -90,7 +91,12 @@ export const npcCreationService = createNpcCreationService({
         triggerReprocess();
         return card;
     },
-    beforeCreate: options => requireLorebook(null, { ...options, purpose: 'NPC creation', skipLabel: 'Continue without NPC' }),
+    beforeCreate: async options => {
+        if (!await confirmGenerationNotice('NPC creation')) {
+            throw new DOMException('NPC creation cancelled.', 'AbortError');
+        }
+        await requireLorebook(null, { ...options, purpose: 'NPC creation', skipLabel: 'Continue without NPC' });
+    },
     afterCommit: async (card, isCurrent, { reused }) => {
         await prepareNpcLore(card, isCurrent);
         if (!reused && isCurrent()) void portrait(card, isCurrent);

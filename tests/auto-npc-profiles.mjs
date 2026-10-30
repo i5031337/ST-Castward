@@ -20,7 +20,9 @@ function fixture() {
     let imageReply = async card => `/images/${card.name}.png`;
     let reply = async () => ({ content: 'generated' });
     let chooseBook = async () => 'Book';
+    let allowRequests = true;
     const dependencies = { profileFieldValue,
+        confirmGenerationNotice: async () => allowRequests,
         requireLorebook: (...args) => chooseBook(...args),
         getContext: () => context, getSettings: () => settings,
         saveSettings: () => calls.push('save'), LOG_PREFIX: '[test]',
@@ -52,6 +54,7 @@ function fixture() {
         (...Object.values(dependencies));
     return { settings, cards, state, fields, calls, warnings, context,
         run: names => run(names, () => current),
+        setNotice: value => { allowRequests = value; },
         setLoreTarget: value => { chooseBook = value; },
         setReply: value => { reply = value; }, setImageReply: value => { imageReply = value; }, invalidate: () => { current = false; } };
 }
@@ -65,6 +68,15 @@ test('automatic profiles are opt-in and require an open chat', async () => {
     f.context.getCurrentChatId = () => undefined;
     await f.run(['Mira']);
     assert.deepEqual(f.calls, []);
+});
+
+test('declining the generation notice stops automatic NPC profile and portrait requests', async () => {
+    const f = fixture();
+    f.settings.autoPortraitOnFill = true;
+    f.setNotice(false);
+    assert.deepEqual(await f.run(['Mira']), { generated: 0, failed: 0 });
+    assert.deepEqual(f.calls, []);
+    assert.equal(f.cards.some(card => card.name === 'Mira'), false);
 });
 
 test('new admitted NPCs generate once; aliases, existing cards and the player are skipped', async () => {

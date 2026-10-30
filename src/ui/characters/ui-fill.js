@@ -10,6 +10,7 @@ import { generateCharacterImageLogic } from '../../api/api.js';
 import { automaticFillStages } from '../../prompts/fill-preset.js';
 import { playerAdventureService, fillPlayerAdventure } from './ui-player-adventure.js';
 import { getPersonaData } from '../../tracker/status-logic.js';
+import { confirmGenerationNotice } from '../shared/ui-generation-notice.js';
 
 const filling = new WeakSet();
 
@@ -130,6 +131,8 @@ async function performFill(char, { onSave, preset }) {
         toastr.info(`${char.name} is already filled in.`, 'Castward');
         return;
     }
+
+    if (!await confirmGenerationNotice('Fill') || !isCurrent()) return;
 
     const chosen = preset === 'automatic'
         ? automaticFillStages(audit, getSettings().autoPortraitOnFill !== false)
