@@ -40,24 +40,22 @@ export function buildVoicesSection(card, { save = () => {
         description.value = presentation.voiceDesign.description || cue?.description || '';
         version.textContent = `Voice version ${presentation.voiceDesign.version}. Changing the description creates a new voice on the next spoken line.`;
         select.replaceChildren();
-        for (const [value, label] of [['default', 'Use narrator voice'], ['disabled', 'Silent'],
-            ...(designed ? [] : voices.map(voice => [`voice:${voice}`, voice]))]) {
+        for (const [value, label] of [['default', designed ? 'Use described voice or NPC default' : 'Use NPC default voice'],
+            ['disabled', 'Silent'], ...voices.map(voice => [`voice:${voice}`, voice])]) {
             const option = document.createElement('option'); option.value = value; option.textContent = label; select.append(option);
         }
-        if (designed) select.options[0].textContent = 'Use designed voice (narrator if undescribed)';
         const voice = voices.find(id => id === binding?.voiceId)
             || voices.find(id => id === binding?.voiceName);
-        if (!designed && binding?.mode === 'voice' && !voice) {
+        if (binding?.mode === 'voice' && !voice) {
             const option = document.createElement('option'); option.value = 'missing';
             option.textContent = `Missing voice: ${binding.voiceName || binding.voiceId}`;
             select.append(option); select.value = 'missing';
             status.textContent = 'Saved voice is unavailable. Choose another voice or Silent.';
         } else {
-            select.value = designed ? (binding?.mode === 'disabled' ? 'disabled' : 'default')
-                : binding?.mode === 'voice' ? `voice:${voice}` : binding?.mode || 'default';
+            select.value = binding?.mode === 'voice' ? `voice:${voice}` : binding?.mode || 'default';
             status.textContent = designed ? (cue && !presentation.voiceDesign.description
                 ? 'Using the narrator voice cue for this chat. Edit to create a new voice version.'
-                : 'A described voice uses the local service’s Castward voice-design protocol. Without a description, dialogue uses the narrator model and voice. Preview creates the described voice.')
+                : 'A described voice uses the local service’s Castward voice-design protocol. A preset choice overrides the description.')
                 : voices.length ? `${voices.length} voices configured.`
                     : 'Add voices in Castward speech settings.';
         }

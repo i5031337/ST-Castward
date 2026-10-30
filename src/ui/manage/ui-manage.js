@@ -11,7 +11,7 @@ import { renderAdvancedView } from '../settings/ui-settings-advanced.js';
 import { renderImageSettingsView, renderProfileSettingsView } from '../settings/ui-settings-generation.js';
 import { renderStatusView } from '../tracker/ui-tracker-settings.js';
 import { renderTtsSettings } from '../tts/ui-tts-settings.js';
-import { stopNpcTts, previewNpcVoice } from '../../tts/npc-tts.js';
+import { stopNpcTts, previewNpcVoice, previewNpcDefaultVoice, previewNpcDesignedVoice } from '../../tts/npc-tts.js';
 import { buildSystemBuilder } from '../system/ui-system-builder.js';
 import { buildSystemManager } from '../system/ui-system-manager.js';
 import { liveSystemContext } from '../system/ui-system-context.js';
@@ -324,7 +324,9 @@ function settingsTabs() {
           render: v => renderWritingRulesView(v, reprocessAllMessages) },
         { id: 'speech', label: 'Speech', container: 'sillynpc-speech-view',
           render: v => renderTtsSettings(v, {
-              onChange: () => { stopNpcTts(); reprocessAllMessages(); }, preview: previewNpcVoice,
+              onChange: () => { stopNpcTts(); reprocessAllMessages(); },
+              preview: previewNpcVoice, previewNpcDefault: previewNpcDefaultVoice,
+              previewNpcDesign: previewNpcDesignedVoice,
           }) },
         { id: 'status', label: 'Tracker', container: 'sillynpc-status-view',
           render: v => renderStatusView(v) },

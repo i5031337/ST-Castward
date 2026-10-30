@@ -1,14 +1,18 @@
 // Persisted voice-binding key; keep existing character voices through the rebrand.
+import { catalogVoices, normalizeSpeechCatalog } from './speech-catalog.js';
+
 export const NPC_TTS_PROVIDER = 'SillyNPC OpenAI Compatible';
 export const defaultTtsSettings = Object.freeze({
     enabled: false,
     autoPlay: false,
     model: '',
     npcModel: '',
+    npcVoice: '',
     npcVoices: [],
     npcVoiceMode: 'listed',
     voices: ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer'],
     narratorVoice: 'alloy',
+    catalog: null,
     speed: 1,
 });
 
@@ -25,8 +29,10 @@ export function normalizeTtsSettings(value) {
         autoPlay: raw.autoPlay === true,
         model: typeof raw.model === 'string' ? raw.model.trim().slice(0, 200) : '',
         npcModel: typeof raw.npcModel === 'string' ? raw.npcModel.trim().slice(0, 200) : '',
+        npcVoice: typeof raw.npcVoice === 'string' ? raw.npcVoice.trim().slice(0, 200) : '',
         voices,
         npcVoices: voiceList(Array.isArray(raw.npcVoices) ? raw.npcVoices : []),
+        catalog: normalizeSpeechCatalog(raw.catalog),
         // Preserve the previously implicit local adapter setting when loading old settings.
         npcVoiceMode: raw.npcVoiceMode === 'designed' || (raw.npcVoiceMode === undefined && raw.npcModel === QWEN_MODEL)
             ? 'designed' : 'listed',
@@ -36,7 +42,15 @@ export function normalizeTtsSettings(value) {
 }
 
 export const usesDesignedNpcVoices = config => config?.npcVoiceMode === 'designed';
-export const dialogueVoices = config => config.npcVoices?.length ? config.npcVoices : config.voices;
+export const narratorVoices = config => [...new Set([
+    ...(catalogVoices(config.catalog, config.model).length
+        ? catalogVoices(config.catalog, config.model) : config.voices), config.narratorVoice,
+].filter(Boolean))];
+export const dialogueVoices = config => [...new Set([
+    ...(catalogVoices(config.catalog, config.npcModel || config.model).length
+        ? catalogVoices(config.catalog, config.npcModel || config.model)
+        : config.npcVoices?.length ? config.npcVoices : config.voices), config.npcVoice,
+].filter(Boolean))];
 
 /** The host proxy forwards voice but drops the local service's NPC fields. */
 export function encodeDesignedVoice(card, text) {
@@ -58,19 +72,21 @@ export function resolveUnitSpeech(unit, config, card) {
     const binding = card.presentation?.voices?.[NPC_TTS_PROVIDER]
         || card.presentation?.voices?.['OpenAI Compatible'];
     if (binding?.mode === 'disabled') return { voice: null, model: '' };
+    if (binding?.mode === 'voice') {
+        const voice = resolveUnitVoice(unit, config, card);
+        return voice ? { voice, model: config.npcModel || config.model } : { voice: null, model: '' };
+    }
     if (usesDesignedNpcVoices(config)) {
         const designed = encodeDesignedVoice(card, unit.text);
-        return designed ? { voice: designed, model: config.npcModel || config.model } : narrator;
+        if (designed) return { voice: designed, model: config.npcModel || config.model };
     }
-    if (binding?.mode !== 'voice') return narrator;
-    const voice = resolveUnitVoice(unit, config, card);
-    return voice ? { voice, model: config.npcModel || config.model } : { voice: null, model: '' };
+    return config.npcVoice ? { voice: config.npcVoice, model: config.npcModel || config.model } : narrator;
 }
 
 /** Preview the same binding/fallback used in dialogue; no card means narrator preview. */
 export function resolvePreviewSpeech(voice, config, card, text) {
     if (!card) {
-        if (!config.voices.includes(voice)) throw new Error('Voice is not in the narrator voice list.');
+        if (!narratorVoices(config).includes(voice)) throw new Error('Voice is not in the narrator voice list.');
         return { voice, model: config.model };
     }
     const choice = resolveUnitSpeech({ kind: 'dialogue', text }, config, card);
@@ -85,7 +101,7 @@ export function ttsConfigError(config, endpoint) {
         if (!['http:', 'https:'].includes(url.protocol)) return 'Set an HTTP or HTTPS endpoint in built-in OpenAI Compatible TTS.';
     } catch { return 'Set an endpoint in built-in OpenAI Compatible TTS.'; }
     if (!config.model) return 'Enter a speech model.';
-    if (!config.narratorVoice || !config.voices.includes(config.narratorVoice)) return 'Choose an available narrator voice.';
+    if (!config.narratorVoice || !narratorVoices(config).includes(config.narratorVoice)) return 'Choose an available narrator voice.';
     return '';
 }
 
@@ -94,7 +110,7 @@ export function resolveUnitVoice(unit, config, card) {
     const binding = card.presentation?.voices?.[NPC_TTS_PROVIDER]
         || card.presentation?.voices?.['OpenAI Compatible'];
     if (binding?.mode === 'disabled') return null;
-    if (binding?.mode !== 'voice') return config.narratorVoice;
+    if (binding?.mode !== 'voice') return config.npcVoice || config.narratorVoice;
     const voices = dialogueVoices(config);
     const voice = voices.find(id => id === binding.voiceId)
         || voices.find(id => id === binding.voiceName);

@@ -58,19 +58,46 @@ export function stopNpcTts({ preserveGeneration = false } = {}) {
     updateButtons();
 }
 
-export async function previewNpcVoice(voice, card) {
+async function playPreview(resolveChoice) {
     stopNpcTts();
     const config = normalizeTtsSettings(getSettings().tts);
     const issue = ttsConfigError(config, hostSpeechEndpoint());
     if (issue) throw new Error(issue);
     const unit = { kind: 'dialogue', text: 'Hello. It is good to meet you.' };
-    const designCard = cardWithVoiceCue(card, card?.name);
-    const choice = resolvePreviewSpeech(voice, config, designCard, unit.text);
+    const choice = resolveChoice(config, unit);
+    if (!choice.voice) throw new Error('This NPC voice is unavailable.');
     const controller = new AbortController(); previewController = controller;
     try {
         const blob = await synthesizeSpeech({ ...unit, ...choice }, config, controller.signal);
         if (!controller.signal.aborted) await playSpeechAudio(blob, controller.signal);
     } finally { if (previewController === controller) previewController = null; }
+}
+
+export async function previewNpcVoice(voice, card) {
+    return playPreview((config, unit) => resolvePreviewSpeech(voice, config,
+        cardWithVoiceCue(card, card?.name), unit.text));
+}
+
+/** Preview the same default preset and NPC model used for dialogue without a card override. */
+export async function previewNpcDefaultVoice() {
+    return playPreview((config, unit) => {
+        if (!config.npcVoice) throw new Error('Choose an NPC preset voice first.');
+        return resolveUnitSpeech(unit, config, { id: 'castward-preview', presentation: { voices: {} } });
+    });
+}
+
+/** A draft description gets a stable preview identity without editing a character. */
+export async function previewNpcDesignedVoice(instructions) {
+    const description = String(instructions || '').trim().slice(0, 500);
+    if (!description) throw new Error('Enter voice design instructions first.');
+    let hash = 2166136261;
+    for (const byte of new TextEncoder().encode(description)) hash = Math.imul(hash ^ byte, 16777619);
+    const card = { id: `castward-preview-${(hash >>> 0).toString(16)}-${description.length}`,
+        presentation: { voices: {}, voiceDesign: { description, version: 1 } } };
+    return playPreview((config, unit) => {
+        if (!usesDesignedNpcVoices(config)) throw new Error('Enable character voice descriptions first.');
+        return resolveUnitSpeech(unit, config, card);
+    });
 }
 
 export async function playNpcMessage(messageId, { automatic = false } = {}) {

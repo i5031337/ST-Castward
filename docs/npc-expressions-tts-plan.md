@@ -132,9 +132,15 @@ legacy SillyNPC endpoint settings are discarded. Requests use SillyTavern's cust
 speech proxy, keeping the key out of extension settings.
 
 Narration and actions use the narrator model and preset voice. Recognized NPC
-quotes use the NPC model and voice binding. Persona dialogue uses narration.
+quotes use the NPC model and default preset voice, with per-character presets
+or described voices taking precedence. Persona dialogue uses narration.
 Unknown speakers use narration unless a usable chat voice cue supplies a design.
-Missing voices and explicit silence retain their existing routing behavior.
+Missing per-character presets and explicit silence retain their existing routing behavior.
+The Speech tab saves discovered model and voice choices in extension settings,
+so remote browsers can select them without reaching the local speech endpoint.
+Its preview controls play the narrator or NPC default preset, or use draft
+instructions to hear a designed NPC voice without editing a character card.
+Repeating the same draft reuses its preview identity on the speech server.
 
 The local `qwentts` service supports `qwen3-tts` NPC dialogue and `kokoro`
 narration. The unmodified host proxy carries Qwen fields inside a `sillynpc-v1:`

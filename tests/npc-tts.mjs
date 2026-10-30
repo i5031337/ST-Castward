@@ -217,7 +217,28 @@ test('narrator fallbacks use narrator model for cardless, default and undescribe
     assert.throws(() => resolvePreviewSpeech('npc-only', config, null, unit.text), /narrator voice list/);
     assert.deepEqual(dialogueVoices(normalizeTtsSettings({ voices: ['narrator'] })), ['narrator']);
     config.npcVoiceMode = 'designed';
-    assert.deepEqual(resolveUnitSpeech(unit, config, card), narrator);
+    assert.deepEqual(resolveUnitSpeech(unit, config, card), { voice: 'npc-only', model: 'dialogue-model' });
+});
+
+test('NPC default preset and per-character overrides use the selected NPC model', () => {
+    const config = normalizeTtsSettings({ model: 'narrator', narratorVoice: 'alba', voices: ['alba'],
+        npcModel: 'npc', npcVoice: 'anna', catalog: {
+            endpoint: 'http://localhost:8001/v1/audio/speech', models: ['narrator', 'npc'],
+            voices: [{ id: 'alba', model: 'narrator' }, { id: 'anna', model: 'npc' },
+                { id: 'cosette', model: 'npc' }], designModels: ['npc'],
+        } });
+    const unit = { kind: 'dialogue', text: 'Hello.' };
+    assert.deepEqual(dialogueVoices(config), ['anna', 'cosette']);
+    assert.deepEqual(resolveUnitSpeech(unit, config, { id: 'npc' }), { voice: 'anna', model: 'npc' });
+    const card = { id: 'npc', presentation: { voices: { [NPC_TTS_PROVIDER]: {
+        mode: 'voice', voiceId: 'cosette',
+    } } } };
+    assert.deepEqual(resolveUnitSpeech(unit, config, card), { voice: 'cosette', model: 'npc' });
+    config.npcVoiceMode = 'designed';
+    card.presentation.voiceDesign = { description: 'A warm voice.', version: 1 };
+    assert.deepEqual(resolveUnitSpeech(unit, config, card), { voice: 'cosette', model: 'npc' });
+    card.presentation.voices[NPC_TTS_PROVIDER].mode = 'default';
+    assert.match(resolveUnitSpeech(unit, config, card).voice, /^sillynpc-v1:/u);
 });
 
 test('local voice design is an explicit capability independent of model identifier', () => {
