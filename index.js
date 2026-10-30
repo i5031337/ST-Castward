@@ -117,7 +117,7 @@ jQuery(async () => {
         initPlaceLore();
         await addSettingsPanel();
         wireAvatarClicks();
-        // Presets replace the prompt list, so restore managed prompts and refresh the HUD.
+        // Refresh the HUD and clear retired prompt-list entries after preset changes.
         eventSource.on(event_types.OAI_PRESET_CHANGED_AFTER, () => {
             // Keep portrait refresh independent of prompt failures.
             try {
@@ -130,7 +130,7 @@ jQuery(async () => {
             try {
                 applyDialogueFormatPrompt();
             } catch (err) {
-                debugLog('Could not put the writing prompts back after the preset change', err);
+                debugLog('Could not refresh the writing prompt after the preset change', err);
             }
         });
 

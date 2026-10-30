@@ -283,8 +283,8 @@ This map covers tracked runtime files, tests and support files. Source files and
 | `src/prompts/prompt-texts-reader.js` | Reader and status extraction prompt templates. |
 | `src/prompts/prompt-texts-other.js` | Other built-in prompt templates. |
 | `src/prompts/fill-preset.js` | Automatic character fill stage selection. |
-| `src/prompts/prompt-slot.js` | Place writing prompts in SillyTavern's prompt manager. |
-| `tests/prompt-slot-rebrand.mjs` | Rename the former default dialogue prompt without changing custom names, placement, order, or toggles. |
+| `src/prompts/prompt-slot.js` | Inject writing prompts and remove retired prompt-list entries. |
+| `tests/prompt-slot-cleanup.mjs` | Remove retired prompt-list entries while preserving normal prompt injection. |
 | `src/prompts/macros.js` | Expand extension template macros. |
 | `src/prompts/dialogue-format.js` | Dialogue formatting instructions. |
 

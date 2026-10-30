@@ -296,6 +296,7 @@ function normalizeTrackerSchema(settings) {
 export function normalizeSettings(settings) {
     if (!settings || typeof settings !== 'object') return;
     delete settings.systemWorldArchive;
+    delete settings.dialogueFormatInPromptList;
     const currentVersion = defaultSettings.version;
 
     normaliseBaseSettings(settings);

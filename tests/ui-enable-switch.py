@@ -18,8 +18,7 @@ with browser_session() as browser:
           const { reprocessMessage, reprocessAllMessages, setReprocessCallback } = await import(root + 'src/chat/chat.js');
           const { extractStateFromMessage } = await import(root + 'src/tracker/extractor/status-extractor.js');
           const settings = getSettings();
-          const saved = { enabled: settings.enabled, tracker: { ...settings.statusTracker },
-            dialogueList: settings.dialogueFormatInPromptList };
+          const saved = { enabled: settings.enabled, tracker: { ...settings.statusTracker } };
           const fixture = document.createElement('div');
           const result = {};
           let redraws = 0;
@@ -27,7 +26,6 @@ with browser_session() as browser:
             result.bothPlaces = !!document.querySelector('#sillynpc-settings [data-setting="enabled"] input')
               && !!document.querySelector('#sillynpc-advanced-view [data-setting="enabled"] input');
             setReprocessCallback(() => { redraws++; });
-            settings.dialogueFormatInPromptList = false;
             settings.statusTracker.enabled = true;
             settings.statusTracker.extractionMode = 'manual';
             settings.statusTracker.scanButtonEnabled = true;
@@ -59,7 +57,6 @@ with browser_session() as browser:
           finally {
             fixture.remove(); settings.enabled = saved.enabled;
             Object.assign(settings.statusTracker, saved.tracker);
-            settings.dialogueFormatInPromptList = saved.dialogueList;
             refreshExtensionEnabled(); setReprocessCallback(reprocessAllMessages);
           }
           document.documentElement.setAttribute('data-enable-smoke', JSON.stringify(result));

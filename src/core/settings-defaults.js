@@ -29,8 +29,6 @@ export const defaultSettings = {
     npcCreationToolEnabled: true,
     /** 0 puts it after the newest message - the last thing read before answering. */
     dialogueFormatDepth: 0,
-    /** Expose formatting in the host prompt list instead of injecting it at dialogueFormatDepth. */
-    dialogueFormatInPromptList: false,
     /** Colour a speaker who has no card, from their name. */
     autoColorUnknownSpeakers: true,
     /** Draw a missing portrait after empty-card Fill or reader-generated NPC profiles. */

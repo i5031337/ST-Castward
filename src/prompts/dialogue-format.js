@@ -16,14 +16,9 @@ export function applyDialogueFormatPrompt() {
     const off = !settings.enabled || !settings.dialogueFormatEnabled;
 
     placeWritingPrompt(DIALOGUE_FORMAT_KEY, off ? '' : dialogueFormatText(), {
-        inList: settings.dialogueFormatInPromptList === true,
         depth: Number(settings.dialogueFormatDepth ?? 0),
-        name: 'Castward - Dialogue Format',
-        previousName: 'SillyNPC - Dialogue Format',
     });
 
     if (off) return;
-    debugLog(settings.dialogueFormatInPromptList === true
-        ? "Dialogue format handed to SillyTavern's prompt list"
-        : `Dialogue format sent at depth ${Number(settings.dialogueFormatDepth ?? 0)}`);
+    debugLog(`Dialogue format sent at depth ${Number(settings.dialogueFormatDepth ?? 0)}`);
 }
