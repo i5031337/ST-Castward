@@ -144,7 +144,7 @@ async function performExtraction(messageText, messageId, options, signal) {
         const strangers = strangersToClassify(messageId);
         const schema = buildExtractionSchema(trackerSettings, { strangers, state, cards: getAllCharacters() });
         const leadUp = collectLeadUp(messageId, Number(trackerSettings.extractionContextMessages ?? 2));
-        const userPrompt = buildUserPrompt(state, String(messageText), trackerSettings, leadUp, { strangers });
+        const userPrompt = buildUserPrompt(state, String(messageText), trackerSettings, leadUp, { strangers, messageId });
 
         debugLog('Extraction request for message', key);
         const raw = await requestExtraction(userPrompt, schema, trackerSettings);

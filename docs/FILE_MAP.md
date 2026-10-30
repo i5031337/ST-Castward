@@ -126,7 +126,7 @@ This map covers tracked runtime files, tests and support files. Source files and
 | `src/npc/npc-generation-format.js` | Reader-compatible JSON repair, numeric stat string normalization, and concise model-facing template definitions. |
 | `src/npc/npc-naming.js` | Randomized naming briefs: adjustable syllable/stress weights, four distinct initials favoring unused cast initials, and uniform selection. Cultural fit overrides the hints. |
 | `src/npc/npc-collection-generation.js` | Player/NPC starting collection selection, reader-style initialization guidance, typed entry contracts, defaults, bounds and identifier validation. |
-| `src/npc/npc-creation.js` | NPC creation lifecycle, identity/request deduplication, validation retries, cancellation, guarded commits, and preservation of established stats and belongings. |
+| `src/npc/npc-creation.js` | NPC creation lifecycle, identity/request deduplication, validation retries, cancellation, guarded commits, creation-turn reference, and preservation of established stats and belongings. |
 | `src/npc/npc-generation.js` | Narrator tool parameters, System-aware NPC response contracts, prompts, name/alias matching, and generated NPC validation. |
 | `src/npc/npc-lore-handoff.js`, `src/npc/npc-lore-runtime.js` | Prepare tool-created profiles for immediate continuation, and compact historical tool results in outgoing prompts. |
 | `tests/npc-lore-handoff.mjs`, `tests/npc-lore-runtime.mjs` | Single-source tool lore, saved policy preservation, continuation boundaries, and missing-book/failure handling. |
@@ -265,7 +265,7 @@ This map covers tracked runtime files, tests and support files. Source files and
 | `src/tracker/extractor/status-extractor-schema-provider.js` | Keep numeric patterns on llama.cpp/GGUF routes and adapt portable schemas per request destination. |
 | `src/tracker/extractor/status-extractor-readings.js` | Absolute model readings, numeric punctuation repair, earned-only XP protection, and rejected stat-delta output. |
 | `src/tracker/stat-reading-equality.js` | Compare unchanged stat readings while respecting explicit pool maximum edits. |
-| `src/tracker/extractor/status-extractor-prompt.js` | Extraction prompt assembly and recent message context. |
+| `src/tracker/extractor/status-extractor-prompt.js` | Extraction prompt assembly, recent message context, and prompt-only holdings for NPC cards created on the current turn. |
 | `src/tracker/extractor/status-extractor-prompt-state.js` | Describe current state, collections, and limits for prompts. |
 | `src/tracker/extractor/status-extractor-prompt-offstage.js` | Describe known absent NPCs named in the reply or activated lore, including held stats, collections, and profiles. |
 | `src/tracker/extractor/status-extractor-request.js` | Send and normalize model extraction responses. |
@@ -276,7 +276,7 @@ This map covers tracked runtime files, tests and support files. Source files and
 | `src/tracker/extractor/status-profile-followups.js`, `src/tracker/extractor/status-profile-followups-runtime.js` | Defer profile batches until review completes, preserve source boundaries, and own follow-up cancellation, locking and report updates. |
 | `tests/npc-profile-followups.mjs`, `tests/npc-profile-followups-runtime.mjs`, `tests/ui-profile-review.py`, `tests/fixtures/ui-profile-review.js` | Review-before-autofill ordering, reviewed starting sheets, partial review, stale work, Stop, and real Apply/Discard controls with mocked generation. |
 | `src/tracker/extractor/status-npc-profiles.js` | Optional profile generation for newly discovered reader NPCs, with chat and reply guards. |
-| `src/tracker/extractor/status-collection-normalize.js` | Repair omitted collection IDs only when one actor-compatible destination exists; warn and discard ambiguous changes. |
+| `src/tracker/extractor/status-collection-normalize.js` | Repair omitted collection IDs only when one actor-compatible destination exists; reject bare model lists that would be interpreted as additions. |
 | `src/tracker/extractor/status-extraction-report.js` | Persist swipe-specific reader reports, guard late results, and refresh summaries against current applied and pending changes. |
 | `src/tracker/extractor/status-report-counts.js` | Summarize applied and pending changes by category and actor, combining pool value and maximum rows for reporting. |
 | `src/prompts/prompt-texts.js` | Built-in prompt text and template substitution. |

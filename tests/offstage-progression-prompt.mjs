@@ -39,6 +39,7 @@ test('offstage prompt exposes filled locked stats as initialization reference da
     const describe = load('../src/tracker/extractor/status-extractor-prompt-offstage.js', {
         progressionFields, npcTemplateFor: actor => ({ id: actor.npcTemplateId }),
         charactersMentionedIn: () => [card], charactersFromActivatedLore: () => [],
+        getChatCharacters: () => [],
         liveFactsFor: actor => ({ stats: actor.statusOverrides, collections: {} }),
         summariseCollections: () => ({}), profileBlock: () => ({}), isReaderStat,
     }, 'describeAbsentButNamed');
@@ -46,6 +47,20 @@ test('offstage prompt exposes filled locked stats as initialization reference da
     assert.equal(records[0].offstage, true);
     assert.deepEqual(records[0].stats, { Experience: '90/100', Rank: '1', Power: '5' });
 
+});
+
+test('a newly created chat NPC exposes starting stacks even before joining the active cast', () => {
+    const created = { name: 'Bram', npcTemplateId: 'fighter', npcCreation: { requestKey: 'river-guard' },
+        statusCollections: { equipment: [{ name: 'Crossbow bolts', quantity: 12 }] } };
+    const describe = load('../src/tracker/extractor/status-extractor-prompt-offstage.js', {
+        npcTemplateFor: actor => ({ id: actor.npcTemplateId }),
+        charactersMentionedIn: (_text, cards) => cards?.filter(entry => entry.name === 'Bram') || [],
+        getChatCharacters: () => [created], charactersFromActivatedLore: () => [],
+        liveFactsFor: actor => ({ stats: {}, collections: actor.statusCollections }),
+        summariseCollections: actor => actor.collections, profileBlock: () => ({}),
+    }, 'describeAbsentButNamed');
+    const records = JSON.parse(describe({ characters: [] }, 'Bram checks his quiver.', tracker));
+    assert.deepEqual(records[0].collections.equipment, [{ name: 'Crossbow bolts', quantity: 12 }]);
 });
 
 test('collection removal schema uses the configured primary field type', () => {

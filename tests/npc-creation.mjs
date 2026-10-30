@@ -14,6 +14,7 @@ test('creation returns only a receipt while saving the complete profile and shee
     assert.equal(f.cards[0].statusOverrides.XP, '0/100');
     assert.deepEqual(f.cards[0].statusCollections, {});
     assert.equal(f.cards[0].npcCreation.requestKey, request.requestKey);
+    assert.equal(f.cards[0].npcCreation.userMessageIndex, 0);
     assert.equal(f.calls.length, 1);
     assert.doesNotMatch(f.calls[0].userPrompt, /player-only/);
 });

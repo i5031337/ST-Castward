@@ -15,15 +15,15 @@ import { buildLocationProposals } from '../../src/locations/location-proposals.j
 import { normalizeCollectionUpdates } from '../../src/tracker/extractor/status-collection-normalize.js';
 import { normalizeModelReadings } from '../../src/tracker/extractor/status-extractor-readings.js';
 
-// Host boundaries only: these fixtures have no saved cards, lore, persona profile or chat UI.
+// Host boundaries only: fixtures may supply chat cards, but have no lore, persona profile or chat UI.
 // Production prompt/schema, numeric normalization, sanitation and place review are exercised.
-export async function harness(systemId, state, { chat = [] } = {}) {
+export async function harness(systemId, state, { chat = [], cards = [] } = {}) {
     const system = createBuiltinSystem(systemId);
     const settings = { ...structuredClone(defaultTrackerSettings), ...projectSystemTracker(system) };
     const root = { activeSystem: system.name, statusTracker: { ...settings, presets: { [system.name]: { definition: system } } } };
     profiles.setProfileSettingsProvider(() => root);
     const status = { getCurrentPersonaName: () => 'Alex', getPlayerCard: () => null,
-        findCardForName: () => null,
+        findCardForName: name => cards.find(card => card.name.toLowerCase() === String(name).toLowerCase()) || null,
         statsInSystem: (values, scope, actor) => Object.fromEntries(Object.entries(values || {})
             .filter(([name]) => (scope === 'npcStats' ? templates.npcStatsFor(actor, settings) : settings[scope]).some(stat => stat.name === name))) };
     const cache = new Map();
@@ -35,11 +35,12 @@ export async function harness(systemId, state, { chat = [] } = {}) {
         if (filename.endsWith('/st-context.js')) return { getContext: () => ({ chat }) };
         if (filename.endsWith('/core/settings.js')) return { getSettings: () => root, saveSettings() {} };
         if (filename.endsWith('/events.js')) return { eventSource: { emit() {} } };
-        if (filename.endsWith('/characters/character-repository.js')) return { getAllCharacters: () => [] };
+        if (filename.endsWith('/characters/character-repository.js')) return { getAllCharacters: () => cards, getChatCharacters: () => cards.filter(card => card.npcCreation) };
         if (filename.endsWith('/default-portraits.js')) return { poolTags: () => [], strangerKind: () => undefined };
-        if (filename.endsWith('/chat/chat.js')) return { charactersMentionedIn: () => [] };
+        if (filename.endsWith('/chat/chat.js')) return { charactersMentionedIn: (text, candidates = cards) => candidates.filter(card =>
+            String(text).toLowerCase().includes(card.name.toLowerCase())) };
         if (filename.endsWith('/activated-lore.js')) return { charactersFromActivatedLore: () => [] };
-        if (filename.endsWith('/api/api.js')) return { liveFactsFor: () => ({}) };
+        if (filename.endsWith('/api/api.js')) return { liveFactsFor: card => ({ stats: card.statusOverrides, collections: card.statusCollections }) };
         if (filename.endsWith('/core/utils.js')) return load('../../src/core/utils-format.js');
         let source = readFileSync(url, 'utf8');
         const dependencies = {};
@@ -68,10 +69,10 @@ export async function harness(systemId, state, { chat = [] } = {}) {
     cache.set(new URL('../../src/core/profile-fields.js', import.meta.url).href, profiles);
     const prompt = await load('../../src/tracker/extractor/status-extractor-prompt.js');
     const schema = await load('../../src/tracker/extractor/status-extractor-schema.js');
-    const deps = { ...statValueUtils, findCardForName: () => null, allowedValues: def => def.options || [],
+    const deps = { ...statValueUtils, findCardForName: status.findCardForName, allowedValues: def => def.options || [],
         findMatchingStatKey: (values, name) => Object.keys(values).find(key => key.toLowerCase() === name.toLowerCase()) };
     const host = { ...templates, ...profiles, ...constants, ...bounds, ...statValueUtils,
-        getSettings: () => root, saveSettings() {}, getAllCharacters: () => [],
+        getSettings: () => root, saveSettings() {}, getAllCharacters: () => cards,
         getContext: () => ({ chat }), eventSource: { emit() {} } };
     const bind = file => bindStatusModule(new URL(`../../src/tracker/${file}.js`, import.meta.url), deps, host);
     bind('status-stat-values');
@@ -88,7 +89,7 @@ export async function harness(systemId, state, { chat = [] } = {}) {
     });
     bind('status-apply-update');
     return { settings, system, basePrompt: () => prompt.buildReaderBasePrompt(settings), collectLeadUp: prompt.collectLeadUp,
-        prompt: (text, earlier = []) => prompt.buildUserPrompt(state, text, settings, earlier),
+        prompt: (text, earlier = [], options = {}) => prompt.buildUserPrompt(state, text, settings, earlier, options),
         schema: schema.buildExtractionSchema(settings, { state }),
         normalize(raw, text) {
             const update = structuredClone(raw);

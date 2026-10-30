@@ -6,6 +6,7 @@ import { setNpcTemplateSettingsProvider } from '../src/core/npc-templates.js';
 import { collectionAppliesTo, collectionTargets } from '../src/core/collection-targets.js';
 import { normalizeCollectionUpdates } from '../src/tracker/extractor/status-collection-normalize.js';
 import { imageItemsFromCollections } from '../src/api/api-image-items.js';
+import { calculateTrackerUpdate } from '../src/tracker/tracker-update-calculation.js';
 
 const definition = normalizeSystemDefinition({ schemaVersion: 1, name: 'Types',
     npcTemplates: [{ id: 'human', name: 'Human' }, { id: 'pokemon', name: 'Pokémon' }],
@@ -48,6 +49,28 @@ test('unnamed collection changes resolve using an established template or a vali
     assert.deepEqual(update.characters[1].collections, { moves: { add: [{ name: 'Thunderbolt' }] } });
     assert.equal(update.characters[2].collections, undefined);
     assert.match(warnings[0], /0 possible collections/);
+});
+
+test('a model full-list reply leaves a new NPC card’s counted holdings unchanged', () => {
+    const collection = { id: 'equipment', targets: ['npc'], trackQuantity: true, fields: [
+        { name: 'name', isPrimary: true, type: 'text' },
+        { name: 'quantity', type: 'number', defaultValue: '1', min: '0' },
+    ] };
+    const rules = { globalStats: [], playerStats: [], npcStats: [], npcTemplates: [], collections: [collection] };
+    const card = { id: 'bram', name: 'Bram', statusOverrides: {}, statusCollections: {
+        equipment: [{ name: 'Crossbow bolts', quantity: 12 }],
+    } };
+    const state = { global: {}, player: { name: 'Alex', stats: {}, collections: {} }, characters: [] };
+    const update = { characters: [{ name: 'Bram', collections: {
+        equipment: [{ name: 'Crossbow bolts', quantity: 12 }],
+    } }] };
+    const warnings = normalizeCollectionUpdates(update, rules, state, [card]);
+    assert.match(warnings[0], /bare list would repeat held items/);
+    const result = calculateTrackerUpdate({ state, tracker: rules, cards: [card], itemLibrary: {},
+        actorDecisions: [{ name: 'Bram', canonicalName: 'Bram', allowed: true }],
+        playerIdentity: { name: 'Alex' }, update, policy: { preview: true, admitCharacters: true }, timestamp: 1 });
+    assert.deepEqual(result.offstageComparisons[0].actor.collections.equipment, card.statusCollections.equipment);
+    assert.deepEqual(result.libraryChanges, []);
 });
 
 test('model adds, removals, updates and replacements cannot change another template’s collection', () => {

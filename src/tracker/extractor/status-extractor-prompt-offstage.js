@@ -1,5 +1,6 @@
 import { npcTemplateFor } from '../../core/npc-templates.js';
 import { charactersMentionedIn } from '../../chat/chat.js';
+import { getChatCharacters } from '../../characters/character-repository.js';
 import { charactersFromActivatedLore } from '../../lore/activated-lore.js';
 import { liveFactsFor } from '../../api/api.js';
 import { summariseCollections, profileBlock } from './status-extractor-prompt-state.js';
@@ -21,7 +22,9 @@ import { summariseCollections, profileBlock } from './status-extractor-prompt-st
  */
 export function describeAbsentButNamed(state, messageText, trackerSettings) {
     const present = new Set((state.characters || []).map(c => String(c.name).toLowerCase()));
-    const candidates = [...charactersMentionedIn(messageText), ...charactersFromActivatedLore()];
+    const createdHere = getChatCharacters().filter(card => card.npcCreation);
+    const candidates = [...charactersMentionedIn(messageText),
+        ...charactersMentionedIn(messageText, createdHere), ...charactersFromActivatedLore()];
 
     const seen = new Set();
     const records = [];

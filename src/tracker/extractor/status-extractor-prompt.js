@@ -1,9 +1,12 @@
 import { buildLocationReaderNotes } from '../../locations/location-context.js';
 import { collectionQuantityField } from '../../core/collection-fields.js';
 import { collectionAppliesTo } from '../../core/collection-targets.js';
-import { describeNpcTemplates, npcTemplates, npcStatsFor } from '../../core/npc-templates.js';
+import { activeNpcSystem, describeNpcTemplates, npcTemplates, npcStatsFor } from '../../core/npc-templates.js';
 import { promptText } from '../../prompts/prompt-texts.js';
 import { getContext } from '../../../../../../st-context.js';
+import { getSettings } from '../../core/settings.js';
+import { getChatCharacters } from '../../characters/character-repository.js';
+import { charactersMentionedIn } from '../../chat/chat.js';
 import { debugLog, SYSTEM_PROMPT } from '../../core/constants.js';
 import { describeReaderStats } from '../stat-prompt-definitions.js';
 import { strangerValues } from './status-extractor-schema.js';
@@ -14,6 +17,7 @@ import { isReaderStat } from '../stat-update-policy.js';
 import { isImageOnlyMessage } from '../ui/status-ui-placement.js';
 import { getCurrentPersonaName } from '../status-logic.js';
 import { progressionFields } from '../progression-fields.js';
+import { buildActorState } from '../actor-calculation.js';
 
 /**
  * Extra notes for the reader, from whoever registered one.
@@ -142,25 +146,45 @@ export function buildReaderBasePrompt(trackerSettings) {
     });
 }
 
+/** Show cards created for this reply as held state without writing scene presence. */
+function stateForReader(state, messageText, trackerSettings, messageId) {
+    const chat = getContext()?.chat;
+    const index = Number(messageId);
+    if (!Array.isArray(chat) || !Number.isInteger(index) || index < 0 || index >= chat.length) return state;
+    let userIndex = index - 1;
+    while (userIndex >= 0 && !chat[userIndex]?.is_user) userIndex--;
+    if (userIndex < 0) return state;
+    const present = new Set((state.characters || []).map(actor => String(actor.name).toLowerCase()));
+    const system = getSettings().activeSystem;
+    const created = getChatCharacters().filter(card => card.npcCreation?.userMessageIndex === userIndex
+        && card.npcCreation.system === system);
+    const additions = charactersMentionedIn(messageText, created)
+        .filter(card => !present.has(String(card.name).toLowerCase()))
+        .map(card => buildActorState({ name: card.name, state, tracker: trackerSettings,
+            system: activeNpcSystem(getSettings()), cards: [card] }));
+    return additions.length ? { ...state, characters: [...(state.characters || []), ...additions] } : state;
+}
+
 /** Builds the reader request from state, the fresh exchange and older context. */
-function readerValues(state, messageText, trackerSettings, leadUp = [], { strangers = [] } = {}) {
+function readerValues(state, messageText, trackerSettings, leadUp = [], { strangers = [], messageId } = {}) {
     const evidence = readerEvidence(leadUp);
     const exchangeText = [evidence.userTurn, messageText].filter(Boolean).join('\n');
+    const visibleState = messageId === undefined ? state : stateForReader(state, messageText, trackerSettings, messageId);
     return {
         playerName: getCurrentPersonaName(),
-        state: describeCurrentState(state, trackerSettings) || '(empty)',
-        offstage: describeAbsentButNamed(state, exchangeText, trackerSettings),
+        state: describeCurrentState(visibleState, trackerSettings) || '(empty)',
+        offstage: describeAbsentButNamed(visibleState, exchangeText, trackerSettings),
         ...readerDefinitionValues(trackerSettings),
         // Whatever else has asked to be told to the reader - see registerExtractionNotes.
         notes: [describeNpcTemplates(), describeExtractionNotes(state, messageText),
             state?.locations?.enabled ? buildLocationReaderNotes(state, messageText, leadUp) : ''].filter(Boolean).join('\n'),
         locationReminder: state?.locations?.enabled
             ? 'Include the top-level boolean "locationChanged": true for a changed scene location, false otherwise.' : '',
-        poolRecovery: describePoolRecovery(state, trackerSettings),
-        injuryConsequence: describeInjuryConsequence(state, trackerSettings),
+        poolRecovery: describePoolRecovery(visibleState, trackerSettings),
+        injuryConsequence: describeInjuryConsequence(visibleState, trackerSettings),
         ...strangerValues(strangers),
-        minimalReply: buildMinimalExample(state, trackerSettings),
-        changedReply: buildChangedExample(state, trackerSettings),
+        minimalReply: buildMinimalExample(visibleState, trackerSettings),
+        changedReply: buildChangedExample(visibleState, trackerSettings),
         newNpcReply: buildNewNpcExample(trackerSettings, state?.locations?.enabled),
         ...evidence,
         message: messageText,

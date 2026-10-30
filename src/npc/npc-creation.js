@@ -134,7 +134,8 @@ export function createNpcCreationService({ getContext, getSettings, getCards, ge
                 }
                 draft.statusCollections = { ...draft.statusCollections, ...structuredClone(known.collections || {}) };
             }
-            const card = commit({ ...draft, npcCreation: { requestKey: request.requestKey, system, chatId } });
+            const card = commit({ ...draft, npcCreation: { requestKey: request.requestKey, system, chatId,
+                userMessageIndex: context.chat?.lastIndexOf(latestUser) ?? -1 } });
             const currentCard = () => isCurrent() && getChatCards().includes(card);
             return deliver(card, false, currentCard);
         };

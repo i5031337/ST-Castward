@@ -47,10 +47,10 @@ Use the field's current scale for estimates.
 Apply configured persistence and reset rules.
 Update the listed editable fields.
 {{#collections}}
-Match mentioned possessions to the owner’s recorded entries before proposing changes.
-Add newly acquired items and additional copies, reporting the quantity gained.
+Use recorded holdings as the baseline for each owner, including newly created NPCs.
+Report collection changes established in this exchange. Initialize an unrecorded NPC with established starting possessions.
+For counted items, give the quantity gained or spent with add or remove.
 Match each item’s placement to the collection’s purpose.
-Use established possessions for a new NPC's starting items.
 Treat scene props as part of the setting.
 Add missing abilities or knowledge when demonstrated, including during a failed action.
 Reusable entries stay held after use.
@@ -265,10 +265,10 @@ The application handles level-ups and the XP remainder; report the total before 
 Omit existing configured level and level-bonus fields. A blank NPC level field may be initialized.
 {{/xpProgression}}
 {{#schemas}}
-Match mentioned possessions to the owner’s recorded entries before proposing changes.
-Add newly acquired items and additional copies, reporting the quantity gained.
+Use recorded holdings as the baseline for each owner, including newly created NPCs.
+Report collection changes established in this exchange. Initialize an unrecorded NPC with established starting possessions.
+For counted items, give the quantity gained or spent with add or remove.
 Match each item’s placement to the collection’s purpose.
-Use established possessions for a new NPC's starting items.
 Treat scene props as part of the setting.
 Add missing abilities or knowledge when demonstrated, including during a failed action.
 Reusable entries stay held after use.
