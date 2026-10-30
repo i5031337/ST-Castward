@@ -1,6 +1,6 @@
 import { createCompletedLineStream } from './line-stream.js';
 
-export const speechUnitKey = unit => JSON.stringify([unit.kind, unit.npcId, unit.speakerLabel, unit.text, unit.dialogueLineIndex]);
+export const speechUnitKey = unit => JSON.stringify([unit.kind, unit.npcId, unit.isPersona, unit.speakerLabel, unit.text, unit.dialogueLineIndex]);
 let serial = 0;
 
 /** Generation-scoped producer. Reads and playback are adapters so raw boundaries stay testable. */

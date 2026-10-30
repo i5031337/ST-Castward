@@ -10,16 +10,17 @@ export function buildVoicesSection(card, { save = () => {
     if (isChatCharacter(card.id)) getContext()?.saveMetadataDebounced?.();
     else saveSettings();
 }, previewVoice = previewNpcVoice } = {}) {
+    const player = card.isPlayer === true;
     const root = document.createElement('fieldset'); root.className = 'sillynpc-voice-editor';
     const legend = document.createElement('legend'); legend.textContent = 'Dialogue voice'; root.append(legend);
     const note = document.createElement('p');
     note.textContent = 'Uses the built-in OpenAI Compatible endpoint and API key. Set speech models in Castward settings.';
     root.append(note);
     const select = document.createElement('select'); select.className = 'text_pole';
-    select.setAttribute('aria-label', 'NPC dialogue voice'); root.append(select);
+    select.setAttribute('aria-label', player ? 'Player dialogue voice' : 'NPC dialogue voice'); root.append(select);
     const description = document.createElement('textarea');
     description.className = 'text_pole'; description.rows = 3; description.maxLength = 500;
-    description.setAttribute('aria-label', 'NPC voice description');
+    description.setAttribute('aria-label', player ? 'Player voice description' : 'NPC voice description');
     const descriptionLabel = document.createElement('label');
     descriptionLabel.textContent = 'Designed voice description'; descriptionLabel.append(description); root.append(descriptionLabel);
     const version = document.createElement('p'); root.append(version);
@@ -30,7 +31,7 @@ export function buildVoicesSection(card, { save = () => {
     const refresh = () => {
         config = getSettings().tts;
         const presentation = normalizeCharacterPresentation(card);
-        const cue = voiceCueFor(card.name, card);
+        const cue = player ? null : voiceCueFor(card.name, card);
         const saved = presentation.voices;
         const binding = saved[NPC_TTS_PROVIDER] || saved['OpenAI Compatible'];
         const designed = usesDesignedNpcVoices(config);
@@ -40,7 +41,9 @@ export function buildVoicesSection(card, { save = () => {
         description.value = presentation.voiceDesign.description || cue?.description || '';
         version.textContent = `Voice version ${presentation.voiceDesign.version}. Changing the description creates a new voice on the next spoken line.`;
         select.replaceChildren();
-        for (const [value, label] of [['default', designed ? 'Use described voice or NPC default' : 'Use NPC default voice'],
+        const defaultLabel = player ? (designed ? 'Use described voice or default dialogue voice'
+            : 'Use default dialogue voice') : (designed ? 'Use described voice or NPC default' : 'Use NPC default voice');
+        for (const [value, label] of [['default', defaultLabel],
             ['disabled', 'Silent'], ...voices.map(voice => [`voice:${voice}`, voice])]) {
             const option = document.createElement('option'); option.value = value; option.textContent = label; select.append(option);
         }
@@ -76,7 +79,7 @@ export function buildVoicesSection(card, { save = () => {
     description.addEventListener('change', () => {
         const design = normalizeCharacterPresentation(card).voiceDesign;
         const next = description.value.trim().slice(0, 500);
-        if (next === (design.description || voiceCueFor(card.name, card)?.description || '')) return;
+        if (next === (design.description || (player ? '' : voiceCueFor(card.name, card)?.description) || '')) return;
         design.description = next;
         design.version = Number.isSafeInteger(design.version + 1) ? design.version + 1 : 1;
         stopNpcTts(); save(); refresh();

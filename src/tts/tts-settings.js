@@ -55,8 +55,17 @@ export const dialogueVoices = config => [...new Set([
 /** The host proxy forwards voice but drops the local service's NPC fields. */
 export function encodeDesignedVoice(card, text) {
     const design = card?.presentation?.voiceDesign;
-    if (!design?.description || !card?.id) return '';
-    const id = `sn_${String(card.id).replace(/[^A-Za-z0-9_-]/gu, '_')}_v${design.version || 1}`;
+    const identity = card?.isPlayer ? card.personaKey : card?.id;
+    if (!design?.description || !identity) return '';
+    let playerId = '';
+    if (card.isPlayer) {
+        let hash = 14695981039346656037n;
+        for (const byte of new TextEncoder().encode(String(identity)))
+            hash = BigInt.asUintN(64, (hash ^ BigInt(byte)) * 1099511628211n);
+        playerId = `sp_${hash.toString(16)}`;
+    }
+    const id = playerId ? `${playerId}_v${design.version || 1}`
+        : `sn_${String(identity).replace(/[^A-Za-z0-9_-]/gu, '_')}_v${design.version || 1}`;
     if (id.length > 128) return '';
     const maxNewTokens = Math.min(512, Math.max(128, Math.ceil(String(text).length * 2.5)));
     const json = JSON.stringify({ npc_id: id, instructions: design.description, max_new_tokens: maxNewTokens });

@@ -16,12 +16,13 @@ with browser_session() as browser:
           try {
             const { readSpeechUnits } = await import(root + 'src/tts/speech-units.js');
             const { stripVoiceCueNodes, parseVoiceCues } = await import(root + 'src/tts/voice-cue-format.js');
+            const { retainVoiceCues } = await import(root + 'src/tts/voice-cues.js');
             const { resolveUnitSpeech, normalizeTtsSettings } = await import(root + 'src/tts/tts-settings.js');
             const { synthesizeSpeech } = await import(root + 'src/tts/openai-speech.js');
             const host = SillyTavern.getContext();
             const description = 'high-pitched, bubbly, and frantically energetic, 18';
             const dialogue = "Oh! Oh no, no, no! Please don't... stay... together!";
-            const source = '[[NPC_VOICE speaker="Yvonna" description="' + description + '"]]\\n\\nYvonna: "' + dialogue + '"';
+            const source = '[[NPC_VOICE Yvonna description="' + description + '"]]\\n\\nYvonna: "' + dialogue + '"';
             const context = { chat: [{ mes: source, is_user: false }] };
             element = document.createElement('div'); element.setAttribute('mesid', '0');
             const text = document.createElement('div'); text.className = 'mes_text';
@@ -33,6 +34,10 @@ with browser_session() as browser:
             const units = readSpeechUnits(element, options);
             result.units = units.map(unit => [unit.kind, unit.text]);
             result.cues = parseVoiceCues(source, [{speakerLabel: 'Yvonna', text: dialogue}]);
+            const captureContext = { chat: [{ mes: source, is_user: false }], chatMetadata: {},
+                getCurrentChatId: () => 'voice-cue-fixture', saveMetadataDebounced: () => {}, saveChat: () => {} };
+            result.captured = retainVoiceCues(0, [{speakerLabel: 'Yvonna', text: dialogue}], captureContext);
+            result.cleaned = captureContext.chat[0].mes === 'Yvonna: "' + dialogue + '"';
             const config = normalizeTtsSettings({ enabled: true, model: 'kokoro',
                 npcModel: 'qwen3-tts', npcVoiceMode: 'designed', voices: ['af_heart'], narratorVoice: 'af_heart' });
             const card = { id: 'cue-fixture', presentation: {
@@ -70,6 +75,7 @@ with browser_session() as browser:
         # The host's smart punctuation may replace three dots with an ellipsis.
         assert [[kind, text.replace('…', '...')] for kind, text in result['units']] == [['dialogue', dialogue]], result
         assert result['hidden'], result
+        assert result['captured'] == 1 and result['cleaned'], result
         assert result['request']['input'].replace('…', '...') == dialogue, result
         assert result['request']['model'] == 'qwen3-tts', result
         assert result['fields']['instructions'] == 'high-pitched, bubbly, and frantically energetic, 18', result

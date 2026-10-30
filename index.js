@@ -1,6 +1,7 @@
 import { refreshExtensionEnabled } from './src/entry/entry-enabled.js';
 import { initNpcExpressions } from './src/expressions/npc-expressions.js';
 import { initNpcTts } from './src/tts/npc-tts.js';
+import { captureVoiceCues } from './src/tts/voice-cues.js';
 import { initNpcCreationTool } from './src/npc/npc-tool.js';
 import { buildSettingToggle } from './src/ui/shared/ui-shared.js';
 import { eventSource, event_types } from '../../../events.js';
@@ -167,6 +168,9 @@ jQuery(async () => {
         });
 
         eventSource.on(event_types.CHARACTER_MESSAGE_RENDERED, onMessageRendered);
+        eventSource.on(event_types.CHARACTER_MESSAGE_RENDERED, id => {
+            if (getSettings().enabled) captureVoiceCues(id);
+        });
         eventSource.on(event_types.CHARACTER_MESSAGE_RENDERED, onMessageForExtraction);
         eventSource.on(event_types.USER_MESSAGE_RENDERED, onMessageRendered);
         eventSource.on(event_types.MESSAGE_UPDATED, onMessageRendered);

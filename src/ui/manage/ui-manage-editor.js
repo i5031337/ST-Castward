@@ -95,7 +95,10 @@ function buildEditorLeft(char, refreshEditor) {
     // Shared with the player sheet, which has the same picture, gallery and controls.
     const { preview, buttons: imgBtns } = buildPortraitBlock(char, { onChange: () => refreshPortrait(char, refreshEditor) });
     left.append(preview, imgBtns);
-    if (char.isPlayer) return { left };
+    if (char.isPlayer) {
+        left.append(buildVoicesSection(char));
+        return { left };
+    }
 
     const fitField = document.createElement('div');
     fitField.className = 'sillynpc-editor-field';

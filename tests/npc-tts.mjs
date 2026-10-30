@@ -69,6 +69,30 @@ test('Kokoro narration and designed NPC speech use separate model and stable ver
     assert.equal(resolveUnitSpeech({ kind: 'dialogue', text: 'Hello.' }, config, card).voice, null);
 });
 
+test('player designed voice belongs to the persona and uses the dialogue model', () => {
+    const config = normalizeTtsSettings({ model: 'narrator', npcModel: 'dialogue',
+        narratorVoice: 'narrator-voice', npcVoice: 'dialogue-voice', npcVoiceMode: 'designed' });
+    const player = { isPlayer: true, personaKey: 'ava/avatar-one.png', name: 'Alex',
+        presentation: { voiceDesign: { description: 'A steady, soft voice.', version: 2 } } };
+    const speech = resolveUnitSpeech({ kind: 'dialogue', isPersona: true, text: 'I agree.' }, config, player);
+    assert.equal(speech.model, 'dialogue');
+    assert.match(speech.voice, /^sillynpc-v1:/u);
+    const decode = voice => JSON.parse(Buffer.from(voice.split(':')[1].replace(/-/gu, '+').replace(/_/gu, '/'),
+        'base64').toString('utf8'));
+    const first = decode(speech.voice);
+    assert.match(first.npc_id, /^sp_[a-f0-9]+_v2$/u);
+    assert.equal(first.instructions, player.presentation.voiceDesign.description);
+    player.name = 'Renamed Alex';
+    assert.equal(decode(resolveUnitSpeech({ kind: 'dialogue', text: 'I agree.' }, config, player).voice).npc_id,
+        first.npc_id);
+    player.personaKey = 'ava/avatar-two.png';
+    assert.notEqual(decode(resolveUnitSpeech({ kind: 'dialogue', text: 'I agree.' }, config, player).voice).npc_id,
+        first.npc_id);
+    player.presentation.voices = { [NPC_TTS_PROVIDER]: { mode: 'voice', voiceId: 'dialogue-voice' } };
+    assert.deepEqual(resolveUnitSpeech({ kind: 'dialogue', text: 'I agree.' }, config, player),
+        { model: 'dialogue', voice: 'dialogue-voice' });
+});
+
 test('speech queue prefetches requests while keeping playback ordered and bounded', async () => {
     const calls = [];
     let finishFirst;

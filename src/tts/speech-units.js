@@ -77,6 +77,11 @@ export function readSpeechUnits(mesEl, {
     if (!container || idText === null || idText === undefined || idText === ''
         || !Number.isInteger(id) || id < 0) return [];
     const revision = suppliedRevision ?? dialogueRevision(context, id);
+    if (context?.chat?.[id]?.is_user) {
+        const text = clean(speakableText(dialogueContentClone(container)));
+        return text ? [{ messageId: id, revision, lineIndex: 0, kind: 'dialogue',
+            npcId: null, isPersona: true, dialogueLineIndex: null, speakerLabel: '', text }] : [];
+    }
     const units = [];
     const dialogueIndices = new Map();
     for (const record of readDialogueRecords(mesEl, { context, characters, settings, ignoredLabels, personaFor, streaming })) {
@@ -106,6 +111,7 @@ export function readSpeechUnits(mesEl, {
                 if (!piece.text) continue;
                 units.push({ messageId: id, revision, lineIndex: units.length, kind: piece.kind,
                     npcId: piece.kind === 'dialogue' && !match?.persona ? match?.card?.id || null : null,
+                    isPersona: piece.kind === 'dialogue' && Boolean(match?.persona),
                     dialogueLineIndex: piece.kind === 'dialogue' ? dialogueIndex : null,
                     speakerLabel: piece.kind === 'dialogue' ? match?.label.name || '' : '', text: piece.text });
             }

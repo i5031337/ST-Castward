@@ -1,5 +1,6 @@
 const result = {};
-let settings, saved, context, originalFetch, originalPlay, nativeTts, savedNative, element, editor, panel, designPanel, speech, chatLength;
+let settings, saved, context, originalFetch, originalPlay, nativeTts, savedNative, element, playerElement,
+    userElement, pastUserElement, editor, playerEditor, panel, designPanel, speech, chatLength;
 try {
     const entry = [...document.scripts].find(script => script.src.includes('/SillyNPC-XP/index.js'));
     const root = new URL('.', entry.src).href;
@@ -7,11 +8,13 @@ try {
     speech = await import(root + 'src/tts/npc-tts.js');
     const { normalizeTtsSettings, NPC_TTS_PROVIDER } = await import(root + 'src/tts/tts-settings.js');
     const { buildVoicesSection } = await import(root + 'src/ui/characters/ui-voices.js');
+    const { getPlayerCard } = await import(root + 'src/tracker/status-logic.js');
     const { renderTtsSettings } = await import(root + 'src/ui/tts/ui-tts-settings.js');
     const { dialogueFormatText } = await import(root + 'src/prompts/dialogue-format.js');
     settings = getSettings(); context = SillyTavern.getContext();
-    saved = { tts: settings.tts, characters: settings.characters, enabled: settings.enabled,
+    saved = { tts: settings.tts, characters: settings.characters, personaData: settings.personaData, enabled: settings.enabled,
         autoGenerateNpcExpressions: settings.autoGenerateNpcExpressions };
+    settings.personaData = structuredClone(settings.personaData || {});
     nativeTts = context.extensionSettings.tts;
     savedNative = { enabled: nativeTts.enabled, auto_generation: nativeTts.auto_generation,
         periodic_auto_generation: nativeTts.periodic_auto_generation, 'OpenAI Compatible': nativeTts['OpenAI Compatible'] };
@@ -93,6 +96,53 @@ try {
     card.presentation.voices[NPC_TTS_PROVIDER] = { mode: 'default' };
     await speech.previewNpcVoice('', card);
     result.explicitDesign = calls.at(-1).model === 'arbitrary-design-adapter' && calls.at(-1).voice.startsWith('sillynpc-v1:');
+    const playerCard = getPlayerCard();
+    playerCard.presentation = { voiceDesign: { description: 'A patient, steady voice.', version: 1 }, voices: {} };
+    playerEditor = buildVoicesSection(playerCard, { save: () => {} }); document.body.append(playerEditor);
+    const playerDescription = playerEditor.querySelector('textarea');
+    playerDescription.value = 'A clear player voice.';
+    playerDescription.dispatchEvent(new Event('change'));
+    const renderedPlayerEditor = buildVoicesSection(getPlayerCard(), { save: () => {} });
+    result.playerVoiceEditor = playerEditor.querySelector('select')?.getAttribute('aria-label') === 'Player dialogue voice'
+        && renderedPlayerEditor.querySelector('textarea')?.value === 'A clear player voice.';
+    const playerStart = calls.length;
+    context.chat.push({ mes: `${playerCard.name}: "I can help."\nThe room settles.`, is_user: false, swipe_id: 0 });
+    playerElement = document.createElement('div'); playerElement.className = 'mes';
+    playerElement.setAttribute('mesid', chatLength + 1);
+    playerElement.innerHTML = '<div class="mes_text"><p></p><p>The room settles.</p></div>';
+    playerElement.querySelector('p').textContent = `${playerCard.name}: "I can help."`;
+    document.querySelector('#chat').append(playerElement);
+    await speech.playNpcMessage(chatLength + 1);
+    const playerCalls = calls.slice(playerStart);
+    result.playerDialogue = playerCalls.length === 2 && playerCalls[0].model === 'arbitrary-design-adapter'
+        && playerCalls[0].voice.startsWith('sillynpc-v1:') && playerCalls[1].voice === 'narrator-only';
+    const userStart = calls.length;
+    context.chat.push({ mes: 'I answer the guard.', name: playerCard.name, is_user: true, swipe_id: 0,
+        force_avatar: `/thumbnail?type=persona&file=${encodeURIComponent(playerCard.personaKey)}` });
+    userElement = document.createElement('div'); userElement.className = 'mes';
+    userElement.setAttribute('mesid', chatLength + 2);
+    userElement.innerHTML = '<div class="mes_text"><p>I answer the guard.</p></div>';
+    document.querySelector('#chat').append(userElement);
+    speech.renderNpcTtsControl(userElement);
+    await speech.playNpcMessage(chatLength + 2, { automatic: true });
+    result.userNoAuto = calls.length === userStart;
+    await speech.playNpcMessage(chatLength + 2);
+    result.userManual = Boolean(userElement.querySelector('.sillynpc-tts-play'))
+        && calls.length === userStart + 1 && calls.at(-1).model === 'arbitrary-design-adapter'
+        && calls.at(-1).voice.startsWith('sillynpc-v1:');
+    const currentPlayerVoice = calls.at(-1).voice;
+    const otherKey = 'castward-fixture-other-persona.png';
+    settings.personaData[otherKey] = { presentation: {
+        voiceDesign: { description: 'An older persona voice.', version: 1 }, voices: {} } };
+    context.chat.push({ mes: 'A past message.', name: 'Past persona', is_user: true, swipe_id: 0,
+        force_avatar: `/thumbnail?type=persona&file=${encodeURIComponent(otherKey)}` });
+    pastUserElement = document.createElement('div'); pastUserElement.className = 'mes';
+    pastUserElement.setAttribute('mesid', chatLength + 3);
+    pastUserElement.innerHTML = '<div class="mes_text"><p>A past message.</p></div>';
+    document.querySelector('#chat').append(pastUserElement);
+    await speech.playNpcMessage(chatLength + 3);
+    result.pastPersonaVoice = calls.at(-1).voice !== currentPlayerVoice
+        && calls.at(-1).voice.startsWith('sillynpc-v1:');
     result.designCuePrompt = dialogueFormatText().includes('NPC_VOICE');
     settings.tts.npcVoiceMode = 'listed';
     result.listedCuePrompt = !dialogueFormatText().includes('NPC_VOICE');
@@ -104,6 +154,7 @@ finally {
     if (nativeTts && savedNative) Object.assign(nativeTts, savedNative);
     if (context && chatLength !== undefined) context.chat.splice(chatLength);
     if (settings && saved) Object.assign(settings, saved);
-    element?.remove(); editor?.remove(); panel?.remove(); designPanel?.remove();
+    element?.remove(); playerElement?.remove(); userElement?.remove(); pastUserElement?.remove();
+    editor?.remove(); playerEditor?.remove(); panel?.remove(); designPanel?.remove();
 }
 document.documentElement.setAttribute('data-tts-routing-fixture', JSON.stringify(result));

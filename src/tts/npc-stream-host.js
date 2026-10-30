@@ -11,7 +11,7 @@ import { readSpeechUnits } from './speech-units.js';
 import { createNpcStreaming, speechUnitKey } from './npc-streaming.js';
 import { parseVoiceCues, stripVoiceCueNodes, voiceCueKey } from './voice-cue-format.js';
 import { makeId } from '../core/utils.js';
-import { saveVoiceCues } from './voice-cues.js';
+import { retainVoiceCues } from './voice-cues.js';
 import { usesDesignedNpcVoices } from './tts-settings.js';
 import { streamFormatSource, stripSpeechFences } from './stream-format-source.js';
 
@@ -117,8 +117,9 @@ export function initNpcStreaming({ enqueue, close, cancelSpeech, renderControl,
             state.records = state.records.filter(line => finalRecords.some(final => final.lineIndex === line.lineIndex
                 && final.npcId === line.npcId && final.text === line.text));
             adoptStreamExpressions(state.messageId, finalRecords);
+            if (usesDesignedNpcVoices(getSettings().tts))
+                retainVoiceCues(state.messageId, finalRecords, contextFor(), state.cueCards, state.parserSource);
             state.finalRevision = dialogueRevision(contextFor(), state.messageId);
-            if (usesDesignedNpcVoices(getSettings().tts)) saveVoiceCues(parseVoiceCues(state.parserSource, finalRecords), contextFor(), state.cueCards);
             close(state);
         },
         cancel: () => { disconnect(); controller?.abort(); clearDialogueStream(); cancelSpeech(); },

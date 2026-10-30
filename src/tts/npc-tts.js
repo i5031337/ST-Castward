@@ -2,12 +2,14 @@ import { eventSource, event_types } from '../../../../../events.js';
 import { getContext } from '../../../../../st-context.js';
 import { getSettings } from '../core/settings.js';
 import { getActiveCharacters } from '../characters/characters.js';
+import { getPlayerCard } from '../tracker/status-logic.js';
 import { dialogueRevision } from '../chat/dialogue-presentation.js';
 import { MESSAGE_RENDERED_EVENT } from '../story/beats.js';
 import { readSpeechUnits } from './speech-units.js';
 import { createSpeechQueue } from './speech-queue.js';
 import { hostSpeechEndpoint, synthesizeSpeech, playSpeechAudio } from './openai-speech.js';
-import { normalizeTtsSettings, resolveUnitSpeech, ttsConfigError, resolvePreviewSpeech, usesDesignedNpcVoices } from './tts-settings.js';
+import { normalizeTtsSettings, resolveUnitSpeech, ttsConfigError, resolvePreviewSpeech,
+    usesDesignedNpcVoices, NPC_TTS_PROVIDER } from './tts-settings.js';
 import { builtInAutoTtsEnabled } from '../ui/tts/ui-tts-settings.js';
 import { wireSpeechEvents } from './speech-events.js';
 import { completeNpcExpressions, showNpcSpeechExpression } from '../expressions/npc-expressions.js';
@@ -34,7 +36,7 @@ function updateButtons() {
 const queue = createSpeechQueue({
     synthesize: (unit, signal) => synthesizeSpeech(unit, unit.config, signal),
     playAudio: playSpeechAudio,
-    prepare: job => job.revision.startsWith('npc-stream-') ? undefined
+    prepare: job => job.revision.startsWith('npc-stream-') || getContext()?.chat?.[job.messageId]?.is_user ? undefined
         : completeNpcExpressions(job.messageId, { signal: job.controller.signal }),
     valid: job => getSettings().enabled && getSettings().tts.enabled
         && (job.revision.startsWith('npc-stream-') ? streaming?.valid(job) && !builtInAutoTtsEnabled()
@@ -65,7 +67,7 @@ async function playPreview(resolveChoice) {
     if (issue) throw new Error(issue);
     const unit = { kind: 'dialogue', text: 'Hello. It is good to meet you.' };
     const choice = resolveChoice(config, unit);
-    if (!choice.voice) throw new Error('This NPC voice is unavailable.');
+    if (!choice.voice) throw new Error('This voice is unavailable.');
     const controller = new AbortController(); previewController = controller;
     try {
         const blob = await synthesizeSpeech({ ...unit, ...choice }, config, controller.signal);
@@ -75,7 +77,34 @@ async function playPreview(resolveChoice) {
 
 export async function previewNpcVoice(voice, card) {
     return playPreview((config, unit) => resolvePreviewSpeech(voice, config,
-        cardWithVoiceCue(card, card?.name), unit.text));
+        card?.isPlayer ? card : cardWithVoiceCue(card, card?.name), unit.text));
+}
+
+function playerCardForMessage(message) {
+    const active = getPlayerCard();
+    if (!message?.is_user) return active;
+    const avatar = String(message.force_avatar || '');
+    let key = '';
+    if (avatar.startsWith('User Avatars/')) key = avatar.slice('User Avatars/'.length);
+    else if (avatar) {
+        try {
+            const url = new URL(avatar, globalThis.location?.origin || 'http://localhost');
+            if (url.pathname === '/thumbnail' && url.searchParams.get('type') === 'persona')
+                key = url.searchParams.get('file') || '';
+        } catch { /* An unrecognized avatar cannot identify a stored persona. */ }
+    }
+    if (key) {
+        if (key === active.personaKey) return active;
+        const stored = getSettings().personaData?.[key];
+        return stored ? { ...stored, isPlayer: true, personaKey: key } : null;
+    }
+    return !message.name || message.name === active.name ? active : null;
+}
+
+function cardForSpeechUnit(unit, cards, message) {
+    if (unit.kind !== 'dialogue') return null;
+    if (unit.isPersona) return playerCardForMessage(message);
+    return cardWithVoiceCue(cards.get(unit.npcId), unit.speakerLabel);
 }
 
 /** Preview the same default preset and NPC model used for dialogue without a card override. */
@@ -109,16 +138,15 @@ export async function playNpcMessage(messageId, { automatic = false } = {}) {
     if (automatic && (!config.autoPlay || builtInAutoTtsEnabled())) return;
     const id = Number(messageId);
     const message = getContext()?.chat?.[id];
-    if (!message || message.is_user || message.is_system) return;
+    if (!message || message.is_system || (automatic && message.is_user)) return;
     const element = messageElement(id);
     if (!element) return;
-    captureVoiceCues(id);
+    if (!message.is_user) captureVoiceCues(id);
     const units = readSpeechUnits(element);
     if (!units.length) return;
     const cards = new Map(getActiveCharacters().map(card => [card.id, card]));
     const prepared = units.map(unit => ({ ...unit,
-        ...resolveUnitSpeech(unit, config,
-            unit.kind === 'dialogue' ? cardWithVoiceCue(cards.get(unit.npcId), unit.speakerLabel) : null), config }));
+        ...resolveUnitSpeech(unit, config, cardForSpeechUnit(unit, cards, message)), config }));
     if (!prepared.some(unit => unit.voice)) return;
     configSignature = JSON.stringify(config);
     endpointSignature = hostSpeechEndpoint();
@@ -130,7 +158,7 @@ export function renderNpcTtsControl(mesEl) {
     const id = Number(mesEl.getAttribute('mesid'));
     const message = getContext()?.chat?.[id];
     const old = mesEl.querySelector('.sillynpc-tts-play');
-    if (!getSettings().enabled || !getSettings().tts.enabled || !message || message.is_user || message.is_system) {
+    if (!getSettings().enabled || !getSettings().tts.enabled || !message || message.is_system) {
         old?.remove(); return;
     }
     if (old) { updateButtons(); return; }
@@ -148,6 +176,7 @@ export function renderNpcTtsControl(mesEl) {
 
 /** Only a changed foreground reply can initiate automatic speech. */
 export function initNpcTts() {
+    eventSource.on(event_types.PERSONA_CHANGED, stopNpcTts);
     document.addEventListener('input', event => {
         if (event.target?.matches?.('#openai_compatible_tts_endpoint')) stopNpcTts();
     });
@@ -185,8 +214,11 @@ export function initNpcTts() {
             }
             const cards = new Map(getActiveCharacters().map(card => [card.id, card]));
             state.speech.append(units.map(unit => {
-                let card = unit.kind === 'dialogue' ? cardWithVoiceCue(cards.get(unit.npcId), unit.speakerLabel) : null;
-                if (unit.kind === 'dialogue' && !card?.presentation?.voiceDesign?.description) {
+                let card = cardForSpeechUnit(unit, cards, getContext()?.chat?.[state.messageId]);
+                const binding = card?.presentation?.voices?.[NPC_TTS_PROVIDER]
+                    || card?.presentation?.voices?.['OpenAI Compatible'];
+                if (unit.kind === 'dialogue' && !unit.isPersona && binding?.mode !== 'voice'
+                    && !card?.presentation?.voiceDesign?.description) {
                     const provisional = state.cueCards?.get(voiceCueKey(unit.speakerLabel));
                     if (provisional) card = { ...card, ...provisional, presentation: {
                         ...card?.presentation, ...provisional.presentation,

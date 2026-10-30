@@ -194,7 +194,8 @@ async function main() {
                     out.cuePrompt=dialogueFormatText().includes('[[NPC_VOICE speaker=');
                     const cueId=hostContext.chat.length;
                     hostContext.chat.push({mes:'[[NPC_VOICE speaker="Cue Fixture" description="adult low warm voice"]]\\n\\nCue Fixture: "Ready."',swipe_id:0,is_user:false});
-                    const cueContext={...hostContext,chatMetadata:{},getCurrentChatId:()=> 'cue-fixture',saveMetadataDebounced:()=>{}};
+                    const cueContext={...hostContext,chatMetadata:{},getCurrentChatId:()=> 'cue-fixture',
+                        saveMetadataDebounced:()=>{},saveChat:()=>{},updateMessageBlock:()=>{}};
                     cueMes=document.createElement('div');cueMes.className='mes';cueMes.setAttribute('mesid',String(cueId));
                     const cueText=document.createElement('div');cueText.className='mes_text';
                     cueText.innerHTML=hostContext.messageFormatting(hostContext.chat[cueId].mes,'',false,false,cueId);
