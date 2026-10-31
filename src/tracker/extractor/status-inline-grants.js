@@ -15,6 +15,7 @@ import { prepareLevelReading, saveLevelReading } from './status-level-reading.js
 import { collectLeadUp } from './status-extractor-prompt.js';
 import { normalizeCollectionUpdates } from './status-collection-normalize.js';
 import { finishExtractionReport } from './status-extraction-report.js';
+import { trackerReadGate } from '../tracker-read-gate.js';
 
 const queued = new WeakMap();
 const READING_KEY = 'sillynpc_inline_reading';
@@ -42,7 +43,7 @@ export function queueInlineReading(update, messageId, mesEl, fingerprint) {
         && Number(messageId) === trackerMessageIndex(getContext()?.chat)
         && [source, cleaned].includes(message.mes);
     // Defer beyond DOM surgery; status stripping can change message.mes to cleaned text.
-    Promise.resolve().then(async () => {
+    const reading = Promise.resolve().then(async () => {
         if (!fresh()) return;
         const state = regenerate ? replacementReadingState(messageId) : loadStateFromMetadata();
         if (!state) return;
@@ -94,5 +95,6 @@ export function queueInlineReading(update, messageId, mesEl, fingerprint) {
     }).finally(() => {
         if (queued.get(message) === token) queued.delete(message);
     });
+    trackerReadGate.register(message, reading);
     return true;
 }

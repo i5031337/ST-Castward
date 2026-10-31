@@ -55,7 +55,8 @@ export function readStreamingMessage(source, state, context = getContext()) {
 }
 
 export function initNpcStreaming({ enqueue, close, cancelSpeech, renderControl,
-    context: contextFor = getContext, events = eventSource, types = event_types }) {
+    context: contextFor = getContext, events = eventSource, types = event_types,
+    completeFinalExpressions = completeNpcExpressions }) {
     let authorized = null, observer = null, scheduled = false, controller = null;
     let epoch = 0, suppressedEpoch = -1;
     const disconnect = () => { observer?.disconnect(); observer = null; };
@@ -121,6 +122,10 @@ export function initNpcStreaming({ enqueue, close, cancelSpeech, renderControl,
                 retainVoiceCues(state.messageId, finalRecords, contextFor(), state.cueCards, state.parserSource);
             state.finalRevision = dialogueRevision(contextFor(), state.messageId);
             close(state);
+            if (getSettings().npcExpressionsPerMessage) {
+                void Promise.resolve().then(() => completeFinalExpressions(state.messageId, { records: finalRecords }))
+                    .catch(error => console.warn('[Castward] Finalized message expressions failed', error));
+            }
         },
         cancel: () => { disconnect(); controller?.abort(); clearDialogueStream(); cancelSpeech(); },
     });

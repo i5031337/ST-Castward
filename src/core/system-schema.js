@@ -94,6 +94,7 @@ function collections(source) {
             targets: collectionTargets(collection),
             trackQuantity: collection.trackQuantity,
             includeInImagePrompt: collection.includeInImagePrompt !== false,
+            emptyImagePrompt: typeof collection.emptyImagePrompt === 'string' ? collection.emptyImagePrompt.trim() : 'none',
             guidance: string(collection.guidance),
             retired: collection.retired === true,
             fields: list(collection.fields).filter(value => value && typeof value === 'object').map(value => {

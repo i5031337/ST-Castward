@@ -33,6 +33,18 @@ export function renderImageGenerationSettings(view, rerender) {
         onChange: () => resetNpcExpressions(),
     }));
     view.append(buildSettingToggle({
+        key: 'npcExpressionsPerMessage', label: 'One Expression per NPC per Message',
+        help: 'Classify each NPC’s combined dialogue once per completed reply and use that expression for all their lines in the message.',
+        onChange: () => resetNpcExpressions(),
+    }));
+    view.append(buildSettingToggle({
+        key: 'npcExpressionsRefreshOnImagePrompt', label: 'Refresh Expressions When Image Prompt Changes',
+        help: 'Replace Castward-generated expressions when profile fields or collections included in that NPC’s image prompt change. '
+            + 'With the background tracker reader on, new images wait for its accepted updates; included item changes awaiting review wait for your decision. '
+            + 'Existing imported sprites are kept until generated manually.',
+        onChange: () => resetNpcExpressions(),
+    }));
+    view.append(buildSettingToggle({
         key: 'showPresentNpcSprites', label: 'Show Present NPC Sprites',
         help: 'Keep the latest full-size sprite of every NPC in the current scene beside the chat, even with TTS off. '
             + 'Uses the newest sprite in an existing pack, or the portrait when no sprite is available. Displaying sprites does not generate images.',

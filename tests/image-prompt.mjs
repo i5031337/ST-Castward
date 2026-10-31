@@ -18,7 +18,7 @@ function fixture() {
         getSettings: () => settings,
         resolveImagePrompt: () => '{{name}} | {{lore}} | {{items}}',
         fillImagePrompt: (template, values) => template.replace(/{{(\w+)}}/g, (_, key) => values[key]),
-        describeCarriedItems: () => 'Red coat',
+        describeImageCollections: () => 'Clothing: Red coat',
         characterImageDescription: () => 'Species: Elf',
         loadWorldInfo: async () => ({ entries: [{ uid: 1, content: 'Lore' }] }),
         debugLog() {},
@@ -32,7 +32,7 @@ function fixture() {
 test('portrait preview uses profile and items without making an image request', async () => {
     const f = fixture();
     const card = { name: 'Mira', lorebook: { world: 'World', uid: 1 } };
-    assert.equal(await f.buildCharacterImagePrompt(card), 'Mira | Species: Elf | Red coat');
+    assert.equal(await f.buildCharacterImagePrompt(card), 'Mira | Species: Elf | Clothing: Red coat');
     assert.deepEqual(f.calls, []);
 });
 
@@ -73,14 +73,14 @@ test('portrait prefix precedes the description in preview and automatic requests
     const f = fixture();
     const card = { name: 'Mira' };
     f.settings.imgGenPromptPrefix = '  Solo, profile picture  ';
-    const expected = 'Solo, profile picture\nMira | Species: Elf | Red coat';
+    const expected = 'Solo, profile picture\nMira | Species: Elf | Clothing: Red coat';
     assert.equal(await f.buildCharacterImagePrompt(card), expected);
     await f.generateCharacterImageLogic(card);
     assert.equal(f.calls[0].prompt, expected);
     await f.generateCharacterImageLogic(card, { prompt: 'Manually replaced prompt' });
     assert.equal(f.calls[1].prompt, 'Manually replaced prompt');
     f.settings.imgGenPromptPrefix = '';
-    assert.equal(await f.buildCharacterImagePrompt(card), 'Mira | Species: Elf | Red coat');
+    assert.equal(await f.buildCharacterImagePrompt(card), 'Mira | Species: Elf | Clothing: Red coat');
 });
 
 test('portrait description uses visual profile details filled on the card', () => {
@@ -98,25 +98,27 @@ test('portrait description uses visual profile details filled on the card', () =
 
 test('portrait items follow each collection image setting and actor target', () => {
     const definitions = [
-        { id: 'clothes', target: 'all', includeInImagePrompt: true, fields: [{ name: 'piece', isPrimary: true }] },
-        { id: 'secrets', target: 'all', includeInImagePrompt: false, fields: [{ name: 'name', isPrimary: true }] },
-        { id: 'legacy', target: 'npc', fields: [{ name: 'name', isPrimary: true }] },
+        { id: 'clothes', name: 'Clothing', target: 'all', includeInImagePrompt: true, fields: [{ name: 'piece', isPrimary: true }] },
+        { id: 'secrets', name: 'Secrets', target: 'all', includeInImagePrompt: false, fields: [{ name: 'name', isPrimary: true }] },
+        { id: 'legacy', name: 'Equipment', target: 'npc', fields: [{ name: 'name', isPrimary: true }] },
     ];
     const collections = {
-        clothes: [{ piece: 'Red cloak' }, { piece: 'Silver sword' }],
+        clothes: [{ piece: 'Red cloak' }, { piece: 'Silver sword' }, { piece: 'Red cloak' }],
         secrets: [{ name: 'Hidden letter' }],
         legacy: [{ name: 'Silver sword' }, { name: 'Leather boots' }],
         unknown: [{ name: 'Unconfigured item' }],
     };
     const npc = imageItemsFromCollections(collections, definitions);
     const player = imageItemsFromCollections(collections, definitions, true);
-    for (const text of [npc, player]) {
-        assert.ok(text.includes('Red cloak'));
-        assert.equal(text.match(/Silver sword/g)?.length, 1);
-        assert.doesNotMatch(text, /Hidden letter|Unconfigured item/);
-    }
-    assert.ok(npc.includes('Leather boots'));
-    assert.ok(!player.includes('Leather boots'));
+    assert.equal(npc, 'Clothing: Red cloak, Silver sword\nEquipment: Silver sword, Leather boots');
+    assert.equal(player, 'Clothing: Red cloak, Silver sword');
+    assert.equal(imageItemsFromCollections({ clothes: [] }, definitions), 'Clothing: none\nEquipment: none');
+    assert.equal(imageItemsFromCollections({}, definitions, true), 'Clothing: none');
+    definitions[0].emptyImagePrompt = '';
+    definitions[2].emptyImagePrompt = 'unarmed';
+    assert.equal(imageItemsFromCollections({}, definitions), 'Equipment: unarmed');
+    assert.equal(imageItemsFromCollections({ clothes: [{ piece: 'Red cloak' }] }, definitions),
+        'Clothing: Red cloak\nEquipment: unarmed');
 });
 
 

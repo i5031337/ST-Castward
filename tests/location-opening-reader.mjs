@@ -17,6 +17,7 @@ function fixture(message, enabled = true, reading = { applied: true }) {
             return Promise.resolve(reading);
         },
         scheduleMemoryRead: id => memories.push(id),
+        trackerReadGate: { register() {} },
     };
     const onMessageForExtraction = new Function(...Object.keys(deps),
         `${source}\nreturn onMessageForExtraction;`)(...Object.values(deps));

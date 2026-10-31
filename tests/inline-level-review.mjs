@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFileSync } from 'node:fs';
+import { createTrackerReadGate } from '../src/tracker/tracker-read-gate.js';
 
 const source = readFileSync(new URL('../src/tracker/extractor/status-inline-grants.js', import.meta.url), 'utf8')
     .replace(/^import [\s\S]*?;\n/gm, '').replaceAll('export ', '');
@@ -10,7 +11,9 @@ function harness({ rejectPhase } = {}) {
     const state = { player: { stats: { XP: '9/10', Level: '1' } } };
     const calls = { attempts: [], applied: [], pending: [], selections: 0, records: [], replacements: 0, resets: 0 };
     let duringSelection = () => {};
+    const trackerReadGate = createTrackerReadGate();
     const deps = {
+        trackerReadGate,
         getContext: () => context, getSettings: () => ({ enabled: calls.enabled !== false, statusTracker: { enabled: true, extractionMode: calls.mode || 'inline' } }),
         getAllCharacters: () => [], loadStateFromMetadata: () => state, getCurrentPersonaKey: () => 'persona',
         parseMessageForUpdates: text => ({ cleanedText: text }),
@@ -41,9 +44,23 @@ function harness({ rejectPhase } = {}) {
     const queue = new Function(...Object.keys(deps), `${source}\nreturn queueInlineReading;`)(...Object.values(deps));
     const element = { classList: { contains: () => false } };
     return { queue: (id = 0, fingerprint = 'block') => queue({ player: { stats: { XP: '10/10' } } }, id, element, fingerprint),
-        context, calls, message, setDuringSelection: fn => { duringSelection = fn; } };
+        context, calls, message, trackerReadGate, setDuringSelection: fn => { duringSelection = fn; } };
 }
 const settle = () => new Promise(resolve => setTimeout(resolve, 0));
+
+test('inline image work waits until its tracker update finishes', async () => {
+    const h = harness();
+    let release;
+    h.setDuringSelection(() => new Promise(resolve => { release = resolve; }));
+    assert.equal(h.queue(), true);
+    let ready = false;
+    const waiting = h.trackerReadGate.wait(h.message).then(() => { ready = true; });
+    await settle();
+    assert.equal(ready, false);
+    release(); await waiting;
+    assert.equal(ready, true);
+    assert.equal(h.calls.applied.length, 1);
+});
 
 test('inline archive rendering cannot apply XP or start grant selection', async () => {
     const h = harness(); h.context.chat.push({ mes: 'A newer turn' });

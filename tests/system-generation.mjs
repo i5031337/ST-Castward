@@ -17,6 +17,7 @@ test('staged generation assembles canonical System with template progression and
     const result = await run.generate();
     assert.deepEqual(validateDefinition(result.definition), []);
     assert.equal(result.definition.profiles.find(field => field.id === 'species').includeInImagePrompt, true);
+    assert.equal(result.definition.collections[0].emptyImagePrompt, 'none');
     assert.deepEqual(result.definition.stats.world.map(stat => stat.name), ['Weather']);
     assert.equal(result.definition.collections[0].levelUpRewards.schedule[0].entry.power, 2);
     assert.deepEqual(result.definition.collections[0].targets, ['player', 'template:creature']);
@@ -176,6 +177,8 @@ test('strict validation rejects semantic corruption before normalization can rep
         d => { d.progression.player.assignment = 'llm'; },
         d => { d.progression.player.statIds = ['xp']; },
         d => { d.collections[0].targets = ['template:missing']; },
+        d => { d.collections[0].emptyImagePrompt = 5; },
+        d => { d.collections[0].emptyImagePrompt = 'x'.repeat(161); },
         d => { d.collections[0].fields[1].isPrimary = true; },
         d => { d.collections[0].fields[0].isStatic = false; },
         d => { d.collections[0].levelUpRewards.schedule[0].entry.power = 4; },

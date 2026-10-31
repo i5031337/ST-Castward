@@ -85,6 +85,7 @@ export function buildCollectionsEditor(onRefresh, context = liveSystemContext) {
             ],
             targets: ['player', 'npc'],
             includeInImagePrompt: false,
+            emptyImagePrompt: 'none',
         });
         saveSettings();
         onRefresh();
@@ -119,6 +120,12 @@ function createCollectionRow(col, index, collections, bulk, onRefresh, context) 
             <small>Track quantity</small>
         </label>
         <div class="col-targets-slot"></div>
+        <div style="display:flex; gap:8px; width:100%; align-items:center; margin-bottom:12px;">
+            <small class="sillynpc-field-note">When empty in image prompt:</small>
+            <input type="text" class="text_pole col-empty-image-prompt" value="${escapeHtml(col.emptyImagePrompt ?? 'none')}" maxlength="160"
+                   placeholder="Leave blank to omit" title="Text after the collection name when it has no entries. Leave blank to omit the line."
+                   style="flex:1; min-width:120px;">
+        </div>
         <div style="display:flex; gap:8px; width:100%; align-items:center; margin-bottom:12px;">
             <small class="sillynpc-field-note" title="What this collection holds, in your own words. Sent to the reader with every extraction.">What it holds:</small>
             <input type="text" class="text_pole col-hint" value="${escapeHtml(col.hint || '')}"
@@ -168,12 +175,19 @@ function wireCollectionControls(colWrap, col, index, collections, bulk, onRefres
 
     colWrap.querySelector('.col-name').addEventListener('input', (e) => { col.name = e.target.value; saveSettings(); });
     colWrap.querySelector('.col-hint')?.addEventListener('input', (e) => { col.guidance = col.hint = e.target.value; saveSettings(); });
+    colWrap.querySelector('.col-empty-image-prompt').addEventListener('change', (e) => {
+        col.emptyImagePrompt = e.target.value.trim();
+        e.target.value = col.emptyImagePrompt;
+        saveSettings();
+    });
     wireCollectionIdRename(colWrap, col, collections, onRefresh, context);
     colWrap.querySelector('.col-targets-slot').append(buildCollectionTargetsEditor(col, saveSettings, context.definition()?.npcTemplates));
     colWrap.querySelector('.col-image-prompt').addEventListener('change', (e) => {
         col.includeInImagePrompt = e.target.checked;
+        colWrap.querySelector('.col-empty-image-prompt').disabled = !e.target.checked;
         saveSettings();
     });
+    colWrap.querySelector('.col-empty-image-prompt').disabled = col.includeInImagePrompt === false;
     const visibleCheck = colWrap.querySelector('.col-visible');
     if (visibleCheck) {
         visibleCheck.addEventListener('change', (e) => { col.visible = e.target.checked; saveSettings(); onRefresh(); });

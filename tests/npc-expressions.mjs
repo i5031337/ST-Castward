@@ -3,9 +3,61 @@ import assert from 'node:assert/strict';
 import { createExpressionEngine, selectSprite } from '../src/expressions/expression-engine.js';
 import { wireExpressionEvents } from '../src/expressions/expression-events.js';
 import { EventEmitter } from 'node:events';
+import { expressionMessageGroups } from '../src/expressions/expression-message-groups.js';
+import { needsExpressionRefresh, captureExpressionImageSource, hasPendingImageCollection } from '../src/expressions/expression-source-policy.js';
 
 const line = (npcId, lineIndex = 0) => ({ npcId, lineIndex, text: `Speech ${lineIndex}`, revision: 'chat/swipe/source' });
 const job = (npcId, index = 0) => ({ line: line(npcId, index), config: { api: 0 } });
+test('message mode groups each NPC dialogue once while line mode keeps separate emotions', () => {
+    const lines = [line('a', 0), line('b', 1), line('a', 2)];
+    assert.deepEqual(expressionMessageGroups(lines, true), [[lines[0], lines[2]], [lines[1]]]);
+    assert.deepEqual(expressionMessageGroups(lines, false), lines.map(part => [part]));
+});
+test('image prompt changes replace only sprites with a recorded generated source', () => {
+    const generation = { imageSources: { joy: 'old' } };
+    assert.equal(needsExpressionRefresh(generation, 'joy', 'new', true), true);
+    assert.equal(needsExpressionRefresh(generation, 'joy', 'old', true), false);
+    assert.equal(needsExpressionRefresh(generation, 'fear', 'new', true), false);
+    assert.equal(needsExpressionRefresh(generation, 'joy', 'new', false), false);
+});
+test('image source follows every included profile field and collection regardless of name', () => {
+    const card = { imageUrl: '/portrait.png', profile: { ancestry: 'Elf', mood: 'Kind', secret: 'Hidden' } };
+    const fields = [{ id: 'ancestry', label: 'Ancestry', includeInImagePrompt: true },
+        { id: 'mood', label: 'Mood', includeInImagePrompt: true },
+        { id: 'secret', label: 'Secret', includeInImagePrompt: false }];
+    const definitions = [{ id: 'equipment', name: 'Equipment', targets: ['npc'], includeInImagePrompt: true },
+        { id: 'private', name: 'Private', targets: ['npc'], includeInImagePrompt: false }];
+    const collections = { equipment: [{ name: 'Blue coat' }], private: [{ name: 'Key' }] };
+    const snapshot = () => captureExpressionImageSource(card, fields, collections, definitions, 'Solo portrait');
+    const source = snapshot();
+    card.profile.secret = 'Revealed'; collections.private.push({ name: 'Book' });
+    assert.equal(snapshot(), source);
+    card.profile.ancestry = 'Dwarf';
+    assert.notEqual(snapshot(), source);
+    card.profile.ancestry = 'Elf'; card.profile.mood = 'Cautious';
+    assert.notEqual(snapshot(), source);
+    card.profile.mood = 'Kind'; collections.equipment[0].name = 'Red coat';
+    assert.notEqual(snapshot(), source);
+    collections.equipment[0].name = 'Blue coat';
+    assert.notEqual(captureExpressionImageSource(card, fields, collections, definitions, 'Close portrait'), source);
+    collections.equipment = [];
+    assert.notEqual(snapshot(), source);
+    const emptySource = snapshot();
+    definitions[0].emptyImagePrompt = 'unarmed';
+    assert.notEqual(snapshot(), emptySource);
+    definitions[0].emptyImagePrompt = '';
+    assert.notEqual(snapshot(), emptySource);
+});
+test('only pending image collections for the classified NPC delay regeneration', () => {
+    const card = { name: 'Tessa' };
+    const definitions = [{ id: 'outfit', targets: ['npc'], includeInImagePrompt: true },
+        { id: 'secrets', targets: ['npc'], includeInImagePrompt: false }];
+    const row = { scope: 'npc', actor: 'Tessa', collectionId: 'outfit', kind: 'item-add' };
+    assert.equal(hasPendingImageCollection([row], card, definitions), true);
+    assert.equal(hasPendingImageCollection([{ ...row, actor: 'Mira' }], card, definitions), false);
+    assert.equal(hasPendingImageCollection([{ ...row, collectionId: 'secrets' }], card, definitions), false);
+    assert.equal(hasPendingImageCollection([{ ...row, scope: 'player' }], card, definitions), false);
+});
 test('packs map labels and sparse fallbacks with stable variants independent of listing order', () => {
     const sprites = [{ label: 'joy', path: '/b' }, { label: 'joy', path: '/a' }, { label: 'neutral', path: '/n' }];
     assert.equal(selectSprite(sprites, 'missing', 'neutral', 'id'), '/n');

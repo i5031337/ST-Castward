@@ -59,8 +59,10 @@ export function normalizeExpressionGeneration(raw = {}) {
         });
         if (overrides.some(Boolean)) prompts[label] = overrides;
     }
+    const imageSources = Object.fromEntries(Object.entries(raw?.imageSources || {})
+        .filter(([label, source]) => EMOTION_LABELS.includes(label) && typeof source === 'string' && source));
     return { reference: text(raw?.reference), workflow: text(raw?.workflow),
-        negativePrompt: text(raw?.negativePrompt), prompts };
+        negativePrompt: text(raw?.negativePrompt), prompts, imageSources };
 }
 
 /** Built-in variants stay in code; saved generations contain only custom overrides. */
@@ -91,6 +93,7 @@ export function prepareExpressionReference(card) {
     let changed = false;
     if (config.generation.reference && config.generation.reference !== card.imageUrl) {
         config.generation.reference = card.imageUrl;
+        config.generation.imageSources = {};
         config.spriteFolder = expressionFolder(card, card.imageUrl);
         config.bindingStatus = 'unverified'; changed = true;
     }

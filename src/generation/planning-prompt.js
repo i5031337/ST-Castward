@@ -46,6 +46,7 @@ Progression:
 - growth describes desired code-owned numeric advancement, including points per level and random or manual assignment, reset, and persistence in plain text. Random picks each point independently with replacement from stats below their caps. Budgets may exceed the number of stats. No experience curves or character values.
 
 Collections are lists with one row per item, move, or other entry. Set trackQuantity true for counted holdings such as inventory and consumables, false for skills and knowledge. Counted collections include the built-in quantity field (default 1); add/remove report amounts gained or spent. The first field names each entry, usually Name. Do not make party slots separate columns or use a discovery count as the only field of a species list; a single count is a stat. Targets are player, npc (all NPCs), or an exact NPC template name. Rewards are none, scheduled, or guided; rewards require progression enabled for at least one target.
+The collection generation stage chooses which collections affect image prompts and what each should say when empty. Plan visible collections with clear names so the prompt can label them.
 
 Prefer 4-8 shared character stats, 1-3 templates, 1-3 collections, and 2-5 fields per collection. Omit unnecessary features. Create rules only, without characters, holdings, story state, settings, credentials, markup, or executable content.
 

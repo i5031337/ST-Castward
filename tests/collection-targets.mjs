@@ -98,9 +98,9 @@ test('model adds, removals, updates and replacements cannot change another templ
 test('portrait prompts hide belongings retained from a previous template', () => {
     fixture();
     const stored = { moves: [{ name: 'Thunderbolt' }], clothes: [{ name: 'Red coat' }] };
-    assert.equal(imageItemsFromCollections(stored, tracker.collections, false, human), 'Red coat');
-    assert.equal(imageItemsFromCollections(stored, tracker.collections, false, pokemon), 'Thunderbolt');
-    assert.equal(imageItemsFromCollections(stored, tracker.collections, true, human), 'Red coat');
+    assert.equal(imageItemsFromCollections(stored, tracker.collections, false, human), 'Clothing: Red coat');
+    assert.equal(imageItemsFromCollections(stored, tracker.collections, false, pokemon), 'Moves: Thunderbolt');
+    assert.equal(imageItemsFromCollections(stored, tracker.collections, true, human), 'Clothing: Red coat');
 });
 
 test('multiple targets include the player and humans, exclude Pokémon, and survive System export/import', () => {

@@ -15,6 +15,11 @@ import { EMOTION_LABELS, prepareExpressionReference, expressionWorkflow } from '
 import { expressionGenerator, expressionJob } from './host-expression-generation.js';
 import { rememberNpcSprite, initSceneSprites, focusSceneSprite } from './scene-sprites.js';
 import { portraitFromResult, readDialoguePortrait, rememberDialoguePortrait } from './dialogue-portraits.js';
+import { expressionMessageGroups } from './expression-message-groups.js';
+import { expressionImageSource } from './expression-image-source.js';
+import { needsExpressionRefresh, hasPendingImageCollection } from './expression-source-policy.js';
+import { trackerReadGate, shouldWaitForTrackerRead } from '../tracker/tracker-read-gate.js';
+import { getPendingChanges, REVIEW_EVENT } from '../tracker/status-review.js';
 
 const results = new Map();
 const warned = new Set();
@@ -24,8 +29,11 @@ let generationController = new AbortController();
 const cardFor = id => getActiveCharacters().find(card => card.id === id);
 const preferences = card => {
     const settings = getSettings();
-    return JSON.stringify([card?.presentation?.expressions, expressionWorkflow(card, settings),
-        settings.npcExpressionIpAdapterMode, settings.npcExpressionIpAdapterMode ? [settings.imgGenPromptPrefix, card?.profile, card?.lorebook] : null]);
+    const expressions = card?.presentation?.expressions;
+    const generation = expressions?.generation;
+    const stableExpressions = expressions && { ...expressions,
+        generation: generation && { ...generation, imageSources: undefined } };
+    return JSON.stringify([stableExpressions, expressionWorkflow(card, settings), settings.npcExpressionIpAdapterMode]);
 };
 const messageElement = id => document.querySelector(`#chat .mes[mesid="${Number(id)}"]`);
 function saveExpressionBinding(card) {
@@ -41,46 +49,91 @@ function isCurrent(job, pending = true) {
         && JSON.stringify(classifierConfig()) === JSON.stringify(job.config);
 }
 
+function waitForImageReview(job, card, signal) {
+    const pending = () => hasPendingImageCollection(getPendingChanges(job.line.messageId), card,
+        getSettings().statusTracker.collections || []);
+    if (!pending()) return Promise.resolve();
+    return new Promise((resolve, reject) => {
+        const cleanup = () => {
+            eventSource.removeListener(REVIEW_EVENT, changed);
+            signal.removeEventListener('abort', abort);
+        };
+        const changed = ({ messageId }) => {
+            if (Number(messageId) !== job.line.messageId || pending()) return;
+            cleanup(); resolve();
+        };
+        const abort = () => { cleanup(); reject(signal.reason || new DOMException('Cancelled', 'AbortError')); };
+        eventSource.on(REVIEW_EVENT, changed);
+        signal.addEventListener('abort', abort, { once: true });
+        if (signal.aborted) abort();
+        else changed({ messageId: job.line.messageId });
+    });
+}
+
+async function generateClassifiedExpression(job, label) {
+    if (!job.generate || !EMOTION_LABELS.includes(label)) return;
+    const card = cardFor(job.line.npcId);
+    if (!card) return;
+    const image = card.imageUrl;
+    // Speech may end while the tracker reads; accepted expression work owns its own lifetime.
+    const current = () => job.epoch === epoch && isCurrent(job, false)
+        && cardFor(job.line.npcId) === card && card.imageUrl === image;
+    try {
+        if (shouldWaitForTrackerRead(getSettings(), getContext()?.getCurrentChatId?.() !== undefined)) {
+            await trackerReadGate.wait(job.sourceToken, generationController.signal);
+            await waitForImageReview(job, card, generationController.signal);
+        }
+        if (!current()) return;
+        const source = expressionImageSource(card);
+        const exists = job.sprites.some(sprite => sprite.label === label);
+        const replace = getSettings().npcExpressionsRefreshOnImagePrompt
+            && needsExpressionRefresh(card.presentation.expressions.generation, label, source, exists);
+        if (exists && !replace) return;
+        const unchanged = () => current() && (!getSettings().npcExpressionsRefreshOnImagePrompt
+            || expressionImageSource(card) === source);
+        const input = await expressionJob(card, label, unchanged, generationController.signal);
+        const sprites = await expressionGenerator.generate(input, { replace });
+        if (!unchanged()) return;
+        if (!job.line.streamId) job.rememberSprite(card, sprites, label, job.line);
+        for (const result of results.values()) {
+            if (result.line.npcId === card.id && result.preferences === job.preferences && isCurrent(result, false)) {
+                result.sprites = sprites;
+                result.savePortrait(result, result.label);
+                renderNpcExpressions(messageElement(result.line.messageId), result.line);
+            }
+        }
+        // Speech portraits advance only on the next audio playing event.
+    } catch (error) {
+        if (error.name === 'AbortError') return;
+        const key = JSON.stringify([card.id, label, job.preferences, error.message]);
+        if (warned.has(key)) return;
+        warned.add(key);
+        if (warned.size > 128) warned.delete(warned.values().next().value);
+        console.warn(`[Castward] ${card.name}: ${label} expression generation failed`, error);
+        if (typeof toastr !== 'undefined') toastr.warning(
+            `${card.name}: ${label} expression failed. ${error.message} Retry in NPC Edit.`, 'Castward');
+    }
+}
+
 const engine = createExpressionEngine({ classify: job => job.classify(job), isCurrent,
     apply(job, label) {
         Object.assign(job, { label, classified: true });
-        results.set(resultKey(job.line), job);
-        job.savePortrait(job, label);
-        if (!job.line.streamId) job.rememberSprite(cardFor(job.line.npcId), job.sprites, label, job.line);
-        while (results.size > 128) results.delete(results.keys().next().value);
-        renderNpcExpressions(messageElement(job.line.messageId), job.line);
-        if (job.generate && EMOTION_LABELS.includes(label) && !job.sprites.some(sprite => sprite.label === label)) {
-            // Editing runs in the background; classification and speech remain free to proceed.
-            const card = cardFor(job.line.npcId);
-            const image = card?.imageUrl;
-            const current = () => isCurrent(job) && cardFor(job.line.npcId) === card && card.imageUrl === image;
-            expressionJob(card, label, current, generationController.signal).then(input => expressionGenerator.generate(input)).then(sprites => {
-                if (!current()) return;
-                if (!job.line.streamId) job.rememberSprite(card, sprites, label, job.line);
-                for (const result of results.values()) {
-                    if (result.line.npcId === card.id && result.preferences === job.preferences && isCurrent(result, false)) {
-                        result.sprites = sprites;
-                        result.savePortrait(result, result.label);
-                        renderNpcExpressions(messageElement(result.line.messageId), result.line);
-                    }
-                }
-                // Speech portraits advance only on the next audio playing event.
-            }).catch(error => {
-                if (error.name === 'AbortError') return;
-                const key = JSON.stringify([card.id, label, job.preferences, error.message]);
-                if (warned.has(key)) return;
-                warned.add(key);
-                if (warned.size > 128) warned.delete(warned.values().next().value);
-                console.warn(`[Castward] ${card.name}: ${label} expression generation failed`, error);
-                if (typeof toastr !== 'undefined') toastr.warning(
-                    `${card.name}: ${label} expression failed. ${error.message} Retry in NPC Edit.`, 'Castward');
-            });
+        for (const line of job.targetLines || [job.line]) {
+            const result = line === job.line ? job : { ...job, line };
+            results.set(resultKey(line), result);
+            result.savePortrait(result, label);
+            if (!line.streamId) result.rememberSprite(cardFor(line.npcId), result.sprites, label, line);
+            renderNpcExpressions(messageElement(line.messageId), line);
         }
+        while (results.size > 128) results.delete(results.keys().next().value);
+        // Existing sprites are visible now; image edits follow the configured tracker gate.
+        void generateClassifiedExpression(job, label);
     },
 });
 
 export function resetNpcExpressions({ clear = true } = {}) {
     generationController.abort(); generationController = new AbortController();
+    if (!clear) trackerReadGate.forget(getContext()?.chat?.at(-1));
     clearSpeechSprite();
     epoch++; engine.reset();
     if (!clear) return;
@@ -134,21 +187,26 @@ export async function completeNpcExpressions(messageId, {
     const message = getContext()?.chat?.[Number(messageId)];
     if (!message || message.is_user || message.is_system) return;
     const lines = (records ?? readDialogueRecords(messageElement(messageId))).filter(line => line.npcId && !line.isPersona);
+    const perMessage = getSettings().npcExpressionsPerMessage === true;
+    if (perMessage && lines.some(line => line.streamId)) return;
     const version = epoch, packs = new Map();
-    for (const line of lines) {
+    for (const targetLines of expressionMessageGroups(lines, perMessage)) {
+        const line = perMessage ? { ...targetLines[0], text: targetLines.map(part => part.text).join('\n') } : targetLines[0];
         if (signal?.aborted || version !== epoch) return;
-        const cached = results.get(resultKey(line));
-        if ((cached?.classified || cached?.pending) && isCurrent(cached, false)) continue;
+        if (targetLines.every(part => {
+            const cached = results.get(resultKey(part));
+            return (cached?.classified || cached?.pending) && isCurrent(cached, false);
+        })) continue;
         const card = cardFor(line.npcId);
         const settings = card ? normalizeCharacterPresentation(card).expressions : null;
         if (card && prepareExpressionReference(card)) saveBinding(card);
         if (!settings?.spriteFolder) continue;
-        const job = { line, signal, sourceToken: message, epoch: version, preferences: preferences(card), config: classifierConfig(), classify, rememberSprite, savePortrait,
+        const job = { line, targetLines, signal, sourceToken: message, epoch: version, preferences: preferences(card), config: classifierConfig(), classify, rememberSprite, savePortrait,
             fallback: settings.fallback, sprites: [], pending: true, label: '' };
         job.generate = Boolean(settings.generation?.reference)
             && settings.generation.reference === card.imageUrl;
         if (job.generate) job.labels = EMOTION_LABELS;
-        results.set(resultKey(line), job);
+        for (const part of targetLines) results.set(resultKey(part), job);
         while (results.size > 128) results.delete(results.keys().next().value);
         try {
             if (!packs.has(settings.spriteFolder)) packs.set(settings.spriteFolder, loadPack(settings.spriteFolder));
@@ -174,6 +232,7 @@ export function adoptStreamExpressions(messageId, records) {
         if (!line) continue;
         // The engine retains this job object, so a pending classification also adopts it.
         job.line = line;
+        job.targetLines = [line];
         results.set(resultKey(line), job);
         if (job.classified && isCurrent(job, false)) {
             job.savePortrait(job, job.label);

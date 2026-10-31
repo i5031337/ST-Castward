@@ -38,7 +38,8 @@ export function responseFor(stage, registry) {
     }
     if (kind === 'collection') {
         const c = registry.collections.find(c => c.id === scope);
-        section = { id: c.id, name: c.name, targets: c.targets, trackQuantity: c.trackQuantity, guidance: c.purpose, fields: c.fields.map((f, index) => ({
+        section = { id: c.id, name: c.name, targets: c.targets, trackQuantity: c.trackQuantity, guidance: c.purpose,
+            includeInImagePrompt: true, emptyImagePrompt: 'none', fields: c.fields.map((f, index) => ({
             id: f.id, name: f.id, label: f.name, type: index ? 'number' : 'text', defaultValue: index ? 1 : '',
             isPrimary: index === 0, isStatic: index === 0, ...(f.id === 'quantity' ? { min: '0', maxStatValue: '' } : index ? { min: '1', maxStatValue: '3' } : {}) })) };
     }

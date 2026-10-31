@@ -79,6 +79,9 @@ with browser_session() as browser:
             results.draftMemories = !!panel.querySelector('.profile-memory-enabled');
             input(panel.querySelector('.profile-memory-interval'), '6', 'change');
             tab('Collections');
+            const emptyPrompt = panel.querySelector('.col-empty-image-prompt');
+            results.emptyPromptControl = emptyPrompt.value === 'none' && !emptyPrompt.disabled;
+            input(emptyPrompt, 'no visible techniques', 'change');
             input(panel.querySelector('.col-hint'), 'Learned combat techniques.');
             input(panel.querySelector('.f-hint'), 'The unique technique name.');
             const primary = panel.querySelector('.f-name'); input(primary, 'title', 'change');
@@ -94,6 +97,7 @@ with browser_session() as browser:
               && saved.profiles[0].guidance === 'Describe the species clearly.'
               && saved.memories.interval === 6
               && saved.collections[0].guidance === 'Learned combat techniques.'
+              && saved.collections[0].emptyImagePrompt === 'no visible techniques'
               && saved.collections[0].fields[0].guidance === 'The unique technique name.'
               && saved.collections[0].fields[0].name === 'title'
               && saved.npcTemplates.some(template => template.name === 'Human' && template.progression.enabled === false)

@@ -38,6 +38,8 @@ export const defaultSettings = {
     /** Draw a linked landscape image when the reader saves a new Place. */
     autoPlaceBackgrounds: false,
     autoGenerateNpcExpressions: false,
+    npcExpressionsPerMessage: false,
+    npcExpressionsRefreshOnImagePrompt: false,
     npcExpressionWorkflow: '',
     npcExpressionIpAdapterMode: false,
     showPresentNpcSprites: false,

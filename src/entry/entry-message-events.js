@@ -8,6 +8,7 @@ import { rebaseToSwipe, revertToBase, clearTurnRecord } from '../tracker/snapsho
 import { swipeBaseRecord } from '../tracker/status-logic.js';
 import { isImageOnlyMessage, trackerMessageIndex } from '../tracker/ui/status-ui-placement.js';
 import { scheduleMemoryRead, reconcileMemorySources, resetMemorySchedule } from '../memory/memory-reader.js';
+import { trackerReadGate } from '../tracker/tracker-read-gate.js';
 
 export function onMessageRendered(messageId) {
     try {
@@ -53,7 +54,13 @@ export function onMessageForExtraction(messageId) {
         if (!message || message.is_user || message.is_system || isImageOnlyMessage(message)) return;
 
         let cancelled = false;
-        extractStateFromMessage(message.mes, messageId)
+        const reading = extractStateFromMessage(message.mes, messageId);
+        if (getSettings().statusTracker?.extractionMode === 'inline') {
+            queueMicrotask(() => {
+                if (!trackerReadGate.hasRegistration(message)) trackerReadGate.register(message, Promise.resolve());
+            });
+        } else trackerReadGate.register(message, reading);
+        reading
             .then(result => {
                 cancelled = result.cancelled || result.reason === 'cancelled';
                 if (!result.applied && result.reason && result.reason !== 'extraction disabled'

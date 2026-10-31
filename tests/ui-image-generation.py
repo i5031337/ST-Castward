@@ -51,6 +51,12 @@ with browser_session() as browser:
             const adapterToggle=imageSettings.querySelector('[data-setting=npcExpressionIpAdapterMode]');
             result.ipAdapterModeSetting=adapterToggle?.previousElementSibling?.dataset.setting==='npcExpressionWorkflow'
               &&adapterToggle.querySelector('input[type="checkbox"]').checked===!!getSettings().npcExpressionIpAdapterMode;
+            const messageToggle=imageSettings.querySelector('[data-setting=npcExpressionsPerMessage]');
+            const refreshToggle=imageSettings.querySelector('[data-setting=npcExpressionsRefreshOnImagePrompt]');
+            result.expressionOptions=messageToggle?.previousElementSibling===adapterToggle
+              &&refreshToggle?.previousElementSibling===messageToggle
+              &&messageToggle.querySelector('input').checked===!!getSettings().npcExpressionsPerMessage
+              &&refreshToggle.querySelector('input').checked===!!getSettings().npcExpressionsRefreshOnImagePrompt;
             const sceneToggle=imageSettings.querySelector('[data-setting=showPresentNpcSprites]');
             result.sceneSpriteSetting=!!sceneToggle&&sceneToggle.querySelector('input[type="checkbox"]').checked===!!getSettings().showPresentNpcSprites;
             const tracker = document.createElement('div');

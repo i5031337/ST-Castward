@@ -5,7 +5,7 @@ import { debugLog, PORTRAIT_SHAPES, DEFAULT_PORTRAIT_SHAPE } from '../core/const
 import { applyMacros } from '../prompts/macros.js';
 import { getSettings, resolveImagePrompt } from '../core/settings.js';
 import { DEFAULT_IMAGE_NEGATIVE_PROMPT } from '../core/settings-defaults.js';
-import { fillImagePrompt, describeCarriedItems } from './api-lore-facts.js';
+import { fillImagePrompt, describeImageCollections } from './api-lore-facts.js';
 import { characterImageDescription } from './api-image-description.js';
 import { persistGeneratedImage } from './api-image-files.js';
 import { startActivity } from '../core/generation-activity.js';
@@ -32,7 +32,7 @@ export async function buildCharacterImagePrompt(char) {
     const fullPrompt = fillImagePrompt(template, {
         name: char.name,
         lore: characterImageDescription(char, loreContext),
-        items: describeCarriedItems(char),
+        items: describeImageCollections(char),
     });
     debugLog('Image prompt', fullPrompt);
     return fullPrompt;

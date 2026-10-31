@@ -17,7 +17,7 @@ export function createExpressionGenerator({ edit, loadPack, upload, cleanup = as
     return {
         generate(job, { retry = false, replace = false } = {}) {
             const key = JSON.stringify([job.owner, job.npcId, job.reference, job.folder, job.label,
-                job.workflow, job.prompt, job.promptVariants, job.negativePrompt, replace]);
+                job.workflow, job.prompt, job.promptVariants, job.negativePrompt, job.imageSource, replace]);
             const existing = pending.get(key);
             if (existing && existing.job.signal === job.signal && !existing.job.signal?.aborted
                 && existing.job.isCurrent()) return existing.task;
@@ -45,6 +45,7 @@ export function createExpressionGenerator({ edit, loadPack, upload, cleanup = as
                     const refreshed = await loadPack(job.folder);
                     check();
                     if (!refreshed.some(sprite => sprite.label === job.label)) throw new Error('Generated sprite was not found in the pack.');
+                    job.onSaved?.();
                     failed.delete(key);
                     return refreshed;
                 } finally {

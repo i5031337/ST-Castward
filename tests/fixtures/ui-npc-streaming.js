@@ -1,5 +1,5 @@
 const result = {};
-let context, chatLength, fixture, settings, savedCards, savedNpcs, savedCast, savedExpressions, savedTts, savedEnabled, savedTracker, bridge;
+let context, chatLength, fixture, settings, savedCards, savedNpcs, savedCast, savedExpressions, savedPerMessage, savedTts, savedEnabled, savedTracker, bridge;
 try {
     const entry = [...document.scripts].find(script => script.src.includes('/SillyNPC-XP/index.js'));
     const root = new URL('.', entry.src).href;
@@ -21,6 +21,7 @@ try {
     const cards = [{ id: 'streaming-ui-fixture', name: 'Streaming NPC', aliases: [] }];
     settings = getSettings(); savedCards = settings.characters; settings.characters = cards;
     savedExpressions = settings.autoGenerateNpcExpressions; settings.autoGenerateNpcExpressions = false;
+    savedPerMessage = settings.npcExpressionsPerMessage;
     savedTts = settings.tts;
     savedEnabled = settings.enabled; settings.enabled = true;
     savedTracker = settings.statusTracker; settings.statusTracker = { ...savedTracker, enabled: true };
@@ -111,11 +112,13 @@ try {
     const listeners = new Map();
     const events = { on: (name, callback) => { if (!listeners.has(name)) listeners.set(name, []); listeners.get(name).push(callback); } };
     const emit = (name, ...args) => { for (const callback of listeners.get(name) || []) callback(...args); };
-    const bridgeUnits = []; let closes = 0, speechCancelled = 0, enqueuedState;
+    const bridgeUnits = [], completedExpressions = []; let closes = 0, speechCancelled = 0, enqueuedState;
+    settings.npcExpressionsPerMessage = true;
     const hostContext = { ...context, streamingProcessor: { messageId: chatLength, type: 'normal', continueMessage: '', stoppingStrings: [] } };
     bridge = initNpcStreaming({ context: () => hostContext, events, types: event_types,
         enqueue: (state, added) => { enqueuedState = state; bridgeUnits.push(...added.map(unit => unit.text)); },
-        close: () => closes++, cancelSpeech: () => speechCancelled++, renderControl: () => {} });
+        close: () => closes++, cancelSpeech: () => speechCancelled++, renderControl: () => {},
+        completeFinalExpressions: (id, { records }) => completedExpressions.push({ id, records }) });
     const frame = () => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
     emit(event_types.GENERATION_STARTED, 'normal', {}, false);
     emit(event_types.STREAM_TOKEN_RECEIVED, 'Streaming NPC: "Wire partial');
@@ -127,6 +130,10 @@ try {
     emit(event_types.GENERATION_ENDED);
     await frame();
     result.wireFinalFlush = bridgeUnits.join(',') === 'Wire first.,Wire tail.' && closes === 1 && bridge.handled(chatLength);
+    result.wireMessageExpressionsAfterFinalization = completedExpressions.length === 1
+        && completedExpressions[0].id === chatLength
+        && completedExpressions[0].records.map(line => line.text).join(',') === 'Wire first.,Wire tail.'
+        && completedExpressions[0].records.every(line => !line.streamId);
     emit(event_types.GENERATION_ENDED); await frame();
     result.wireFinalNoReplay = bridgeUnits.length === 2 && closes === 1;
     bridge.stop();
@@ -190,6 +197,7 @@ finally {
     if (context && chatLength !== undefined) context.chat.splice(chatLength);
     if (settings) {
         settings.characters = savedCards; settings.autoGenerateNpcExpressions = savedExpressions;
+        settings.npcExpressionsPerMessage = savedPerMessage;
         settings.tts = savedTts; settings.enabled = savedEnabled; settings.statusTracker = savedTracker;
     }
     if (context) {

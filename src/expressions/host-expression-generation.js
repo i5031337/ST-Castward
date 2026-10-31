@@ -7,6 +7,9 @@ import { getSettings } from '../core/settings.js';
 import { expressionWorkflow, expressionPromptVariants } from './expression-prompts.js';
 import { cleanupExpressionSource } from './expression-image-cleanup.js';
 import { buildCharacterImagePrompt } from '../api/api-image-generate.js';
+import { expressionImageSource } from './expression-image-source.js';
+import { isChatCharacter } from '../characters/character-repository.js';
+import { saveSettings } from '../core/settings.js';
 
 export const expressionOwner = () => {
     const context = getContext();
@@ -52,6 +55,13 @@ export async function expressionJob(card, label, isCurrent, signal) {
     const job = { owner: expressionOwner(), npcId: card.id, folder: config.spriteFolder, label,
         reference: generation.reference, prompt: '', promptVariants: expressionPromptVariants(generation, label),
         negativePrompt: generation.negativePrompt, workflow: expressionWorkflow(card, settings), isCurrent, signal };
+    job.imageSource = expressionImageSource(card);
+    job.onSaved = () => {
+        generation.imageSources ||= {};
+        generation.imageSources[label] = job.imageSource;
+        if (isChatCharacter(card.id)) getContext()?.saveMetadataDebounced?.();
+        else saveSettings();
+    };
     if (settings.npcExpressionIpAdapterMode === true) job.prompt = await buildCharacterImagePrompt(card);
     return job;
 }

@@ -28,13 +28,13 @@ with browser_session() as browser:
             if(id<0)throw new Error('Scene fixture needs a host character with a chat.');
             hostScript.setCharacterId(id);
           }
-          savedSettings={characters:settings.characters,enabled:settings.enabled,autoGenerateNpcExpressions:settings.autoGenerateNpcExpressions,npcExpressionWorkflow:settings.npcExpressionWorkflow,npcExpressionIpAdapterMode:settings.npcExpressionIpAdapterMode,showPresentNpcSprites:settings.showPresentNpcSprites};
+          savedSettings={characters:settings.characters,enabled:settings.enabled,autoGenerateNpcExpressions:settings.autoGenerateNpcExpressions,npcExpressionsPerMessage:settings.npcExpressionsPerMessage,npcExpressionsRefreshOnImagePrompt:settings.npcExpressionsRefreshOnImagePrompt,npcExpressionWorkflow:settings.npcExpressionWorkflow,npcExpressionIpAdapterMode:settings.npcExpressionIpAdapterMode,showPresentNpcSprites:settings.showPresentNpcSprites};
           metadata={...context.chatMetadata}; chatLength=context.chat.length;
           expressionsSettings=context.extensionSettings.expressions;
           context.extensionSettings.expressions={...expressionsSettings,api:0};
           const cards=['A','B'].map(name=>({id:'expression-fixture-'+name,name:'Expression '+name,aliases:[],imageUrl:'/img/ai4.png',
             presentation:{expressions:{enabled:true,spriteFolder:'ExpressionPack/'+name,fallback:'neutral'}}}));
-          settings.characters=cards; settings.enabled=true;settings.autoGenerateNpcExpressions=true;settings.showPresentNpcSprites=false;settings.npcExpressionIpAdapterMode=false;
+          settings.characters=cards; settings.enabled=true;settings.autoGenerateNpcExpressions=true;settings.showPresentNpcSprites=false;settings.npcExpressionIpAdapterMode=false;settings.npcExpressionsPerMessage=false;settings.npcExpressionsRefreshOnImagePrompt=false;
           context.chatMetadata.sillynpc_npcs=[];
           context.chatMetadata.sillynpc_expression_sprites={};
           context.chatMetadata.sillynpc_cast={categories:null,include:[],exclude:[]};
@@ -54,6 +54,11 @@ with browser_session() as browser:
           const adapters={rememberSprite,savePortrait,saveBinding:()=>{},loadPack:async()=>{completionPackRequests++;return sprites;},classify:async job=>{calls.push([job.line.npcId,job.line.text]);return job.line.text==='First.'?'neutral':'joy';}};
           const {verifyExpressionStreaming}=await import(root+'tests/fixtures/ui-expression-streaming.js');
           Object.assign(result,await verifyExpressionStreaming({root,runtime,context,fixture,chatLength,sprites}));
+          settings.npcExpressionsPerMessage=true;runtime.resetNpcExpressions();
+          await runtime.completeNpcExpressions(chatLength,adapters);
+          result.perMessageClassifiesEachNpcOnce=JSON.stringify(calls)===JSON.stringify([[cards[0].id,['First.','Last.'].join(String.fromCharCode(10))],[cards[1].id,'Second.']]);
+          result.perMessageAppliesEveryLine=[...fixture.querySelectorAll('.sillynpc-chat-avatar')].map(a=>a.dataset.sillynpcExpression).join(',')==='joy,joy,joy';
+          calls=[];completionPackRequests=0;settings.npcExpressionsPerMessage=false;runtime.resetNpcExpressions();
           await runtime.completeNpcExpressions(chatLength,adapters);
           result.eachLine=JSON.stringify(calls)===JSON.stringify([[cards[0].id,'First.'],[cards[1].id,'Second.'],[cards[0].id,'Last.']]);
           result.sharedCompletionPacks=completionPackRequests===2;

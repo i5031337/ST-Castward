@@ -31,6 +31,7 @@ test('legacy preset migration keeps only reusable schema and stable generated ID
     assert.equal(systemProfileFields(result, 'npc').find(field => field.id === 'appearance').guidance, 'Describe visible details.');
     assert.equal(result.collections[0].fields[1].isStatic, false);
     assert.equal(result.collections[0].includeInImagePrompt, true);
+    assert.equal(result.collections[0].emptyImagePrompt, 'none');
     assert.equal(result.memories.maxEntriesPerCharacter, 50);
     assert.equal(JSON.stringify(result).includes('Mira'), false);
     assert.equal(JSON.stringify(result).includes('rare'), false);
@@ -39,9 +40,12 @@ test('legacy preset migration keeps only reusable schema and stable generated ID
 
 test('System definitions retain collection image prompt choices', () => {
     const system = normalizeSystemDefinition({ schemaVersion: SYSTEM_SCHEMA_VERSION,
-        collections: [{ id: 'secrets', includeInImagePrompt: false, fields: [] }],
+        collections: [{ id: 'secrets', includeInImagePrompt: false, emptyImagePrompt: '', fields: [] },
+            { id: 'equipment', emptyImagePrompt: 'unarmed', fields: [] }],
     });
     assert.equal(system.collections[0].includeInImagePrompt, false);
+    assert.equal(system.collections[0].emptyImagePrompt, '');
+    assert.equal(system.collections[1].emptyImagePrompt, 'unarmed');
     assert.deepEqual(normalizeSystemDefinition(system), system);
 });
 

@@ -35,6 +35,7 @@ export const defaultTrackerSettings = {
                 ], 
                 targets: ['player', 'npc'],
                 includeInImagePrompt: true,
+                emptyImagePrompt: 'none',
             }
         ],
         summaryThreshold: 5,

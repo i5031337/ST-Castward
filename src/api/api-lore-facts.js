@@ -107,7 +107,7 @@ export function fillImagePrompt(template, { name, lore, items } = {}) {
     }).trim();
 }
 
-export function describeCarriedItems(char) {
+export function describeImageCollections(char) {
     if (!char?.name) return '';
     const { collections } = liveFactsFor(char);
     return imageItemsFromCollections(collections, getSettings().statusTracker.collections, char.isPlayer, char);

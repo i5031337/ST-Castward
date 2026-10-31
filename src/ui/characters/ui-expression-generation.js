@@ -2,6 +2,7 @@ import { EMOTION_LABELS, expressionPromptVariants, setExpressionPrompt, prepareE
 import { expressionGenerator, expressionJob, expressionOwner } from '../../expressions/host-expression-generation.js';
 import { getSettings } from '../../core/settings.js';
 import { findCharacterRecord } from '../../characters/character-repository.js';
+import { expressionImageSource } from '../../expressions/expression-image-source.js';
 
 export function buildExpressionGeneration(card, { save, onPack, onReference, onSelect, hasExpression }) {
     const config = card.presentation.expressions, generation = config.generation;
@@ -63,16 +64,20 @@ export function buildExpressionGeneration(card, { save, onPack, onReference, onS
     const run = async () => {
         if (!card.imageUrl) { status.textContent = 'Add an NPC portrait first.'; return; }
         if (prepareExpressionReference(card)) { onReference(); save(); }
-        const snapshot = JSON.stringify(config), image = card.imageUrl, owner = expressionOwner();
+        const configSnapshot = () => JSON.stringify({ ...config,
+            generation: { ...config.generation, imageSources: undefined } });
+        const snapshot = configSnapshot(), image = card.imageUrl, owner = expressionOwner();
         const workflow = expressionWorkflow(card, getSettings());
         const ipAdapterMode = getSettings().npcExpressionIpAdapterMode;
         const portraitInputs = () => JSON.stringify([getSettings().imgGenPromptPrefix, card.profile, card.lorebook]);
         const imagePromptInputs = portraitInputs();
+        const imageSource = expressionImageSource(card);
         controller = new AbortController();
         const current = () => getSettings().enabled && expressionOwner() === owner && card.imageUrl === image
-            && findCharacterRecord(card.id) === card && JSON.stringify(card.presentation.expressions) === snapshot
+            && findCharacterRecord(card.id) === card && configSnapshot() === snapshot
             && expressionWorkflow(card, getSettings()) === workflow
             && getSettings().npcExpressionIpAdapterMode === ipAdapterMode
+            && expressionImageSource(card) === imageSource
             && (!ipAdapterMode || portraitInputs() === imagePromptInputs);
         const label = emotion.value;
         generate.disabled = emotion.disabled = true; cancel.hidden = false;
