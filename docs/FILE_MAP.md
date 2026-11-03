@@ -136,7 +136,7 @@ This map covers tracked runtime files, tests and support files. Source files and
 | `src/entry/entry-message-events.js` | Message, swipe, regeneration, latest-reply edit, and deletion event handlers. |
 | `src/entry/entry-avatar-actions.js` | Character and player avatar click actions. |
 | `src/entry/entry-chat-scope.js` | Prompt to scope a chat to its characters. |
-| `src/entry/entry-history-notes.js` | Manage copied historical notes on messages. |
+| `src/entry/entry-history-notes.js` | Prepare prompt-only narrator history and world notes. |
 | `src/entry/entry-generation-names.js` | Temporarily allow player-labelled story dialogue through host reply cleanup, then restore the host setting. |
 | `src/core/generation-cancellation.js` | Shared Stop-button visibility, stop/chat-change cancellation, linked dialog signals, and late-response guards for all LLM request adapters. |
 | `src/core/generation-activity.js`, `src/ui/tracker/ui-generation-activity.js` | Transient request activity and composer indicators. |
@@ -284,6 +284,7 @@ This map covers tracked runtime files, tests and support files. Source files and
 | `src/prompts/prompt-texts-other.js` | Other built-in prompt templates. |
 | `src/prompts/fill-preset.js` | Automatic character fill stage selection. |
 | `src/prompts/prompt-slot.js` | Inject writing prompts and remove retired prompt-list entries. |
+| `src/prompts/history-window.js` | Keep a stable token-bounded narrator history window. |
 | `tests/prompt-slot-cleanup.mjs` | Remove retired prompt-list entries while preserving normal prompt injection. |
 | `src/prompts/macros.js` | Expand extension template macros. |
 | `src/prompts/dialogue-format.js` | Dialogue formatting instructions. |

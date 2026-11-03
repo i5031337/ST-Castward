@@ -29,6 +29,10 @@ export const defaultSettings = {
     npcCreationToolEnabled: true,
     /** 0 puts it after the newest message - the last thing read before answering. */
     dialogueFormatDepth: 0,
+    /** Keep a stable prompt-only history window for narrator cache reuse. */
+    narratorHistoryLimitEnabled: false,
+    narratorHistoryMinTokens: 8000,
+    narratorHistoryMaxTokens: 16000,
     /** Colour a speaker who has no card, from their name. */
     autoColorUnknownSpeakers: true,
     /** Draw a missing portrait after empty-card Fill or reader-generated NPC profiles. */

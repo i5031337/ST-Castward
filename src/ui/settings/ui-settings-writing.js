@@ -59,6 +59,27 @@ export function renderWritingRulesView(view, onReprocessMessages) {
         }));
     }
 
+    const historyHeading = document.createElement('h4');
+    historyHeading.className = 'sillynpc-subsection-title';
+    historyHeading.textContent = 'Narrator History';
+    view.append(historyHeading);
+    view.append(buildSettingToggle({
+        key: 'narratorHistoryLimitEnabled',
+        label: 'History Trimming',
+        help: 'Limit recent chat history sent to the narrator. When the limit is reached, remove older turns from its next prompt in one batch. Older messages remain in your chat and available to Castward memory readings. Leave disabled if another extension manages your context. These limits cover chat history; allow room for other prompts and the reply in your model context.',
+        onChange: rerender,
+    }));
+    if (getSettings().narratorHistoryLimitEnabled) {
+        view.append(buildSettingNumber({
+            key: 'narratorHistoryMinTokens', label: 'History After Trimming', suffix: 'tokens',
+            min: 100, help: 'After the limit is reached, keep roughly this many tokens of recent chat history. Complete player turns stay together.',
+        }));
+        view.append(buildSettingNumber({
+            key: 'narratorHistoryMaxTokens', label: 'History Limit', suffix: 'tokens',
+            min: 200, help: 'Trim when visible chat history reaches this size. Keep this above History After Trimming.',
+        }));
+    }
+
     const readingHeading = document.createElement('h3');
     readingHeading.className = 'sillynpc-section-title';
     readingHeading.style.marginTop = '24px';

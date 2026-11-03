@@ -48,6 +48,16 @@ export function normaliseBaseSettings(settings) {
         if (!Number.isFinite(value) || value <= 0) settings[key] = defaultSettings[key];
         else settings[key] = Math.floor(value);
     }
+    if (typeof settings.narratorHistoryLimitEnabled !== 'boolean') {
+        settings.narratorHistoryLimitEnabled = defaultSettings.narratorHistoryLimitEnabled;
+    }
+    for (const key of ['narratorHistoryMinTokens', 'narratorHistoryMaxTokens']) {
+        const value = Number(settings[key]);
+        settings[key] = Number.isFinite(value) && value >= 100 ? Math.floor(value) : defaultSettings[key];
+    }
+    settings.narratorHistoryMaxTokens = Math.max(200, settings.narratorHistoryMaxTokens);
+    settings.narratorHistoryMinTokens = Math.min(settings.narratorHistoryMinTokens,
+        settings.narratorHistoryMaxTokens - 100);
     if (typeof settings.popupWidth !== 'number' || settings.popupWidth < 20) settings.popupWidth = 80;
     if (typeof settings.popupHeight !== 'number' || settings.popupHeight < 20) settings.popupHeight = 80;
 
