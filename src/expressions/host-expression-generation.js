@@ -6,7 +6,8 @@ import { createExpressionGenerator } from './expression-generation.js';
 import { getSettings } from '../core/settings.js';
 import { expressionWorkflow, expressionPromptVariants } from './expression-prompts.js';
 import { cleanupExpressionSource } from './expression-image-cleanup.js';
-import { buildCharacterImagePrompt } from '../api/api-image-generate.js';
+import { buildCharacterImagePrompt, resolvePortraitShape } from '../api/api-image-generate.js';
+import { PORTRAIT_SHAPES, DEFAULT_PORTRAIT_SHAPE } from '../core/constants.js';
 import { expressionImageSource } from './expression-image-source.js';
 import { isChatCharacter } from '../characters/character-repository.js';
 import { saveSettings } from '../core/settings.js';
@@ -48,13 +49,29 @@ export const expressionGenerator = createExpressionGenerator({
     },
 });
 
+async function expressionDimensions(reference) {
+    // The edit should keep the reference framing, regardless of the portrait setting
+    // or temporary dimensions from another SillyTavern image request.
+    try {
+        const image = new Image();
+        image.src = reference;
+        await image.decode();
+        if (image.naturalWidth > 0 && image.naturalHeight > 0) {
+            return { width: image.naturalWidth, height: image.naturalHeight };
+        }
+    } catch { /* Use the configured size if the browser cannot decode this reference. */ }
+    return resolvePortraitShape().pixels || PORTRAIT_SHAPES[DEFAULT_PORTRAIT_SHAPE].pixels;
+}
+
 export async function expressionJob(card, label, isCurrent, signal) {
     const config = card.presentation.expressions;
     const generation = config.generation;
     const settings = getSettings();
+    const { width, height } = await expressionDimensions(generation.reference);
     const job = { owner: expressionOwner(), npcId: card.id, folder: config.spriteFolder, label,
         reference: generation.reference, prompt: '', promptVariants: expressionPromptVariants(generation, label),
-        negativePrompt: generation.negativePrompt, workflow: expressionWorkflow(card, settings), isCurrent, signal };
+        negativePrompt: generation.negativePrompt, workflow: expressionWorkflow(card, settings),
+        width, height, isCurrent, signal };
     job.imageSource = expressionImageSource(card);
     job.onSaved = () => {
         generation.imageSources ||= {};

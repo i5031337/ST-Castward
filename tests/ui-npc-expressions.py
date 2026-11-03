@@ -28,7 +28,7 @@ with browser_session() as browser:
             if(id<0)throw new Error('Scene fixture needs a host character with a chat.');
             hostScript.setCharacterId(id);
           }
-          savedSettings={characters:settings.characters,enabled:settings.enabled,autoGenerateNpcExpressions:settings.autoGenerateNpcExpressions,npcExpressionsPerMessage:settings.npcExpressionsPerMessage,npcExpressionsRefreshOnImagePrompt:settings.npcExpressionsRefreshOnImagePrompt,npcExpressionWorkflow:settings.npcExpressionWorkflow,npcExpressionIpAdapterMode:settings.npcExpressionIpAdapterMode,showPresentNpcSprites:settings.showPresentNpcSprites};
+          savedSettings={characters:settings.characters,enabled:settings.enabled,autoGenerateNpcExpressions:settings.autoGenerateNpcExpressions,npcExpressionsPerMessage:settings.npcExpressionsPerMessage,npcExpressionsRefreshOnImagePrompt:settings.npcExpressionsRefreshOnImagePrompt,npcExpressionWorkflow:settings.npcExpressionWorkflow,npcExpressionIpAdapterMode:settings.npcExpressionIpAdapterMode,showPresentNpcSprites:settings.showPresentNpcSprites,portraitShape:settings.portraitShape};
           metadata={...context.chatMetadata}; chatLength=context.chat.length;
           expressionsSettings=context.extensionSettings.expressions;
           context.extensionSettings.expressions={...expressionsSettings,api:0};
@@ -117,9 +117,15 @@ with browser_session() as browser:
           settings.npcExpressionIpAdapterMode=false;
           settings.autoGenerateNpcExpressions=false;
           imageSettings=context.extensionSettings.sd;
-          context.extensionSettings.sd={...imageSettings,comfy_url:'http://fixture.invalid',comfy_workflow:'PortraitOnly.json'};
+          context.extensionSettings.sd={...imageSettings,comfy_url:'http://fixture.invalid',comfy_workflow:'PortraitOnly.json',width:1280,height:720};
+          settings.portraitShape='st';
+          config.generation.reference=cards[0].imageUrl;
+          const referenceSizedJob=await expressionJob(cards[0],'joy',()=>true);
+          result.hostResolutionUsesReference=referenceSizedJob.width===512&&referenceSizedJob.height===768;
+          config.generation.reference='';
+          settings.portraitShape='3:4';
           settings.npcExpressionWorkflow='FixtureEdit.json';
-          let stored=[], edits=0, uploads=0, sentPrompt='', uploadedFolder='', pauseEdit=false, releaseEdit, requestedWorkflow;
+          let stored=[], edits=0, uploads=0, sentPrompt='', uploadedFolder='', pauseEdit=false, releaseEdit, requestedWorkflow, requestedDimensions=[];
           const mockJson=value=>Promise.resolve(new Response(JSON.stringify(value),{headers:{'Content-Type':'application/json'}}));
           const png='iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+a1X8AAAAASUVORK5CYII=';
           window.fetch=(url,options={})=>{
@@ -128,10 +134,11 @@ with browser_session() as browser:
             if(path==='/api/sd/comfy/workflows') return mockJson(['FixtureEdit.json']);
             if(path==='/api/sd/comfy/workflow') {
               requestedWorkflow=JSON.parse(options.body).file_name;
-              return mockJson(JSON.stringify({'1':{class_type:'Fixture',inputs:{image:'%reference_image%',text:'%prompt%'}}}));
+              return mockJson(JSON.stringify({'1':{class_type:'Fixture',inputs:{image:'%reference_image%',text:'%prompt%',width:'%width%',height:'%height%'}}}));
             }
             if(path==='/api/sd/comfy/generate'){
-              edits++;sentPrompt=JSON.parse(JSON.parse(options.body).prompt).prompt['1'].inputs.text;
+              edits++;const inputs=JSON.parse(JSON.parse(options.body).prompt).prompt['1'].inputs;
+              sentPrompt=inputs.text;requestedDimensions.push([inputs.width,inputs.height]);
               if(pauseEdit) return new Promise(resolve=>{releaseEdit=()=>resolve(new Response(JSON.stringify({format:'png',data:png}),{headers:{'Content-Type':'application/json'}}));});
               return mockJson({format:'png',data:png});
             }
@@ -154,6 +161,7 @@ with browser_session() as browser:
           result.generatedFromReference=edits===1&&uploads===1&&uploadedFolder===config.spriteFolder
             &&expressionPromptVariants(config.generation,'joy').includes(sentPrompt)
             &&editor.querySelector('select').value==='joy';
+          result.manualPortraitDimensions=JSON.stringify(requestedDimensions[0])==='[512,768]';
           result.sharedEditingWorkflow=requestedWorkflow==='FixtureEdit.json'&&context.extensionSettings.sd.comfy_workflow==='PortraitOnly.json';
           result.generatedExpressionIndicator=availability.dataset.missing==='false'&&availability.textContent.includes('joy');
           generate.click();
@@ -183,6 +191,7 @@ with browser_session() as browser:
           releaseEdit();
           for(let i=0;i<100&&fixture.querySelector('.sillynpc-chat-avatar').dataset.sillynpcExpression!=='joy';i++) await new Promise(r=>setTimeout(r,25));
           result.emptyPackGeneration=classificationLabels?.length===28&&edits===3&&uploads===3;
+          result.automaticPortraitDimensions=JSON.stringify(requestedDimensions[2])==='[512,768]';
           result.generatedApplied=fixture.querySelector('.sillynpc-chat-avatar').dataset.sillynpcExpression==='joy';
           result.lateEditKeepsSpeechPortrait=document.querySelector('#sillynpc-speech-sprite img').src===speechPortrait;
           runtime.resetNpcExpressions();runtime.renderNpcExpressions(fixture);

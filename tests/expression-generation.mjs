@@ -13,7 +13,7 @@ function fixture() {
     });
     const job = { owner: 'chat A', npcId: 'npc', folder: 'SillyNPC/npc', label: 'joy',
         reference: '/portrait.png', prompt: 'Keep outfit. Smile.', negativePrompt: 'text',
-        workflow: 'Edit.json', isCurrent: () => true };
+        workflow: 'Edit.json', width: 512, height: 768, isCurrent: () => true };
     return { generator, calls, packs, job };
 }
 
@@ -122,7 +122,8 @@ test('duplicate jobs share one edit, send the saved prompt unchanged, and reuse 
     assert.equal(sprites[0].label, 'joy');
     await generator.generate(job);
     assert.equal(calls.length, 1);
-    assert.deepEqual(calls[0], { reference: job.reference, prompt: job.prompt, negativePrompt: 'text', workflow: 'Edit.json', signal: undefined });
+    assert.deepEqual(calls[0], { reference: job.reference, prompt: job.prompt, negativePrompt: 'text',
+        workflow: 'Edit.json', width: 512, height: 768, signal: undefined });
     await generator.generate(job, { retry: true, replace: true });
     assert.equal(calls.length, 2);
 });

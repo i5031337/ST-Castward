@@ -17,7 +17,8 @@ export function createExpressionGenerator({ edit, loadPack, upload, cleanup = as
     return {
         generate(job, { retry = false, replace = false } = {}) {
             const key = JSON.stringify([job.owner, job.npcId, job.reference, job.folder, job.label,
-                job.workflow, job.prompt, job.promptVariants, job.negativePrompt, job.imageSource, replace]);
+                job.workflow, job.prompt, job.promptVariants, job.negativePrompt, job.width, job.height,
+                job.imageSource, replace]);
             const existing = pending.get(key);
             if (existing && existing.job.signal === job.signal && !existing.job.signal?.aborted
                 && existing.job.isCurrent()) return existing.task;
@@ -38,7 +39,8 @@ export function createExpressionGenerator({ edit, loadPack, upload, cleanup = as
                 let url;
                 try {
                     url = await edit({ reference: job.reference, prompt: selectExpressionPrompt(job),
-                        negativePrompt: job.negativePrompt, workflow: job.workflow || undefined, signal: job.signal });
+                        negativePrompt: job.negativePrompt, workflow: job.workflow || undefined,
+                        width: job.width, height: job.height, signal: job.signal });
                     check();
                     await upload({ url, folder: job.folder, label: job.label, signal: job.signal, check });
                     check();
