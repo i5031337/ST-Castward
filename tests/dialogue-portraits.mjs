@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { DIALOGUE_PORTRAITS_KEY, readLinePortrait, writeLinePortrait } from '../src/expressions/dialogue-portrait-state.js';
+import { DIALOGUE_PORTRAITS_KEY, readLinePortrait, writeLinePortrait, previousLinePortrait } from '../src/expressions/dialogue-portrait-state.js';
 
 const line = { npcId: 'bianca', lineIndex: 2 };
 const picture = { label: 'joy', path: '/characters/Bianca/joy.png', fallback: 'neutral', fallbackPath: '/characters/Bianca/neutral.png' };
@@ -47,4 +47,20 @@ test('selections travel with native swipe extras and do not overwrite other swip
     assert.equal(chatMessage.swipe_info[0].extra[DIALOGUE_PORTRAITS_KEY].lines[2].label, 'joy');
     chatMessage.swipe_id = 0; chatMessage.mes = 'Bianca: "Hello."'; chatMessage.extra = firstExtra;
     assert.equal(readLinePortrait(chatMessage, line).label, 'joy');
+});
+
+test('previous portraits follow NPC and line order, never borrowing future lines or other swipes', () => {
+    const chat = [message(), message(), message()];
+    writeLinePortrait(chat[0], line, picture);
+    writeLinePortrait(chat[1], { ...line, lineIndex: 0 }, { ...picture, label: 'sadness' });
+    writeLinePortrait(chat[1], { ...line, npcId: 'other', lineIndex: 1 }, picture);
+    writeLinePortrait(chat[1], { ...line, lineIndex: 3 }, { ...picture, label: 'surprise' });
+    const target = { ...line, messageId: 1 };
+    assert.equal(previousLinePortrait(chat, target).picture.label, 'sadness');
+    assert.equal(previousLinePortrait(chat, { ...target, lineIndex: 0 }).picture.label, 'joy');
+    chat[1].swipe_id = 1;
+    assert.equal(previousLinePortrait(chat, target).picture.label, 'joy');
+    assert.equal(previousLinePortrait(chat, target, () => false), null);
+    assert.equal(previousLinePortrait([], target), null);
+    assert.equal(previousLinePortrait(chat, { ...target, npcId: 'absent' }), null);
 });

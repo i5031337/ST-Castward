@@ -3,7 +3,7 @@ export async function verifyExpressionEditor({ root, cards, packRequests, expres
   const {buildExpressionsSection}=await import(root+'src/ui/characters/ui-expressions.js');
   const result={};
   let writes=0;
-  const editor=buildExpressionsSection(cards[0],{save:()=>writes++}); document.body.append(editor);
+  const editor=buildExpressionsSection(cards[0],{save:()=>writes++,savePortrait:()=>{}}); document.body.append(editor);
   try {
     for(let i=0;i<50&&!editor.textContent.includes('sprites available');i++) await new Promise(r=>setTimeout(r,10));
     result.preview=editor.textContent.includes('2 sprites available')&&!editor.querySelector('img').hidden&&packRequests()===1;

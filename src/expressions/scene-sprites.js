@@ -44,6 +44,12 @@ export function clearSceneSprites() {
     document.getElementById('sillynpc-scene-sprites')?.remove();
 }
 
+/** Read the current selection without loading a pack or changing scene ownership. */
+export function readNpcSprite(card) {
+    const record = getContext().chatMetadata?.[METADATA_KEY]?.[card.id];
+    return validLatestSprite(card, record, sourceFor) ? record : null;
+}
+
 /** Remember only an available emotion sprite; neutral placeholders do not replace it. */
 export function rememberNpcSprite(card, sprites, label, line, { save = () => getContext().saveMetadataDebounced?.() } = {}) {
     const context = getContext();
@@ -58,6 +64,20 @@ export function rememberNpcSprite(card, sprites, label, line, { save = () => get
     if (!mayRememberSprite(records[card.id], record, sourceFor)) return;
     if (JSON.stringify(records[card.id]) !== JSON.stringify(record)) { records[card.id] = record; save(); }
     packs.set(JSON.stringify([owner(), config.spriteFolder]), Promise.resolve(sprites));
+    void refreshSceneSprites();
+}
+
+/** Refresh the selected image without letting an older generation change its emotion. */
+export function refreshNpcSpritePack(card, sprites, { save = () => getContext().saveMetadataDebounced?.() } = {}) {
+    const context = getContext(), config = card.presentation?.expressions;
+    const record = context.chatMetadata?.[METADATA_KEY]?.[card.id];
+    if (context.getCurrentChatId?.() === undefined || !config?.spriteFolder) return;
+    packs.set(JSON.stringify([owner(), config.spriteFolder]), Promise.resolve(sprites));
+    if (validLatestSprite(card, record, sourceFor)) {
+        const identity = record.source === null ? card.id : dialogueRevision(context, record.messageId) + card.id + record.lineIndex;
+        const path = selectSprite(sprites, record.label, '', identity);
+        if (path && path !== record.path) { record.path = path; save(); }
+    }
     void refreshSceneSprites();
 }
 

@@ -7,12 +7,13 @@ import { loadSpritePack } from '../../expressions/host-expressions.js';
 import { selectSprite } from '../../expressions/expression-engine.js';
 import { buildExpressionGeneration } from './ui-expression-generation.js';
 import { rememberNpcSprite } from '../../expressions/scene-sprites.js';
+import { refreshNpcExpressionPack } from '../../expressions/npc-expressions.js';
 
 export function buildExpressionsSection(card, { save = () => {
     if (isChatCharacter(card.id)) getContext()?.saveMetadataDebounced?.();
     else saveSettings();
     triggerReprocess();
-} } = {}) {
+}, savePortrait } = {}) {
     const config = normalizeCharacterPresentation(card).expressions;
     const root = document.createElement('fieldset'); root.className = 'sillynpc-expression-editor';
     const legend = document.createElement('legend'); legend.textContent = 'Expressions'; root.append(legend);
@@ -68,6 +69,7 @@ export function buildExpressionsSection(card, { save = () => {
         onPack: (loaded, label) => {
             request++; sprites = loaded; selected = label; show(); status.textContent = `${loaded.length} sprites available.`;
             rememberNpcSprite(card, loaded, label, null, { save });
+            refreshNpcExpressionPack(card, loaded, { save, savePortrait });
         },
         onReference: () => { request++; folder.value = config.spriteFolder; sprites = []; show(); },
     });

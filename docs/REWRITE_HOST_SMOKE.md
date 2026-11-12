@@ -5,6 +5,7 @@ Run these checks in a live SillyTavern session with this extension enabled. Node
 ## Host verification
 
 - On 2026-09-29, the user reported thoroughly testing the smoke checklist in SillyTavern and confirmed that its behavior works, except for level-up mechanics, which still need enough gameplay to exercise. Results marked **User verified** below record that report; they are not an agent-run browser session.
+- On 2026-10-31, the user confirmed that the level-up trigger and XP rollover work properly. Reward retry remains to be checked.
 - The earlier agent check on 2026-09-28 only confirmed that SillyTavern served HTTP 200. It did not verify UI behavior.
 
 ## User report on 2026-09-28
@@ -20,7 +21,7 @@ The user initially found rare XP awards, overlapping text in Underlines, a track
 | Portrait provider | Configure SillyTavern Image Generation, generate a portrait, then choose Use or Discard. | `/imagine` returns an image through the host provider and the chosen action updates or leaves the card accordingly. | User verified |
 | NPC edit and lore | Edit a profile field, save, sync lore, then reopen both. | The edited value remains on the card and linked lore entry. | User verified |
 | Turn extraction and review | Generate a reply with a clear stat or item change and run the reader. | Proposed changes and reasons are visible; accepting a proposal updates the correct actor once. | User verified |
-| XP and level | Generate an accomplishment that awards XP across a level boundary. | The reader's absolute XP total advances the stored remainder and level once; dependent stat growth and collection rewards appear for review. | Level-up mechanics pending |
+| XP and level | Generate an accomplishment that awards XP across a level boundary. | The reader's absolute XP total advances the stored remainder and level once; dependent stat growth and collection rewards appear for review. | Level-up trigger and XP rollover user verified; reward retry pending |
 | Chat and persona scope | Switch to a different chat and persona, then return. | Cast and live tracker state follow the chat; player identity follows the selected persona. | User verified |
 | Latest reply changes | Swipe, regenerate, and edit the latest reply. | Review and tracked state correspond to the selected reply; no stale reply changes accumulate. | User verified |
 
@@ -28,7 +29,7 @@ The user initially found rare XP awards, overlapping text in Underlines, a track
 
 | Case | Host action | Expected result | Result |
 | --- | --- | --- | --- |
-| Menu access without HUD | Hide the HUD, open SillyNPC's normal menu, select **Player**. | The current persona's full sheet opens with profile, stats, collections, XP/level, portrait, and edit controls. | User verified; level-up display after rollover pending |
+| Menu access without HUD | Hide the HUD, open SillyNPC's normal menu, select **Player**. | The current persona's full sheet opens with profile, stats, collections, XP/level, portrait, and edit controls. | User verified; level-up display after rollover not separately confirmed |
 | HUD shortcut | Show the HUD and activate its player portrait/action. | The same menu opens directly on **Player**; no second sheet popup appears. | User verified |
 | Fill and lore | On **Player**, run Fill for empty fields and portrait, then inspect or sync lore. | Filled data appears in the menu sheet and linked lore; existing fields are not unexpectedly replaced. | User verified |
 | Save on tab switch | Edit a profile, stat, and collection value; switch to **Characters** and back. | Each edit saves once and appears once on return. | User verified |
@@ -38,9 +39,7 @@ The user initially found rare XP awards, overlapping text in Underlines, a track
 
 For the Player sheet, test with at least two personas and two chats, including one existing chat with saved XP and a portrait. Inspect the browser console for extension errors after each action. If the menu cannot remain open during a chat or persona switch, record that host constraint and use the close/switch/reopen path.
 
-To exercise the remaining level-up case without a long play session, use a disposable chat and manually set the player's XP remainder to one below its displayed cap. Then generate a clearly earned minor accomplishment and inspect the reader report, stored remainder, level, reward proposals, Player sheet, and HUD. The reward-retry case needs a deliberately unusable reward selection response. The
-progression/reward flow has changed since the dated user report; verify its current
-behavior separately with `tests/ui-progression-smoke.py`.
+The user has since confirmed the level-up trigger and XP rollover. The reward-retry case still needs a deliberately unusable reward selection response. Use `tests/ui-progression-smoke.py` for the current progression UI fixture; it does not replace the remaining live reward-retry check.
 
 ## Regression follow-up checks
 
@@ -53,7 +52,7 @@ behavior separately with `tests/ui-progression-smoke.py`.
 | Home screen | Leave the chat for SillyTavern's home screen. | No tracker box remains visible. | User verified |
 | Image in chat | Generate an image message with tracker placement above, then below the latest prose message. | The tracker remains visible beside the latest prose message in both positions. | User verified |
 | Underlines | Select Underlines with Energy and XP visible. | Each name and value is readable once, with no text overlap. | User verified |
-| Small XP award | Generate a minor accomplishment, then one that crosses a level boundary. Inspect the raw XP total under `player.stats`. | The reader adds a scaled award to the current XP and reports the total as a string; lower XP readings are refused and rollover happens once. | Minor awards user verified; boundary and rollover pending |
+| Small XP award | Generate a minor accomplishment, then one that crosses a level boundary. Inspect the raw XP total under `player.stats`. | The reader adds a scaled award to the current XP and reports the total as a string; lower XP readings are refused and rollover happens once. | Minor awards, level-up trigger, and XP rollover user verified |
 | Collection names with commas | Show two tracked items, one with comma-separated adjectives in its name. | Each item has a visible boundary in the tracker summary. | User verified |
 | Failed tracker reply | Make the reader return invalid JSON for the latest prose reply, then use **Retry tracker reading** under that reply. | The failed output is visible; retry runs the same message again and applies a valid answer once. | User verified |
 | Failed reward selection | Cross an XP threshold and make a guided collection reward selection return invalid JSON, then retry the missing rewards. | The XP transition follows its review policy independently; valid choices remain cached. Retry proposes only missing grants and does not award XP again. | Current progression/reward mechanics need a manual gameplay check |

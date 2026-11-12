@@ -17,6 +17,21 @@ export function readLinePortrait(message, line) {
         fallbackPath: spritePath(record.fallbackPath) ? record.fallbackPath : '' };
 }
 
+/** Find the nearest earlier selection for this NPC in the active message/swipe history. */
+export function previousLinePortrait(chat, line, accepts = () => true) {
+    for (let messageId = Math.min(line.messageId, chat.length - 1); messageId >= 0; messageId--) {
+        const message = chat[messageId];
+        const indices = Object.keys(message?.extra?.[DIALOGUE_PORTRAITS_KEY]?.lines || {})
+            .map(Number).filter(index => Number.isInteger(index) && index >= 0
+                && (messageId < line.messageId || index < line.lineIndex)).sort((a, b) => b - a);
+        for (const lineIndex of indices) {
+            const picture = readLinePortrait(message, { npcId: line.npcId, lineIndex });
+            if (picture && accepts(picture)) return { messageId, lineIndex, picture };
+        }
+    }
+    return null;
+}
+
 /** The host owns swipe storage; synchronize only our field in the active swipe's extra. */
 export function writeLinePortrait(message, line, picture) {
     if (!message || !line.npcId || !picture || !spritePath(picture.path)) return false;

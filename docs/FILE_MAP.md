@@ -548,7 +548,7 @@ paths have regression tests under `tests/`.
 | `src/expressions/scene-sprite-state.js` | Present-NPC matching and saved sprite freshness/order rules. |
 | `src/expressions/scene-sprites.js` | Chat-owned latest sprite records and persistent multi-NPC display independent of speech. |
 | `src/expressions/dialogue-portrait-state.js` | Compact per-line sprite selections, reply freshness, and native swipe-extra synchronization. |
-| `src/expressions/dialogue-portraits.js` | Save and restore exact dialogue portraits using the existing chat-save queue. |
+| `src/expressions/dialogue-portraits.js` | Save and restore exact dialogue portraits and refresh saved pack selections across active chat history using the existing chat-save queue. |
 | `src/expressions/npc-expressions.js` | Runtime freshness guards, cached dialogue portraits, and event registration. |
 | `src/expressions/emotion-prompt-variants.js` | Three built-in facial-expression and pose prompt variants for each of 28 emotions. |
 | `src/expressions/speech-sprite.js` | Mount and clear the active speech sprite with image fallbacks. |
@@ -575,6 +575,7 @@ paths have regression tests under `tests/`.
 | `tests/expression-generation.mjs` | Prompt persistence, pack isolation, missing-sprite reuse, duplicate jobs, cancellation, and explicit retry. |
 | `tests/scene-sprites.mjs` | Scene membership, saved sprite freshness, and ordering of delayed versus manual expressions. |
 | `tests/dialogue-portraits.mjs` | Portrait serialization, per-line identity, edit invalidation, generated updates, and swipe-extra preservation. |
+| `tests/dialogue-portrait-pack.mjs` | Pack refresh without rendered messages or classifier jobs, changed filenames, newly available emotions, and NPC/folder/edit/swipe boundaries. |
 | `tests/ui-npc-expressions.py` | Unsaved live portrait and editor checks with mocked classification and sprite packs. |
 | `tests/fixtures/ui-expression-streaming.js`, `tests/fixtures/ui-expression-editor.js`, `tests/fixtures/ui-expression-scene.js` | Shared live streaming-adoption, editor, and scene-display fixture sections. |
 | `tests/npc-tts.mjs` | Speech segmentation, queue ordering/cancellation, voice fallback, and completion gating. |

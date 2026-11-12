@@ -13,8 +13,9 @@ import { clearSpeechSprite, showSpeechSprite } from './speech-sprite.js';
 import { wireExpressionEvents } from './expression-events.js';
 import { EMOTION_LABELS, prepareExpressionReference, expressionWorkflow } from './expression-prompts.js';
 import { expressionGenerator, expressionJob } from './host-expression-generation.js';
-import { rememberNpcSprite, initSceneSprites, focusSceneSprite } from './scene-sprites.js';
-import { portraitFromResult, readDialoguePortrait, rememberDialoguePortrait } from './dialogue-portraits.js';
+import { rememberNpcSprite, initSceneSprites, focusSceneSprite, refreshNpcSpritePack, readNpcSprite } from './scene-sprites.js';
+import { portraitFromResult, readDialoguePortrait, rememberDialoguePortrait, refreshDialoguePortraitPack } from './dialogue-portraits.js';
+import { previousLinePortrait } from './dialogue-portrait-state.js';
 import { expressionMessageGroups } from './expression-message-groups.js';
 import { expressionImageSource } from './expression-image-source.js';
 import { needsExpressionRefresh, hasPendingImageCollection } from './expression-source-policy.js';
@@ -36,6 +37,41 @@ const preferences = card => {
     return JSON.stringify([stableExpressions, expressionWorkflow(card, settings), settings.npcExpressionIpAdapterMode]);
 };
 const messageElement = id => document.querySelector(`#chat .mes[mesid="${Number(id)}"]`);
+
+function previousPortrait(line) {
+    if (!getSettings().autoGenerateNpcExpressions || !dialogueLineCurrent(line)) return null;
+    const card = cardFor(line.npcId), config = card?.presentation?.expressions;
+    if (!config?.spriteFolder || (config.generation?.reference && config.generation.reference !== card.imageUrl)) return null;
+    const candidates = [];
+    const earlier = candidate => candidate.messageId < line.messageId
+        || (candidate.messageId === line.messageId && candidate.lineIndex < line.lineIndex);
+    for (const result of results.values()) {
+        if (!result.classified || result.line.npcId !== line.npcId || !earlier(result.line)
+            || result.folder !== config.spriteFolder || result.reference !== card.imageUrl || !dialogueLineCurrent(result.line)) continue;
+        const picture = portraitFromResult(result);
+        if (picture) candidates.push({ ...result.line, picture });
+    }
+    const saved = previousLinePortrait(getContext().chat || [], line, picture => {
+        try { return decodeURI(picture.path.split('?')[0]).startsWith(`/characters/${config.spriteFolder}/`); }
+        catch { return false; }
+    });
+    if (saved) candidates.push(saved);
+    const scene = readNpcSprite(card);
+    if (scene && (earlier(scene) || (scene.source === null && scene.messageId === line.messageId))) {
+        candidates.push({ ...scene, picture: { path: scene.path, label: scene.label } });
+    }
+    candidates.sort((a, b) => b.messageId - a.messageId || b.lineIndex - a.lineIndex);
+    return candidates[0]?.picture || null;
+}
+
+function pictureForLine(line) {
+    const result = results.get(resultKey(line));
+    const current = result && isCurrent(result, false);
+    return (current && result.classified ? portraitFromResult(result) : null)
+        || readDialoguePortrait(line) || previousPortrait(line)
+        || (current ? portraitFromResult(result) : null);
+}
+
 function saveExpressionBinding(card) {
     if (isChatCharacter(card.id)) getContext()?.saveMetadataDebounced?.();
     else saveSettings();
@@ -94,14 +130,10 @@ async function generateClassifiedExpression(job, label) {
         const input = await expressionJob(card, label, unchanged, generationController.signal);
         const sprites = await expressionGenerator.generate(input, { replace });
         if (!unchanged()) return;
-        if (!job.line.streamId) job.rememberSprite(card, sprites, label, job.line);
-        for (const result of results.values()) {
-            if (result.line.npcId === card.id && result.preferences === job.preferences && isCurrent(result, false)) {
-                result.sprites = sprites;
-                result.savePortrait(result, result.label);
-                renderNpcExpressions(messageElement(result.line.messageId), result.line);
-            }
+        for (const line of job.targetLines || [job.line]) {
+            if (!line.streamId) job.rememberSprite(card, sprites, label, line);
         }
+        refreshNpcExpressionPack(card, sprites);
         // Speech portraits advance only on the next audio playing event.
     } catch (error) {
         if (error.name === 'AbortError') return;
@@ -131,6 +163,24 @@ const engine = createExpressionEngine({ classify: job => job.classify(job), isCu
     },
 });
 
+/** Publish a saved pack to both displays without classifying or generating again. */
+export function refreshNpcExpressionPack(card, sprites, {
+    save, savePortrait = rememberDialoguePortrait,
+} = {}) {
+    const config = card.presentation.expressions;
+    for (const result of new Set(results.values())) {
+        if (result.line.npcId !== card.id || result.folder !== config.spriteFolder || result.reference !== card.imageUrl
+            || getContext().chat?.[result.line.messageId] !== result.sourceToken || !dialogueLineCurrent(result.line)) continue;
+        result.sprites = sprites;
+        if (result.classified) result.savePortrait(result, result.label);
+    }
+    refreshDialoguePortraitPack(card, sprites, { savePortrait });
+    for (const message of document.querySelectorAll('#chat .mes')) {
+        renderNpcExpressions(message);
+    }
+    refreshNpcSpritePack(card, sprites, { save });
+}
+
 export function resetNpcExpressions({ clear = true } = {}) {
     generationController.abort(); generationController = new AbortController();
     if (!clear) trackerReadGate.forget(getContext()?.chat?.at(-1));
@@ -157,8 +207,7 @@ export function renderNpcExpressions(mesEl, targetLine) {
         delete avatar.dataset.sillynpcExpression;
         const line = byLine.get(Number(avatar.dataset.sillynpcDialogueLine));
         if (line?.npcId !== avatar.dataset.charId) continue;
-        const result = results.get(resultKey(line));
-        const picture = (result && isCurrent(result, false) ? portraitFromResult(result) : null) || readDialoguePortrait(line);
+        const picture = pictureForLine(line);
         if (!picture) continue;
         const path = picture.path;
         const original = avatar.src;
@@ -202,7 +251,8 @@ export async function completeNpcExpressions(messageId, {
         if (card && prepareExpressionReference(card)) saveBinding(card);
         if (!settings?.spriteFolder) continue;
         const job = { line, targetLines, signal, sourceToken: message, epoch: version, preferences: preferences(card), config: classifierConfig(), classify, rememberSprite, savePortrait,
-            fallback: settings.fallback, sprites: [], pending: true, label: '' };
+            fallback: settings.fallback, folder: settings.spriteFolder, reference: card.imageUrl,
+            sprites: [], pending: true, label: '' };
         job.generate = Boolean(settings.generation?.reference)
             && settings.generation.reference === card.imageUrl;
         if (job.generate) job.labels = EMOTION_LABELS;
@@ -256,7 +306,9 @@ export function showNpcSpeechExpression(unit) {
     if (getSettings().showPresentNpcSprites) {
         clearSpeechSprite(); focusSceneSprite(card.id); return;
     }
-    const picture = (result && isCurrent(result, false) ? portraitFromResult(result) : null) || readDialoguePortrait(line);
+    const current = result && isCurrent(result, false);
+    const picture = (current && result.classified ? portraitFromResult(result) : null)
+        || readDialoguePortrait(line) || previousPortrait(line) || (current ? portraitFromResult(result) : null);
     showSpeechSprite(card, picture?.path || '', picture?.fallbackPath || '', unit);
 }
 
