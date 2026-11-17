@@ -83,15 +83,6 @@
 .sillynpc-scene-sprite:only-child { transform: none; }
 .sillynpc-scene-sprite[data-active="true"] { z-index: 1000; }
 .sillynpc-scene-sprite img { width: 100%; height: 100%; object-fit: contain; object-position: bottom center; }
-/* Give square profile pictures the presence of a tall sprite, cropping rather than stretching. */
-#sillynpc-speech-sprite img[data-portrait="true"],
-.sillynpc-scene-sprite img[data-portrait="true"] {
-    height: auto;
-    max-height: 100%;
-    aspect-ratio: 1 / 2;
-    object-fit: cover;
-    object-position: top center;
-}
 @media (max-width: 768px) {
     #sillynpc-scene-sprites { z-index: 1; }
     .sillynpc-scene-sprite-side { width: 35vw; height: 35vh; }

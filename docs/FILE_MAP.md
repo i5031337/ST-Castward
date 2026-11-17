@@ -574,6 +574,7 @@ paths have regression tests under `tests/`.
 | `tests/fixtures/ui-expression-regeneration.js`, `tests/fixtures/ui-expression-speech.js` | Page-context regeneration and speech helpers for the unsaved expression UI check. |
 | `tests/expression-generation.mjs` | Prompt persistence, pack isolation, missing-sprite reuse, duplicate jobs, cancellation, and explicit retry. |
 | `tests/scene-sprites.mjs` | Scene membership, saved sprite freshness, and ordering of delayed versus manual expressions. |
+| `tests/ui-scene-sprites.cjs`, `tests/fixtures/ui-scene-sprites.js` | Windows headless Edge layout checks for portrait and expression frames at desktop and mobile widths. |
 | `tests/dialogue-portraits.mjs` | Portrait serialization, per-line identity, edit invalidation, generated updates, and swipe-extra preservation. |
 | `tests/dialogue-portrait-pack.mjs` | Pack refresh without rendered messages or classifier jobs, changed filenames, newly available emotions, and NPC/folder/edit/swipe boundaries. |
 | `tests/ui-npc-expressions.py` | Unsaved live portrait and editor checks with mocked classification and sprite packs. |

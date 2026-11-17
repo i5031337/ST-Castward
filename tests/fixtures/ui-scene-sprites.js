@@ -25,9 +25,11 @@ try {
     const imageUrl = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><rect width="400" height="400" fill="teal"/></svg>');
     const spriteUrl = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="400" height="800"><rect x="80" width="240" height="800" fill="teal"/></svg>');
     const checkPortrait = image => {
-        check(image.dataset.portrait === 'true' && getComputedStyle(image).objectFit === 'cover', 'Fallback portraits should fill a tall frame');
-        const expected = Math.min(image.offsetWidth * 2, image.parentElement.clientHeight);
-        check(Math.abs(image.offsetHeight - expected) <= 1, 'Square portraits should have comparable height to tall sprites');
+        check(image.dataset.portrait === 'true' && getComputedStyle(image).objectFit === 'contain',
+            'Fallback portraits should use the same scaling as expression sprites');
+        check(Math.abs(image.offsetWidth - image.parentElement.clientWidth) <= 1
+            && Math.abs(image.offsetHeight - image.parentElement.clientHeight) <= 1,
+        'Portraits and expression sprites should share a display frame');
     };
     const cards = Array.from({ length: 5 }, (_, i) => ({ id: `scene-test-${i}`, name: `Scene ${i}`, imageUrl }));
     settings.characters = cards;
