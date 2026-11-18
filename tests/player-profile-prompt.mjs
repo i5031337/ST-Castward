@@ -162,7 +162,7 @@ test('the combined profile and lore request includes the player persona descript
     }
 });
 
-test('player creation uses the active System and creative prompt while NPC Fill stays factual', async () => {
+test('player creation uses the active System while NPC Fill creatively completes missing fields', async () => {
     const settings = { activeSystem: 'voyage', statusTracker: { presets: { voyage: { definition: {
         name: 'Deep Space', metadata: { description: 'Aboard a worn exploration ship.' },
         stats: { character: [
@@ -179,7 +179,9 @@ test('player creation uses the active System and creative prompt while NPC Fill 
     }
     assert.match(prompt, /Creatively fill gaps/);
     assert.doesNotMatch(prompt, /Do not invent profile details|NPC-only marker|NPC secrets/);
-    assert.match(await lorePrompt({ name: 'Mira' }, persona, { settings }), /Do not invent profile details/);
+    const npcPrompt = await lorePrompt({ name: 'Mira' }, persona, { settings });
+    assert.match(npcPrompt, /Creatively fill missing fields/);
+    assert.match(npcPrompt, /Preserve existing profile values unless the story clearly changes them/);
 });
 
 test('player Fill preserves existing values while accepting newly invented fields', async () => {

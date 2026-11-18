@@ -67,7 +67,7 @@ Return raw JSON matching responseSchema.
 Preserve established facts and match the setting and tone.
 For request.name, preserve that character's identity and canon; explicit story and alternate-universe facts take precedence.
 Fill unspecified details that fit the context. Leave uncertain history and relationships unspecified.
-For a new character, give them a distinct appearance, voice, motive and personal tension where the fields allow.
+Match the setting and tone. Favor specific, coherent details that make the character feel distinct rather than generic, following the guidance for each requested field.
 Use establishedActor's held stats and possessions to inform the profile.
 
 ### NAMES
