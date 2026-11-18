@@ -31,23 +31,21 @@ The separate profile test passed **78/78 checks**. The [Fantasy tracker report](
 
 ## Two turns of Fantasy Adventure
 
-This session used local **Gemma 4 31B** with the built-in Fantasy Adventure System. The story introduced Joram without a prepared NPC card. Castward generated his profile and portrait from the conversation. No tracked values were edited by hand.
+Skritch, a novice goblin mage, arrives at a ruined floodgate looking for someone who can help. This session uses the built-in Fantasy Adventure System. NPC creation, profiles, portraits, and tracking were automatic; only the location's background generation was triggered manually.
 
-**1. Meet someone new, then give them a face.** The reader picks up Joram's stats and wrench. Clicking his placeholder portrait and choosing **Fill** gives him a profile and picture.
+**1. Meet someone new.** The narrator calls Castward's **Create NPC** tool and introduces Vogn, an exhausted goblin floodgate overseer. He arrives with his own profile, portrait, stats, equipment, and abilities.
 
-[![Joram's generated portrait beside his dialogue, with his stats and iron wrench in the tracker](img/screenshots/fantasy-demo/02-new-npc-after-fill.png)](img/screenshots/fantasy-demo/02-new-npc-after-fill.png)
+[![The opening premise and Create NPC tool call, followed by Vogn's illustrated dialogue and the tracker](img/screenshots/fantasy-demo/01-meet-vogn.png)](img/screenshots/fantasy-demo/01-meet-vogn.png)
 
-His character sheet brings those details together. Here's Joram's sheet from later in the same session.
+Click his portrait to see his character sheet, including his background, belongings, and motivation.
 
-[![Joram's character sheet with his portrait, equipment, appearance, and motivation](img/screenshots/fantasy-demo/03-generated-profile.png)](img/screenshots/fantasy-demo/03-generated-profile.png)
+[![Vogn's character sheet with his portrait, stats, equipment, abilities, and lore](img/screenshots/fantasy-demo/02-vogn-sheet.png)](img/screenshots/fantasy-demo/02-vogn-sheet.png)
 
-**2. Borrow equipment and cast magic.** Joram lends Skritch his wrench. The reader moves it to Skritch's equipment and records the heat spell. Casting costs **2 Mana**, leaves Skritch with a **strained shoulder**, and earns **15 XP**.
+**2. Cast magic and see what changes.** Skritch blasts the rust off a jammed valve. The reader adds **Rust Blast** to his abilities, spends **2 Mana**, awards **10 XP**, and records that he is **slightly dazed from magical recoil**.
 
-[![Skritch borrows the wrench and casts a spell, with the resulting changes shown in the tracker](img/screenshots/fantasy-demo/04-magic-and-equipment.png)](img/screenshots/fantasy-demo/04-magic-and-equipment.png)
+[![Skritch casts Rust Blast at the floodgate, with the location background and updated Mana, XP, condition, and abilities](img/screenshots/fantasy-demo/03-rust-blast.png)](img/screenshots/fantasy-demo/03-rust-blast.png)
 
-You can read the [full session and reader outputs](docs/evaluations/fantasy-adventure-live-demo.json), including the details it missed.
-
-Profiles are filled on click by default. Turn on **Profiles → Generate Profiles For New NPCs** to fill them as you meet people. Enable **Profiles → Draw Portrait Automatically** to give them pictures too; portraits need a configured SillyTavern Image Generation service.
+Profiles are filled on click by default (for characters not created with the tool). Turn on **Profiles → Generate Profiles For New NPCs** to fill them as you meet people. Enable **Profiles → Draw Portrait Automatically** to give them pictures too; portraits need a configured SillyTavern Image Generation service.
 
 The narrator can create NPCs with fresh names, distinct personalities, stats, and suitable starting belongings and abilities before introducing them into the story. Previously mentioned or canon characters can keep their established names.
 
@@ -67,7 +65,7 @@ A floating HUD keeps your player's stats on screen while you scroll. Drag it whe
 
 **Create your player character:** Open **Player → Fill** to flesh out your SillyTavern persona using the active System. Before your first message in a new adventure, it can also create starting stats, equipment, and abilities for you to review.
 
-[![Skritch's floating HUD after casting the spell](img/screenshots/fantasy-demo/player-hud.png)](img/screenshots/fantasy-demo/player-hud.png)
+[![Skritch's floating HUD after Rust Blast, showing 12 HP, 8 Mana, 10 XP, and level 1](img/screenshots/fantasy-demo/player-hud-vogn-session.png)](img/screenshots/fantasy-demo/player-hud-vogn-session.png)
 
 ## Change genres with Systems
 
