@@ -102,14 +102,22 @@ export function renderAppearanceView(view, onReprocessMessages, updateExtensionT
         label: 'Enable Colored Chat Blocks',
         help: 'The master switch for colour in the chat: with it off nothing is tinted, and '
             + 'any colour the model wrote into its own reply is left showing through. On, a '
-            + 'speaker\'s dialogue carries their colour in the style set below.',
-        onChange: rerender,
+            + 'speaker\'s block uses their colour in the style set below.',
+        onChange: () => { reprocess(); rerender(); },
     }));
     // Only while there is colouring for them to affect. Both decide how colour is applied
     // rather than whether it happens, so with the switch above off they do nothing at all -
     // and a live-looking control that does nothing is worse than one that is absent.
     if (getSettings().applyColors) {
         view.append(buildSettingSelect({ key: 'colorStyle', label: 'Character Coloring Logic', options: [{value:'text',label:'Text Only'},{value:'background',label:'Soft Background'},{value:'border',label:'Left Border Accent'},{value:'gradient',label:'Subtle Gradient'},{value:'all',label:'Full Highlight (Strong)'}], onChange: reprocess }));
+        view.append(buildSettingToggle({
+            key: 'colorDialogueText',
+            label: 'Color Dialogue Text',
+            help: 'Use the speaker’s Castward color for their words. Turn off to keep your preset’s text colors '
+                + 'while retaining portraits and the selected background or border highlight. '
+                + 'Choose a style other than Text Only to keep a colored highlight.',
+            onChange: reprocess,
+        }));
         view.append(buildSettingToggle({
             key: 'autoColorUnknownSpeakers',
             label: 'Colour Speakers Without A Card',

@@ -334,8 +334,8 @@
 .sillynpc-chat-avatar.size-extra  { width: 132px !important; min-width: 132px !important; height: 180px !important; }
 
 /* Speech Block Coloring */
-.mes_text .sillynpc-speech-block[class*="color-"],
-.mes_text .sillynpc-speech-block[class*="color-"] * {
+.mes_text .sillynpc-speech-block.sillynpc-tint-text,
+.mes_text .sillynpc-speech-block.sillynpc-tint-text * {
     color: var(--sillynpc-color) !important;
 }
 

@@ -8,6 +8,7 @@ export const defaultSettings = {
     enabled: true,
     tts: defaultTtsSettings,
     applyColors: true,
+    colorDialogueText: true,
     /** Independent font multipliers for menus/sheets and the in-chat tracker. */
     menuFontScale: 1.0,
     trackerFontScale: 1.0,

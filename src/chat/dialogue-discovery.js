@@ -75,10 +75,10 @@ function startsLine(node) {
     return !previous || previous.nodeName === 'BR';
 }
 
-function quotedElementFollows(node) {
-    let next = node.nextSibling;
-    while (next?.nodeType === 3 && !next.nodeValue.trim()) next = next.nextSibling;
-    return next?.nodeName === 'Q' && OPEN_QUOTES.has((next.textContent || '')[0]);
+function quotedTextFollows(node, container) {
+    // Preset markup can wrap speech in spans or custom tags as well as <q>.
+    const line = dialogueSource(node, node.nodeValue.length, container).split('\n', 1)[0];
+    return OPEN_QUOTES.has(line.trimStart()[0]);
 }
 
 function excluded(node, container) {
@@ -139,7 +139,8 @@ export function discoverDialogueLines(container, {
     let node;
     while ((node = walker.nextNode())) {
         if (excluded(node, container)) continue;
-        for (const label of dialogueLabels(node.nodeValue, startsLine(node), quotedElementFollows(node), dialogueRecognitionFormat)) {
+        for (const label of dialogueLabels(node.nodeValue, startsLine(node),
+            () => quotedTextFollows(node, container), dialogueRecognitionFormat)) {
             const card = cardForDialogueName(label.name, characters, caseInsensitive);
             if (!card && ignoredLabels.has(label.name.trim().toLowerCase())) continue;
             const persona = personaFor(label.name);

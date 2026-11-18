@@ -17,8 +17,9 @@ export function dialogueLabels(text, startsLine = true, quoteFollows = false, te
     for (const match of source.matchAll(cachedPattern)) {
         if (match.index === 0 && !match[1] && !startsLine) continue;
         const quoteStart = match.index + match[0].length;
-        // SillyTavern can move quoted speech into a following <q>.
-        if (quoteStart === source.length && !quoteFollows) continue;
+        // Formatting can move quoted speech into a following inline element.
+        if (quoteStart === source.length
+            && !(typeof quoteFollows === 'function' ? quoteFollows() : quoteFollows)) continue;
         const name = match[4].trim();
         if (!name) continue;
         const start = match.index + match[1].length + match[2].length + match[3].length;

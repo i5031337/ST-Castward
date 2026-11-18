@@ -124,6 +124,7 @@ export function clearDecorations(textContainer) {
         p.classList.remove(
             'sillynpc-speech-block',
             'sillynpc-multi-speaker',
+            'sillynpc-tint-text',
             'divider-subtle', 'divider-bold', 'divider-dashed', 'divider-none',
             'color-text', 'color-background', 'color-border', 'color-gradient', 'color-all'
         );
@@ -232,7 +233,7 @@ export function resolveSpeakerColor(charId, charName) {
  * @returns {number} How many tags were neutralised.
  */
 export function neutraliseModelColors(block) {
-    if (!getSettings().applyColors) return 0;
+    if (!getSettings().applyColors || getSettings().colorDialogueText === false) return 0;
     const tags = block?.querySelectorAll?.('font[color]') || [];
     let count = 0;
     for (const tag of tags) {
@@ -254,6 +255,7 @@ function decorateSpeechBlocks(container) {
         // Reset classes to ensure setting changes apply
         block.classList.remove(
             'sillynpc-speech-block', 
+            'sillynpc-tint-text',
             'divider-subtle', 'divider-bold', 'divider-dashed', 'divider-none',
             'color-text', 'color-background', 'color-border', 'color-gradient', 'color-all'
         );
@@ -275,6 +277,7 @@ function decorateSpeechBlocks(container) {
                 block.style.setProperty('--sillynpc-color', colour.color);
                 if (colour.charId) block.setAttribute('data-sillynpc-char', colour.charId);
                 block.classList.add(`color-${settings.colorStyle || 'text'}`);
+                if (settings.colorDialogueText !== false) block.classList.add('sillynpc-tint-text');
             }
         }
 

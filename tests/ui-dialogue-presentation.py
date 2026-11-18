@@ -25,6 +25,8 @@ with browser_session() as browser:
                     hideSpeakerNames: false, applyColors: true, dialogueRecognitionFormat: '{name}: "{dialogue}"' });
                 const { checkShortNames } = await import(base + 'tests/fixtures/ui-short-names.js');
                 Object.assign(result, await checkShortNames(base, settings));
+                const { checkDialogueColors } = await import(base + 'tests/fixtures/ui-dialogue-colors.js');
+                Object.assign(result, await checkDialogueColors(base, settings));
                 const player = logic.getCurrentPersonaName();
                 const cards = [
                     { id: 'dialogue-fixture-a', name: 'Zélie', aliases: [] },
@@ -110,6 +112,31 @@ with browser_session() as browser:
                 result.customUnquoted = readDialogueRecords(mes, options)[0]?.text === 'Unquoted words.'
                     && readSpeechUnits(mes, options)[0]?.kind === 'dialogue';
                 settings.dialogueRecognitionFormat = '{name}: "{dialogue}"';
+                for (const [kind, markup] of [
+                    ['presetTag', '<marigold:stretch>"Well now..."</marigold>'],
+                    ['styledSpan', '<span style="color:gold"><em>"Well now..."</em></span>'],
+                ]) {
+                    container.innerHTML = '<p>Maren: ' + markup + '</p>';
+                    const records = readDialogueRecords(mes, options);
+                    injectAtDialogueLines(container, cards, () => '/img/ai4.png', false);
+                    result[kind] = records.length === 1 && records[0].speakerLabel === 'Maren'
+                        && records[0].text === 'Well now...'
+                        && container.querySelectorAll('.sillynpc-chat-avatar').length === 1
+                        && JSON.stringify(readDialogueRecords(mes, options)) === JSON.stringify(records)
+                        && readSpeechUnits(mes, options).some(unit =>
+                            unit.kind === 'dialogue' && unit.speakerLabel === 'Maren' && unit.text === 'Well now...');
+                }
+                for (const [kind, markup] of [
+                    ['followingLine', '<br><span>"Not Maren’s dialogue."</span>'],
+                    ['hiddenQuote', '<span hidden>"Hidden words."</span>Visible prose.'],
+                    ['codeQuote', '<code>"Code words."</code>Visible prose.'],
+                    ['unquotedSpan', '<span>Visible prose.</span>'],
+                ]) {
+                    container.innerHTML = '<p>Maren: ' + markup + '</p>';
+                    injectAtDialogueLines(container, cards, () => '/img/ai4.png', false);
+                    result[kind] = readDialogueRecords(mes, options).length === 0
+                        && !container.querySelector('.sillynpc-chat-avatar');
+                }
                 container.innerHTML = '<p>Zélie: "Restored words."</p>';
                 const original = before[0].revision;
                 context.chat[0].swipe_id = 1;

@@ -52,6 +52,7 @@ export function chatRenderSignature() {
     const decoration = [
         settings.enabled,
         settings.applyColors,
+        settings.colorDialogueText,
         settings.hideSpeakerNames,
         settings.caseInsensitive,
         settings.defaultImageFit,
