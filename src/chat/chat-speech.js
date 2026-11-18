@@ -7,6 +7,7 @@ import { createAvatarImg } from './chat-portraits.js';
 export function injectAtDialogueLines(container, characters, pickFace, isLastMessage) {
     const matches = discoverDialogueLines(container, {
         characters, caseInsensitive: getSettings().caseInsensitive,
+        dialogueRecognitionFormat: getSettings().dialogueRecognitionFormat,
         ignoredLabels: getIgnoredSpeakerLabels(), personaFor: resolvePersonaSpeaker,
     });
     const byNode = new Map();

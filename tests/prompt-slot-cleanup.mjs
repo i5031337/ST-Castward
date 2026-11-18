@@ -9,6 +9,7 @@ let fixtureId = 0;
 
 async function fixture(withOldEntry) {
     const declarations = `
+        import { DEFAULT_DIALOGUE_TEMPLATE, resolveDialogueTemplate } from ${JSON.stringify(new URL('../src/chat/dialogue-template.js', import.meta.url).href)};
         const calls = { saves: 0, renders: [], injections: [] };
         const setExtensionPrompt = (...args) => calls.injections.push(args);
         const saveSettingsDebounced = () => calls.saves++;
@@ -64,4 +65,12 @@ test('old list preference does not recreate a prompt-list entry', async () => {
     applyDialogueFormatPrompt();
     assert.deepEqual(calls.injections.at(-1),
         ['sillynpc-dialogue-format', '', 1, 4, false, 0]);
+});
+
+test('format reminder follows recognition and falls back for invalid templates', async () => {
+    const { dialogueFormatText, settings } = await fixture(false);
+    settings.dialogueRecognitionFormat = '[{name}]: "{dialogue}"';
+    assert.ok(dialogueFormatText().includes(settings.dialogueRecognitionFormat));
+    settings.dialogueRecognitionFormat = '{dialogue}';
+    assert.equal(dialogueFormatText(), 'Dialogue format');
 });

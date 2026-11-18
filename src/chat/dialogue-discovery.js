@@ -1,5 +1,6 @@
 import { cardForShortName } from '../characters/short-name-match.js';
 import { dialogueLabels } from './dialogue-line.js';
+import { resolveDialogueTemplate } from './dialogue-template.js';
 import { stripVoiceCueNodes } from '../tts/voice-cue-format.js';
 
 const OPEN_QUOTES = new Map([['"', '"'], ['“', '”'], ['«', '»'], ['「', '」'], ['『', '』'], ['＂', '＂']]);
@@ -55,6 +56,17 @@ export function dialogueQuotes(source) {
         text: passages.map(part => part.text).join(' ').trim(),
         quotedText: passages.map(part => part.quotedText).join(' '),
     };
+}
+
+export function dialogueForTemplate(source, template) {
+    const format = resolveDialogueTemplate(template);
+    if (format.quoted) return dialogueQuotes(source);
+    let text = String(source ?? '').split('\n', 1)[0].trim();
+    if (format.suffix) {
+        if (!text.endsWith(format.suffix)) return null;
+        text = text.slice(0, -format.suffix.length).trim();
+    }
+    return text ? { text, quotedText: null } : null;
 }
 
 function startsLine(node) {
@@ -120,18 +132,19 @@ function dialogueSource(node, start, container) {
 /** One discovery pass shared by highlighting and dialogue presentation. No DOM writes. */
 export function discoverDialogueLines(container, {
     characters = [], caseInsensitive = false, ignoredLabels = new Set(), personaFor = () => null,
+    dialogueRecognitionFormat,
 } = {}) {
     const walker = container.ownerDocument.createTreeWalker(container, 4);
     const lines = [];
     let node;
     while ((node = walker.nextNode())) {
         if (excluded(node, container)) continue;
-        for (const label of dialogueLabels(node.nodeValue, startsLine(node), quotedElementFollows(node))) {
+        for (const label of dialogueLabels(node.nodeValue, startsLine(node), quotedElementFollows(node), dialogueRecognitionFormat)) {
             const card = cardForDialogueName(label.name, characters, caseInsensitive);
             if (!card && ignoredLabels.has(label.name.trim().toLowerCase())) continue;
             const persona = personaFor(label.name);
             lines.push({ node, label, card, persona,
-                dialogue: dialogueQuotes(dialogueSource(node, label.quoteStart, container)) });
+                dialogue: dialogueForTemplate(dialogueSource(node, label.quoteStart, container), dialogueRecognitionFormat) });
         }
     }
     return lines;

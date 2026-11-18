@@ -30,6 +30,7 @@ export function readDialogueRecords(mesEl, {
     const revision = dialogueRevision(context, messageId);
     return discoverDialogueLines(dialogueContentClone(container), {
         characters, caseInsensitive: settings.caseInsensitive, ignoredLabels, personaFor,
+        dialogueRecognitionFormat: settings.dialogueRecognitionFormat,
     }).flatMap(({ label, card, persona, dialogue }, lineIndex) => {
         if (!dialogue?.text) return [];
         return [{

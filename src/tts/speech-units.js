@@ -34,9 +34,11 @@ function quotedParts(value) {
 const clean = value => String(value ?? '').replace(/\s+/gu, ' ').trim();
 
 /** Split an accepted speaker line without giving surrounding action text the speaker voice. */
-export function splitSpeechLine(line, match) {
-    const label = dialogueLabels(line).find(item => item.name === match?.label?.name && item.start === 0);
-    if (!label || !match.dialogue?.quotedText) return [{ kind: 'narration', text: clean(line) }];
+export function splitSpeechLine(line, match, template) {
+    const label = dialogueLabels(line, true, false, template).find(item => item.name === match?.label?.name);
+    if (!label || !match.dialogue) return [{ kind: 'narration', text: clean(line) }];
+    if (match.dialogue.quotedText === null) return [{ kind: 'dialogue', text: clean(match.dialogue.text) }];
+    if (!match.dialogue.quotedText) return [{ kind: 'narration', text: clean(line) }];
     const body = line.slice(label.quoteStart);
     const parts = quotedParts(match.dialogue.quotedText);
     if (!parts.length) return [{ kind: 'narration', text: clean(body) }];
@@ -94,16 +96,17 @@ export function readSpeechUnits(mesEl, {
         const clone = dialogueContentClone(beat.element);
         const matches = discoverDialogueLines(clone, {
             characters, caseInsensitive: settings.caseInsensitive, ignoredLabels, personaFor,
+            dialogueRecognitionFormat: settings.dialogueRecognitionFormat,
         });
         let nextMatch = 0;
         for (const source of speakableText(clone).split('\n')) {
             const line = clean(source);
             if (!line) continue;
-            const label = dialogueLabels(line)[0];
+            const label = dialogueLabels(line, true, false, settings.dialogueRecognitionFormat)[0];
             const match = matches[nextMatch];
-            const matched = label?.start === 0 && match?.label.name === label.name;
+            const matched = label && match?.label.name === label.name;
             const recognized = matched && match.dialogue?.text;
-            const pieces = recognized ? splitSpeechLine(line, match) : [{ kind: 'narration', text: line }];
+            const pieces = recognized ? splitSpeechLine(line, match, settings.dialogueRecognitionFormat) : [{ kind: 'narration', text: line }];
             const dialogueIndex = recognized
                 ? dialogueIndices.get(JSON.stringify([match.label.name, match.dialogue.text]))?.shift() ?? null : null;
             if (matched) nextMatch++;

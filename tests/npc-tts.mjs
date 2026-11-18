@@ -350,3 +350,12 @@ test('expected regenerate deletion preserves streaming authorization and complet
     fire(types.MESSAGE_DELETED, 5);
     assert.equal(stopped.at(-1), undefined, 'unrelated deletion still cancels streaming authorization');
 });
+
+test('custom speaker formats use NPC speech without reading the label aloud', () => {
+    assert.deepEqual(splitSpeechLine('[Mira]: “Wait.”', {
+        label: { name: 'Mira' }, dialogue: { quotedText: '“Wait.”' },
+    }, '[{name}]: "{dialogue}"'), [{ kind: 'dialogue', text: 'Wait.' }]);
+    assert.deepEqual(splitSpeechLine('Mira — Wait.', {
+        label: { name: 'Mira' }, dialogue: { text: 'Wait.', quotedText: null },
+    }, '{name} — {dialogue}'), [{ kind: 'dialogue', text: 'Wait.' }]);
+});

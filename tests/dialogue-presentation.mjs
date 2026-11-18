@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFileSync } from 'node:fs';
-import { cardForDialogueName, dialogueQuotes } from '../src/chat/dialogue-discovery.js';
+import { cardForDialogueName, dialogueQuotes, dialogueForTemplate } from '../src/chat/dialogue-discovery.js';
 
 const cards = [
     { id: 'captain', name: 'Ágata', aliases: [{ pattern: 'Captain' }, { pattern: 'Officer [0-9]+', isRegex: true }] },
@@ -77,4 +77,15 @@ test('revision identities separate chat, character, group, message, swipe, edits
         assert.notEqual(dialogueRevision(changed, 0), first);
     }
     assert.notEqual(dialogueRevision(context, 1), first);
+});
+
+test('custom speech bodies respect quotation and literal closing delimiters', () => {
+    assert.deepEqual(dialogueForTemplate('「Hello.」 narration', '({name}) | 「{dialogue}」'),
+        { text: 'Hello.', quotedText: '「Hello.」' });
+    assert.deepEqual(dialogueForTemplate('Hello.\nNext line', '{name} — {dialogue}'),
+        { text: 'Hello.', quotedText: null });
+    assert.deepEqual(dialogueForTemplate('Hello.]', '[{name}|{dialogue}]'),
+        { text: 'Hello.', quotedText: null });
+    assert.equal(dialogueForTemplate('Hello.', '[{name}|{dialogue}]'), null);
+    assert.equal(dialogueForTemplate('"Partial', '{name}: "{dialogue}"'), null);
 });

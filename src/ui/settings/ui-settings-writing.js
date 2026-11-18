@@ -1,6 +1,8 @@
 import { getSettings } from '../../core/settings.js';
 import { buildSettingToggle, buildSettingTextArea, buildSettingNumber } from '../shared/ui-shared.js';
 import { npcCreationService } from '../../npc/npc-tool.js';
+import { DEFAULT_DIALOGUE_TEMPLATE, parseDialogueTemplate } from '../../chat/dialogue-template.js';
+import { applyDialogueFormatPrompt } from '../../prompts/dialogue-format.js';
 
 export function renderWritingRulesView(view, onReprocessMessages) {
     if (!view) return;
@@ -38,12 +40,40 @@ export function renderWritingRulesView(view, onReprocessMessages) {
     formatHeading.textContent = 'Dialogue Formatting';
     view.append(formatHeading);
 
+    const formatField = buildSettingTextArea({
+        key: 'dialogueRecognitionFormat',
+        label: 'Recognized Dialogue Format',
+        rows: 2,
+        builtIn: DEFAULT_DIALOGUE_TEMPLATE,
+        help: 'Use {name} for the speaker and {dialogue} for their words, once each on one line. '
+            + 'Examples: {name}: "{dialogue}", [{name}]: "{dialogue}", or {name} — {dialogue}. '
+            + 'Match the visible text after Markdown formatting. Without quotation marks, the entire rest of the line is spoken. '
+            + 'Leave empty to restore the default. This also sets the model’s format reminder below.',
+    });
+    const formatInput = formatField.querySelector('textarea');
+    const formatError = document.createElement('p');
+    formatError.className = 'notes';
+    formatError.setAttribute('role', 'status');
+    const validateFormat = () => {
+        const valid = !formatInput.value.trim() || parseDialogueTemplate(formatInput.value);
+        formatInput.setAttribute('aria-invalid', String(!valid));
+        formatError.textContent = valid ? '' : 'Use one {name}, a separator, then one {dialogue}, all on one line. The default format is used until this is valid.';
+    };
+    formatInput.addEventListener('input', () => {
+        validateFormat();
+        applyDialogueFormatPrompt();
+        reprocess();
+    });
+    formatField.append(formatError);
+    view.append(formatField);
+    formatInput.setAttribute('aria-label', 'Recognized Dialogue Format');
+    validateFormat();
+
     view.append(buildSettingToggle({
         key: 'dialogueFormatEnabled',
         label: 'Ask The Model To Format Dialogue',
-        help: 'Asks for each spoken line as Speaker: "dialogue". This is the format used '
-            + 'for avatars, speech blocks and colours, including speakers without cards.',
-        onChange: rerender,
+        help: 'Asks for each spoken line in the recognized format above, used for avatars, speech blocks, colours and voices, including speakers without cards. Disable this if your preset already supplies formatting instructions.',
+        onChange: () => { applyDialogueFormatPrompt(); rerender(); },
     }));
     if (getSettings().dialogueFormatEnabled) {
         view.append(buildSettingNumber({
@@ -94,7 +124,7 @@ export function renderWritingRulesView(view, onReprocessMessages) {
     view.append(buildSettingTextArea({
         key: 'speakerIgnoreList',
         label: 'Not Speakers',
-        help: 'Labels in a Name: "dialogue" line that are not people. One per line or '
+        help: 'Speaker labels in the recognized dialogue format that are not people. One per line or '
             + 'separated by commas. Everything you '
             + 'named in System Builder is already excluded, so stats and collections need '
             + 'no entry here. A character who has a card is never ignored.',

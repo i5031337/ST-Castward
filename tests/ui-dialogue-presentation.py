@@ -19,10 +19,10 @@ with browser_session() as browser:
                 const { clearDecorations } = await import(base + 'src/chat/chat-portraits.js');
                 const logic = await import(base + 'src/tracker/status-logic.js');
                 settings = getSettings();
-                const keys = ['enabled', 'caseInsensitive', 'hideSpeakerNames', 'applyColors'];
+                const keys = ['enabled', 'caseInsensitive', 'hideSpeakerNames', 'applyColors', 'dialogueRecognitionFormat'];
                 saved = Object.fromEntries(keys.map(key => [key, settings[key]]));
                 Object.assign(settings, { enabled: true, caseInsensitive: true,
-                    hideSpeakerNames: false, applyColors: true });
+                    hideSpeakerNames: false, applyColors: true, dialogueRecognitionFormat: '{name}: "{dialogue}"' });
                 const { checkShortNames } = await import(base + 'tests/fixtures/ui-short-names.js');
                 Object.assign(result, await checkShortNames(base, settings));
                 const player = logic.getCurrentPersonaName();
@@ -86,6 +86,31 @@ with browser_session() as browser:
                 clearDecorations(container);
                 settings.enabled = false;
                 result.masterOffRead = JSON.stringify(readDialogueRecords(mes, options)) === JSON.stringify(before);
+                const { readSpeechUnits } = await import(base + 'src/tts/speech-units.js');
+                const { renderWritingRulesView } = await import(base + 'src/ui/settings/ui-settings-writing.js');
+                const { dialogueFormatText } = await import(base + 'src/prompts/dialogue-format.js');
+                settings.dialogueRecognitionFormat = '[{name}]: "{dialogue}"';
+                settings.enabled = true;
+                const view = document.createElement('div');
+                renderWritingRulesView(view, () => {});
+                result.formatField = view.querySelector('[data-setting="dialogueRecognitionFormat"] textarea')?.value
+                    === settings.dialogueRecognitionFormat;
+                result.formatPrompt = dialogueFormatText().includes(settings.dialogueRecognitionFormat);
+                container.innerHTML = '<p>[Zélie]: <q>“Custom words.”</q> Afterward.</p>';
+                const custom = readDialogueRecords(mes, options);
+                injectAtDialogueLines(container, cards, () => '/img/ai4.png', false);
+                result.customQuoted = custom.length === 1 && custom[0].text === 'Custom words.'
+                    && custom[0].npcId === cards[0].id
+                    && container.querySelectorAll('.sillynpc-chat-avatar').length === 1
+                    && JSON.stringify(readDialogueRecords(mes, options)) === JSON.stringify(custom);
+                result.customVoices = readSpeechUnits(mes, options).some(unit =>
+                    unit.kind === 'dialogue' && unit.text === 'Custom words.' && unit.npcId === cards[0].id);
+                settings.dialogueRecognitionFormat = '{name} — {dialogue}';
+                container.innerHTML = '<p>Zélie — Unquoted words.</p>';
+                result.customUnquoted = readDialogueRecords(mes, options)[0]?.text === 'Unquoted words.'
+                    && readSpeechUnits(mes, options)[0]?.kind === 'dialogue';
+                settings.dialogueRecognitionFormat = '{name}: "{dialogue}"';
+                container.innerHTML = '<p>Zélie: "Restored words."</p>';
                 const original = before[0].revision;
                 context.chat[0].swipe_id = 1;
                 const swipe = readDialogueRecords(mes, options)[0].revision;
