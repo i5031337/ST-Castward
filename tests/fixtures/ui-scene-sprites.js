@@ -9,18 +9,21 @@ const settings = getSettings(), context = SillyTavern.getContext();
 const { setCharacterId } = await import('/script.js');
 const savedCharacterId = context.characterId;
 const fixtureCharacterId = context.characters.length;
-const savedSettings = Object.fromEntries(['enabled', 'showPresentNpcSprites', 'characters'].map(key => [key, settings[key]]));
+const savedSettings = Object.fromEntries(['enabled', 'showPresentNpcSprites', 'characters', 'dialogueRecognitionFormat'].map(key => [key, settings[key]]));
 const keys = ['sillynpc_npcs', 'sillynpc_cast', 'sillynpc_status_state', 'sillynpc_expression_sprites'];
 const savedMetadata = Object.fromEntries(keys.filter(key => Object.hasOwn(context.chatMetadata, key)).map(key => [key, context.chatMetadata[key]]));
 const results = [];
 const message = document.createElement('div');
 message.className = 'mes';
 const savedChatLength = context.chat.length;
+const savedVisualNovelMode = document.body.classList.contains('waifuMode');
 const check = (condition, message) => { if (!condition) throw new Error(message); };
 try {
+    document.body.classList.remove('waifuMode');
     context.characters.push({ name: 'Scene layout fixture', chat: 'scene-layout-fixture' });
     setCharacterId(fixtureCharacterId);
     settings.enabled = settings.showPresentNpcSprites = true;
+    settings.dialogueRecognitionFormat = '{name}: "{dialogue}"';
     for (const key of keys) delete context.chatMetadata[key];
     const imageUrl = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><rect width="400" height="400" fill="teal"/></svg>');
     const spriteUrl = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="400" height="800"><rect x="80" width="240" height="800" fill="teal"/></svg>');
@@ -63,6 +66,16 @@ try {
             check(scene.querySelectorAll('[data-active="true"]').length === 1, 'Only one speaker should be in front');
         }
         results.push({ count, slotWidth: widths[0] });
+        document.body.classList.add('waifuMode');
+        const bounds = figures.map(el => el.getBoundingClientRect());
+        const left = Math.min(...bounds.map(rect => rect.left));
+        const right = Math.max(...bounds.map(rect => rect.right));
+        check(Math.abs((left + right) / 2 - innerWidth / 2) <= 1,
+            'Visual Novel mode should center the cast');
+        check(left >= -1 && right <= innerWidth + 1, 'The centered cast should fit the viewport');
+        check(bounds.every(rect => rect.height > innerHeight * .8), 'Visual Novel sprites should use the full stage height');
+        document.body.classList.remove('waifuMode');
+        check(figures[0].offsetWidth === widths[0], 'Leaving Visual Novel mode should restore side framing');
     }
     cards[0].presentation = { expressions: { spriteFolder: 'SceneLayoutFixture' } };
     await refreshSceneSprites({ loadPack: async () => [{ label: 'neutral', path: spriteUrl }] });
@@ -79,6 +92,12 @@ try {
         'Speech sprites should stay fully visible');
     speechImage.onerror();
     checkPortrait(speechImage);
+    document.body.classList.add('waifuMode');
+    const speechBounds = speechImage.parentElement.getBoundingClientRect();
+    check(Math.abs((speechBounds.left + speechBounds.right) / 2 - innerWidth / 2) <= 1,
+        'Visual Novel mode should center the dialogue sprite');
+    check(speechBounds.height > innerHeight * .8, 'Visual Novel dialogue sprites should use the full stage height');
+    document.body.classList.remove('waifuMode');
     clearSpeechSprite();
     message.setAttribute('mesid', String(context.chat.length));
     message.innerHTML = '<div class="mes_text"><p>Scene 2: "Hello there."</p></div>';
@@ -101,6 +120,7 @@ try {
 } catch (error) {
     document.documentElement.setAttribute('data-scene-sprite-test', JSON.stringify({ error: `${error.message}\n${error.stack}` }));
 } finally {
+    document.body.classList.toggle('waifuMode', savedVisualNovelMode);
     clearSceneSprites();
     clearSpeechSprite();
     message.remove();

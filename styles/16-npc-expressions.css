@@ -87,3 +87,28 @@
     #sillynpc-scene-sprites { z-index: 1; }
     .sillynpc-scene-sprite-side { width: 35vw; height: 35vh; }
 }
+
+/* Native Visual Novel mode puts the cast behind the bottom-aligned chat. */
+body.waifuMode #sillynpc-speech-sprite {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    width: 90vw;
+    height: 90vh;
+}
+body.waifuMode #sillynpc-scene-sprites {
+    justify-content: center;
+    align-items: flex-end;
+}
+body.waifuMode .sillynpc-scene-sprite-side { display: contents; }
+body.waifuMode .sillynpc-scene-sprite-side .sillynpc-scene-sprite {
+    position: relative;
+    transform: none;
+    left: auto;
+    right: auto;
+    flex: 0 1 90vh;
+    min-width: 0;
+    width: 90vw;
+    height: 90vh;
+    max-height: calc(100vh - var(--topBarBlockSize, 40px));
+}
