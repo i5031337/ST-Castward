@@ -11,7 +11,7 @@ export function buildExpressionWorkflowSetting() {
         options: [{ value: '', label: 'Choose a reference-edit workflow' },
             ...(current ? [{ value: current, label: current }] : [])],
         help: 'Saved ComfyUI API workflow with %reference_image% and %prompt% inputs. '
-            + 'Used by all NPCs for automatic and manual expressions. Independent of the portrait workflow in ST Image Generation.',
+            + 'Used by NPCs and enabled player expressions for automatic and manual generation. Independent of the portrait workflow in ST Image Generation.',
         onChange: () => resetNpcExpressions(),
     });
     const select = root.querySelector('select');

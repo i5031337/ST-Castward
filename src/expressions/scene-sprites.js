@@ -1,8 +1,10 @@
 import { eventSource, event_types } from '../../../../../events.js';
 import { getContext } from '../../../../../st-context.js';
+import { getPlayerCard, getCurrentPersonaKey } from '../tracker/status-logic.js';
+import { readExpressionLines } from './expression-actors.js';
 import { getSettings } from '../core/settings.js';
 import { getActiveCharacters } from '../characters/characters.js';
-import { dialogueRevision, readDialogueRecords } from '../chat/dialogue-presentation.js';
+import { dialogueRevision } from '../chat/dialogue-presentation.js';
 import { fnv1a } from '../core/hash.js';
 import { loadSpritePack } from './host-expressions.js';
 import { selectSprite } from './expression-engine.js';
@@ -14,7 +16,7 @@ const packs = new Map();
 let version = 0;
 const owner = () => {
     const context = getContext();
-    return JSON.stringify([context.getCurrentChatId?.(), context.characterId, context.groupId]);
+    return JSON.stringify([context.getCurrentChatId?.(), context.characterId, context.groupId, getCurrentPersonaKey()]);
 };
 const sourceFor = id => {
     const context = getContext();
@@ -33,7 +35,7 @@ export function focusSceneSprite(npcId) {
 
 function latestSceneSpeaker(ids) {
     for (const message of [...document.querySelectorAll('#chat .mes')].reverse()) {
-        const line = readDialogueRecords(message).filter(line => !line.isPersona && ids.has(line.npcId)).at(-1);
+        const line = readExpressionLines(message).filter(line => ids.has(line.npcId)).at(-1);
         if (line) return line.npcId;
     }
     return '';
@@ -92,6 +94,7 @@ export async function refreshSceneSprites({ loadPack = loadSpritePack } = {}) {
     }
     clearSpeechSprite();
     const cards = presentSpriteCards(getActiveCharacters(), context.chatMetadata?.sillynpc_status_state);
+    if (settings.playerExpressions) cards.unshift(getPlayerCard());
     const records = context.chatMetadata?.[METADATA_KEY] || {};
     const entries = await Promise.all(cards.map(async card => {
         const config = card.presentation?.expressions;
@@ -111,7 +114,7 @@ export async function refreshSceneSprites({ loadPack = loadSpritePack } = {}) {
     if (!entries.some(entry => entry.path)) { root?.remove(); return; }
     if (!root) {
         root = document.createElement('div'); root.id = 'sillynpc-scene-sprites';
-        root.setAttribute('aria-label', 'Present NPC expressions'); document.body.append(root);
+        root.setAttribute('aria-label', 'Scene character expressions'); document.body.append(root);
     }
     const sides = ['left', 'right'].map(side => {
         const element = document.createElement('div'); element.className = 'sillynpc-scene-sprite-side';
@@ -142,6 +145,9 @@ export async function refreshSceneSprites({ loadPack = loadSpritePack } = {}) {
 }
 
 export function initSceneSprites(renderedEvent) {
+    for (const event of [event_types.PERSONA_CHANGED, 'sillynpc-player-portrait-changed']) {
+        eventSource.on(event, () => { clearSceneSprites(); void refreshSceneSprites(); });
+    }
     eventSource.on('sillynpc-status-updated', () => void refreshSceneSprites());
     for (const event of [renderedEvent, event_types.MESSAGE_SWIPED,
         event_types.MESSAGE_EDITED, event_types.MESSAGE_DELETED]) eventSource.on(event, () => {

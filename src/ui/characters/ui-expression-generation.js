@@ -2,6 +2,7 @@ import { EMOTION_LABELS, expressionPromptVariants, setExpressionPrompt, prepareE
 import { expressionGenerator, expressionJob, expressionOwner } from '../../expressions/host-expression-generation.js';
 import { getSettings } from '../../core/settings.js';
 import { findCharacterRecord } from '../../characters/character-repository.js';
+import { expressionCardFor } from '../../expressions/expression-actors.js';
 import { expressionImageSource } from '../../expressions/expression-image-source.js';
 
 export function buildExpressionGeneration(card, { save, onPack, onReference, onSelect, hasExpression }) {
@@ -62,7 +63,7 @@ export function buildExpressionGeneration(card, { save, onPack, onReference, onS
     };
     let controller;
     const run = async () => {
-        if (!card.imageUrl) { status.textContent = 'Add an NPC portrait first.'; return; }
+        if (!card.imageUrl) { status.textContent = 'Add a character portrait first.'; return; }
         if (prepareExpressionReference(card)) { onReference(); save(); }
         const configSnapshot = () => JSON.stringify({ ...config,
             generation: { ...config.generation, imageSources: undefined } });
@@ -74,7 +75,7 @@ export function buildExpressionGeneration(card, { save, onPack, onReference, onS
         const imageSource = expressionImageSource(card);
         controller = new AbortController();
         const current = () => getSettings().enabled && expressionOwner() === owner && card.imageUrl === image
-            && findCharacterRecord(card.id) === card && configSnapshot() === snapshot
+            && (card.isPlayer ? expressionCardFor(card.id) : findCharacterRecord(card.id)) === card && configSnapshot() === snapshot
             && expressionWorkflow(card, getSettings()) === workflow
             && getSettings().npcExpressionIpAdapterMode === ipAdapterMode
             && expressionImageSource(card) === imageSource

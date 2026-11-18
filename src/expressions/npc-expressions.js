@@ -1,16 +1,15 @@
 import { eventSource, event_types } from '../../../../../events.js';
 import { getContext } from '../../../../../st-context.js';
 import { getSettings, saveSettings } from '../core/settings.js';
-import { getActiveCharacters } from '../characters/characters.js';
 import { isChatCharacter } from '../characters/character-repository.js';
 import { normalizeCharacterPresentation } from '../core/npc-presentation.js';
-import { readDialogueRecords, dialogueRevision } from '../chat/dialogue-presentation.js';
-import { dialogueLineCurrent } from '../chat/dialogue-stream-state.js';
+import { dialogueRevision } from '../chat/dialogue-presentation.js';
+import { expressionCardFor as cardFor, expressionLineCurrent as dialogueLineCurrent, readExpressionLines, expressionLine, expressionsEnabled } from './expression-actors.js';
 import { MESSAGE_RENDERED_EVENT } from '../story/beats.js';
 import { createExpressionEngine } from './expression-engine.js';
 import { classifierConfig, classifierHint, classifyDialogue, loadSpritePack } from './host-expressions.js';
 import { clearSpeechSprite, showSpeechSprite } from './speech-sprite.js';
-import { wireExpressionEvents } from './expression-events.js';
+import { wireExpressionEvents, createExpressionCompletion, deferExpressionCompletion } from './expression-events.js';
 import { EMOTION_LABELS, prepareExpressionReference, expressionWorkflow } from './expression-prompts.js';
 import { expressionGenerator, expressionJob } from './host-expression-generation.js';
 import { rememberNpcSprite, initSceneSprites, focusSceneSprite, refreshNpcSpritePack, readNpcSprite } from './scene-sprites.js';
@@ -27,7 +26,6 @@ const warned = new Set();
 const resultKey = line => JSON.stringify([line.revision, line.npcId, line.lineIndex]);
 let epoch = 0;
 let generationController = new AbortController();
-const cardFor = id => getActiveCharacters().find(card => card.id === id);
 const preferences = card => {
     const settings = getSettings();
     const expressions = card?.presentation?.expressions;
@@ -39,7 +37,7 @@ const preferences = card => {
 const messageElement = id => document.querySelector(`#chat .mes[mesid="${Number(id)}"]`);
 
 function previousPortrait(line) {
-    if (!getSettings().autoGenerateNpcExpressions || !dialogueLineCurrent(line)) return null;
+    if (!expressionsEnabled(line) || !dialogueLineCurrent(line)) return null;
     const card = cardFor(line.npcId), config = card?.presentation?.expressions;
     if (!config?.spriteFolder || (config.generation?.reference && config.generation.reference !== card.imageUrl)) return null;
     const candidates = [];
@@ -78,7 +76,7 @@ function saveExpressionBinding(card) {
 }
 function isCurrent(job, pending = true) {
     return (!pending || !job.signal?.aborted) && (!pending || job.epoch === epoch) && getSettings().enabled
-        && getSettings().autoGenerateNpcExpressions === true
+        && expressionsEnabled(job.line)
         && getContext().chat?.[job.line.messageId] === job.sourceToken
         && dialogueLineCurrent(job.line)
         && preferences(cardFor(job.line.npcId)) === job.preferences
@@ -115,7 +113,7 @@ async function generateClassifiedExpression(job, label) {
     const current = () => job.epoch === epoch && isCurrent(job, false)
         && cardFor(job.line.npcId) === card && card.imageUrl === image;
     try {
-        if (shouldWaitForTrackerRead(getSettings(), getContext()?.getCurrentChatId?.() !== undefined)) {
+        if (!job.sourceToken.is_user && shouldWaitForTrackerRead(getSettings(), getContext()?.getCurrentChatId?.() !== undefined)) {
             await trackerReadGate.wait(job.sourceToken, generationController.signal);
             await waitForImageReview(job, card, generationController.signal);
         }
@@ -143,7 +141,7 @@ async function generateClassifiedExpression(job, label) {
         if (warned.size > 128) warned.delete(warned.values().next().value);
         console.warn(`[Castward] ${card.name}: ${label} expression generation failed`, error);
         if (typeof toastr !== 'undefined') toastr.warning(
-            `${card.name}: ${label} expression failed. ${error.message} Retry in NPC Edit.`, 'Castward');
+            `${card.name}: ${label} expression failed. ${error.message} Retry in character Edit.`, 'Castward');
     }
 }
 
@@ -188,7 +186,7 @@ export function resetNpcExpressions({ clear = true } = {}) {
     epoch++; engine.reset();
     if (!clear) return;
     results.clear();
-    document.querySelectorAll('.sillynpc-chat-avatar[data-sillynpc-base-portrait]').forEach(avatar => {
+    document.querySelectorAll('#chat img[data-sillynpc-base-portrait]').forEach(avatar => {
         avatar.src = avatar.dataset.sillynpcBasePortrait;
         delete avatar.dataset.sillynpcExpression;
         delete avatar.dataset.sillynpcBasePortrait;
@@ -198,15 +196,20 @@ export function resetNpcExpressions({ clear = true } = {}) {
 /** Decoration notifications may read cached pictures, never schedule classification. */
 export function renderNpcExpressions(mesEl, targetLine) {
     if (!mesEl || !getSettings().enabled) return;
-    const records = targetLine ? [targetLine] : readDialogueRecords(mesEl);
+    const records = targetLine ? [targetLine] : readExpressionLines(mesEl);
     const byLine = new Map(records.map(line => [line.lineIndex, line]));
-    const selector = targetLine ? `.sillynpc-chat-avatar[data-char-id][data-sillynpc-dialogue-line="${Number(targetLine.lineIndex)}"]`
-        : '.sillynpc-chat-avatar[data-char-id]';
-    for (const avatar of mesEl.querySelectorAll(selector)) {
+    const selector = targetLine ? `.sillynpc-chat-avatar:is([data-char-id], [data-persona])[data-sillynpc-dialogue-line="${Number(targetLine.lineIndex)}"]`
+        : '.sillynpc-chat-avatar:is([data-char-id], [data-persona])';
+    const avatars = [...mesEl.querySelectorAll(selector)];
+    const player = records.find(line => line.isPersona && getContext().chat?.[line.messageId]?.is_user);
+    const hostAvatar = mesEl.querySelector('.mesAvatarWrapper .avatar img');
+    if (hostAvatar && (player || hostAvatar.dataset.sillynpcBasePortrait)) avatars.push(hostAvatar);
+    for (const avatar of avatars) {
         if (avatar.dataset.sillynpcBasePortrait) avatar.src = avatar.dataset.sillynpcBasePortrait;
         delete avatar.dataset.sillynpcExpression;
-        const line = byLine.get(Number(avatar.dataset.sillynpcDialogueLine));
-        if (line?.npcId !== avatar.dataset.charId) continue;
+        const line = avatar === hostAvatar ? player : byLine.get(Number(avatar.dataset.sillynpcDialogueLine));
+        if (!line || (line.isPersona && !expressionsEnabled(line))
+            || (avatar !== hostAvatar && !line.isPersona && line.npcId !== avatar.dataset.charId)) continue;
         const picture = pictureForLine(line);
         if (!picture) continue;
         const path = picture.path;
@@ -232,10 +235,10 @@ export async function completeNpcExpressions(messageId, {
     loadPack = loadSpritePack, classify = classifyDialogue, saveBinding = saveExpressionBinding,
     rememberSprite = rememberNpcSprite, savePortrait = rememberDialoguePortrait, signal, records,
 } = {}) {
-    if (!getSettings().enabled || getSettings().autoGenerateNpcExpressions !== true) return;
+    if (!getSettings().enabled) return;
     const message = getContext()?.chat?.[Number(messageId)];
-    if (!message || message.is_user || message.is_system) return;
-    const lines = (records ?? readDialogueRecords(messageElement(messageId))).filter(line => line.npcId && !line.isPersona);
+    if (!message || message.is_system) return;
+    const lines = (records ? records.map(expressionLine) : readExpressionLines(messageElement(messageId))).filter(line => line.npcId && expressionsEnabled(line));
     const perMessage = getSettings().npcExpressionsPerMessage === true;
     if (perMessage && lines.some(line => line.streamId)) return;
     const version = epoch, packs = new Map();
@@ -245,7 +248,14 @@ export async function completeNpcExpressions(messageId, {
         if (targetLines.every(part => {
             const cached = results.get(resultKey(part));
             return (cached?.classified || cached?.pending) && isCurrent(cached, false);
-        })) continue;
+        })) {
+            const cached = results.get(resultKey(line));
+            if (message.is_user && cached?.classified && cached.epoch !== version) {
+                cached.epoch = version;
+                void generateClassifiedExpression(cached, cached.label);
+            }
+            continue;
+        }
         const card = cardFor(line.npcId);
         const settings = card ? normalizeCharacterPresentation(card).expressions : null;
         if (card && prepareExpressionReference(card)) saveBinding(card);
@@ -274,6 +284,7 @@ export async function completeNpcExpressions(messageId, {
 
 /** Transfer committed results and in-flight jobs to the finalized message identity. */
 export function adoptStreamExpressions(messageId, records) {
+    records = records.map(expressionLine);
     for (const [key, job] of [...results]) {
         if (job.line.messageId !== Number(messageId) || !job.line.streamId) continue;
         const line = records.find(candidate => candidate.lineIndex === job.line.lineIndex
@@ -294,11 +305,12 @@ export function adoptStreamExpressions(messageId, records) {
 /** Called only by the audio element's playing event, never by synthesis completion. */
 export function showNpcSpeechExpression(unit) {
     if (unit.kind !== 'dialogue') return;
-    const card = cardFor(unit.npcId);
-    if (!getSettings().enabled || !card) {
+    const mapped = expressionLine(unit);
+    const card = cardFor(mapped.npcId);
+    if (!getSettings().enabled || !card || (unit.isPersona && !expressionsEnabled(mapped))) {
         clearSpeechSprite(); return;
     }
-    const line = { ...unit, lineIndex: unit.dialogueLineIndex };
+    const line = { ...mapped, lineIndex: unit.dialogueLineIndex ?? 0 };
     const result = results.get(resultKey(line)) || (unit.streamId ? [...results.values()].find(candidate =>
         candidate.line.messageId === line.messageId && candidate.line.lineIndex === line.lineIndex
         && candidate.line.npcId === line.npcId && candidate.line.text === (line.dialogueText ?? line.text)) : null);
@@ -314,6 +326,7 @@ export function showNpcSpeechExpression(unit) {
 
 export function initNpcExpressions() {
     initSceneSprites(MESSAGE_RENDERED_EVENT);
+    eventSource.on(event_types.PERSONA_CHANGED, () => resetNpcExpressions());
     wireExpressionEvents({ events: eventSource, types: event_types, renderedEvent: MESSAGE_RENDERED_EVENT,
         render: renderNpcExpressions, reset: resetNpcExpressions,
         latestId: () => (getContext()?.chat?.length ?? 0) - 1,
@@ -321,5 +334,9 @@ export function initNpcExpressions() {
         // revision afterward; edit/swipe/chat events still cancel the completion token.
         sourceToken: id => getContext()?.chat?.[id],
         revision: id => dialogueRevision(getContext(), id), defer: requestAnimationFrame,
-        complete: completeNpcExpressions });
+        complete: createExpressionCompletion({ getContext, version: () => epoch,
+            playerEnabled: () => getSettings().playerExpressions, complete: completeNpcExpressions }) });
+    eventSource.on(event_types.USER_MESSAGE_RENDERED, id => deferExpressionCompletion(id, {
+        getContext, version: () => epoch, defer: requestAnimationFrame, complete: completeNpcExpressions,
+    }));
 }

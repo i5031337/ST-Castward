@@ -30,7 +30,7 @@ export function buildExpressionsSection(card, { save = () => {
     preview.onerror = () => {
         if (!showingPortrait && card.imageUrl) {
             showingPortrait = true; preview.src = card.imageUrl; preview.hidden = false;
-            status.textContent = 'Sprite unavailable; using the NPC portrait.';
+            status.textContent = 'Sprite unavailable; using the character portrait.';
         } else {
             preview.hidden = true; status.textContent = 'Preview image unavailable.';
         }
@@ -50,7 +50,7 @@ export function buildExpressionsSection(card, { save = () => {
         input.className = 'text_pole'; input.dataset.expressionField = key;
     };
     const folder = document.createElement('input'); folder.value = config.spriteFolder;
-    folder.placeholder = 'Assigned automatically from the NPC portrait'; field('Folder', folder, 'folder');
+    folder.placeholder = 'Assigned automatically from the character portrait'; field('Folder', folder, 'folder');
     const fallback = document.createElement('input'); fallback.value = config.fallback; field('Fallback', fallback, 'fallback');
     folder.addEventListener('change', () => {
         const valid = normalizeSpriteFolder(folder.value);

@@ -103,6 +103,7 @@ function getPlayerCard() {
     const record = takePersonaRecord(settings.personaData, key, name) || initPersonaData(key, name);
 
     record.isPlayer = true;
+    record.id = `player:${key}`;
     record.personaKey = key;
     record.name = name;
     // No description: the sheet had a box for one and it only ever restated the persona

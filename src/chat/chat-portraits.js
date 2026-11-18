@@ -33,6 +33,11 @@ export function applyPlayerPortrait(mesEl) {
     const context = getContext();
     const record = (context?.chat || [])[Number(mesEl.getAttribute('mesid'))];
     const wanted = playerPortraitFor(record);
+    if (img.dataset.sillynpcBasePortrait !== undefined) {
+        img.src = img.dataset.sillynpcBasePortrait;
+        delete img.dataset.sillynpcBasePortrait;
+        delete img.dataset.sillynpcExpression;
+    }
 
     if (wanted) {
         if (img.dataset.sillynpcAvatar === undefined) {

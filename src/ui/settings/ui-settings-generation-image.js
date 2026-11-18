@@ -27,19 +27,26 @@ export function renderImageGenerationSettings(view, rerender) {
     }));
     view.append(buildExpressionWorkflowSetting());
     view.append(buildSettingToggle({
+        key: 'playerExpressions', label: 'Player Expressions',
+        help: 'Display and generate expressions for your active player persona, including your messages and recognized player dialogue. '
+            + 'Uses the same workflow, IP-Adapter, per-message and image-prompt refresh settings as NPC expressions. '
+            + 'Add a portrait and customize expressions in Player → Edit. Includes the player when Show Present NPC Sprites is enabled.',
+        onChange: () => { resetNpcExpressions(); void refreshSceneSprites(); },
+    }));
+    view.append(buildSettingToggle({
         key: 'npcExpressionIpAdapterMode', label: 'IP-Adapter mode',
-        help: 'Prepend each NPC’s default image prompt to the selected expression prompt. '
+        help: 'Prepend each character’s default image prompt to the selected expression prompt. '
             + 'When off, send only the expression prompt. Applies to automatic and manual expressions.',
         onChange: () => resetNpcExpressions(),
     }));
     view.append(buildSettingToggle({
-        key: 'npcExpressionsPerMessage', label: 'One Expression per NPC per Message',
-        help: 'Classify each NPC’s combined dialogue once per completed reply and use that expression for all their lines in the message.',
+        key: 'npcExpressionsPerMessage', label: 'One Expression per Character per Message',
+        help: 'Classify each character’s combined dialogue once per completed reply and use that expression for all their lines in the message.',
         onChange: () => resetNpcExpressions(),
     }));
     view.append(buildSettingToggle({
         key: 'npcExpressionsRefreshOnImagePrompt', label: 'Refresh Expressions When Image Prompt Changes',
-        help: 'Replace Castward-generated expressions when profile fields or collections included in that NPC’s image prompt change. '
+        help: 'Replace Castward-generated expressions when profile fields or collections included in that character’s image prompt change. '
             + 'With the background tracker reader on, new images wait for its accepted updates; included item changes awaiting review wait for your decision. '
             + 'Existing imported sprites are kept until generated manually.',
         onChange: () => resetNpcExpressions(),

@@ -35,6 +35,17 @@ text. Revision identity includes chat, character/group, message, swipe, source,
 and translated display text. Discovery works when visual decoration is disabled.
 
 Each completed reply classifies every recognized, expression-enabled NPC line.
+The opt-in Player Expressions setting uses the same pipeline for recognized
+persona dialogue and whole user messages. It operates independently of NPC
+automation and shares the workflow, IP-Adapter, per-message and image-source
+refresh settings. Player → Edit exposes the same expression editor. The reusable
+card and its pack belong to the persona avatar (`player:<avatar filename>`);
+line portraits and latest scene selections remain chat-owned. User messages with
+another persona's avatar are excluded. Persona changes invalidate pending work.
+With the scene-sprite display enabled, the active player joins the present NPCs.
+User messages do not wait for a tracker read, which runs on assistant replies;
+player dialogue in those replies uses the same tracker and review gates as NPCs.
+
 The session cache and rendered results are bounded to 128 entries. Jobs are
 serialized and deduplicated by revision, NPC, line, dialogue, classifier settings,
 preferences, and pack vocabulary. Stale results cannot update changed chats,

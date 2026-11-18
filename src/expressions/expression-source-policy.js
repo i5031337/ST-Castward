@@ -18,9 +18,10 @@ export function captureExpressionImageSource(card, fields, collections, definiti
 }
 
 export function hasPendingImageCollection(rows, card, definitions) {
+    const scope = card.isPlayer ? 'player' : 'npc';
     const included = new Set(definitions.filter(collection => collection?.id
         && collection.includeInImagePrompt !== false && !collection.retired
-        && collectionAppliesTo(collection, 'npc', card)).map(collection => collection.id));
-    return rows.some(row => row.scope === 'npc' && included.has(row.collectionId)
-        && String(row.actor || '').toLowerCase() === String(card.name || '').toLowerCase());
+        && collectionAppliesTo(collection, scope, card)).map(collection => collection.id));
+    return rows.some(row => row.scope === scope && included.has(row.collectionId)
+        && (card.isPlayer || String(row.actor || '').toLowerCase() === String(card.name || '').toLowerCase()));
 }

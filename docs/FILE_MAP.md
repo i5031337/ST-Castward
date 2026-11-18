@@ -54,6 +54,8 @@ This map covers tracked runtime files, tests and support files. Source files and
 | `img/screenshots/fantasy-demo/` | Live Fantasy Adventure captures of Joram after Fill, his generated profile, magic and equipment, and the player HUD. Evidence is in `docs/evaluations/fantasy-adventure-live-demo.json`. |
 | `img/screenshots/example-portraits.webp` | Original generated example artwork used in the captures: Mira neutral/joy and Rowan neutral/fear, arranged in a two-by-two sheet. |
 | `tests/chat-character-ownership.mjs` | Character visibility, chat NPC routing, persona identity, and chat-local player state boundaries. |
+| `src/expressions/expression-actors.js` | Shared expression routing for NPCs and persona-owned player cards, message eligibility and stale-persona checks. |
+| `tests/player-expressions.mjs`, `tests/ui-player-expressions.py`, `tests/fixtures/ui-player-expressions.js` | Player expression ownership, shared settings/editor, automatic selection, manual generation and display checks. |
 | `src/characters/system-npc-roster.js`, `src/characters/system-npc-roster-runtime.js` | Opt-in local System rosters, portable snapshots, and one-time independent chat seeding. |
 | `src/characters/system-roster-state.js` | Optional map and NPC memory snapshots, provenance-free memory copies, and deferred tracker-state seeds. |
 | `src/ui/system/ui-system-reuse.js` | Local per-System NPC reuse, Places carryover controls, and saved-roster clearing. Memory carryover is a canonical System rule edited under Profiles. |

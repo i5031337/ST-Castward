@@ -31,7 +31,7 @@ export function createExpressionGenerator({ edit, loadPack, upload, cleanup = as
                 check();
                 if (!EMOTION_LABELS.includes(job.label)) throw new Error('Choose a supported emotion.');
                 if (!job.reference || !job.folder || !(job.promptVariants?.some(prompt => prompt?.trim()) || job.prompt?.trim())) {
-                    throw new Error('Choose an NPC reference image, sprite folder and expression prompt first.');
+                    throw new Error('Choose a character reference image, sprite folder and expression prompt first.');
                 }
                 const sprites = await loadPack(job.folder);
                 check();

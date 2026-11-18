@@ -96,7 +96,7 @@ function buildEditorLeft(char, refreshEditor) {
     const { preview, buttons: imgBtns } = buildPortraitBlock(char, { onChange: () => refreshPortrait(char, refreshEditor) });
     left.append(preview, imgBtns);
     if (char.isPlayer) {
-        left.append(buildVoicesSection(char));
+        left.append(buildExpressionsSection(char), buildVoicesSection(char));
         return { left };
     }
 
